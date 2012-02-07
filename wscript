@@ -9,10 +9,10 @@ out = 'build'
 def options(opt):
     opt.load('compiler_cxx')
 
-    opt.add_option('--enable-debug', action='store_true', default=False,
-                   help='build a debug version of the project', dest='debug')
-    opt.add_option('--enable-werror', action='store_true', default=False,
-                   help='interpret warnings as errors', dest='werror')
+    opt.add_option('--enable-debug', action = 'store_true', default = False,
+                   help = 'build a debug version', dest = 'debug')
+    opt.add_option('--enable-werror', action = 'store_true', default = False,
+                   help = 'interpret warnings as errors', dest = 'werror')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -49,6 +49,9 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-O2')
         conf.check_cxx(cxxflags = '-ffast-math')
         conf.env.append_value('CXXFLAGS', ['-O2', '-ffast-math'])
+
+    # Other
+    conf.env.append_value('INCLUDES', 'src/lib')
 
     # Werror support - at the end to avoid false negatives in the checks
     if conf.options.werror:
