@@ -27,6 +27,14 @@ def build(bld):
         use = ['CXX']
     )
 
+    bld.stlib(
+        source = ' '.join([
+            'src/lib/rules/rules.cc'
+        ]),
+        target = 'rules',
+        use = ['CXX']
+    )
+
     bld.program(
         source = ' '.join([
             'src/client/client.cc',
