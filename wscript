@@ -30,7 +30,8 @@ def configure(conf):
     conf.check_cxx(cxxflags = '-Wextra')
     conf.check_cxx(cxxflags = '-pedantic')
 
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-pedantic'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-pedantic',
+                                       '-Wno-variadic-macros'])
 
     # Check for C++0x
     conf.check_cxx(cxxflags = '-std=c++0x')
