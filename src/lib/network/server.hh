@@ -7,6 +7,9 @@
 
 namespace network {
 
+// Because it inherits Socket, Server's field names are pubsub* and reqrep* to
+// be consistent with Client
+
 class Server : public Socket
 {
 public:

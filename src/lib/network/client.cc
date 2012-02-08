@@ -17,6 +17,7 @@ void Client::init()
     {
         pubsub_sckt_ = new zmq::socket_t(ctx_, ZMQ_SUB);
         pubsub_sckt_->connect(pubsub_addr_.c_str());
+        pubsub_sckt_->setsockopt(ZMQ_SUBSCRIBE, nullptr, 0);
     }
     catch (const zmq::error_t& e)
     {
