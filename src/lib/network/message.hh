@@ -22,7 +22,7 @@ struct Message
     uint32_t size;
 
     // String representation of a message
-    const std::string& str() const;
+    std::string str() const;
 };
 
 } // namespace network

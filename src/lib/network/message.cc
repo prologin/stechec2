@@ -12,7 +12,7 @@ Message::Message(uint32_t type_, uint32_t client_id_)
 {
 }
 
-const std::string& Message::str() const
+std::string Message::str() const
 {
     std::stringstream ss;
 
