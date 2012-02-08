@@ -59,3 +59,16 @@ TEST(UtilsBuffer, Deserialize)
     EXPECT_EQ(2, s.arr[1]);
     EXPECT_EQ(3, s.arr[2]);
 }
+
+TEST(UtilsBuffer, DeserializeError)
+{
+    char contents[4] = "foo";
+    std::vector<uint8_t> v;
+    v.assign(contents, contents + 4);
+
+    Buffer buf(v);
+    MyStruct s;
+    EXPECT_EXIT(s.handle_buffer(buf),
+                ::testing::KilledBySignal(SIGABRT),
+                "Assertion failed");
+}
