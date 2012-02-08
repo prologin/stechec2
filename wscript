@@ -75,13 +75,24 @@ def build(bld):
 def build_libs(bld):
     build_network(bld)
     build_rules(bld)
+    build_utils(bld)
 
 def build_network(bld):
     bld.stlib(
         source = """
             src/lib/network/network.cc
         """,
+        defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'network'
+    )
+
+def build_utils(bld):
+    bld.stlib(
+        source = """
+            src/lib/utils/log.cc
+        """,
+        defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
+        target = 'utils'
     )
 
 def build_rules(bld):
@@ -90,6 +101,7 @@ def build_rules(bld):
             src/lib/rules/action.cc
             src/lib/rules/state.cc
         """,
+        defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
         target = 'rules'
     )
 
@@ -107,7 +119,8 @@ def build_client(bld):
             src/client/client.cc
         """,
         target = 'client',
-        use = ['network']
+        defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"'],
+        use = ['utils', 'network']
     )
 
 def build_server(bld):
@@ -116,5 +129,6 @@ def build_server(bld):
             src/server/server.cc
         """,
         target = 'server',
-        use = ['network']
+        defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"'],
+        use = ['utils', 'network']
     )
