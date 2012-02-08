@@ -132,6 +132,7 @@ def build_rules(bld):
 def build_client(bld):
     bld.program(
         source = """
+            src/client/main.cc
             src/client/client.cc
         """,
         target = 'stechec2-client',
@@ -142,6 +143,7 @@ def build_client(bld):
 def build_server(bld):
     bld.program(
         source = """
+            src/server/main.cc
             src/server/server.cc
         """,
         target = 'stechec2-server',
