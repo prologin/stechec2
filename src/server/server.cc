@@ -37,6 +37,6 @@ void Server::wait_for_players(unsigned nb_players)
 
         delete id_req;
 
-        INFO("One client connected, allocated id %i", nb_clients_ + 1);
+        NOTICE("Client connected, allocated id %i", nb_clients_ + 1);
     }
 }

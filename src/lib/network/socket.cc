@@ -51,7 +51,7 @@ bool Socket::get_msg(Message** msg)
             throw std::runtime_error("Could not get message");
 
         *msg = reinterpret_cast<Message*>(new char[zmsg.size()]);
-        memcpy(msg, zmsg.data(), zmsg.size());
+        memcpy(*msg, zmsg.data(), zmsg.size());
 
         return true;
     }

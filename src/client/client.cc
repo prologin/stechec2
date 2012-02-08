@@ -28,5 +28,5 @@ void Client::init()
 
     delete id_rep;
 
-    INFO("Got id %i", id_);
+    NOTICE("Connected with id %i", id_);
 }
