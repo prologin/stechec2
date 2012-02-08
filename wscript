@@ -59,6 +59,10 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-ffast-math')
         conf.env.append_value('CXXFLAGS', ['-O2', '-ffast-math'])
 
+    # ZeroMQ
+    conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
+                   args = ['--cflags', '--libs'])
+
     # Other
     conf.env.append_value('INCLUDES', 'src/lib')
 
@@ -80,10 +84,10 @@ def build_libs(bld):
 def build_network(bld):
     bld.stlib(
         source = """
-            src/lib/network/network.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
-        target = 'network'
+        target = 'network',
+        use = ['ZeroMQ', 'utils']
     )
 
 def build_utils(bld):
