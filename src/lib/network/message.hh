@@ -6,12 +6,18 @@
 
 namespace network {
 
+// Message types of stechec2 (not the rules)
+enum MsgType
+{
+    MSG_ERR = 0,
+    MSG_GETID = 1
+};
+
 struct Message
 {
     Message(uint32_t type_ = 0, uint32_t client_id_ = 0);
 
-    // Type of the message
-    // For example synchronization packets or rule packets
+    // Type of the message (see MsgType)
     uint32_t type;
 
     // Id of the client that sent the packet
