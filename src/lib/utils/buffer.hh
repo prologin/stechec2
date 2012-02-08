@@ -1,6 +1,8 @@
 #ifndef LIB_UTILS_BUFFER_HH_
 # define LIB_UTILS_BUFFER_HH_
 
+# include "log.hh"
+
 # include <cassert>
 # include <cstdint>
 # include <cstdlib>
@@ -33,7 +35,7 @@ public:
             data_.insert(data_.end(), mem, mem + len);
         else
         {
-            assert(idx_ + len <= data_.size());
+            CHECK(idx_ + len <= data_.size());
             memcpy(mem, &data_[idx_], len);
             idx_ += len;
         }
@@ -49,7 +51,7 @@ public:
             handle_mem((char*)s.c_str(), size);
         else
         {
-            assert(idx_ + size <= data_.size());
+            CHECK(idx_ + size <= data_.size());
             s.assign(&data_[idx_], &data_[idx_ + size]);
             idx_ += size;
         }

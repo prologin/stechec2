@@ -72,6 +72,12 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
 # define INFO(fmt, args...) LOG(utils::Logger::INFO_LEVEL, fmt, ## args)
 # define NOTICE(fmt, args...) LOG(utils::Logger::NOTICE_LEVEL, fmt, ## args)
 
+# define CHECK(cond) \
+    do { \
+        if (!(cond)) \
+            FATAL("%s", "Assertion failed: " #cond " -- aborting"); \
+    } while (0)
+
 } // namespace utils
 
 #endif // !LIB_UTILS_LOG_HH_
