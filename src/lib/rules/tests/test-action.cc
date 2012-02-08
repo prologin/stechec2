@@ -27,7 +27,7 @@ public:
             return 0;
     }
 
-    virtual void serialize(Serializer&) const
+    virtual void handle_buffer(utils::Buffer&) const
     {
     }
 
@@ -49,7 +49,7 @@ public:
             return 0;
     }
 
-    virtual void serialize(Serializer&) const
+    virtual void handle_buffer(utils::Buffer&) const
     {
     }
 

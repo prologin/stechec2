@@ -1,11 +1,10 @@
 #ifndef ACTION_HH_
 # define ACTION_HH_
 
+# include <utils/buffer.hh>
+
 // In rules/state.hh
 class RulesState;
-
-// In tools/serialize.hh
-class Serializer;
 
 // Interface to be implemented by all action types.
 class Action
@@ -19,9 +18,9 @@ public:
     // Copies the current state and returns a new state with the action applied.
     RulesState* apply(RulesState* st) const;
 
-    // Serializes the action object by saving all internal parameters to a
-    // stream.
-    virtual void serialize(Serializer& serializer) const = 0;
+    // Handles serialization and deserialization of the Action object to a
+    // buffer.
+    virtual void handle_buffer(utils::Buffer& buf) const = 0;
 
 private:
     // Only applies the action to a given state, without handling action
