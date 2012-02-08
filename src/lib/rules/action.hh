@@ -19,9 +19,6 @@ public:
     // Copies the current state and returns a new state with the action applied.
     RulesState* apply(RulesState* st) const;
 
-    // Cancels the action and returns a new state with the action cancelled.
-    RulesState* cancel(RulesState* st) const;
-
     // Serializes the action object by saving all internal parameters to a
     // stream.
     virtual void serialize(Serializer& serializer) const = 0;
@@ -46,7 +43,6 @@ public:
     }
 
     T* apply(RulesState* st) const { return dynamic_cast<T*>(Action::apply(st)); }
-    T* cancel(RulesState* st) const { return dynamic_cast<T*>(Action::cancel(st)); }
 
 private:
     virtual void apply_on(T* st) const = 0;
