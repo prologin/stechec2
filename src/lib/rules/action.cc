@@ -1,5 +1,6 @@
 #include "action.hh"
-#include "state.hh"
+
+namespace rules {
 
 RulesState* Action::apply(RulesState* st) const
 {
@@ -12,3 +13,5 @@ RulesState* Action::apply(RulesState* st) const
 
     return new_st;
 }
+
+} // namespace rules

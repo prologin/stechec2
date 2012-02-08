@@ -1,10 +1,11 @@
 #ifndef ACTION_HH_
 # define ACTION_HH_
 
+# include "state.hh"
+
 # include <utils/buffer.hh>
 
-// In rules/state.hh
-class RulesState;
+namespace rules {
 
 // Interface to be implemented by all action types.
 class Action
@@ -50,5 +51,7 @@ private:
         apply_on(dynamic_cast<T*>(st));
     }
 };
+
+} // namespace rules
 
 #endif // !ACTION_HH_

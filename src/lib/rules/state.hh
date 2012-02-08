@@ -3,6 +3,8 @@
 
 #include <cassert>
 
+namespace rules {
+
 // Interface of the rules state.
 class RulesState
 {
@@ -44,5 +46,7 @@ T* cancel(T* current_version)
 
     return old_version;
 }
+
+} // namespace rules
 
 #endif // !STATE_HH_

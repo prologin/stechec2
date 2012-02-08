@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace rules;
+
 class MockRulesState : public RulesState
 {
     virtual RulesState* copy() const { return new MockRulesState(); }

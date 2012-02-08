@@ -3,6 +3,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace rules;
+
 // Test action: increments or decrements state.x in [0;3].
 
 class MyRulesState : public RulesState
