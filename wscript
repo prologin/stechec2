@@ -103,6 +103,14 @@ def build_utils(bld):
         target = 'utils'
     )
 
+    for test in ['buffer']:
+        bld.program(
+            features = 'gtest',
+            source = 'src/lib/utils/tests/test-%s.cc' % test,
+            target = 'utils-test-%s' % test,
+            use = ['utils']
+        )
+
 def build_rules(bld):
     bld.stlib(
         source = """
