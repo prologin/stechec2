@@ -33,9 +33,6 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
     Logger::get().stream() << buffer << std::endl;
 
     va_end(va);
-
-    if (Logger::get().level() == Logger::FATAL_LEVEL)
-        abort();
 }
 
 } // namespace utils

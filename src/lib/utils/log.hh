@@ -66,11 +66,16 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
 # define LOG(lvl, fmt, args...) utils::log(lvl, __FILE__, __LINE__, \
                                            MODULE_NAME, MODULE_COLOR, \
                                            fmt, ## args)
-# define FATAL(fmt, args...) LOG(utils::Logger::FATAL_LEVEL, fmt, ## args)
 # define ERR(fmt, args...) LOG(utils::Logger::ERROR_LEVEL, fmt, ## args)
 # define WARN(fmt, args...) LOG(utils::Logger::WARNING_LEVEL, fmt, ## args)
 # define INFO(fmt, args...) LOG(utils::Logger::INFO_LEVEL, fmt, ## args)
 # define NOTICE(fmt, args...) LOG(utils::Logger::NOTICE_LEVEL, fmt, ## args)
+
+# define FATAL(fmt, args...) \
+    do { \
+        LOG(utils::Logger::FATAL_LEVEL, fmt, ## args); \
+        abort(); \
+    } while (0)
 
 # define CHECK(cond) \
     do { \
