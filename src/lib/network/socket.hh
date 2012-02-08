@@ -17,8 +17,8 @@ public:
     virtual ~Socket();
 
     virtual void init() = 0;
-    virtual void send_msg(const Message& msg);
-    virtual void get_msg(Message* msg);
+    virtual bool send_msg(const Message& msg);
+    virtual bool get_msg(Message** msg);
 
 protected:
     std::string pubsub_addr_;

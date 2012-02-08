@@ -22,7 +22,7 @@ Socket::~Socket()
     delete reqrep_sckt_;
 }
 
-void Socket::send_msg(const Message& msg)
+bool Socket::send_msg(const Message& msg)
 {
     try
     {
@@ -31,14 +31,17 @@ void Socket::send_msg(const Message& msg)
 
         if (!reqrep_sckt_->send(zmsg))
             throw std::runtime_error("Could not send message");
+
+        return true;
     }
     catch(const std::exception& e)
     {
-        FATAL("%s", e.what());
+        ERR("%s", e.what());
+        return false;
     }
 }
 
-void Socket::get_msg(Message* msg)
+bool Socket::get_msg(Message** msg)
 {
     try
     {
@@ -47,11 +50,15 @@ void Socket::get_msg(Message* msg)
         if (!reqrep_sckt_->recv(&zmsg))
             throw std::runtime_error("Could not get message");
 
+        *msg = reinterpret_cast<Message*>(new char[zmsg.size()]);
         memcpy(msg, zmsg.data(), zmsg.size());
+
+        return true;
     }
     catch(const std::exception& e)
     {
-        FATAL("%s", e.what());
+        ERR("%s", e.what());
+        return false;
     }
 }
 
