@@ -87,7 +87,6 @@ def build_rules(bld):
     bld.stlib(
         source = """
             src/lib/rules/action.cc
-            src/lib/rules/rules.cc
             src/lib/rules/state.cc
         """,
         target = 'rules'
