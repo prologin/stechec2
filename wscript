@@ -84,6 +84,8 @@ def build_libs(bld):
 def build_network(bld):
     bld.stlib(
         source = """
+            src/lib/network/socket.cc
+            src/lib/network/message.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'network',
