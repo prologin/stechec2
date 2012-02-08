@@ -66,6 +66,10 @@ def configure(conf):
     # Other
     conf.env.append_value('INCLUDES', 'src/lib')
 
+    # Boost
+    conf.load('boost')
+    conf.check_boost(lib = 'program_options')
+
     # Werror support - at the end to avoid false negatives in the checks
     if conf.options.werror:
         conf.check_cxx(cxxflags = '-Werror')
@@ -137,7 +141,7 @@ def build_client(bld):
         """,
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"'],
-        use = ['utils', 'network']
+        use = ['utils', 'network', 'boost_libs']
     )
 
 def build_server(bld):
