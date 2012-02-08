@@ -6,6 +6,8 @@
 # include <iostream>
 # include <ostream>
 
+namespace utils {
+
 # define ANSI_COL_NONE        "\033[0m"
 # define ANSI_COL_RED         "\033[1;31m"
 # define ANSI_COL_GREEN       "\033[1;32m"
@@ -26,10 +28,11 @@ class Logger
 public:
     enum DisplayLevel
     {
-        ERROR_LEVEL = 0,
-        WARNING_LEVEL = 1,
-        INFO_LEVEL = 2,
-        NOTICE_LEVEL = 3
+        FATAL_LEVEL = 0,
+        ERROR_LEVEL = 1,
+        WARNING_LEVEL = 2,
+        INFO_LEVEL = 3,
+        NOTICE_LEVEL = 4
     };
 
     std::ostream& stream() { return std::cerr; }
@@ -60,12 +63,15 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
          const char* module_name, const char* module_color,
          const char* fmt, ...);
 
-# define LOG(lvl, fmt, args...) ::log(lvl, __FILE__, __LINE__, \
+# define LOG(lvl, fmt, args...) utils::log(lvl, __FILE__, __LINE__, \
                                            MODULE_NAME, MODULE_COLOR, \
                                            fmt, ## args)
-# define ERR(fmt, args...) LOG(::Logger::ERROR_LEVEL, fmt, ## args)
-# define WARN(fmt, args...) LOG(::Logger::WARNING_LEVEL, fmt, ## args)
-# define INFO(fmt, args...) LOG(::Logger::INFO_LEVEL, fmt, ## args)
-# define NOTICE(fmt, args...) LOG(::Logger::NOTICE_LEVEL, fmt, ## args)
+# define FATAL(fmt, args...) LOG(utils::Logger::FATAL_LEVEL, fmt, ## args)
+# define ERR(fmt, args...) LOG(utils::Logger::ERROR_LEVEL, fmt, ## args)
+# define WARN(fmt, args...) LOG(utils::Logger::WARNING_LEVEL, fmt, ## args)
+# define INFO(fmt, args...) LOG(utils::Logger::INFO_LEVEL, fmt, ## args)
+# define NOTICE(fmt, args...) LOG(utils::Logger::NOTICE_LEVEL, fmt, ## args)
+
+} // namespace utils
 
 #endif // !LIB_UTILS_LOG_HH_
