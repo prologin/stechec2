@@ -134,7 +134,7 @@ def build_client(bld):
         source = """
             src/client/client.cc
         """,
-        target = 'client',
+        target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"'],
         use = ['utils', 'network']
     )
@@ -144,7 +144,7 @@ def build_server(bld):
         source = """
             src/server/server.cc
         """,
-        target = 'server',
+        target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"'],
         use = ['utils', 'network']
     )
