@@ -93,6 +93,14 @@ def build_rules(bld):
         target = 'rules'
     )
 
+    for test in ['action', 'state']:
+        bld.program(
+            features = 'gtest',
+            source = 'src/lib/rules/tests/test-%s.cc' % test,
+            target = 'rules-test-%s' % test,
+            use = ['rules']
+        )
+
 def build_client(bld):
     bld.program(
         source = """
