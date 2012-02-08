@@ -7,10 +7,18 @@
 # include <cstdint>
 # include <cstdlib>
 # include <cstring>
+# include <stdexcept>
 # include <string>
 # include <vector>
 
 namespace utils {
+
+// Exception raised when a deserialization fails. For example, when the buffer
+// is too small to be deserialized properly.
+struct DeserializationError : public std::runtime_error
+{
+    DeserializationError() : std::runtime_error("Deserialization error") {}
+};
 
 // Serializes or deserializes data to an internal buffer. To use it, use the
 // "do" method on a variable, or "do_array" on an array.
@@ -35,7 +43,7 @@ public:
             data_.insert(data_.end(), mem, mem + len);
         else
         {
-            CHECK(idx_ + len <= data_.size());
+            CHECK_EXC(DeserializationError, idx_ + len <= data_.size());
             memcpy(mem, &data_[idx_], len);
             idx_ += len;
         }
@@ -51,7 +59,7 @@ public:
             handle_mem((char*)s.c_str(), size);
         else
         {
-            CHECK(idx_ + size <= data_.size());
+            CHECK_EXC(DeserializationError, idx_ + size <= data_.size());
             s.assign(&data_[idx_], &data_[idx_ + size]);
             idx_ += size;
         }

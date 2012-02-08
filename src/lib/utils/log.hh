@@ -77,10 +77,20 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
         abort(); \
     } while (0)
 
+// Basically, an assertion using our logging system
 # define CHECK(cond) \
     do { \
         if (!(cond)) \
             FATAL("%s", "Assertion failed: " #cond " -- aborting"); \
+    } while (0)
+
+// An assertion which raises an exception instead of aborting.
+# define CHECK_EXC(exc, cond) \
+    do { \
+        if (!(cond)) { \
+            ERR("%s", "Assertion failed: " #cond " -- raising " #exc); \
+            throw exc(); \
+        } \
     } while (0)
 
 } // namespace utils

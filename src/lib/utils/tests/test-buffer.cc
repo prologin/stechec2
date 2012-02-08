@@ -68,7 +68,5 @@ TEST(UtilsBuffer, DeserializeError)
 
     Buffer buf(v);
     MyStruct s;
-    EXPECT_EXIT(s.handle_buffer(buf),
-                ::testing::KilledBySignal(SIGABRT),
-                "Assertion failed");
+    ASSERT_THROW(s.handle_buffer(buf), DeserializationError);
 }
