@@ -19,6 +19,7 @@ public:
 private:
     void init();
     void wait_for_players(unsigned nb_players);
+    void run_game();
 
 private:
     const Options& opt_;
