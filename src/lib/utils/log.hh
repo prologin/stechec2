@@ -32,7 +32,8 @@ public:
         ERROR_LEVEL = 1,
         WARNING_LEVEL = 2,
         INFO_LEVEL = 3,
-        NOTICE_LEVEL = 4
+        NOTICE_LEVEL = 4,
+        DEBUG_LEVEL = 5
     };
 
     std::ostream& stream() { return std::cerr; }
@@ -70,6 +71,7 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
 # define WARN(fmt, args...) LOG(utils::Logger::WARNING_LEVEL, fmt, ## args)
 # define INFO(fmt, args...) LOG(utils::Logger::INFO_LEVEL, fmt, ## args)
 # define NOTICE(fmt, args...) LOG(utils::Logger::NOTICE_LEVEL, fmt, ## args)
+# define DEBUG(fmt, args...) LOG(utils::Logger::DEBUG_LEVEL, fmt, ## args)
 
 # define FATAL(fmt, args...) \
     do { \
