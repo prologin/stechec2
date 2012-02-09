@@ -140,7 +140,8 @@ def build_client(bld):
             src/client/client.cc
         """,
         target = 'stechec2-client',
-        defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"'],
+        defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
+            'MODULE_VERSION="%s"' % VERSION],
         use = ['utils', 'network', 'boost_libs']
     )
 
@@ -148,9 +149,11 @@ def build_server(bld):
     bld.program(
         source = """
             src/server/main.cc
+            src/server/options.cc
             src/server/server.cc
         """,
         target = 'stechec2-server',
-        defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"'],
-        use = ['utils', 'network']
+        defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
+            'MODULE_VERSION="%s"' % VERSION],
+        use = ['utils', 'network', 'BOOST']
     )

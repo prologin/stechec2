@@ -4,6 +4,13 @@
 #include <network/server.hh>
 #include <network/message.hh>
 
+#include "options.hh"
+
+Server::Server(const Options& opt)
+    : opt_(opt)
+{
+}
+
 void Server::run(unsigned nb_players)
 {
     init();
@@ -12,9 +19,8 @@ void Server::run(unsigned nb_players)
 
 void Server::init()
 {
-    net_ = new network::Server("tcp://127.0.0.1:2345",
-                               "tcp://127.0.0.1:2346");
-
+    net_ = std::shared_ptr<network::Server>(
+            new network::Server(opt_.pub_addr, opt_.rep_addr));
     net_->init();
 }
 void Server::wait_for_players(unsigned nb_players)
