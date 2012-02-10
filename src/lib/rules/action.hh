@@ -32,23 +32,26 @@ private:
 // A template that can be used to implement actions in an easier way without
 // dynamic_casts everywhere.
 // It's kind of ugly, but it allows a lot more genericity in the codebase.
-template <typename T>
+template <typename TState>
 class RulesAction : public Action
 {
 public:
-    virtual int check(const T* st) const = 0;
+    virtual int check(const TState* st) const = 0;
     virtual int check(const GameState* st) const
     {
-        return check(dynamic_cast<const T*>(st));
+        return check(dynamic_cast<const TState*>(st));
     }
 
-    T* apply(GameState* st) const { return dynamic_cast<T*>(Action::apply(st)); }
+    TState* apply(GameState* st) const
+    {
+        return dynamic_cast<TState*>(Action::apply(st));
+    }
 
 private:
-    virtual void apply_on(T* st) const = 0;
+    virtual void apply_on(TState* st) const = 0;
     virtual void apply_on(GameState* st) const
     {
-        apply_on(dynamic_cast<T*>(st));
+        apply_on(dynamic_cast<TState*>(st));
     }
 };
 
