@@ -15,6 +15,7 @@ out = 'build'
 def options(opt):
     opt.load('compiler_cxx')
     opt.load('unittest_gtest')
+    opt.load('boost')
 
     opt.add_option('--enable-debug', action = 'store_true', default = False,
                    help = 'build a debug version', dest = 'debug')
@@ -101,6 +102,7 @@ def build_network(bld):
 def build_utils(bld):
     bld.stlib(
         source = """
+            src/lib/utils/dll.cc
             src/lib/utils/log.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
