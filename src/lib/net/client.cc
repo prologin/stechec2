@@ -4,7 +4,7 @@
 
 #include <utils/log.hh>
 
-namespace network {
+namespace net {
 
 Client::Client(const std::string& sub_addr, const std::string& req_addr)
     : Socket(sub_addr, req_addr, 1)
@@ -35,4 +35,4 @@ void Client::init()
     }
 }
 
-} // namespace network
+} // namespace net

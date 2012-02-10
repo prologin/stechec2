@@ -1,10 +1,10 @@
-#ifndef LIB_NETWORK_SOCKET_HH_
-# define LIB_NETWORK_SOCKET_HH_
+#ifndef LIB_NET_SOCKET_HH_
+# define LIB_NET_SOCKET_HH_
 
 # include <string>
 # include <zmq.hpp>
 
-namespace network {
+namespace net {
 
 class Message;
 
@@ -29,6 +29,6 @@ protected:
     zmq::socket_t* reqrep_sckt_;
 };
 
-} // namespace network
+} // namespace net
 
 #endif // !LIB_NETWORK_SOCKET_HH_

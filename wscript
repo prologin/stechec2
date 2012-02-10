@@ -82,20 +82,20 @@ def build(bld):
     build_server(bld)
 
 def build_libs(bld):
-    build_network(bld)
+    build_net(bld)
     build_rules(bld)
     build_utils(bld)
 
-def build_network(bld):
+def build_net(bld):
     bld.stlib(
         source = """
-            src/lib/network/socket.cc
-            src/lib/network/server.cc
-            src/lib/network/client.cc
-            src/lib/network/message.cc
+            src/lib/net/socket.cc
+            src/lib/net/server.cc
+            src/lib/net/client.cc
+            src/lib/net/message.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
-        target = 'network',
+        target = 'net',
         use = ['ZeroMQ', 'utils']
     )
 
@@ -144,7 +144,7 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'network', 'boost_libs']
+        use = ['utils', 'net', 'boost_libs']
     )
 
 def build_server(bld):
@@ -157,5 +157,5 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'network', 'BOOST']
+        use = ['utils', 'net', 'BOOST']
     )

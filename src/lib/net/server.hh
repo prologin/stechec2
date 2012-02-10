@@ -1,11 +1,11 @@
-#ifndef LIB_NETWORK_SERVER_HH_
-# define LIB_NETWORK_SERVER_HH_
+#ifndef LIB_NET_SERVER_HH_
+# define LIB_NET_SERVER_HH_
 
 #include <string>
 
-#include <network/socket.hh>
+#include <net/socket.hh>
 
-namespace network {
+namespace net {
 
 // Because it inherits Socket, Server's field names are pubsub* and reqrep* to
 // be consistent with Client
@@ -18,6 +18,6 @@ public:
     void init();
 };
 
-} // namespace network
+} // namespace net
 
 #endif // !LIB_NETWORK_SERVER_HH_

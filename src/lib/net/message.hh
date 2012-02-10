@@ -1,10 +1,10 @@
-#ifndef LIB_NETWORK_MESSAGE_HH_
-# define LIB_NETWORK_MESSAGE_HH_
+#ifndef LIB_NET_MESSAGE_HH_
+# define LIB_NET_MESSAGE_HH_
 
 # include <cstdint>
 # include <iostream>
 
-namespace network {
+namespace net {
 
 // Message types of stechec2 (not the rules)
 enum MsgType
@@ -31,8 +31,8 @@ struct Message
     std::string str() const;
 };
 
-} // namespace network
+} // namespace net
 
-std::ostream& operator<<(std::ostream& os, const network::Message& msg);
+std::ostream& operator<<(std::ostream& os, const net::Message& msg);
 
-#endif // !LIB_NETWORK_MESSAGE_HH_
+#endif // !LIB_NET_MESSAGE_HH_

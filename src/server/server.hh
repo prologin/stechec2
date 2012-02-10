@@ -5,7 +5,7 @@
 # include <list>
 # include <memory>
 
-namespace network {
+namespace net {
     class Server;
 }
 struct Options;
@@ -25,7 +25,7 @@ private:
     const Options& opt_;
     // XXX: The following should be a std::unique_ptr but I have no time to find
     // out why it does not compile today
-    std::shared_ptr<network::Server> net_;
+    std::shared_ptr<net::Server> net_;
     std::list<uint32_t> clients_;
     unsigned nb_clients_;
 };

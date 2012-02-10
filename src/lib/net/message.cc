@@ -3,7 +3,7 @@
 #include <sstream>
 #include <ostream>
 
-namespace network {
+namespace net {
 
 Message::Message(uint32_t type_, uint32_t client_id_)
     : type(type_),
@@ -23,9 +23,9 @@ std::string Message::str() const
     return ss.str();
 }
 
-} // namespace network
+} // namespace net
 
-std::ostream& operator<<(std::ostream& os, const network::Message& msg)
+std::ostream& operator<<(std::ostream& os, const net::Message& msg)
 {
     os << msg.str() << std::endl;
 

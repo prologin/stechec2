@@ -3,9 +3,9 @@
 #include <stdexcept>
 
 #include <utils/log.hh>
-#include <network/message.hh>
+#include <net/message.hh>
 
-namespace network {
+namespace net {
 
 Socket::Socket(const std::string& pubsub_addr,
                const std::string& reqrep_addr,
@@ -62,4 +62,4 @@ bool Socket::get_msg(Message** msg)
     }
 }
 
-} // namespace network
+} // namespace net

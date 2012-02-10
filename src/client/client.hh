@@ -3,7 +3,7 @@
 
 # include <cstdint>
 
-namespace network {
+namespace net {
     class Client;
 }
 
@@ -16,7 +16,7 @@ private:
     void init();
 
 private:
-    network::Client* net_;
+    net::Client* net_;
     uint32_t id_;
 };
 
