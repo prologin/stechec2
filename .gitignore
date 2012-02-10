@@ -2,3 +2,4 @@
 build
 .unittest-gtest
 __pycache__
+*.pyc
