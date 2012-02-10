@@ -14,10 +14,10 @@ public:
     // Check if the action can be applied to the state. Returns 0 if there is
     // no error, or a rule dependent error value if the action can't be
     // applied.
-    virtual int check(const RulesState* st) const = 0;
+    virtual int check(const GameState* st) const = 0;
 
     // Copies the current state and returns a new state with the action applied.
-    RulesState* apply(RulesState* st) const;
+    GameState* apply(GameState* st) const;
 
     // Handles serialization and deserialization of the Action object to a
     // buffer.
@@ -26,7 +26,7 @@ public:
 private:
     // Only applies the action to a given state, without handling action
     // cancellation.
-    virtual void apply_on(RulesState* st) const = 0;
+    virtual void apply_on(GameState* st) const = 0;
 };
 
 // A template that can be used to implement actions in an easier way without
@@ -37,16 +37,16 @@ class RulesAction : public Action
 {
 public:
     virtual int check(const T* st) const = 0;
-    virtual int check(const RulesState* st) const
+    virtual int check(const GameState* st) const
     {
         return check(dynamic_cast<const T*>(st));
     }
 
-    T* apply(RulesState* st) const { return dynamic_cast<T*>(Action::apply(st)); }
+    T* apply(GameState* st) const { return dynamic_cast<T*>(Action::apply(st)); }
 
 private:
     virtual void apply_on(T* st) const = 0;
-    virtual void apply_on(RulesState* st) const
+    virtual void apply_on(GameState* st) const
     {
         apply_on(dynamic_cast<T*>(st));
     }

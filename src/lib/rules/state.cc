@@ -2,7 +2,7 @@
 
 namespace rules {
 
-RulesState::~RulesState()
+GameState::~GameState()
 {
     delete old_version_;
 }

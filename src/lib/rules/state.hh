@@ -1,23 +1,23 @@
-#ifndef STATE_HH_
-# define STATE_HH_
+#ifndef LIB_RULES_STATE_HH_
+# define LIB_RULES_STATE_HH_
 
 #include <cassert>
 
 namespace rules {
 
-// Interface of the rules state.
-class RulesState
+// Interface of the game state.
+class GameState
 {
 public:
-    virtual ~RulesState();
+    virtual ~GameState();
 
     // Copies this state and returns a new state object with the same data.
-    virtual RulesState* copy() const = 0;
+    virtual GameState* copy() const = 0;
 
     // Getter/Setter for the old version of the state.
     // See below for an explanation of the state versions.
-    RulesState* get_old_version() const { return old_version_; }
-    void set_old_version(RulesState* st) { old_version_ = st; }
+    GameState* get_old_version() const { return old_version_; }
+    void set_old_version(GameState* st) { old_version_ = st; }
 
     // Checks if the state has something to cancel.
     bool can_cancel() const { return old_version_ != 0; }
@@ -27,7 +27,7 @@ private:
     // Basically, each state is linked to its older version so that an action
     // can be simply cancelled by deleting the current version and reusing the
     // older version.
-    RulesState* old_version_;
+    GameState* old_version_;
 };
 
 // Cancels the last action that occurred on the state. External to the state
@@ -49,4 +49,4 @@ T* cancel(T* current_version)
 
 } // namespace rules
 
-#endif // !STATE_HH_
+#endif // !LIB_RULES_STATE_HH_

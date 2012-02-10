@@ -7,21 +7,21 @@ using namespace rules;
 
 // Test action: increments or decrements state.x in [0;3].
 
-class MyRulesState : public RulesState
+class MyGameState : public GameState
 {
 public:
-    MyRulesState() : RulesState(), x(0) {}
-    MyRulesState(const MyRulesState& mrs) : RulesState(), x(mrs.x) {}
+    MyGameState() : GameState(), x(0) {}
+    MyGameState(const MyGameState& mgs) : GameState(), x(mgs.x) {}
 
-    virtual RulesState* copy() const { return new MyRulesState(*this); }
+    virtual GameState* copy() const { return new MyGameState(*this); }
 
     int x;
 };
 
-class MyIncrAction : public RulesAction<MyRulesState>
+class MyIncrAction : public RulesAction<MyGameState>
 {
 public:
-    virtual int check(const MyRulesState* st) const
+    virtual int check(const MyGameState* st) const
     {
         if (st->x >= 3)
             return 1;
@@ -34,16 +34,16 @@ public:
     }
 
 private:
-    virtual void apply_on(MyRulesState* st) const
+    virtual void apply_on(MyGameState* st) const
     {
         st->x += 1;
     }
 };
 
-class MyDecrAction : public RulesAction<MyRulesState>
+class MyDecrAction : public RulesAction<MyGameState>
 {
 public:
-    virtual int check(const MyRulesState* st) const
+    virtual int check(const MyGameState* st) const
     {
         if (st->x <= 0)
             return 1;
@@ -56,7 +56,7 @@ public:
     }
 
 private:
-    virtual void apply_on(MyRulesState* st) const
+    virtual void apply_on(MyGameState* st) const
     {
         st->x -= 1;
     }
@@ -64,59 +64,59 @@ private:
 
 TEST(RulesAction, CheckApply)
 {
-    MyRulesState* mrs = new MyRulesState();
-    EXPECT_EQ(0, mrs->x);
+    MyGameState* mgs = new MyGameState();
+    EXPECT_EQ(0, mgs->x);
 
     MyIncrAction* incr = new MyIncrAction();
     MyDecrAction* decr = new MyDecrAction();
 
-    mrs = incr->apply(mrs);
-    EXPECT_EQ(1, mrs->x);
+    mgs = incr->apply(mgs);
+    EXPECT_EQ(1, mgs->x);
 
-    mrs = incr->apply(mrs);
-    EXPECT_EQ(2, mrs->x);
+    mgs = incr->apply(mgs);
+    EXPECT_EQ(2, mgs->x);
 
-    mrs = decr->apply(mrs);
-    EXPECT_EQ(1, mrs->x);
+    mgs = decr->apply(mgs);
+    EXPECT_EQ(1, mgs->x);
 
     delete incr;
     delete decr;
-    delete mrs;
+    delete mgs;
 }
 
 TEST(RulesAction, CheckError)
 {
-    MyRulesState* mrs = new MyRulesState();
+    MyGameState* mgs = new MyGameState();
 
     MyIncrAction* incr = new MyIncrAction();
     MyDecrAction* decr = new MyDecrAction();
 
-    EXPECT_NE(0, decr->check(mrs));
+    EXPECT_NE(0, decr->check(mgs));
 
     for (int i = 0; i < 3; ++i)
-        mrs = incr->apply(mrs);
+        mgs = incr->apply(mgs);
 
-    EXPECT_NE(0, incr->check(mrs));
+    EXPECT_NE(0, incr->check(mgs));
 
     delete incr;
     delete decr;
-    delete mrs;
+    delete mgs;
 }
 
 TEST(RulesAction, CheckCancel)
 {
-    MyRulesState* mrs = new MyRulesState();
+    MyGameState* mgs = new MyGameState();
 
     MyIncrAction* incr = new MyIncrAction();
     MyDecrAction* decr = new MyDecrAction();
 
-    EXPECT_EQ(0, mrs->x);
-    mrs = incr->apply(mrs);
-    EXPECT_EQ(1, mrs->x);
-    mrs = cancel(mrs);
-    EXPECT_EQ(0, mrs->x);
+    EXPECT_EQ(0, mgs->x);
+    mgs = incr->apply(mgs);
+    EXPECT_EQ(1, mgs->x);
+    mgs = cancel(mgs);
+    EXPECT_EQ(0, mgs->x);
 
     delete incr;
     delete decr;
-    delete mrs;
+    delete mgs;
 }

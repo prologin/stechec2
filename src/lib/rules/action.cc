@@ -2,10 +2,10 @@
 
 namespace rules {
 
-RulesState* Action::apply(RulesState* st) const
+GameState* Action::apply(GameState* st) const
 {
     // Copy the old state and link the new version to the old version.
-    RulesState* new_st = st->copy();
+    GameState* new_st = st->copy();
     new_st->set_old_version(st);
 
     // Apply the action on the new state.
