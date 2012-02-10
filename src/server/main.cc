@@ -6,10 +6,10 @@
 
 int main(int argc, char** argv)
 {
-    utils::Logger::get().level() = utils::Logger::NOTICE_LEVEL;
-
     Options opt;
     opt.process(argc, argv);
+
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
 
     Server server(opt);
     server.run(2);
