@@ -25,8 +25,8 @@ void Server::init()
             new net::Server(opt_.pub_addr, opt_.rep_addr));
     net_->init();
 
-    NOTICE("Server listening on %s", opt_.rep_addr.c_str());
-    NOTICE("Server publishing on %s", opt_.pub_addr.c_str());
+    NOTICE("Replying on %s", opt_.rep_addr.c_str());
+    NOTICE("Publishing on %s", opt_.pub_addr.c_str());
 }
 void Server::wait_for_players(unsigned nb_players)
 {
