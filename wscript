@@ -110,12 +110,12 @@ def build_utils(bld):
         target = 'utils'
     )
 
-    for test in ['buffer']:
+    for test in ['buffer', 'options']:
         bld.program(
             features = 'gtest',
             source = 'src/lib/utils/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['utils']
+            use = ['utils', 'BOOST']
         )
 
 def build_rules(bld):
