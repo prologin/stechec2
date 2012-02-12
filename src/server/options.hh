@@ -11,8 +11,8 @@ public:
     virtual void process(int argc, char** argv);
 
     std::string config;
-    std::string pub_addr;
     std::string rep_addr;
+    std::string pub_addr;
     unsigned nb_spectator;
     unsigned wait_timeout;
     std::string log;

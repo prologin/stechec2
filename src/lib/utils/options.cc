@@ -7,11 +7,11 @@ namespace po = boost::program_options;
 namespace utils {
 
 void Options::process_cli(po::options_description opt,
+                          po::variables_map& vm,
                           int argc, char** argv)
 {
     try
     {
-        po::variables_map vm;
         po::store(po::command_line_parser(argc, argv).options(opt).run(), vm);
         po::notify(vm);
 
@@ -35,6 +35,7 @@ void Options::process_cli(po::options_description opt,
 }
 
 void Options::process_config(po::options_description opt,
+                             po::variables_map& vm,
                              const std::string& config_file)
 {
     try
@@ -45,7 +46,6 @@ void Options::process_config(po::options_description opt,
             throw std::runtime_error("Could not open config file \"" +
                     config_file + "\"");
 
-        po::variables_map vm;
         po::store(po::parse_config_file(input_file, opt, true), vm);
         po::notify(vm);
     }

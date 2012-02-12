@@ -12,6 +12,8 @@ void Options::process(int argc, char** argv)
     usage_ = std::string("Usage: ") + argv[0] + " [options]\n";
     version_ = VERSION_MESSAGE(MODULE_NAME, MODULE_VERSION);
 
+    po::variables_map vm;
+
     po::options_description cli_opt("Command-line options");
     cli_opt.add_options()
         ("help,h", "Show this help")
@@ -46,7 +48,7 @@ void Options::process(int argc, char** argv)
     po::options_description opt("");
     opt.add(cli_opt).add(config_cli_opt);
 
-    process_cli(opt, argc, argv);
+    process_cli(opt, vm, argc, argv);
 
     po::options_description config_opt("Config options");
     config_opt.add_options()
@@ -58,5 +60,6 @@ void Options::process(int argc, char** argv)
         ("server.verbose", po::value<unsigned>(&verbose))
         ("server.start_game_timeout", po::value<unsigned>(&start_game_timeout));
 
-    process_config(config_opt, config);
+    if (vm.count("config"))
+        process_config(config_opt, vm, config);
 }
