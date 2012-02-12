@@ -1,11 +1,16 @@
 #include "client.hh"
 
+#include "options.hh"
+
 #include <utils/log.hh>
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
-    utils::Logger::get().level() = utils::Logger::NOTICE_LEVEL;
+    Options opt;
+    opt.process(argc, argv);
 
-    Client client;
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
+
+    Client client(opt);
     client.run();
 }

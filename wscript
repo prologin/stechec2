@@ -140,12 +140,13 @@ def build_client(bld):
     bld.program(
         source = """
             src/client/main.cc
+            src/client/options.cc
             src/client/client.cc
         """,
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'boost_libs']
+        use = ['utils', 'net', 'BOOST']
     )
 
 def build_server(bld):
