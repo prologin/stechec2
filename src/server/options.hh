@@ -1,11 +1,14 @@
 #ifndef SERVER_OPTIONS_HH
 # define SERVER_OPTIONS_HH
 
-#include <string>
+# include <string>
 
-struct Options
+# include <utils/options.hh>
+
+class Options : utils::Options
 {
-    void process(int argc, char** argv);
+public:
+    virtual void process(int argc, char** argv);
 
     std::string config;
     std::string pub_addr;

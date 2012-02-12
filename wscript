@@ -104,6 +104,7 @@ def build_utils(bld):
         source = """
             src/lib/utils/dll.cc
             src/lib/utils/log.cc
+            src/lib/utils/options.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
         target = 'utils'
