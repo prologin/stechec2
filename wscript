@@ -2,6 +2,7 @@
 
 import os.path
 import sys
+import types
 
 build_tools = os.path.join('.', 'tools', 'waf')
 sys.path.append(build_tools)
@@ -78,7 +79,18 @@ def configure(conf):
     # Configure games
     conf.recurse('games')
 
+def _build_internal_lib(bld, **kwargs):
+    """Helper to build an internal library, which is static but can be linked
+    with a shared library."""
+    cxxflags = kwargs.get('cxxflags', [])
+    cxxflags.extend(bld.env.CXXFLAGS_cxxshlib)
+    kwargs['cxxflags'] = cxxflags
+    bld.stlib(**kwargs)
+
 def build(bld):
+    # Add some extensions to the bld object
+    bld.internal_lib = types.MethodType(_build_internal_lib, bld)
+
     build_libs(bld)
     build_client(bld)
     build_server(bld)
@@ -91,7 +103,7 @@ def build_libs(bld):
     build_utils(bld)
 
 def build_net(bld):
-    bld.stlib(
+    bld.internal_lib(
         source = """
             src/lib/net/socket.cc
             src/lib/net/server.cc
@@ -105,7 +117,7 @@ def build_net(bld):
     )
 
 def build_utils(bld):
-    bld.stlib(
+    bld.internal_lib(
         source = """
             src/lib/utils/dll.cc
             src/lib/utils/log.cc
@@ -125,7 +137,7 @@ def build_utils(bld):
         )
 
 def build_rules(bld):
-    bld.stlib(
+    bld.internal_lib(
         source = """
             src/lib/rules/action.cc
             src/lib/rules/state.cc
