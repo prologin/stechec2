@@ -66,9 +66,6 @@ def configure(conf):
     conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
                    args = ['--cflags', '--libs'])
 
-    # Other
-    conf.env.append_value('INCLUDES', 'src/lib')
-
     # Boost
     conf.load('boost')
     conf.check_boost(lib = 'program_options')
@@ -78,10 +75,15 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-Werror')
         conf.env.append_value('CXXFLAGS', '-Werror')
 
+    # Configure games
+    conf.recurse('games')
+
 def build(bld):
     build_libs(bld)
     build_client(bld)
     build_server(bld)
+
+    bld.recurse('games')
 
 def build_libs(bld):
     build_net(bld)
@@ -98,7 +100,8 @@ def build_net(bld):
         """,
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'net',
-        use = ['ZeroMQ', 'utils']
+        use = ['ZeroMQ', 'utils'],
+        export_includes = 'src/lib'
     )
 
 def build_utils(bld):
@@ -109,7 +112,8 @@ def build_utils(bld):
             src/lib/utils/options.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
-        target = 'utils'
+        target = 'utils',
+        export_includes = 'src/lib'
     )
 
     for test in ['buffer', 'options']:
@@ -127,7 +131,9 @@ def build_rules(bld):
             src/lib/rules/state.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
-        target = 'rules'
+        target = 'rules',
+        use = ['utils'],
+        export_includes = 'src/lib'
     )
 
     for test in ['action', 'state']:
