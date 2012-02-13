@@ -5,7 +5,7 @@
 # include <memory>
 
 namespace net { class Client; }
-struct Options;
+class Options;
 
 class Client
 {

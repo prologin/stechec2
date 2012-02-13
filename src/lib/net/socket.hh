@@ -6,7 +6,7 @@
 
 namespace net {
 
-class Message;
+struct Message;
 
 class Socket // abstract
 {
