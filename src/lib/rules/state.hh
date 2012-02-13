@@ -9,6 +9,9 @@ namespace rules {
 class GameState
 {
 public:
+    // Default constructor: no older version.
+    GameState() : old_version_(0) {}
+
     virtual ~GameState();
 
     // Copies this state and returns a new state object with the same data.
@@ -22,7 +25,19 @@ public:
     // Checks if the state has something to cancel.
     bool can_cancel() const { return old_version_ != 0; }
 
-private:
+protected:
+    // Copy constructor. Should not be called directly, use the "copy" virtual
+    // member function.
+    //
+    // Note that this does not copy the "old version": having two objects
+    // owning the old version would require refcounting to work properly during
+    // object destruction. For this reason, we require the user to attach the
+    // old version explicitly if needed.
+    //
+    // Most of the time, copying is done in order to use the copy as the new
+    // version, so the old version is overwritten anyway. See Action::apply.
+    GameState(const GameState&) : old_version_(0) {}
+
     // The older version of this state.
     // Basically, each state is linked to its older version so that an action
     // can be simply cancelled by deleting the current version and reusing the
