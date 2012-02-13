@@ -18,7 +18,8 @@ public:
 
     virtual void init() = 0;
     virtual bool send_msg(const Message& msg);
-    virtual bool get_msg(Message** msg);
+    // get_msg allocates a Message, it has to be deleted after its use
+    virtual Message* get_msg();
 
 protected:
     std::string pubsub_addr_;

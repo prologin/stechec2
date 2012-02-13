@@ -39,7 +39,7 @@ void Server::wait_for_players()
     {
         net::Message* id_req = nullptr;
 
-        if (!net_->get_msg(&id_req))
+        if (!(id_req = net_->get_msg()))
             continue;
 
         if (id_req->type != net::MSG_GETID)

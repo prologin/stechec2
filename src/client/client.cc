@@ -29,7 +29,7 @@ void Client::init()
     net::Message id_req(net::MSG_GETID);
     net::Message* id_rep = nullptr;
 
-    if (!net_->send_msg(id_req) || !net_->get_msg(&id_rep) ||
+    if (!net_->send_msg(id_req) || !(id_rep = net_->get_msg()) ||
             id_rep->client_id == 0)
         FATAL("%s", "Unable to get an ID from the server");
 

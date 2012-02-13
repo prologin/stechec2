@@ -35,7 +35,7 @@ bool Socket::send_msg(const Message& msg)
     }
 }
 
-bool Socket::get_msg(Message** msg)
+Message* Socket::get_msg()
 {
     try
     {
@@ -44,15 +44,15 @@ bool Socket::get_msg(Message** msg)
         if (!reqrep_sckt_->recv(&zmsg))
             throw std::runtime_error("Could not get message");
 
-        *msg = reinterpret_cast<Message*>(new char[zmsg.size()]);
-        memcpy(*msg, zmsg.data(), zmsg.size());
+        Message* msg = reinterpret_cast<Message*>(new char[zmsg.size()]);
+        memcpy(msg, zmsg.data(), zmsg.size());
 
-        return true;
+        return msg;
     }
     catch(const std::exception& e)
     {
         ERR("%s", e.what());
-        return false;
+        return nullptr;
     }
 }
 
