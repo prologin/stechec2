@@ -15,7 +15,7 @@ class Server : public Socket
 public:
     Server(const std::string& pub_addr, const std::string& rep_addr);
 
-    void init();
+    virtual void init();
 };
 
 } // namespace net

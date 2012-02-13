@@ -16,12 +16,6 @@ Socket::Socket(const std::string& pubsub_addr,
 {
 }
 
-Socket::~Socket()
-{
-    delete pubsub_sckt_;
-    delete reqrep_sckt_;
-}
-
 bool Socket::send_msg(const Message& msg)
 {
     try

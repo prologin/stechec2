@@ -1,5 +1,6 @@
 #include "server.hh"
 
+#include <memory>
 #include <zmq.hpp>
 
 #include <utils/log.hh>
@@ -15,7 +16,8 @@ void Server::init()
 {
     try
     {
-        pubsub_sckt_ = new zmq::socket_t(ctx_, ZMQ_PUB);
+        pubsub_sckt_ =
+            std::unique_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_PUB));
         pubsub_sckt_->bind(pubsub_addr_.c_str());
     }
     catch (const zmq::error_t& e)
@@ -25,7 +27,8 @@ void Server::init()
 
     try
     {
-        reqrep_sckt_ = new zmq::socket_t(ctx_, ZMQ_REP);
+        reqrep_sckt_ =
+            std::unique_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_REP));
         reqrep_sckt_->bind(reqrep_addr_.c_str());
     }
     catch (const zmq::error_t& e)

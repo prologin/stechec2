@@ -16,8 +16,6 @@ public:
     Client(const std::string& sub_addr, const std::string& req_addr);
 
     virtual void init();
-
-private:
 };
 
 } // namespace net
