@@ -1,7 +1,7 @@
 #ifndef LIB_RULES_STATE_HH_
 # define LIB_RULES_STATE_HH_
 
-#include <cassert>
+# include <utils/log.hh>
 
 namespace rules {
 
@@ -50,7 +50,7 @@ protected:
 template <typename T>
 T* cancel(T* current_version)
 {
-    assert(current_version->can_cancel());
+    CHECK(current_version->can_cancel());
 
     T* old_version = dynamic_cast<T*>(current_version->get_old_version());
 
