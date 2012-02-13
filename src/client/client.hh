@@ -4,9 +4,7 @@
 # include <cstdint>
 # include <memory>
 
-namespace net {
-    class Client;
-}
+namespace net { class Client; }
 struct Options;
 
 class Client

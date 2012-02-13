@@ -11,11 +11,12 @@ Server::Server(const Options& opt)
 {
 }
 
-void Server::run(unsigned nb_players)
+void Server::run()
 {
+    // Listen for connections
     init();
-    wait_for_players(nb_players);
 
+    wait_for_players();
     run_game();
 }
 
@@ -28,9 +29,13 @@ void Server::init()
     NOTICE("Replying on %s", opt_.rep_addr.c_str());
     NOTICE("Publishing on %s", opt_.pub_addr.c_str());
 }
-void Server::wait_for_players(unsigned nb_players)
+
+void Server::wait_for_players()
 {
-    for (nb_clients_ = 0; nb_clients_ < nb_players; ++nb_clients_)
+    // For each client connecting, we send back a unique id
+    // Clients are players or spectators
+
+    for (nb_clients_ = 0; nb_clients_ < opt_.nb_clients; ++nb_clients_)
     {
         net::Message* id_req = nullptr;
 
