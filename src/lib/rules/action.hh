@@ -8,7 +8,7 @@
 namespace rules {
 
 // Interface to be implemented by all action types.
-class Action
+class IAction
 {
 public:
     // Check if the action can be applied to the state. Returns 0 if there is
@@ -33,7 +33,7 @@ private:
 // dynamic_casts everywhere.
 // It's kind of ugly, but it allows a lot more genericity in the codebase.
 template <typename TState>
-class RulesAction : public Action
+class Action : public IAction
 {
 public:
     virtual int check(const TState* st) const = 0;
@@ -44,10 +44,10 @@ public:
 
     TState* apply(GameState* st) const
     {
-        return dynamic_cast<TState*>(Action::apply(st));
+        return dynamic_cast<TState*>(IAction::apply(st));
     }
 
-private:
+protected:
     virtual void apply_on(TState* st) const = 0;
     virtual void apply_on(GameState* st) const
     {

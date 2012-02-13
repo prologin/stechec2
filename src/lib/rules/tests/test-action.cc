@@ -18,7 +18,7 @@ public:
     int x;
 };
 
-class MyIncrAction : public RulesAction<MyGameState>
+class MyIncrAction : public Action<MyGameState>
 {
 public:
     virtual int check(const MyGameState* st) const
@@ -40,7 +40,7 @@ private:
     }
 };
 
-class MyDecrAction : public RulesAction<MyGameState>
+class MyDecrAction : public Action<MyGameState>
 {
 public:
     virtual int check(const MyGameState* st) const

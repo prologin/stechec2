@@ -2,7 +2,7 @@
 
 namespace rules {
 
-GameState* Action::apply(GameState* st) const
+GameState* IAction::apply(GameState* st) const
 {
     // Copy the old state and link the new version to the old version.
     GameState* new_st = st->copy();
