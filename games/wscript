@@ -1,0 +1,34 @@
+#! /usr/bin/env python2
+
+import os
+import os.path
+
+AVAIL_GAMES = [fn for fn in os.listdir('games')
+           if os.path.exists(os.path.join('games', fn, 'wscript'))]
+
+def options(opt):
+    def with_games_callback(option, opt, value, parser):
+        """Callback which sets a Python list as the option value and
+        checks if the arguments are valid in this context."""
+        vals = value.split(',')
+        for val in vals:
+            if val not in AVAIL_GAMES:
+                raise OptionValueError("%r is not a valid game" % val)
+
+        setattr(parser.values, option.dest, value.split(','))
+
+    games = ','.join(AVAIL_GAMES) or 'none :( '
+    opt.add_option('--with-games', type='string', action='callback',
+                   dest='games', callback=with_games_callback,
+                   help='list of games to build (available: %s)' % games)
+
+    for game in AVAIL_GAMES:
+        opt.recurse(game)
+
+def configure(conf):
+    for game in conf.options.games:
+        conf.recurse(game)
+
+def build(bld):
+    for game in bld.options.games:
+        bld.recurse(game)

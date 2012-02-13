@@ -22,6 +22,8 @@ def options(opt):
     opt.add_option('--enable-werror', action = 'store_true', default = False,
                    help = 'interpret warnings as errors', dest = 'werror')
 
+    opt.recurse('games')
+
 def configure(conf):
     conf.load('compiler_cxx')
     conf.load('unittest_gtest')
