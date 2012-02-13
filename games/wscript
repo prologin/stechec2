@@ -19,16 +19,19 @@ def options(opt):
 
     games = ','.join(AVAIL_GAMES) or 'none :( '
     opt.add_option('--with-games', type='string', action='callback',
-                   dest='games', callback=with_games_callback,
+                   dest='games', callback=with_games_callback, default=[],
                    help='list of games to build (available: %s)' % games)
 
     for game in AVAIL_GAMES:
         opt.recurse(game)
 
 def configure(conf):
-    for game in conf.options.games:
+    # Save the games to build in the env
+    conf.env.GAMES = conf.options.games
+
+    for game in conf.env.GAMES:
         conf.recurse(game)
 
 def build(bld):
-    for game in bld.options.games:
+    for game in bld.env.GAMES:
         bld.recurse(game)
