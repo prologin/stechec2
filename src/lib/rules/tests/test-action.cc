@@ -29,7 +29,7 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&) const
+    virtual void handle_buffer(utils::Buffer&)
     {
     }
 
@@ -51,7 +51,7 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&) const
+    virtual void handle_buffer(utils::Buffer&)
     {
     }
 

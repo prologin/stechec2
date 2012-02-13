@@ -21,7 +21,7 @@ public:
 
     // Handles serialization and deserialization of the Action object to a
     // buffer.
-    virtual void handle_buffer(utils::Buffer& buf) const = 0;
+    virtual void handle_buffer(utils::Buffer& buf) = 0;
 
 private:
     // Only applies the action to a given state, without handling action
