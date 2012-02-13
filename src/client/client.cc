@@ -18,7 +18,7 @@ void Client::run()
 
 void Client::init()
 {
-    net_ = std::shared_ptr<net::Client>(
+    net_ = std::unique_ptr<net::Client>(
             new net::Client(opt_.sub_addr, opt_.req_addr));
     net_->init();
 

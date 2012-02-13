@@ -22,7 +22,7 @@ void Server::run()
 
 void Server::init()
 {
-    net_ = std::shared_ptr<net::Server>(
+    net_ = std::unique_ptr<net::Server>(
             new net::Server(opt_.pub_addr, opt_.rep_addr));
     net_->init();
 

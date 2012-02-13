@@ -5,8 +5,9 @@
 
 # include <utils/options.hh>
 
-struct Options : utils::Options
+class Options : utils::Options
 {
+public:
     virtual void process(int argc, char** argv);
 
     // Path to the configuration file
