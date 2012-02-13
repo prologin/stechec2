@@ -64,18 +64,18 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
          const char* module_name, const char* module_color,
          const char* fmt, ...);
 
-# define LOG(lvl, fmt, args...) utils::log(lvl, __FILE__, __LINE__, \
+# define LOG(lvl, args...) utils::log(lvl, __FILE__, __LINE__, \
                                            MODULE_NAME, MODULE_COLOR, \
-                                           fmt, ## args)
-# define ERR(fmt, args...) LOG(utils::Logger::ERROR_LEVEL, fmt, ## args)
-# define WARN(fmt, args...) LOG(utils::Logger::WARNING_LEVEL, fmt, ## args)
-# define INFO(fmt, args...) LOG(utils::Logger::INFO_LEVEL, fmt, ## args)
-# define NOTICE(fmt, args...) LOG(utils::Logger::NOTICE_LEVEL, fmt, ## args)
-# define DEBUG(fmt, args...) LOG(utils::Logger::DEBUG_LEVEL, fmt, ## args)
+                                           ## args)
+# define ERR(args...) LOG(utils::Logger::ERROR_LEVEL, ## args)
+# define WARN(args...) LOG(utils::Logger::WARNING_LEVEL, ## args)
+# define INFO(args...) LOG(utils::Logger::INFO_LEVEL, ## args)
+# define NOTICE(args...) LOG(utils::Logger::NOTICE_LEVEL, ## args)
+# define DEBUG(args...) LOG(utils::Logger::DEBUG_LEVEL, ## args)
 
-# define FATAL(fmt, args...) \
+# define FATAL(args...) \
     do { \
-        LOG(utils::Logger::FATAL_LEVEL, fmt, ## args); \
+        LOG(utils::Logger::FATAL_LEVEL, ## args); \
         abort(); \
     } while (0)
 
