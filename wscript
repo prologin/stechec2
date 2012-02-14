@@ -175,6 +175,7 @@ def build_server(bld):
             src/server/main.cc
             src/server/options.cc
             src/server/server.cc
+            src/server/client.cc
         """,
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',

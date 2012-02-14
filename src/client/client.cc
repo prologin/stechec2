@@ -2,6 +2,7 @@
 
 #include <utils/log.hh>
 #include <net/client.hh>
+#include <net/common.hh>
 #include <net/message.hh>
 
 #include "options.hh"
@@ -26,7 +27,7 @@ void Client::init()
     NOTICE("Subscribing on %s", opt_.sub_addr.c_str());
 
     // Send a message to get an ID from the server
-    net::Message id_req(net::MSG_GETID);
+    net::Message id_req(net::MSG_CONNECT, net::PLAYER);
     net::Message* id_rep = nullptr;
 
     if (!net_->send_msg(id_req) || !(id_rep = net_->get_msg()) ||

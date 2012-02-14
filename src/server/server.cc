@@ -1,10 +1,11 @@
 #include "server.hh"
 
 #include <utils/log.hh>
-#include <net/server.hh>
 #include <net/message.hh>
+#include <net/common.hh>
 
 #include "options.hh"
+#include "client.hh"
 
 Server::Server(const Options& opt)
     : opt_(opt)
@@ -13,10 +14,13 @@ Server::Server(const Options& opt)
 
 void Server::run()
 {
-    // Listen for connections
+    // Launch the network server, listen for connections
     init();
 
+    // We have to wait that the required number of clients specified in the
+    // config is met
     wait_for_players();
+
     run_game();
 }
 
@@ -35,25 +39,33 @@ void Server::wait_for_players()
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
-    for (nb_clients_ = 0; nb_clients_ < opt_.nb_clients; ++nb_clients_)
+    while (clients_.size() < opt_.nb_clients)
     {
         net::Message* id_req = nullptr;
 
         if (!(id_req = net_->get_msg()))
             continue;
 
-        if (id_req->type != net::MSG_GETID)
+        if (id_req->type != net::MSG_CONNECT)
         {
-            ERR("%s", "Message is not of type MSG_GETID, ignoring request");
+            ERR("%s", "Message is not of type MSG_CONNECT, ignoring request");
             continue;
         }
 
-        net::Message id_rep(net::MSG_GETID, nb_clients_ + 1);
+        // To avoid useless message, the client_id of the request corresponds
+        // to the type of the client connecting (PLAYER, SPECTATOR, ...)
+        Client_ptr new_client = Client_ptr(new Client(++nb_clients_,
+                        (net::ClientType) id_req->client_id));
+
+        net::Message id_rep(net::MSG_CONNECT, new_client->id());
         net_->send_msg(id_rep);
 
-        delete id_req;
+        clients_.push_back(new_client);
 
-        NOTICE("Client connected, allocated id %i", nb_clients_ + 1);
+        NOTICE("Client connected - id: %i - type: %s", new_client->id(),
+                clienttype_str(new_client->type()).c_str());
+
+        delete id_req;
     }
 }
 

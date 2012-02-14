@@ -9,13 +9,16 @@ namespace net {
 // Message types of stechec2 (not the rules)
 enum MsgType
 {
-    MSG_ERR = 0,
-    MSG_GETID = 1
+    MSG_ERR     = 0,
+    MSG_CONNECT = 1
 };
 
 struct Message
 {
     Message(uint32_t type_ = 0, uint32_t client_id_ = 0);
+
+    // String representation of a message
+    std::string str() const;
 
     // Type of the message (see MsgType)
     uint32_t type;
@@ -26,9 +29,6 @@ struct Message
 
     // Size of data to send
     uint32_t size;
-
-    // String representation of a message
-    std::string str() const;
 };
 
 } // namespace net

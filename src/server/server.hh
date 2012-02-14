@@ -10,6 +10,8 @@
 // Forward declarations
 class Options;
 class Client;
+typedef std::shared_ptr<Client> Client_ptr;
+typedef std::shared_ptr<Client> Client_ptr;
 
 class Server
 {
@@ -25,8 +27,8 @@ private:
 private:
     const Options& opt_;
     std::unique_ptr<net::Server> net_;
-    std::list<std::shared_ptr<Client>> clients_;
-    unsigned nb_clients_;
+    std::list<Client_ptr> clients_;
+    uint32_t nb_clients_;
 };
 
 #endif // !SERVER_SERVER_HH_
