@@ -5,9 +5,6 @@
 
 # include <net/common.hh>
 
-// Forward decls
-namespace net { enum ClientType; }
-
 // This represents a client from the Stechec server perspective
 
 class Client

@@ -22,8 +22,6 @@ static inline std::string clienttype_str(ClientType type)
         return "SPECTATOR";
     case NONBLOCKING_SPECTATOR:
         return "NONBLOCKING SPECTATOR";
-    default:
-        return "UNKNOWN";
     }
 }
 
