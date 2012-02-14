@@ -1,7 +1,6 @@
 #include "client.hh"
 
 #include <utils/log.hh>
-#include <net/client.hh>
 #include <net/common.hh>
 #include <net/message.hh>
 
@@ -19,8 +18,8 @@ void Client::run()
 
 void Client::init()
 {
-    net_ = std::unique_ptr<net::Client>(
-            new net::Client(opt_.sub_addr, opt_.req_addr));
+    net_ = net::ClientSocket_uptr(
+            new net::ClientSocket(opt_.sub_addr, opt_.req_addr));
     net_->init();
 
     NOTICE("Requesting on %s", opt_.req_addr.c_str());

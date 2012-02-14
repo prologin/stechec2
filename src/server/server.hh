@@ -5,13 +5,12 @@
 # include <list>
 # include <memory>
 
-# include <net/server.hh>
+# include <net/server-socket.hh>
+
+# include "client.hh"
 
 // Forward declarations
 class Options;
-class Client;
-typedef std::shared_ptr<Client> Client_ptr;
-typedef std::shared_ptr<Client> Client_ptr;
 
 class Server
 {
@@ -26,7 +25,7 @@ private:
 
 private:
     const Options& opt_;
-    std::unique_ptr<net::Server> net_;
+    net::ServerSocket_uptr net_;
     std::list<Client_ptr> clients_;
     uint32_t nb_clients_;
 };

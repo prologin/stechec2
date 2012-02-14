@@ -5,10 +5,10 @@
 #include <net/common.hh>
 
 #include "options.hh"
-#include "client.hh"
 
 Server::Server(const Options& opt)
-    : opt_(opt)
+    : opt_(opt),
+      nb_clients_(0)
 {
 }
 
@@ -26,8 +26,8 @@ void Server::run()
 
 void Server::init()
 {
-    net_ = std::unique_ptr<net::Server>(
-            new net::Server(opt_.pub_addr, opt_.rep_addr));
+    net_ = net::ServerSocket_uptr(
+            new net::ServerSocket(opt_.pub_addr, opt_.rep_addr));
     net_->init();
 
     NOTICE("Replying on %s", opt_.rep_addr.c_str());

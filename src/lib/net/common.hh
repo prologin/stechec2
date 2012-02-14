@@ -23,6 +23,8 @@ static inline std::string clienttype_str(ClientType type)
     case NONBLOCKING_SPECTATOR:
         return "NONBLOCKING SPECTATOR";
     }
+
+    return "";
 }
 
 } // namespace net

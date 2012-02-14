@@ -106,8 +106,8 @@ def build_net(bld):
     bld.internal_lib(
         source = """
             src/lib/net/socket.cc
-            src/lib/net/server.cc
-            src/lib/net/client.cc
+            src/lib/net/server-socket.cc
+            src/lib/net/client-socket.cc
             src/lib/net/message.cc
         """,
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],

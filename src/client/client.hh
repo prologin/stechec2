@@ -4,7 +4,7 @@
 # include <cstdint>
 # include <memory>
 
-# include <net/client.hh>
+# include <net/client-socket.hh>
 
 class Options;
 
@@ -19,7 +19,7 @@ private:
 
 private:
     const Options& opt_;
-    std::unique_ptr<net::Client> net_;
+    net::ClientSocket_uptr net_;
     uint32_t id_;
 };
 

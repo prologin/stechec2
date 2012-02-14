@@ -1,4 +1,4 @@
-#include "server.hh"
+#include "server-socket.hh"
 
 #include <memory>
 #include <zmq.hpp>
@@ -7,12 +7,13 @@
 
 namespace net {
 
-Server::Server(const std::string& pub_addr, const std::string& rep_addr)
+ServerSocket::ServerSocket(const std::string& pub_addr,
+                           const std::string& rep_addr)
     : Socket(pub_addr, rep_addr, 2)
 {
 }
 
-void Server::init()
+void ServerSocket::init()
 {
     try
     {

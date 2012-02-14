@@ -2,6 +2,7 @@
 # define SERVER_CLIENT_HH_
 
 # include <cstdint>
+# include <memory>
 
 # include <net/common.hh>
 
@@ -20,5 +21,7 @@ private:
     uint32_t id_;
     net::ClientType type_;
 };
+
+typedef std::shared_ptr<Client> Client_ptr;
 
 #endif // !SERVER_CLIENT_HH_

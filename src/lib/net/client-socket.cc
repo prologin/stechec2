@@ -1,4 +1,4 @@
-#include "client.hh"
+#include "client-socket.hh"
 
 #include <zmq.hpp>
 
@@ -6,12 +6,13 @@
 
 namespace net {
 
-Client::Client(const std::string& sub_addr, const std::string& req_addr)
+ClientSocket::ClientSocket(const std::string& sub_addr,
+                           const std::string& req_addr)
     : Socket(sub_addr, req_addr, 1)
 {
 }
 
-void Client::init()
+void ClientSocket::init()
 {
     try
     {
