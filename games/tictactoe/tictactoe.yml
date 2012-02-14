@@ -1,0 +1,62 @@
+name: tictactoe
+
+enum:
+  -
+    enum_name: error
+    enum_summary:
+      "Enumeration containing all possible error types that can be returned
+      by action functions"
+    enum_field:
+      - [ok, "no error occurred"]
+      - [out_of_bounds, "provided position is out of bounds"]
+      - [already_occupied, "someone already played at the provided position"]
+      - [already_played, "you already played this turn, you cheater!"]
+
+function:
+  -
+    fct_name: my_team
+    fct_summary: Returns your team number
+    fct_ret_type: int
+    fct_arg: []
+    fct_implem:
+      "return game_->player_id();"
+  -
+    fct_name: board
+    fct_summary: Returns the TicTacToe board
+    fct_ret_type: int array
+    fct_arg: []
+    fct_implem:
+      "return game_->get_state()->board();"
+  -
+    fct_name: play
+    fct_summary: Play at the given position
+    fct_ret_type: error
+    fct_arg:
+    - [x, int, x position at which to play]
+    - [y, int, y position at which to play]
+    fct_implem:
+      "return game_->push_action(new PlayAction(x, y, game_->player_id()));"
+  -
+    fct_name: cancel
+    fct_summary: Cancels the last played action
+    fct_ret_type: bool
+    fct_arg: []
+    fct_implem:
+      "return game_->try_cancel();"
+
+user_function:
+  -
+    fct_name: init_game
+    fct_summary: Function called at the start of the game
+    fct_ret_type: void
+    fct_arg: []
+  -
+    fct_name: play_turn
+    fct_summary: Called when this is your turn to play
+    fct_ret_type: void
+    fct_arg: []
+  -
+    fct_name: end_game
+    fct_summary: Function called at the end of the game
+    fct_ret_type: void
+    fct_arg: []
