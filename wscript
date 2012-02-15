@@ -17,6 +17,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.load('unittest_gtest')
     opt.load('boost')
+    opt.load('ruby')
 
     opt.add_option('--enable-debug', action = 'store_true', default = False,
                    help = 'build a debug version', dest = 'debug')
@@ -28,6 +29,7 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_cxx')
     conf.load('unittest_gtest')
+    conf.load('ruby')
 
     # Warning flags
     conf.check_cxx(cxxflags = '-Wall')
@@ -70,6 +72,9 @@ def configure(conf):
     # Boost
     conf.load('boost')
     conf.check_boost(lib = 'program_options')
+
+    # Ruby
+    conf.check_ruby_version((1, 9))
 
     # Werror support - at the end to avoid false negatives in the checks
     if conf.options.werror:
