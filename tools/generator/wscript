@@ -1,0 +1,23 @@
+#! /usr/bin/env python2
+
+import os.path
+
+from waflib import Utils
+
+def build(bld):
+    bld(
+        features = "subst",
+        source = "conf.rb.in",
+        target = "conf.rb",
+        PREFIX = bld.env.PREFIX
+    )
+
+    bld(
+        features = "subst",
+        source = "generator.in",
+        target = "generator",
+        chmod = Utils.O755,
+        RUBY = bld.env.RUBY,
+        GENERATOR_DIR = os.path.join(bld.env.PREFIX, 'lib', 'stechec2',
+                                     'generator')
+    )

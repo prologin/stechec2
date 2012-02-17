@@ -25,6 +25,7 @@ def options(opt):
                    help = 'interpret warnings as errors', dest = 'werror')
 
     opt.recurse('games')
+    opt.recurse('tools')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -84,6 +85,9 @@ def configure(conf):
     # Configure games
     conf.recurse('games')
 
+    # Configure tools
+    conf.recurse('tools')
+
 def _build_internal_lib(bld, **kwargs):
     """Helper to build an internal library, which is static but can be linked
     with a shared library."""
@@ -101,6 +105,7 @@ def build(bld):
     build_server(bld)
 
     bld.recurse('games')
+    bld.recurse('tools')
 
 def build_libs(bld):
     build_net(bld)
