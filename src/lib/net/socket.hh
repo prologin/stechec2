@@ -9,6 +9,10 @@ namespace net {
 
 struct Message;
 
+// Socket is the common representation of the pair of ZeroMQ sockets Stechec
+// needs to work. It is composed of the ZeroMQ context a PUB-SUB socket and
+// a REQ-REP socket
+
 class Socket // abstract
 {
 public:
