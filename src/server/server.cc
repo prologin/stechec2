@@ -17,6 +17,8 @@ void Server::run()
     // Launch the network server, listen for connections
     init();
 
+    INFO("Server Started");
+
     // We have to wait that the required number of clients specified in the
     // config is met
     wait_for_players();
@@ -48,7 +50,7 @@ void Server::wait_for_players()
 
         if (id_req->type != net::MSG_CONNECT)
         {
-            ERR("%s", "Message is not of type MSG_CONNECT, ignoring request");
+            ERR("Message is not of type MSG_CONNECT, ignoring request");
             continue;
         }
 

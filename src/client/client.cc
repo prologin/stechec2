@@ -26,16 +26,18 @@ void Client::init()
     NOTICE("Subscribing on %s", opt_.sub_addr.c_str());
 
     // Send a message to get an ID from the server
+    // To avoid useless message, the client_id of the request corresponds
+    // to the type of the client connecting (PLAYER, SPECTATOR, ...)
     net::Message id_req(net::MSG_CONNECT, net::PLAYER);
     net::Message* id_rep = nullptr;
 
     if (!net_->send_msg(id_req) || !(id_rep = net_->get_msg()) ||
             id_rep->client_id == 0)
-        FATAL("%s", "Unable to get an ID from the server");
+        FATAL("Unable to get an ID from the server");
 
     id_ = id_rep->client_id;
 
     delete id_rep;
 
-    NOTICE("Connected with id %i", id_);
+    NOTICE("Connected - id: %i", id_);
 }

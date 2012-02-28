@@ -10,7 +10,9 @@ namespace net {
 enum MsgType
 {
     MSG_ERR     = 0,
-    MSG_CONNECT = 1
+    MSG_CONNECT = 1,
+    MSG_GAME    = 2,
+    MSG_IGNORED = 3
 };
 
 struct Message
