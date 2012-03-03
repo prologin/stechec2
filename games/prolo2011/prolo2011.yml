@@ -1,0 +1,343 @@
+conf:
+  package_name: prolo2011
+  client_rule_lib: tron
+  server_rule_lib: tron
+  player_lib: champion
+  player_filename: prologin
+
+constant:
+  - doc_extra: \subsection{Constantes}
+  -
+    cst_name: TAILLE_TERRAIN
+    cst_val: 30
+    cst_comment: Taille du terrain
+  -
+    cst_name: FIN_PARTIE
+    cst_val: 150
+    cst_comment: Nombre de tours par partie
+  -
+    cst_name: MAX_PA
+    cst_val: 3
+    cst_comment: "Nombre de points d'action par tour"
+  -
+    cst_name: INTENSITE_TRAINEE
+    cst_val: 120
+    cst_comment: Taille des traînées de moto
+  -
+    cst_name: MAX_ALLONGEMENT
+    cst_val: 5
+    cst_comment: "Longueur maximale de l'allongement"
+  -
+    cst_name: AJOUT_PA
+    cst_val: 5
+    cst_comment: "Nombre de points d'action à rajouter avec bonus"
+
+enum:
+  - doc_extra: \subsection{Énumérations}
+  -
+    enum_name: erreur
+    enum_summary:
+      "Énumération représentant une erreur renvoyée par une des fonctions
+      d'action"
+    enum_field:
+      - [ok, "aucune erreur n'est survenue"]
+      - [id_invalide, identifiant invalide]
+      - [position_invalide, la position spécifiée est invalide]
+      - [plus_de_pa, "vous n'avez pas assez de points d'action"]
+      - [bonus_invalide, "vous n'avez pas ce bonus"]
+      - [pas_a_toi, "l'unité n'est pas a vous"]
+      - [intensite_invalide, "cette intensité est invalide"]
+
+  -
+    enum_name: type_case
+    enum_summary: Énumération représentant les différents types de case
+    enum_field:
+      - [vide, "rien n'est présent sur la case"]
+      - [obstacle, cette case est inaccessible]
+      - [point_croisement, point de croisement de traînées]
+      - [unite, "unité d'énergie"]
+
+  -
+    enum_name: type_bonus
+    enum_summary: Énumération représentant les différents types de bonii
+    enum_field:
+      - [pas_bonus, "ceci n'est pas un bonus :-)"]
+      -
+        - bonus_croisement
+        - "bonus permettant de croiser deux traînées de moto sur une case"
+      - [plus_long, "bonus permettant d'agrandir une traînée de moto"]
+      - [plus_pa, "bonus permettant d'avoir plus de points d'action"]
+      -
+        - bonus_regeneration
+        - "bonus permettant de regenerer une unité d'énergie"
+
+struct:
+  - doc_extra: \subsection{Structures}
+  -
+    str_name: position
+    str_summary: Représente une position sur le terrain du jeu
+    str_tuple: yes
+    str_field:
+      - [x, int, coordonnée en X]
+      - [y, int, coordonnée en Y]
+  -
+    str_name: unite_energie
+    str_summary: "Caracteristiques d'une unité d'énergie"
+    str_tuple: no
+    str_field:
+      - [id, int, "identifiant de l'unité d'énergie"]
+      - [pos, position, "position de l'unité d'énergie"]
+      -
+        - valeur
+        - int
+        -
+          "coefficient représentant les points d'énergie que l'unité va
+          vous apporter"
+      -
+        - valeur_max
+        - int
+        -
+          "coefficient représentant la capacité de l'unité lorsqu'elle est
+          chargée au maximum"
+  -
+    str_name: trainee_moto
+    str_summary: Représente une traînée de moto sur le terrain
+    str_tuple: no
+    str_field:
+      - [id, int, identifiant de la traînee]
+      -
+        - emplacement
+        - position array
+        - position de chaque composant de la traînée de moto
+      -
+        - team
+        - int
+        - "identifiant de l'équipe qui possède cette traînée de moto"
+      - [intensite, int, "taille maximale de la traînée"]
+function:
+  - doc_extra:
+     \subsection{Fonctions d'information}
+
+     Les fonctions d’information permettent à chaque champion de prendre
+     connaissance de l’état courant de la partie. Sans prendre en compte les
+     performances, un champion peut les appeler autant de fois qu’il le désire
+     sans aucune répercussion. En d’autres termes, elles ne modifient pas
+     l’état du jeu.
+
+  -
+    fct_name: mon_equipe
+    fct_summary: Retourne le numéro de votre équipe
+    fct_ret_type: int
+    fct_arg: []
+  -
+    fct_name: scores
+    fct_summary: Retourne les scores de chaque équipe
+    fct_ret_type: int array
+    fct_arg: []
+  -
+    fct_name: nombre_equipes
+    fct_summary: "Retourne le nombre d'équipes sur le terrain"
+    fct_ret_type: int
+    fct_arg: []
+  -
+    fct_name: tour_actuel
+    fct_summary: Retourne le numéro du tour actuel
+    fct_ret_type: int
+    fct_arg: []
+  -
+    fct_name: unites_energie
+    fct_summary: "Retourne la liste des unités d'énergie"
+    fct_ret_type: unite_energie array
+    fct_arg: []
+  -
+    fct_name: trainees_moto
+    fct_summary: Retourne la liste des traînées de moto
+    fct_ret_type: trainee_moto array
+    fct_arg: []
+
+  -
+    fct_name: regarder_type_case
+    fct_summary: "Retourne le type d'une case"
+    fct_ret_type: type_case
+    fct_arg:
+      - [pos, position, position de la case]
+
+  -
+    fct_name: regarder_type_bonus
+    fct_summary: "Retourne le type de bonus d'une case"
+    fct_ret_type: type_bonus
+    fct_arg:
+      - [pos, position, position de la case]
+
+  -
+    fct_name: regarder_bonus
+    fct_summary: "Retourne la liste des bonus d'une équipe"
+    fct_ret_type: type_bonus array
+    fct_arg:
+      - [equipe, int, "identifiant de l'équipe visée"]
+
+  -
+    fct_name: regarder_trainee_case
+    fct_summary: "Retourne la liste des id des traînées présentes sur une case"
+    fct_ret_type: int array
+    fct_arg:
+      - [pos, position, "position de la case"]
+
+  -
+    fct_name: case_traversable
+    fct_summary: "Retourne si une case peut être traversée par une traînée de
+    plus"
+    fct_ret_type: bool
+    fct_arg:
+      - [pos, position, "position de la case"]
+
+  -
+    fct_name: gain_tour_suivant
+    fct_summary: "Renvoie les points que vous allez gagner a la fin du tour"
+    fct_ret_type: int
+    fct_arg: []
+
+  -
+    fct_name: chemin
+    fct_summary: "Renvoie le chemin le plus court entre deux points (fonction lente)"
+    fct_ret_type: position array
+    fct_arg:
+      - [p1, position, "position de départ"]
+      - [p2, position, "position d'arrivée"]
+
+  - doc_extra: |
+     \subsection{Fonctions d'action}
+
+     À l’inverse des fonctions d’information, les fonctions d’action modifient
+     l’état du jeu. Chaque action coûte à un champion un Point d’Action
+     (PA). Un champion est par conséquent limité dans le nombre d’actions qu’il
+     peut effectuer par tour par sa réserve de PA. La constante MAX_PA indique
+     combien de PA un champion a au début de chaque tour. Le bonus
+     \texttt{PLUS_PA} permet à un champion d’obtenir plus de PA, mais ceux-ci
+     ne sont valables que \emph{pendant le tour courant}~: ils sont perdus
+     ensuite.
+     
+     Chaque fonction d’action renvoit un code d’erreur, indiquant si l’action
+     s’est bien passée (constante \texttt{OK}), ou si l’action est invalide,
+     précisant pourquoi (voir les autres constantes d’erreur)."
+
+     Pour rendre l’écriture d’un champion plus facile, la fonction spéciale
+     \texttt{annuler} a été introduite. Elle permet d’annuler la précédente
+     action effectuée pendant ce tour.
+
+  -
+    fct_name: deplacer
+    fct_summary: Déplace une moto
+    fct_ret_type: erreur
+    fct_arg:
+    - [id, int, identifiant de la moto à déplacer]
+    - [de, position, "position de l'extrémité que l'on déplace"]
+    - [vers, position, nouvelle position pour cette extrémité]
+  -
+    fct_name: couper_trainee_moto
+    fct_summary:
+      Coupe une traînée de moto en deux nouvelles traînées. « p1 »
+      et « p2 » doivent être deux positions adjacentes occupées par une
+      même traînée de moto.
+    fct_ret_type: erreur
+    fct_arg:
+    - [id, int, identifiant de la traînée de moto à couper]
+    - [p1, position, nouvelle extrémité de la première traînée de moto]
+    - [p2, position, nouvelle extrémité de la deuxième traînée de moto]
+    -
+      - intensite_p1
+      - int
+      - croissance restante de la moitié de la traînée de moto contenant entre]
+
+  -
+    fct_name: annuler
+    fct_summary:
+      "Annule l'action précédente. Renvoie true si une action a été annulée,
+       false sinon."
+    fct_ret_type: bool
+    fct_arg: []
+
+  -
+    fct_name: enrouler
+    fct_summary: Enroule la traînée de moto en un point
+    fct_ret_type: erreur
+    fct_arg:
+    - [id, int, identifiant de la traînée de moto à enrouler]
+    - [p, position, point sur lequel enrouler la moto]
+
+  -
+    fct_name: regenerer_unite_energie
+    fct_summary: Régénère une unité d'énergie à son maximal
+    fct_ret_type: erreur
+    fct_arg:
+    - [id, int, identifiant de l'unité d'énergie à regénérer]
+  -
+    fct_name: allonger_pa
+    fct_summary: "Allonge le tour en rajoutant des points d'action"
+    fct_ret_type: erreur
+    fct_arg: []
+
+  -
+    fct_name: etendre_trainee_moto
+    fct_summary:
+      "Allonge une traînée de moto. L'allongement se fera aux prochains
+      déplacements. La longueur du prolongement doit être comprise entre 0
+      et MAX_ALLONGEMENT (inclus)."
+    fct_ret_type: erreur
+    fct_arg:
+    - [id, int, identifiant de la traînée de moto à allonger]
+    - [longueur, int, longueur du prolongement]
+
+  -
+    fct_name: poser_point_croisement
+    fct_summary:
+      Pose un point de croisement sur une case du terrain. La case doit ne pas
+      déjà être un point de croisement.
+    fct_ret_type: erreur
+    fct_arg:
+    -
+      - point
+      - position
+      - position de la case sur laquelle poser le point de croisement
+
+  -
+    fct_name: fusionner
+    fct_summary:
+      Fusionne deux traînées de moto. Les deux doivent appartenir à la
+      même équipe, mais doivent être deux traînées distinctes. « pos1 »
+      et « pos2 » doivent être adjacentes et occupées respectivement par
+      « id1 » et « id2 ».
+    fct_ret_type: erreur
+    fct_arg:
+    - [id1, int, identifiant de la première traînée]
+    - [pos1, position, extrémité à fusionner de la première traînée]
+    - [id2, int, identifiant de la seconde traînée]
+    - [pos2, position, extrémité à fusionner de la seconde traînée]
+
+user_function:
+  -
+    fct_name: init_game
+    fct_summary: Fonction appellée au début de la partie
+    fct_ret_type: void
+    fct_arg: []
+  -
+    fct_name: jouer
+    fct_summary: Fonction appellée pour la phase de jeu
+    fct_ret_type: void
+    fct_arg: []
+  -
+    fct_name: end_game
+    fct_summary: Fonction appellée à la fin de la partie
+    fct_ret_type: void
+    fct_arg: []
+
+infos:
+  -
+    fct_name: unites_energie
+    fct_arg: []
+  -
+    fct_name: trainees_moto
+    fct_arg: []
+  -
+    fct_name: scores
+    fct_arg: []
