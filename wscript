@@ -114,12 +114,12 @@ def build_libs(bld):
 
 def build_net(bld):
     bld.internal_lib(
-        source = """
+        source = '''
             src/lib/net/socket.cc
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
-        """,
+        ''',
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'net',
         use = ['ZeroMQ', 'utils'],
@@ -128,11 +128,11 @@ def build_net(bld):
 
 def build_utils(bld):
     bld.internal_lib(
-        source = """
+        source = '''
             src/lib/utils/dll.cc
             src/lib/utils/log.cc
             src/lib/utils/options.cc
-        """,
+        ''',
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
         target = 'utils',
         export_includes = 'src/lib'
@@ -148,10 +148,10 @@ def build_utils(bld):
 
 def build_rules(bld):
     bld.internal_lib(
-        source = """
+        source = '''
             src/lib/rules/action.cc
             src/lib/rules/state.cc
-        """,
+        ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
         target = 'rules',
         use = ['utils'],
@@ -168,11 +168,11 @@ def build_rules(bld):
 
 def build_client(bld):
     bld.program(
-        source = """
+        source = '''
             src/client/main.cc
             src/client/options.cc
             src/client/client.cc
-        """,
+        ''',
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
@@ -181,12 +181,12 @@ def build_client(bld):
 
 def build_server(bld):
     bld.program(
-        source = """
+        source = '''
             src/server/main.cc
             src/server/options.cc
             src/server/server.cc
             src/server/client.cc
-        """,
+        ''',
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
