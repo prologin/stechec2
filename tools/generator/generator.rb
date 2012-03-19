@@ -5,7 +5,7 @@
 # (at your option) any later version.
 #
 # The complete GNU General Public Licence Notice can be found as the
-# `NOTICE' file in the root directory.
+# `COPYING' file in the root directory.
 #
 # Copyright (C) 2005, 2006, 2007 Prologin
 #
@@ -36,6 +36,7 @@ Options:
   server       create special Makefiles for worker nodes.
   rules        generate some boring piece for api rules.
   apidoc       generate latex API documentation for the subject.
+  sphinxdoc    generate sphinx documentation for the subject (prologin2012).
 
 Examples:
   generator player ant /tmp/
@@ -189,6 +190,17 @@ when "apidoc"
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
   puts File.expand_path((path + "file.tex").to_s)
+
+when "sphinxdoc"
+  require 'erb'
+
+  s = File.read(get_file_path('gen/make_sphinx.rsphinx', PKGRUBYDIR))
+  path = Pathname.new($install_path)
+  path.mkpath
+  File.open(path + "file.rst", 'w') do |f|
+    f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
+  end
+  puts File.expand_path((path + "file.rst").to_s)
 
 else
   puts "Bad argument '#{ARGV[0]}'. try: generator --help"

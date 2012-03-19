@@ -102,7 +102,7 @@ def build(ctx):
     # Generate games files and then build games
     for game in ctx.env.GAMES:
 
-        for cmd in ['player', 'apidoc', 'server']: # 'rules'
+        for cmd in ['player', 'sphinxdoc', 'server']: # 'rules'
             GAME_YAML = os.path.join(TOP_GAMES_DIR, game, game + '.yml')
             OUTPUT_DIR = os.path.join(game, cmd)
 
