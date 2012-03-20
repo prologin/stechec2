@@ -14,7 +14,7 @@
 #
 # Cree un fichier .tex, contenant la documentation de l'api, decrit par
 # un fichier YAML
-# Appel� depuis generator.rb
+# Appelé depuis generator.rb
 #
 
 require "gen/file_generator.rb"
@@ -68,8 +68,11 @@ API
 ===
 
 ..
-   Ce fichier a ete genere avec gen/make_tex.rtex
-   Ne faites pas l'autiste, ne le modifiez pas directement 
+   Ce fichier a été généré avec gen/make_sphinx.rsphinx
+   Ne faites pas l'autiste, ne le modifiez pas directement
+
+Constantes
+==========
 
 <%
 
@@ -78,17 +81,17 @@ $conf["constant"].each do |f|
 
    if f['cst_comment']
 %>
-
 .. c:var:: <%= f['cst_name'] %>
 
   :Valeur: <%= f['cst_val'] %>
   :Description:
     <%= f['cst_comment'] %>
 
-<%
-   end
-end
-%>
+    <% end %>
+<% end %>
+
+Énumérations
+============
 
 <%
 $conf["enum"].each do |e|
@@ -103,10 +106,12 @@ $conf["enum"].each do |e|
     <% e['enum_field'].each do |f| %>
       :<%= f[0].upcase %>:
         <%= f[1] %>
+
     <% end %>
-<%
-end
-%>
+<% end %>
+
+Structures
+==========
 
 <%
 $conf["struct"].each do |s|
@@ -126,10 +131,10 @@ $conf["struct"].each do |s|
   :Champs:
     <% s['str_field'].each do |f| %>:<%= f[0] %>: <%= f[2] %>
     <% end %>
+<% end %>
 
-<%
-end
-%>
+Fonctions
+=========
 
 <%
 ($conf["function"]).each do |f|
@@ -159,5 +164,37 @@ end
   <% if f['fct_ret_comment'] %>
   :rtype: <%= f['fct_ret_comment'] %>
   <% end %>
+<% end %>
 
+Fonctions utilisateur
+=====================
+
+<%
+($conf["user_function"]).each do |f|
+  next if make_doc f
+%>
+
+.. c:function:: <%= $gen.print_proto(f['fct_name'], f['fct_ret_type'], f['fct_arg']) %>
+
+    <%= f['fct_summary'] %>
+
+    <% if f['fct_notice'] %>
+    :Remarques: <%= f['fct_notice'] %>
+    <% end %>
+
+<% if f['fct_arg_comment'] or f['fct_arg'] and f['fct_arg'].any? { |arg| arg[2] } %>
+    <% if f['fct_arg_comment'] %>
+    <%= f['fct_arg_comment'] %>
+    <% end %>
+
+    <% f['fct_arg'].each do |arg| %>
+      <% if arg[2] %>
+    :param <%= arg[0] %>: <%= arg[2] %>
+      <% end %>
+    <% end %>
+<% end %>
+
+  <% if f['fct_ret_comment'] %>
+  :rtype: <%= f['fct_ret_comment'] %>
+  <% end %>
 <% end %>
