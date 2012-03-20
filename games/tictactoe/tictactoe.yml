@@ -18,15 +18,13 @@ function:
     fct_summary: Returns your team number
     fct_ret_type: int
     fct_arg: []
-    fct_implem:
-      "return game_->player_id();"
+    fct_implem: my_team
   -
     fct_name: board
     fct_summary: Returns the TicTacToe board
     fct_ret_type: int array
     fct_arg: []
-    fct_implem:
-      "return game_->get_state()->board();"
+    fct_implem: get_board
   -
     fct_name: play
     fct_summary: Play at the given position
@@ -34,15 +32,13 @@ function:
     fct_arg:
     - [x, int, x position at which to play]
     - [y, int, y position at which to play]
-    fct_implem:
-      "return game_->push_action(new PlayAction(x, y, game_->player_id()));"
+    fct_implem: play
   -
     fct_name: cancel
     fct_summary: Cancels the last played action
     fct_ret_type: bool
     fct_arg: []
-    fct_implem:
-      "return game_->try_cancel();"
+    fct_implem: cancel
 
 user_function:
   -
