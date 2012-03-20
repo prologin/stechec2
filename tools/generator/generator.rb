@@ -158,6 +158,20 @@ else
 end
 $install_path = ARGV[2]
 
+if $conf["conf"] == nil then
+  $conf["conf"] = Hash.new
+  $conf["conf"]["package_name"] = $conf["name"]
+  $conf["conf"]["client_rule_lib"] = $conf["name"]
+  $conf["conf"]["server_rule_lib"] = $conf["name"]
+  $conf["conf"]["player_lib"] = "champion"
+  $conf["conf"]["player_filename"] = "prologin"
+end
+
+$conf["constant"] = Hash.new unless $conf["constant"]
+$conf["enum"] = Hash.new unless $conf["enum"]
+$conf["function"] = Hash.new unless $conf["function"]
+$conf["struct"] = Hash.new unless $conf["struct"]
+
 # detect os, for some specificities in Makefile
 case `uname`
 when /Darwin/
