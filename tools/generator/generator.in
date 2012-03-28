@@ -1,2 +1,2 @@
 #! /bin/sh
-exec @RUBY@ -I@GENERATOR_DIR@ -I@GENERATOR_RUBY_DIR@ @GENERATOR_DIR@/generator.rb $@
+exec @RUBY@ -I@GENERATOR_DIR@ @GENERATOR_DIR@/generator.rb $@

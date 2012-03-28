@@ -17,7 +17,107 @@ def build(bld):
         target = 'generator',
         chmod = Utils.O755,
         RUBY = bld.env.RUBY,
-        GENERATOR_DIR = os.path.join(bld.env.PREFIX, 'lib', 'stechec2',
-                                     'generator'),
-        GENERATOR_RUBY_DIR = '',
+        GENERATOR_DIR = '%s/lib/stechec2/generator' % bld.env.PREFIX,
     )
+
+    bld.install_files('${PREFIX}/bin', ['generator'], chmod=Utils.O755)
+
+    bld.install_files('${PREFIX}/lib/stechec2/generator', [
+        'conf.rb',
+        'generator.rb',
+    ])
+
+    bld.install_files('${PREFIX}/share/stechec2/files', [
+        'files/main.cc',
+        'files/README',
+        'files/rules.mk',
+        'files/toposort.py',
+    ])
+
+    bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [
+        'gen/file_generator.rb',
+        'gen/make_tex.rtex',
+        'gen/make_sphinx.rsphinx',
+        'gen/make_rules.rb',
+        'gen/makefile_prolog.rb',
+        'gen/makefile_js.rb',
+        'gen/makefile_ruby.rb',
+        'gen/makefile_python.rb',
+        'gen/makefile_cs.rb',
+        'gen/makefile_lua.rb',
+        'gen/makefile_java.rb',
+        'gen/makefile_caml.rb',
+        'gen/makefile_haskell.rb',
+        'gen/makefile_cxx.rb',
+        'gen/makefile_php.rb',
+        'gen/makefile_c.rb',
+        'gen/makefile_pascal.rb',
+        'gen/generator_lua.rb',
+        'gen/generator_python.rb',
+        'gen/generator_cs.rb',
+        'gen/generator_pascal.rb',
+        'gen/generator_js.rb',
+        'gen/generator_java.rb',
+        'gen/generator_php.rb',
+        'gen/generator_caml.rb',
+        'gen/generator_ruby.rb',
+        'gen/generator_prolog.rb',
+        'gen/generator_haskell.rb',
+        'gen/generator_c.rb',
+        'gen/generator_cxx.rb',
+    ])
+
+#def copy_generator_files(ctx):
+#    TOP_GEN_DIR = ctx.top_dir + '/tools/generator/'
+#    OUT_GEN_DIR = ctx.out_dir + '/tools/generator/'
+#
+#    # Copy all the Ruby files needed by the generator to the build dir
+#    GEN_RB_DIR = TOP_GEN_DIR + 'gen/'
+#    GEN_RB_FILES = \
+#        [f for f in os.listdir(GEN_RB_DIR) if os.path.isfile(GEN_RB_DIR + f)]
+#
+#    for f in GEN_RB_FILES:
+#        ctx(
+#            rule = 'cp ${SRC} ${TGT};;[Ma;[Ma;',
+#            source = ctx.root.find_node(GEN_RB_DIR + f),
+#            target = ctx.root.make_node(OUT_GEN_DIR +
+#                'lib/stechec2/generator/gen/' + f),
+#        )
+#
+#    # Copy all the C++ files needed by the generator to the build dir
+#    GEN_CXX_DIR = TOP_GEN_DIR + 'files/'
+#    GEN_CXX_FILES = \
+#        [f for f in os.listdir(GEN_CXX_DIR) if os.path.isfile(GEN_CXX_DIR + f)]
+#
+#    for f in GEN_CXX_FILES:
+#        ctx(
+#            rule = 'cp ${SRC} ${TGT}',
+#            source = ctx.root.find_node(GEN_CXX_DIR + f),
+#            target = ctx.root.make_node(OUT_GEN_DIR +
+#                'share/stechec2/files/' + f),
+#        )
+#
+#    # Copy the generator.rb script to the build dir
+#    ctx(
+#        rule = 'cp ${SRC} ${TGT}',
+#        source = ctx.root.find_node(TOP_GEN_DIR + '/generator.rb'),
+#        target = ctx.root.make_node(OUT_GEN_DIR + '/generator.rb'),
+#    )
+#
+#    # Copy and fill conf.rb.in and generator.in
+#    ctx(
+#        features = 'subst',
+#        source = ctx.root.find_node(TOP_GEN_DIR + '/conf.rb.in'),
+#        target = ctx.root.make_node(OUT_GEN_DIR + '/conf.rb'),
+#        PREFIX = OUT_GEN_DIR,
+#    )
+#
+#    ctx(
+#        features = 'subst',
+#        source = ctx.root.find_node(TOP_GEN_DIR + '/generator.in'),
+#        target = ctx.root.make_node(OUT_GEN_DIR + '/generator'),
+#        chmod = Utils.O755,
+#        RUBY = ctx.env.RUBY,
+#        GENERATOR_DIR = OUT_GEN_DIR,
+#        GENERATOR_RUBY_DIR = OUT_GEN_DIR + 'lib/stechec2/generator',
+#    )

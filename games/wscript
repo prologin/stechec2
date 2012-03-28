@@ -37,78 +37,85 @@ def configure(conf):
 
 def build(ctx):
     if ctx.env.GAMES:
-        TOP_GEN_DIR = os.path.join(ctx.top_dir, 'tools', 'generator')
-        OUT_GEN_DIR = os.path.join(ctx.out_dir, 'tools', 'generator')
-        TOP_GAMES_DIR = os.path.join(ctx.top_dir, 'games')
-        OUT_GAMES_DIR = os.path.join(ctx.out_dir, 'games')
+        pass
+#        TOP_GEN_DIR = os.path.join(ctx.top_dir, 'tools', 'generator')
+#        OUT_GEN_DIR = os.path.join(ctx.out_dir, 'tools', 'generator')
+#        TOP_GAMES_DIR = os.path.join(ctx.top_dir, 'games')
+#        OUT_GAMES_DIR = os.path.join(ctx.out_dir, 'games')
+#
+#        # Copy all the Ruby files needed by the generator to the build dir
+#        GEN_RB_DIR = os.path.join(TOP_GEN_DIR, 'gen')
+#        GEN_RB_FILES = \
+#            [f for f in os.listdir(GEN_RB_DIR)
+#                    if os.path.isfile(os.path.join(GEN_RB_DIR, f))]
+#
+#        for f in GEN_RB_FILES:
+#            ctx(
+#                rule = 'cp ${SRC} ${TGT}',
+#                source = ctx.root.find_node(GEN_RB_DIR + '/' + f),
+#                target = ctx.root.make_node(OUT_GAMES_DIR +
+#                    '/generator/lib/stechec2/generator/gen/' + f),
+#            )
+#
+#        # Copy all the C++ files needed by the generator to the build dir
+#        GEN_CXX_DIR = os.path.join(TOP_GEN_DIR, 'files')
+#        GEN_CXX_FILES = \
+#            [f for f in os.listdir(GEN_CXX_DIR)
+#                    if os.path.isfile(os.path.join(GEN_CXX_DIR, f))]
+#
+#        for f in GEN_CXX_FILES:
+#            ctx(
+#                rule = 'cp ${SRC} ${TGT}',
+#                source = ctx.root.find_node(GEN_CXX_DIR + '/' + f),
+#                target = ctx.root.make_node(OUT_GAMES_DIR +
+#                    '/generator/share/stechec2/files/' + f),
+#            )
+#
+#        # Copy the generator.rb script to the build dir
+#        ctx(
+#            rule = 'cp ${SRC} ${TGT}',
+#            source = ctx.root.find_node(TOP_GEN_DIR + '/generator.rb'),
+#            target = ctx.root.make_node(OUT_GAMES_DIR +
+#                '/generator/generator.rb'),
+#        )
+#
+#        # Copy and fill conf.rb.in and generator.in
+#        ctx(
+#            features = 'subst',
+#            source = ctx.root.find_node(TOP_GEN_DIR + '/conf.rb.in'),
+#            target = ctx.root.make_node(OUT_GAMES_DIR +
+#                '/generator/conf.rb'),
+#            PREFIX = os.path.join(OUT_GAMES_DIR, 'generator'),
+#        )
+#
+#        ctx(
+#            features = 'subst',
+#            source = ctx.root.find_node(TOP_GEN_DIR + '/generator.in'),
+#            target = ctx.root.make_node(OUT_GAMES_DIR + '/generator/generator'),
+#            chmod = Utils.O755,
+#            RUBY = ctx.env.RUBY,
+#            GENERATOR_DIR = os.path.join(OUT_GAMES_DIR, 'generator'),
+#            GENERATOR_RUBY_DIR =
+#                os.path.join(OUT_GAMES_DIR, 'generator', 'lib', 'stechec2',
+#                    'generator'),
+#        )
 
-        # Copy all the Ruby files needed by the generator to the build dir
-        GEN_RB_DIR = os.path.join(TOP_GEN_DIR, 'gen')
-        GEN_RB_FILES = \
-            [f for f in os.listdir(GEN_RB_DIR)
-                    if os.path.isfile(os.path.join(GEN_RB_DIR, f))]
-
-        for f in GEN_RB_FILES:
-            ctx(
-                rule = 'cp ${SRC} ${TGT}',
-                source = ctx.root.find_node(GEN_RB_DIR + '/' + f),
-                target = ctx.root.make_node(OUT_GAMES_DIR +
-                    '/generator/lib/stechec2/generator/gen/' + f),
-            )
-
-        # Copy all the C++ files needed by the generator to the build dir
-        GEN_CXX_DIR = os.path.join(TOP_GEN_DIR, 'files')
-        GEN_CXX_FILES = \
-            [f for f in os.listdir(GEN_CXX_DIR)
-                    if os.path.isfile(os.path.join(GEN_CXX_DIR, f))]
-
-        for f in GEN_CXX_FILES:
-            ctx(
-                rule = 'cp ${SRC} ${TGT}',
-                source = ctx.root.find_node(GEN_CXX_DIR + '/' + f),
-                target = ctx.root.make_node(OUT_GAMES_DIR +
-                    '/generator/share/stechec2/files/' + f),
-            )
-
-        # Copy the generator.rb script to the build dir
-        ctx(
-            rule = 'cp ${SRC} ${TGT}',
-            source = ctx.root.find_node(TOP_GEN_DIR + '/generator.rb'),
-            target = ctx.root.make_node(OUT_GAMES_DIR +
-                '/generator/generator.rb'),
-        )
-
-        # Copy and fill conf.rb.in and generator.in
-        ctx(
-            features = 'subst',
-            source = ctx.root.find_node(TOP_GEN_DIR + '/conf.rb.in'),
-            target = ctx.root.make_node(OUT_GAMES_DIR +
-                '/generator/conf.rb'),
-            PREFIX = os.path.join(OUT_GAMES_DIR, 'generator'),
-        )
-
-        ctx(
-            features = 'subst',
-            source = ctx.root.find_node(TOP_GEN_DIR + '/generator.in'),
-            target = ctx.root.make_node(OUT_GAMES_DIR + '/generator/generator'),
-            chmod = Utils.O755,
-            RUBY = ctx.env.RUBY,
-            GENERATOR_DIR = os.path.join(OUT_GAMES_DIR, 'generator'),
-            GENERATOR_RUBY_DIR =
-                os.path.join(OUT_GAMES_DIR, 'generator', 'lib', 'stechec2',
-                    'generator'),
-        )
+    TOP_GEN_DIR = ctx.top_dir + '/tools/generator/'
+    OUT_GEN_DIR = ctx.out_dir + '/tools/generator/'
+    TOP_GAMES_DIR = ctx.top_dir + '/games/'
+    OUT_GAMES_DIR = ctx.out_dir + '/games/'
 
     # Generate games files and then build games
-    for game in ctx.env.GAMES:
-
-        for cmd in ['player', 'sphinxdoc', 'server']: # 'rules'
-            GAME_YAML = os.path.join(TOP_GAMES_DIR, game, game + '.yml')
-            OUTPUT_DIR = os.path.join(game, cmd)
-
-            ctx(rule = '${SRC} %s %s ${TGT}' % (cmd, GAME_YAML),
-                source = os.path.join('generator', 'generator'),
-                target = OUTPUT_DIR,
-            )
-
-        ctx.recurse(game)
+#    for game in ctx.env.GAMES:
+#
+#        for cmd in ['player', 'sphinxdoc', 'server']: # 'rules'
+#            GAME_YAML = '%s/%s/%s.yml' % (TOP_GAMES_DIR, game, game)
+#            OUTPUT_DIR = os.path.join(game, cmd)
+#
+#            ctx(
+#                rule = '${SRC} %s %s ${TGT}' % (cmd, GAME_YAML),
+#                source = OUT_GEN_DIR + '/generator',
+#                target = OUTPUT_DIR,
+#            )
+#
+#        ctx.recurse(game)
