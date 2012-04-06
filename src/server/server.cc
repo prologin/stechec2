@@ -28,7 +28,7 @@ void Server::run()
 
 void Server::init()
 {
-    net_ = net::ServerSocket_uptr(
+    net_ = net::ServerSocket_sptr(
             new net::ServerSocket(opt_.pub_addr, opt_.rep_addr));
     net_->init();
 
@@ -45,7 +45,7 @@ void Server::wait_for_players()
     {
         net::Message* id_req = nullptr;
 
-        if (!(id_req = net_->get_msg()))
+        if (!(id_req = net_->recv()))
             continue;
 
         if (id_req->type != net::MSG_CONNECT)
@@ -60,7 +60,7 @@ void Server::wait_for_players()
                         (net::ClientType) id_req->client_id));
 
         net::Message id_rep(net::MSG_CONNECT, new_client->id());
-        net_->send_msg(id_rep);
+        net_->send(id_rep);
 
         clients_.push_back(new_client);
 

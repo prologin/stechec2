@@ -3,11 +3,13 @@
 #include <utils/log.hh>
 #include <net/common.hh>
 #include <net/message.hh>
+#include <net/messenger.hh>
 
 #include "options.hh"
 
 Client::Client(const Options& opt)
-    : opt_(opt)
+    : opt_(opt),
+      rules_lib_(opt.rules_lib)
 {
 }
 
@@ -18,7 +20,7 @@ void Client::run()
 
 void Client::init()
 {
-    net_ = net::ClientSocket_uptr(
+    net_ = net::ClientSocket_sptr(
             new net::ClientSocket(opt_.sub_addr, opt_.req_addr));
     net_->init();
 
@@ -31,7 +33,7 @@ void Client::init()
     net::Message id_req(net::MSG_CONNECT, net::PLAYER);
     net::Message* id_rep = nullptr;
 
-    if (!net_->send_msg(id_req) || !(id_rep = net_->get_msg()) ||
+    if (!net_->send(id_req) || !(id_rep = net_->recv()) ||
             id_rep->client_id == 0)
         FATAL("Unable to get an ID from the server");
 

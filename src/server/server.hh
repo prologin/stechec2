@@ -25,7 +25,7 @@ private:
 
 private:
     const Options& opt_;
-    net::ServerSocket_uptr net_;
+    net::ServerSocket_sptr net_;
     std::list<Client_ptr> clients_;
     uint32_t nb_clients_;
 };

@@ -16,12 +16,12 @@ Socket::Socket(const std::string& pubsub_addr,
 {
 }
 
-bool Socket::send_msg(const Message& msg)
+bool Socket::send(const Message& msg)
 {
     try
     {
-        zmq::message_t zmsg(msg.size);
-        memcpy(zmsg.data(), &msg, msg.size);
+        zmq::message_t zmsg(sizeof (Message) + msg.size);
+        memcpy(zmsg.data(), &msg, sizeof (Message) + msg.size);
 
         if (!reqrep_sckt_->send(zmsg))
             throw std::runtime_error("Could not send message");
@@ -35,7 +35,7 @@ bool Socket::send_msg(const Message& msg)
     }
 }
 
-Message* Socket::get_msg()
+Message* Socket::recv()
 {
     try
     {

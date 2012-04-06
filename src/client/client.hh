@@ -5,6 +5,7 @@
 # include <memory>
 
 # include <net/client-socket.hh>
+# include <utils/dll.hh>
 
 class Options;
 
@@ -19,7 +20,8 @@ private:
 
 private:
     const Options& opt_;
-    net::ClientSocket_uptr net_;
+    const utils::DLL rules_lib_;
+    net::ClientSocket_sptr net_;
     uint32_t id_;
 };
 

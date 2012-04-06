@@ -2,14 +2,16 @@
 
 #include <sstream>
 #include <ostream>
+#include <cstring>
 
 namespace net {
 
 Message::Message(uint32_t type_, uint32_t client_id_)
     : type(type_),
       client_id(client_id_),
-      size(sizeof (*this))
+      size(0)
 {
+    memset(data, 0, sizeof (data));
 }
 
 std::string Message::str() const

@@ -37,7 +37,7 @@ void Options::process(int argc, char** argv)
                         "Rules library")
         ("champion,a",
             po::value<std::string>(&champion_lib)->default_value("champion.so"),
-                        "Champion's library")
+                        "Champion library")
         ("spectator,s",
             po::value<bool>(&spectator)->default_value(false),
                         "Set if the client is a spectator")

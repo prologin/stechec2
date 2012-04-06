@@ -19,7 +19,7 @@ public:
     virtual void init();
 };
 
-typedef std::unique_ptr<ClientSocket> ClientSocket_uptr;
+typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;
 
 } // namespace net
 

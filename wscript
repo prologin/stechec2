@@ -119,12 +119,23 @@ def build_net(bld):
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
+            src/lib/net/messenger.cc
+            src/lib/net/client-messenger.cc
+            src/lib/net/server-messenger.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'net',
         use = ['ZeroMQ', 'utils'],
         export_includes = 'src/lib'
     )
+
+    for test in ['messenger']:
+        bld.program(
+            features = 'gtest',
+            source = 'src/lib/net/tests/test-%s.cc' % test,
+            target = 'utils-test-%s' % test,
+            use = ['net', 'BOOST']
+        )
 
 def build_utils(bld):
     bld.internal_lib(
@@ -176,7 +187,8 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'BOOST']
+        use = ['utils', 'net', 'BOOST'],
+        lib = ['dl']
     )
 
 def build_server(bld):
@@ -190,5 +202,6 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'BOOST']
+        use = ['utils', 'net', 'BOOST'],
+        lib = ['dl']
     )

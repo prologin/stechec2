@@ -19,7 +19,7 @@ public:
     virtual void init();
 };
 
-typedef std::unique_ptr<ServerSocket> ServerSocket_uptr;
+typedef std::shared_ptr<ServerSocket> ServerSocket_sptr;
 
 } // namespace net
 
