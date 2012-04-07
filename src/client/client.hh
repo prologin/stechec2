@@ -20,7 +20,7 @@ private:
 
 private:
     const Options& opt_;
-    const utils::DLL rules_lib_;
+    utils::DLL rules_lib_;
     net::ClientSocket_sptr net_;
     uint32_t id_;
 };

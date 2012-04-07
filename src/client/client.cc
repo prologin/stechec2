@@ -3,9 +3,11 @@
 #include <utils/log.hh>
 #include <net/common.hh>
 #include <net/message.hh>
-#include <net/messenger.hh>
+#include <net/client-messenger.hh>
 
 #include "options.hh"
+
+typedef void (*client_loop)(net::ClientMessenger_sptr);
 
 Client::Client(const Options& opt)
     : opt_(opt),
@@ -16,6 +18,13 @@ Client::Client(const Options& opt)
 void Client::run()
 {
     init();
+
+    // Get the game loop function from the rules library
+    client_loop game_loop = rules_lib_.get<client_loop>("client_loop");
+    net::ClientMessenger_sptr client_msgr = net::ClientMessenger_sptr(
+            new net::ClientMessenger(net_));
+
+    game_loop(client_msgr);
 }
 
 void Client::init()
