@@ -25,7 +25,7 @@ public:
     template <typename T>
     T get(const std::string& sym)
     {
-        return static_cast<T>(get_untyped(sym));
+        return reinterpret_cast<T>(get_untyped(sym));
     }
 
 private:
