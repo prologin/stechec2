@@ -31,6 +31,9 @@ void Options::process(int argc, char** argv)
         ("pub_addr,p",
             po::value<std::string>(&pub_addr)->default_value("tcp://*:4243"),
                         "Set publishing address binding (ZeroMQ)")
+        ("rules,u",
+            po::value<std::string>(&rules_lib)->default_value("rules.so"),
+                        "Rules library")
         ("nb_clients,n",
             po::value<unsigned>(&nb_clients)->default_value(2),
                         "Number of players to expect")

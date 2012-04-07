@@ -3,11 +3,15 @@
 #include <utils/log.hh>
 #include <net/message.hh>
 #include <net/common.hh>
+#include <net/server-messenger.hh>
 
 #include "options.hh"
 
+typedef void (*server_loop)(net::ServerMessenger_sptr);
+
 Server::Server(const Options& opt)
     : opt_(opt),
+      rules_lib_(opt.rules_lib),
       nb_clients_(0)
 {
 }
@@ -23,7 +27,12 @@ void Server::run()
     // config is met
     wait_for_players();
 
-    run_game();
+    // Get the game loop function from the rules library
+    server_loop game_loop = rules_lib_.get<server_loop>("server_loop");
+    net::ServerMessenger_sptr server_msgr = net::ServerMessenger_sptr(
+            new net::ServerMessenger(net_));
+
+    game_loop(server_msgr);
 }
 
 void Server::init()
@@ -69,8 +78,4 @@ void Server::wait_for_players()
 
         delete id_req;
     }
-}
-
-void Server::run_game()
-{
 }

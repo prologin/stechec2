@@ -19,6 +19,9 @@ public:
     // ZeroMQ binding for PUB socket
     std::string pub_addr;
 
+    // Path to the rules library
+    std::string rules_lib;
+
     // Number of clients the server has to expect before beginning a game
     unsigned nb_clients;
 

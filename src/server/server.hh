@@ -6,6 +6,7 @@
 # include <memory>
 
 # include <net/server-socket.hh>
+# include <utils/dll.hh>
 
 # include "client.hh"
 
@@ -21,11 +22,11 @@ public:
 private:
     void init();
     void wait_for_players();
-    void run_game();
 
 private:
     const Options& opt_;
     net::ServerSocket_sptr net_;
+    utils::DLL rules_lib_;
     std::list<Client_ptr> clients_;
     uint32_t nb_clients_;
 };
