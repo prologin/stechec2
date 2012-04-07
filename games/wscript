@@ -106,7 +106,7 @@ def build(ctx):
     OUT_GAMES_DIR = ctx.out_dir + '/games/'
 
     # Generate games files and then build games
-#    for game in ctx.env.GAMES:
+    for game in ctx.env.GAMES:
 #
 #        for cmd in ['player', 'sphinxdoc', 'server']: # 'rules'
 #            GAME_YAML = '%s/%s/%s.yml' % (TOP_GAMES_DIR, game, game)
@@ -118,4 +118,4 @@ def build(ctx):
 #                target = OUTPUT_DIR,
 #            )
 #
-#        ctx.recurse(game)
+        ctx.recurse(game)

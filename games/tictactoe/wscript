@@ -7,4 +7,10 @@ def configure(cfg):
     pass
 
 def build(bld):
-    pass
+    bld.shlib(
+        source = '''
+            src/tictactoe.cc
+        ''',
+        target = 'tictactoe',
+        use = ['net'],
+    )
