@@ -10,11 +10,9 @@ using namespace net;
 
 class TestMessenger : public ::testing::Test, public Messenger
 {
-public:
-    TestMessenger()
-        : Messenger(nullptr)
-    {}
 };
+
+//TestMessenger::~TestMessenger(){}
 
 TEST_F(TestMessenger, CheckFrom)
 {
@@ -28,7 +26,14 @@ TEST_F(TestMessenger, CheckFrom)
     uint32_t data_size = from_msg(*msg, reinterpret_cast<void**>(&data));
 
     ASSERT_EQ(data_size, (uint32_t) 6);
-    ASSERT_STREQ(data, "Chiche");
+
+    //ASSERT_STREQ(data, "Chiche");
+    ASSERT_EQ(data[0], 'C');
+    ASSERT_EQ(data[1], 'h');
+    ASSERT_EQ(data[2], 'i');
+    ASSERT_EQ(data[3], 'c');
+    ASSERT_EQ(data[4], 'h');
+    ASSERT_EQ(data[5], 'e');
 
     delete data;
 }
@@ -41,11 +46,13 @@ TEST_F(TestMessenger, CheckTo)
 
     ASSERT_EQ(msg->size, (uint32_t) 6);
 
-    //FILE* f = fopen("/tmp/lol", "w");
-    //fwrite(msg->data, 6, 1, f);
-    //fclose(f);
-
     //ASSERT_STREQ(msg->data, "Chiche");
+    ASSERT_EQ(msg->data[0], 'C');
+    ASSERT_EQ(msg->data[1], 'h');
+    ASSERT_EQ(msg->data[2], 'i');
+    ASSERT_EQ(msg->data[3], 'c');
+    ASSERT_EQ(msg->data[4], 'h');
+    ASSERT_EQ(msg->data[5], 'e');
 
     delete msg;
 }

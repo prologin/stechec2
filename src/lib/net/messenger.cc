@@ -2,11 +2,6 @@
 
 namespace net {
 
-Messenger::Messenger(Socket* sckt)
-    : sckt_(sckt)
-{
-}
-
 Messenger::~Messenger()
 {
 }

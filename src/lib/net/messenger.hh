@@ -12,15 +12,11 @@ namespace net {
 class Messenger
 {
 public:
-    Messenger(Socket* sckt);
     virtual ~Messenger();
 
 protected:
     virtual Message* to_msg(const void* data, uint32_t data_size);
     virtual uint32_t from_msg(const Message& msg, void** data);
-
-protected:
-    Socket* sckt_;
 };
 
 } // namespace net
