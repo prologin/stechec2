@@ -35,9 +35,9 @@ def configure(conf):
     # Warning flags
     conf.check_cxx(cxxflags = '-Wall')
     conf.check_cxx(cxxflags = '-Wextra')
-    conf.check_cxx(cxxflags = '-pedantic')
+    #conf.check_cxx(cxxflags = '-pedantic')
 
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-pedantic',
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', #'-pedantic',
                                        '-Wno-variadic-macros'])
 
     # Check for C++0x
