@@ -12,7 +12,8 @@ enum MsgType
     MSG_ERR     = 0,
     MSG_CONNECT = 1,
     MSG_RULES   = 2,
-    MSG_IGNORED = 3
+    MSG_IGNORED = 3,
+    MSG_GAMESTART = 4
 };
 
 struct Message

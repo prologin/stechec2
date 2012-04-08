@@ -22,7 +22,7 @@ Server::Server(const Options& opt)
 void Server::run()
 {
     // Launch the network server, listen for connections
-    net_init();
+    sckt_init();
 
     INFO("Server Started");
 
@@ -36,9 +36,11 @@ void Server::run()
     server_result rules_result = rules_lib_.get<server_result>("server_result");
 
     net::ServerMessenger_sptr server_msgr = net::ServerMessenger_sptr(
-            new net::ServerMessenger(net_));
+            new net::ServerMessenger(sckt_));
 
     rules_init(server_msgr);
+
+    sckt_->push(net::Message(net::MSG_GAMESTART));
 
     while (rules_turn())
         ;
@@ -47,11 +49,11 @@ void Server::run()
     rules_result(&players);
 }
 
-void Server::net_init()
+void Server::sckt_init()
 {
-    net_ = net::ServerSocket_sptr(
+    sckt_ = net::ServerSocket_sptr(
             new net::ServerSocket(opt_.pub_addr, opt_.rep_addr));
-    net_->init();
+    sckt_->init();
 
     NOTICE("Replying on %s", opt_.rep_addr.c_str());
     NOTICE("Publishing on %s", opt_.pub_addr.c_str());
@@ -66,7 +68,7 @@ void Server::wait_for_players()
     {
         net::Message* id_req = nullptr;
 
-        if (!(id_req = net_->recv()))
+        if (!(id_req = sckt_->recv()))
             continue;
 
         if (id_req->type != net::MSG_CONNECT)
@@ -81,7 +83,7 @@ void Server::wait_for_players()
                         (net::ClientType) id_req->client_id));
 
         net::Message id_rep(net::MSG_CONNECT, new_client->id());
-        net_->send(id_rep);
+        sckt_->send(id_rep);
 
         clients_.push_back(new_client);
 

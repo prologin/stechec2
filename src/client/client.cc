@@ -21,7 +21,7 @@ Client::Client(const Options& opt)
 void Client::run()
 {
     // Register to the stechec2 server
-    net_init();
+    sckt_init();
 
     // Get required functions from the rules library
     client_init rules_init = rules_lib_.get<client_init>("client_init");
@@ -29,9 +29,11 @@ void Client::run()
     client_result rules_result = rules_lib_.get<client_result>("client_result");
 
     net::ClientMessenger_sptr client_msgr = net::ClientMessenger_sptr(
-            new net::ClientMessenger(net_));
+            new net::ClientMessenger(sckt_));
 
     rules_init(client_msgr);
+
+    wait_for_game_start();
 
     while (rules_turn())
         ;
@@ -40,11 +42,11 @@ void Client::run()
     rules_result(&players);
 }
 
-void Client::net_init()
+void Client::sckt_init()
 {
-    net_ = net::ClientSocket_sptr(
+    sckt_ = net::ClientSocket_sptr(
             new net::ClientSocket(opt_.sub_addr, opt_.req_addr));
-    net_->init();
+    sckt_->init();
 
     NOTICE("Requesting on %s", opt_.req_addr.c_str());
     NOTICE("Subscribing on %s", opt_.sub_addr.c_str());
@@ -55,7 +57,7 @@ void Client::net_init()
     net::Message id_req(net::MSG_CONNECT, net::PLAYER);
     net::Message* id_rep = nullptr;
 
-    if (!net_->send(id_req) || !(id_rep = net_->recv()) ||
+    if (!sckt_->send(id_req) || !(id_rep = sckt_->recv()) ||
             id_rep->client_id == 0)
         FATAL("Unable to get an ID from the server");
 
@@ -68,4 +70,13 @@ void Client::net_init()
 
 void Client::wait_for_game_start()
 {
+    net::Message* msg = nullptr;
+    uint32_t msg_type = net::MSG_IGNORED;
+
+    while (msg_type != net::MSG_GAMESTART)
+    {
+        msg = sckt_->pull();
+        msg_type = msg->type;
+        delete msg;
+    }
 }

@@ -20,12 +20,12 @@ public:
     void run();
 
 private:
-    void net_init();
+    void sckt_init();
     void wait_for_players();
 
 private:
     const Options& opt_;
-    net::ServerSocket_sptr net_;
+    net::ServerSocket_sptr sckt_;
     utils::DLL rules_lib_;
     std::list<Client_ptr> clients_;
     uint32_t nb_clients_;
