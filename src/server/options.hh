@@ -2,6 +2,7 @@
 # define SERVER_OPTIONS_HH
 
 # include <string>
+# include <cstdint>
 
 # include <utils/options.hh>
 
@@ -23,10 +24,10 @@ public:
     std::string rules_lib;
 
     // Number of clients the server has to expect before beginning a game
-    unsigned nb_clients;
+    uint32_t nb_clients;
 
     // Time a player has to play a turn before he timeouts
-    unsigned turn_timeout;
+    uint32_t turn_timeout;
 
     // Path to the file to write the logs to
     std::string log;

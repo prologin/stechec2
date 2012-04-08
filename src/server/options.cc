@@ -35,10 +35,10 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&rules_lib)->default_value("rules.so"),
                         "Rules library")
         ("nb_clients,n",
-            po::value<unsigned>(&nb_clients)->default_value(2),
+            po::value<uint32_t>(&nb_clients)->default_value(2),
                         "Number of players to expect")
         ("turn_timeout,t",
-            po::value<unsigned>(&turn_timeout)->default_value(1),
+            po::value<uint32_t>(&turn_timeout)->default_value(1),
                         "Timeout for a player turn (in ms)")
         ("log,o",
             po::value<std::string>(&log)->default_value("stechec2d.log"),
