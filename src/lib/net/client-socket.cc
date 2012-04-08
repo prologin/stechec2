@@ -38,4 +38,9 @@ void ClientSocket::init()
     }
 }
 
+Message* ClientSocket::pull()
+{
+    return recv_sckt(pubsub_sckt_);
+}
+
 } // namespace net

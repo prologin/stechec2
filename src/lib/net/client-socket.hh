@@ -17,6 +17,8 @@ public:
     ClientSocket(const std::string& sub_addr, const std::string& req_addr);
 
     virtual void init();
+
+    Message* pull();
 };
 
 typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;
