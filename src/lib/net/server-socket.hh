@@ -19,7 +19,7 @@ public:
 
     virtual void init();
 
-    bool push(const Message& msg);
+    bool push(const Message& msg, int flags = 0);
 };
 
 typedef std::shared_ptr<ServerSocket> ServerSocket_sptr;

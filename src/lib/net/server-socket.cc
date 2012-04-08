@@ -38,9 +38,9 @@ void ServerSocket::init()
     }
 }
 
-bool ServerSocket::push(const Message& msg)
+bool ServerSocket::push(const Message& msg, int flags)
 {
-    return send_sckt(msg, pubsub_sckt_);
+    return send_sckt(msg, pubsub_sckt_, flags);
 }
 
 } // namespace net

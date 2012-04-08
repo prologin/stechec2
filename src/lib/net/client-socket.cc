@@ -38,9 +38,9 @@ void ClientSocket::init()
     }
 }
 
-Message* ClientSocket::pull()
+Message* ClientSocket::pull(int flags)
 {
-    return recv_sckt(pubsub_sckt_);
+    return recv_sckt(pubsub_sckt_, flags);
 }
 
 } // namespace net

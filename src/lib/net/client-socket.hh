@@ -18,7 +18,7 @@ public:
 
     virtual void init();
 
-    Message* pull();
+    Message* pull(int flags = 0);
 };
 
 typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;
