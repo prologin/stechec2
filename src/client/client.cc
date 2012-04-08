@@ -4,10 +4,13 @@
 #include <net/common.hh>
 #include <net/message.hh>
 #include <net/client-messenger.hh>
+#include <rules/player.hh>
 
 #include "options.hh"
 
-typedef void (*client_loop)(net::ClientMessenger_sptr);
+typedef void (*client_init)(net::ClientMessenger_sptr);
+typedef bool (*client_turn)();
+typedef void (*client_result)(rules::PlayerList*);
 
 Client::Client(const Options& opt)
     : opt_(opt),
@@ -17,17 +20,27 @@ Client::Client(const Options& opt)
 
 void Client::run()
 {
-    init();
+    // Register to the stechec2 server
+    net_init();
 
-    // Get the game loop function from the rules library
-    client_loop game_loop = rules_lib_.get<client_loop>("client_loop");
+    // Get required functions from the rules library
+    client_init rules_init = rules_lib_.get<client_init>("client_init");
+    client_turn rules_turn = rules_lib_.get<client_turn>("client_turn");
+    client_result rules_result = rules_lib_.get<client_result>("client_result");
+
     net::ClientMessenger_sptr client_msgr = net::ClientMessenger_sptr(
             new net::ClientMessenger(net_));
 
-    game_loop(client_msgr);
+    rules_init(client_msgr);
+
+    while (rules_turn())
+        ;
+
+    rules::PlayerList players;
+    rules_result(&players);
 }
 
-void Client::init()
+void Client::net_init()
 {
     net_ = net::ClientSocket_sptr(
             new net::ClientSocket(opt_.sub_addr, opt_.req_addr));
@@ -51,4 +64,8 @@ void Client::init()
     delete id_rep;
 
     NOTICE("Connected - id: %i", id_);
+}
+
+void Client::wait_for_game_start()
+{
 }

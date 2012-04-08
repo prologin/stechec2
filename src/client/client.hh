@@ -16,7 +16,8 @@ public:
     void run();
 
 private:
-    void init();
+    void net_init();
+    void wait_for_game_start();
 
 private:
     const Options& opt_;

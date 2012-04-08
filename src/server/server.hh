@@ -20,7 +20,7 @@ public:
     void run();
 
 private:
-    void init();
+    void net_init();
     void wait_for_players();
 
 private:

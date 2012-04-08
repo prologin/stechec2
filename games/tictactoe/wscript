@@ -12,5 +12,5 @@ def build(bld):
             src/tictactoe.cc
         ''',
         target = 'tictactoe',
-        use = ['net'],
+        use = ['net', 'utils'],
     )

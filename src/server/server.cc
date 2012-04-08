@@ -4,10 +4,13 @@
 #include <net/message.hh>
 #include <net/common.hh>
 #include <net/server-messenger.hh>
+#include <rules/player.hh>
 
 #include "options.hh"
 
-typedef void (*server_loop)(net::ServerMessenger_sptr);
+typedef void (*server_init)(net::ServerMessenger_sptr);
+typedef bool (*server_turn)();
+typedef void (*server_result)(rules::PlayerList*);
 
 Server::Server(const Options& opt)
     : opt_(opt),
@@ -19,23 +22,32 @@ Server::Server(const Options& opt)
 void Server::run()
 {
     // Launch the network server, listen for connections
-    init();
+    net_init();
 
     INFO("Server Started");
 
-    // We have to wait that the required number of clients specified in the
-    // config is met
+    // We have to wait for the required number of clients specified in the
+    // config to be met
     wait_for_players();
 
-    // Get the game loop function from the rules library
-    server_loop game_loop = rules_lib_.get<server_loop>("server_loop");
+    // Get required functions from the rules library
+    server_init rules_init = rules_lib_.get<server_init>("server_init");
+    server_turn rules_turn = rules_lib_.get<server_turn>("server_turn");
+    server_result rules_result = rules_lib_.get<server_result>("server_result");
+
     net::ServerMessenger_sptr server_msgr = net::ServerMessenger_sptr(
             new net::ServerMessenger(net_));
 
-    game_loop(server_msgr);
+    rules_init(server_msgr);
+
+    while (rules_turn())
+        ;
+
+    rules::PlayerList players;
+    rules_result(&players);
 }
 
-void Server::init()
+void Server::net_init()
 {
     net_ = net::ServerSocket_sptr(
             new net::ServerSocket(opt_.pub_addr, opt_.rep_addr));
