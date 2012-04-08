@@ -11,6 +11,7 @@ def build(bld):
         source = '''
             src/tictactoe.cc
         ''',
+        defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
         target = 'tictactoe',
         use = ['net', 'utils'],
     )
