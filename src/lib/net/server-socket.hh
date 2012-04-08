@@ -5,6 +5,7 @@
 # include <memory>
 
 # include <net/socket.hh>
+# include <net/message.hh>
 
 namespace net {
 
@@ -17,6 +18,8 @@ public:
     ServerSocket(const std::string& pub_addr, const std::string& rep_addr);
 
     virtual void init();
+
+    bool push(const Message& msg);
 };
 
 typedef std::shared_ptr<ServerSocket> ServerSocket_sptr;

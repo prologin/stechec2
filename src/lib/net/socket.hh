@@ -22,16 +22,20 @@ public:
 
     virtual void init() = 0;
     virtual bool send(const Message& msg);
-    // get_msg allocates a Message, it has to be deleted after its use
     virtual Message* recv();
+
+protected:
+    bool send_sckt(const Message& msg, std::shared_ptr<zmq::socket_t> sckt);
+    // recv_sckt allocates a Message, it has to be deleted after its use
+    Message* recv_sckt(std::shared_ptr<zmq::socket_t> sckt);
 
 protected:
     std::string pubsub_addr_;
     std::string reqrep_addr_;
 
     zmq::context_t ctx_;
-    std::unique_ptr<zmq::socket_t> pubsub_sckt_;
-    std::unique_ptr<zmq::socket_t> reqrep_sckt_;
+    std::shared_ptr<zmq::socket_t> pubsub_sckt_;
+    std::shared_ptr<zmq::socket_t> reqrep_sckt_;
 };
 
 } // namespace net

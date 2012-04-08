@@ -18,12 +18,22 @@ Socket::Socket(const std::string& pubsub_addr,
 
 bool Socket::send(const Message& msg)
 {
+    return send_sckt(msg, reqrep_sckt_);
+}
+
+Message* Socket::recv()
+{
+    return recv_sckt(reqrep_sckt_);
+}
+
+bool Socket::send_sckt(const Message& msg, std::shared_ptr<zmq::socket_t> sckt)
+{
     try
     {
         zmq::message_t zmsg(sizeof (Message) + msg.size);
         memcpy(zmsg.data(), &msg, sizeof (Message) + msg.size);
 
-        if (!reqrep_sckt_->send(zmsg))
+        if (!sckt->send(zmsg))
             throw std::runtime_error("Could not send message");
 
         return true;
@@ -35,13 +45,13 @@ bool Socket::send(const Message& msg)
     }
 }
 
-Message* Socket::recv()
+Message* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt)
 {
     try
     {
         zmq::message_t zmsg;
 
-        if (!reqrep_sckt_->recv(&zmsg))
+        if (!sckt->recv(&zmsg))
             throw std::runtime_error("Could not get message");
 
         Message* msg = reinterpret_cast<Message*>(new char[zmsg.size()]);

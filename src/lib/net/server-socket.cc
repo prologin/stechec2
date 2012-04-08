@@ -18,7 +18,7 @@ void ServerSocket::init()
     try
     {
         pubsub_sckt_ =
-            std::unique_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_PUB));
+            std::shared_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_PUB));
         pubsub_sckt_->bind(pubsub_addr_.c_str());
     }
     catch (const zmq::error_t& e)
@@ -29,13 +29,18 @@ void ServerSocket::init()
     try
     {
         reqrep_sckt_ =
-            std::unique_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_REP));
+            std::shared_ptr<zmq::socket_t>(new zmq::socket_t(ctx_, ZMQ_REP));
         reqrep_sckt_->bind(reqrep_addr_.c_str());
     }
     catch (const zmq::error_t& e)
     {
         FATAL("REP: %s: %s", reqrep_addr_.c_str(), e.what());
     }
+}
+
+bool ServerSocket::push(const Message& msg)
+{
+    return send_sckt(msg, pubsub_sckt_);
 }
 
 } // namespace net
