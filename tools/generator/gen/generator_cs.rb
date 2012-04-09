@@ -182,7 +182,7 @@ EOF
         if tn == "struct"
             name = typex['str_name']
         else
-            name = "" #OHNOES
+            name = typex
         end
     end
     @f.puts <<-EOF
@@ -332,6 +332,8 @@ CSharpInterface gl_csharp;
 
     for_each_enum   { |e| build_array(e,"enum") }
     for_each_struct { |s| build_array(s,"struct") }
+    build_array("int", "prim")
+    build_array("bool", "prim")
     build_helper_funcs
     target = $conf['conf']['player_lib']
     @f.puts <<-EOF
@@ -373,7 +375,7 @@ CSharpInterface::CSharpInterface()
      EOF
 
      for_each_fun(false) do |fn|
-       @f.print "  mono_add_internal_call(\"Prologin.Api::" + camel_case(fn.name) + "\", (const void*)" + fn.name + ");"
+       @f.puts "  mono_add_internal_call(\"Prologin.Api::" + camel_case(fn.name) + "\", (const void*)" + fn.name + ");"
      end
 
      @f.puts <<-EOF
@@ -428,22 +430,31 @@ MonoObject* CSharpInterface::callCSharpMethod(const char* name)
   end
 
   def build_helper_funcs
-     for_each_fun(false) do |fn|
-       @f.print cmonotype(fn.ret) + " " + fn.name + "("
-       args = fn.args.map { |arg|
-        arg_type = (arg.type.is_array? or arg.type.is_struct?) ? "MonoObject*" : (arg.type.name == "string" ? "MonoString*" :  cxx_type(arg.type))
-        "#{arg_type} #{arg.name}" }
-       @f.puts args.join(", ") + ")"
-       @f.puts "{"
-       @f.print "\t"
-       @f.print "return cxx2lang< #{cmonotype(fn.ret)}, #{cxx_type(fn.ret)} >(" if not fn.ret.is_nil?
-       @f.print "api_" + fn.name + "("
-        args = fn.args.map { |arg|
-            "lang2cxx< " + cmonotype(arg.type) + ", #{cxx_type(arg.type)} >(#{arg.name})" }
-       @f.print args.join(", ") + ")"
-       @f.print ")" if not fn.ret.is_nil?
-       @f.puts ";\n}"
-     end
+    for_each_fun(false) do |fn|
+      @f.print cmonotype(fn.ret) + " " + fn.name + "("
+      args = fn.args.map { |arg|
+        if arg.type.is_array?
+          at = "MonoArray*"
+        elsif arg.type.is_struct?
+          at = "MonoObject*"
+        elsif arg.type.name == "string"
+          at = "MonoString*"
+        else
+          at = cxx_type(arg.type)
+        end
+        "#{at} #{arg.name}"
+      }
+      @f.puts args.join(", ") + ")"
+      @f.puts "{"
+      @f.print "\t"
+      @f.print "return cxx2lang< #{cmonotype(fn.ret)}, #{cxx_type(fn.ret)} >(" if not fn.ret.is_nil?
+      @f.print "api_" + fn.name + "("
+      args = fn.args.map { |arg|
+           "lang2cxx< " + cmonotype(arg.type) + ", #{cxx_type(arg.type)} >(#{arg.name})" }
+      @f.print args.join(", ") + ")"
+      @f.print ")" if not fn.ret.is_nil?
+      @f.puts ";\n}"
+    end
   end
 
   def build
@@ -511,9 +522,9 @@ lib_TARGETS = #{target}
 #{target}-dists = interface.hh
 #{target}-srcs += api.cs interface.cc ../includes/main.cc
 #{target}-cxxflags = -fPIC \
-    $(shell pkg-config --cflags glib-2.0 mono)
+    $(shell pkg-config --cflags glib-2.0 mono-2)
 #{target}-ldflags = -lm \
-    $(shell pkg-config --libs glib-2.0 mono)
+    $(shell pkg-config --libs glib-2.0 mono-2)
 #{target}-csflags = -target:library -nowarn:0169,0649
 
 include ../includes/rules.mk
