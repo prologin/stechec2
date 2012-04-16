@@ -53,7 +53,7 @@ require 'fileutils'
 require 'pathname'
 require 'conf'
 
-$languages = %w[c cs cxx pascal caml java python php]
+$languages = %w[c cs cxx caml java python php]
 
 def make_player
   $languages.each do |x|
@@ -70,7 +70,7 @@ def make_player
 
   CFileGenerator.new.build
   CSharpFileGenerator.new.build
-  PascalFileGenerator.new.build
+#  PascalFileGenerator.new.build
   CxxFileGenerator.new.build
   CamlFileGenerator.new.build
   JavaFileGenerator.new.build
@@ -111,7 +111,7 @@ def make_includes
 #   PhpMakefile.new.build_client(install_path)
 #   PythonMakefile.new.build_client(install_path)
 #   CSharpMakefile.new.build_client(install_path)
-  PascalMakefile.new.build_client(install_path)
+#  PascalMakefile.new.build_client(install_path)
 # PrologMakefile.new.build_client(install_path)
 #  HaskellMakefile.new.build_client(install_path)
 #  RubyMakefile.new.build_client(install_path)
@@ -132,7 +132,7 @@ def make_server
   CSharpMakefile.new.build_metaserver(install_path)
   CxxMakefile.new.build_metaserver(install_path)
   JavaMakefile.new.build_metaserver(install_path)
-  PascalMakefile.new.build_metaserver(install_path)
+#  PascalMakefile.new.build_metaserver(install_path)
   CamlMakefile.new.build_metaserver(install_path)
  # HaskellMakefile.new.build_metaserver(install_path)
  # LuaMakefile.new.build_metaserver(install_path)
