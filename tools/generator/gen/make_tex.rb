@@ -70,8 +70,8 @@ end
 %>
 
 %%
-%% Ce fichier a ete genere avec gen/make_tex.rtex
-%% Ne faites pas l'autiste, ne le modifiez pas directement 
+%% This file was generated using gen/make_tex.rtex
+%% Do not modify unless you are absolutely sure of what you are doing
 %%
 
 <%

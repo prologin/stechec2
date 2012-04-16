@@ -68,8 +68,8 @@ API
 ===
 
 ..
-   Ce fichier a été généré avec gen/make_sphinx.rsphinx
-   Ne faites pas l'autiste, ne le modifiez pas directement
+   This file was generated using gen/make_sphinx.rsphinx
+   Do not modify unless you are absolutely sure of what you are doing
 
 Constantes
 ==========

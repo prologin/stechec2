@@ -197,24 +197,24 @@ when "server"
 when "apidoc"
   require 'erb'
 
-  s = File.read(get_file_path('gen/make_tex.rtex', PKGRUBYDIR))
+  s = File.read(get_file_path('gen/make_tex.rb', PKGRUBYDIR))
   path = Pathname.new($install_path)
   path.mkpath
   File.open(path + "file.tex", 'w') do |f|
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
-  puts File.expand_path((path + "file.tex").to_s)
+  puts File.expand_path((path + "api.tex").to_s)
 
 when "sphinxdoc"
   require 'erb'
 
-  s = File.read(get_file_path('gen/make_sphinx.rsphinx', PKGRUBYDIR))
+  s = File.read(get_file_path('gen/make_sphinx.rb', PKGRUBYDIR))
   path = Pathname.new($install_path)
   path.mkpath
   File.open(path + "file.rst", 'w') do |f|
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
-  puts File.expand_path((path + "file.rst").to_s)
+  puts File.expand_path((path + "api.rst").to_s)
 
 else
   puts "Bad argument '#{ARGV[0]}'. try: generator --help"

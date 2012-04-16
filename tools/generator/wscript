@@ -36,8 +36,8 @@ def build(bld):
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [
         'gen/file_generator.rb',
-        'gen/make_tex.rtex',
-        'gen/make_sphinx.rsphinx',
+        'gen/make_tex.rb',
+        'gen/make_sphinx.rb',
         'gen/make_rules.rb',
         'gen/makefile_prolog.rb',
         'gen/makefile_js.rb',
