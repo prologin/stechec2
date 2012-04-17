@@ -49,7 +49,6 @@ class CxxFileGenerator < CxxProto
   def replace(line)
     replaces = {}
     replaces['!!provider!!'] = 'Prologin' # FIXME
-    #replaces['!!provider!!'] = $conf['conf']['provider']
     replaces['!!year!!'] = Date.today.year.to_s
     replaces['!!package_name!!'] = $conf['conf']['package_name']
     replaces['!!rule_lib!!'] = $conf['conf']['server_rule_lib']
@@ -187,29 +186,6 @@ convert_to_string_arr "int";
       convert_to_string_arr ty
     end
 
-    # dump infos function
-    @f.puts "std::string dump_infos()","{"
-    i = 0
-    args_string = []
-    for_each_info do |x|
-      i = i + 1
-      ty = x['type']
-      if ty.is_array? then
-        ty = "std::vector<#{ty.type.name}>"
-      else
-        ty = ty.name
-      end
-      args_ = x['fct_arg'].map do |x| x end
-      args_str = args_.join ", "
-      @f.puts "  std::string string_info#{i} = convert_to_string(api->#{x['fct_name']}(#{args_str}));"
-      args_string.push("string_info#{i}")
-    end
-    @f.puts "  // TODO modifie les infos ici, si besoin (si tu as une vue subjective, ca peut-etre utile)"
-
-    @f.puts "  std::string out = \"[\";"
-    if args_string != [] then @f.puts "  out += #{args_string.join " + \", \" + " };" end
-    @f.puts "  return out + \"]\";"
-    @f.puts "}"
     for_each_fun true, "function" do |fn| 
       if fn.dumps then
         t = fn.dumps
