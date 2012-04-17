@@ -27,27 +27,10 @@ install_path.mkpath
 
 # Copie les quelques squelettes.
 files = %w{
-  Api.cc
-  Api.hh
-  Client.cc
-  Client.hh
-  ClientDiffer.cc
-  ClientDiffer.hh
-  ClientEntry.cc
-  ClientEntry.hh
-  Constant.hh
-  GameData.cc
-  GameData.hh
-  Makefile.am
-  Server.cc
-  Server.hh
-  ServerEntry.cc
-  ServerEntry.hh
-  ServerResolver.cc
-  ServerResolver.hh
-  check.cc
+  api.cc
+  api.hh
+  constant.hh
   interface.cc
-  load_rules.cc
 }
 files.each do |x|
   if File.exist? 'files/' + x
