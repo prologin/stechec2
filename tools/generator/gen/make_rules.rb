@@ -48,6 +48,8 @@ Dir.chdir(install_path)
 class CxxFileGenerator < CxxProto
   def replace(line)
     replaces = {}
+    replaces['!!provider!!'] = 'Prologin' # FIXME
+    #replaces['!!provider!!'] = $conf['conf']['provider']
     replaces['!!year!!'] = Date.today.year.to_s
     replaces['!!package_name!!'] = $conf['conf']['package_name']
     replaces['!!rule_lib!!'] = $conf['conf']['server_rule_lib']

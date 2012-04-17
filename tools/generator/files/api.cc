@@ -7,7 +7,7 @@
 ** The complete GNU General Public Licence Notice can be found as the
 ** `NOTICE' file in the root directory.
 **
-** Copyright (C) !!year!! Prologin
+** Copyright (C) !!year!! !!provider!!
 */
 
 #include <stdlib.h>
@@ -17,15 +17,11 @@
 // global used in interface.cc
 Api* api;
 
-
-Api::Api(GameData* gameData, Client* c) : StechecApi(gameData, c)
+Api::Api(GameState* game_state, Player* player)
+    : game_state_(game_state),
+      player_(player)
 {
   api = this;
 }
 
 // @@GEN_HERE@@
-
-
-void Api::teamSwitched()
-{
-}

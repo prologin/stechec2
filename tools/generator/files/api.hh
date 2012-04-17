@@ -7,40 +7,34 @@
 ** The complete GNU General Public Licence Notice can be found as the
 ** `NOTICE' file in the root directory.
 **
-** Copyright (C) !!year!! Prologin
+** Copyright (C) !!year!! !!provider!!
 */
 
 #ifndef API_HH_
 # define API_HH_
 
 # include <vector>
+# include <lib/rules/game-state.hh>
 
-# include <Contest.hh>
 # include "Constant.hh"
-# include "GameData.hh"
 
 /*!
 ** Method of this call are called by the candidat, throught 'interface.cc'
-**
-** You can:
-**  - access to the GameData class: _g
-**  - send message to the server: void SendToServer(struct s_com&)
 */
-class Api: public StechecApi          
+class Api
 {
 
 public:
+    Api(GameState* game_state, Player* player);
+    virtual ~Api() { }
 
-  Api(GameData* gameData, Client* c);
-
-  virtual ~Api() { }
-
-protected:
-  virtual void teamSwitched();
+private:
+    GameState* game_state_;
+    Player* player_;
 
 public:
 
-  // @@GEN_HERE@@
+    // @@GEN_HERE@@
 };
 
 
