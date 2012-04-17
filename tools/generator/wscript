@@ -32,6 +32,10 @@ def build(bld):
         'files/README',
         'files/rules.mk',
         'files/toposort.py',
+        'files/api.cc',
+        'files/api.hh',
+        'files/constant.hh',
+        'files/interface.cc',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [

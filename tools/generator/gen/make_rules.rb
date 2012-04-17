@@ -91,7 +91,7 @@ class CxxFileGenerator < CxxProto
     File.unlink(filename + ".tmp")
   end
 
-  # Api.cc
+  # api.cc
   def print_cxx_api
     for_each_fun do |fn|
       if not fn.dumps then
@@ -260,7 +260,7 @@ convert_to_string_arr "int";
     end
   end
 
-  # Api.hh
+  # api.hh
   def print_cxx_api_head
     for_each_fun do |fn|
       if not fn.dumps then
@@ -285,9 +285,9 @@ gen = CxxFileGenerator.new
 files.each do |fn|
   gen.expand_variables(fn)
 end
-gen.fill_file_section("Api.cc") { gen.print_cxx_api }
-gen.fill_file_section("Api.hh") { gen.print_cxx_api_head }
+gen.fill_file_section("api.cc") { gen.print_cxx_api }
+gen.fill_file_section("api.hh") { gen.print_cxx_api_head }
 gen.fill_file_section("interface.cc") { gen.print_interface }
-gen.fill_file_section("Constant.hh") { gen.print_cst }
+gen.fill_file_section("constant.hh") { gen.print_cst }
 
 puts "Done."
