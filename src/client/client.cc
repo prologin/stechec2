@@ -3,19 +3,19 @@
 #include <utils/log.hh>
 #include <net/common.hh>
 #include <net/message.hh>
-#include <net/client-messenger.hh>
+#include <rules/action.hh>
 #include <rules/player.hh>
 
 #include "options.hh"
 
-typedef void (*client_init)(net::ClientMessenger_sptr);
-typedef bool (*client_turn)();
-typedef void (*client_result)(rules::PlayerList*);
-
 Client::Client(const Options& opt)
-    : opt_(opt),
-      rules_lib_(opt.rules_lib)
+    : opt_(opt)
 {
+    // Get required functions from the rules library
+    utils::DLL rules_lib(opt.rules_lib);
+    rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
+    rules_turn = rules_lib.get<rules::f_rules_turn>("rules_turn");
+    rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
 }
 
 void Client::run()
@@ -23,20 +23,23 @@ void Client::run()
     // Register to the stechec2 server
     sckt_init();
 
-    // Get required functions from the rules library
-    client_init rules_init = rules_lib_.get<client_init>("client_init");
-    client_turn rules_turn = rules_lib_.get<client_turn>("client_turn");
-    client_result rules_result = rules_lib_.get<client_result>("client_result");
+    // Create a messenger for sending rules messages
+    msgr_ = net::ClientMessenger_sptr(new net::ClientMessenger(sckt_));
 
-    net::ClientMessenger_sptr client_msgr = net::ClientMessenger_sptr(
-            new net::ClientMessenger(sckt_));
+    // Rules specific initializations
+    rules_init();
 
-    rules_init(client_msgr);
-
+    // Wait for the server ACK to start the game
     wait_for_game_start();
 
-    while (rules_turn())
-        ;
+    // Play turns
+    rules::PlayerActionsList actions_in;
+    rules::IActionList actions_out;
+
+    while (rules_turn(&actions_in, &actions_out))
+    {
+        // FIXME
+    }
 
     rules::PlayerList players;
     rules_result(&players);

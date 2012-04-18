@@ -36,6 +36,8 @@ def build(bld):
         'files/api.hh',
         'files/constant.hh',
         'files/interface.cc',
+        'files/client.cc',
+        'files/server.cc',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [

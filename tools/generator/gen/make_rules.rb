@@ -31,6 +31,8 @@ files = %w{
   api.hh
   constant.hh
   interface.cc
+  client.cc
+  server.cc
 }
 files.each do |x|
   if File.exist? 'files/' + x

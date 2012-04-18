@@ -5,6 +5,8 @@
 # include <memory>
 
 # include <net/client-socket.hh>
+# include <net/client-messenger.hh>
+# include <rules/types.hh>
 # include <utils/dll.hh>
 
 class Options;
@@ -19,11 +21,16 @@ private:
     void sckt_init();
     void wait_for_game_start();
 
+    rules::f_rules_init rules_init;
+    rules::f_rules_turn rules_turn;
+    rules::f_rules_result rules_result;
+
 private:
     const Options& opt_;
-    utils::DLL rules_lib_;
-    net::ClientSocket_sptr sckt_;
     uint32_t id_;
+
+    net::ClientSocket_sptr sckt_;
+    net::ClientMessenger_sptr msgr_;
 };
 
 #endif // !CLIENT_CLIENT_HH_

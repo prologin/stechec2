@@ -10,27 +10,18 @@
 ** Copyright (C) !!year!! !!provider!!
 */
 
-#include "api.hh"
+extern "C" {
 
-#include <iostream>
-#include <vector>
-
-// from api.cc
-extern Api* api;
-
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
+void client_init()
 {
-  os << "[";
-  typename std::vector<T>::const_iterator it;
-  for (it = arr.begin(); it != arr.end(); ++it)
-  {
-    if (it != arr.begin())
-      os << ", ";
-    os << *it;
-  }
-  os << "]";
-  return os;
 }
 
-// @@GEN_HERE@@
+void client_turn()
+{
+}
+
+void client_result()
+{
+}
+
+} // extern "C"

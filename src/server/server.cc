@@ -8,15 +8,15 @@
 
 #include "options.hh"
 
-typedef void (*server_init)(net::ServerMessenger_sptr);
-typedef bool (*server_turn)();
-typedef void (*server_result)(rules::PlayerList*);
-
 Server::Server(const Options& opt)
     : opt_(opt),
-      rules_lib_(opt.rules_lib),
       nb_clients_(0)
 {
+    // Get required functions from the rules library
+    utils::DLL rules_lib(opt.rules_lib);
+    rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
+    rules_turn = rules_lib.get<rules::f_rules_turn>("rules_turn");
+    rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
 }
 
 void Server::run()
@@ -30,20 +30,24 @@ void Server::run()
     // config to be met
     wait_for_players();
 
-    // Get required functions from the rules library
-    server_init rules_init = rules_lib_.get<server_init>("server_init");
-    server_turn rules_turn = rules_lib_.get<server_turn>("server_turn");
-    server_result rules_result = rules_lib_.get<server_result>("server_result");
-
+    // Create a messenger for sending rules messages
     net::ServerMessenger_sptr server_msgr = net::ServerMessenger_sptr(
             new net::ServerMessenger(sckt_));
 
-    rules_init(server_msgr);
+    // Rules specific initializations
+    rules_init();
 
+    // Send the server ACK to start the game
     sckt_->push(net::Message(net::MSG_GAMESTART));
 
-    while (rules_turn())
-        ;
+    // Play turns
+    rules::PlayerActionsList actions_in;
+    rules::IActionList actions_out;
+
+    while (rules_turn(&actions_in, &actions_out))
+    {
+        // FIXME
+    }
 
     rules::PlayerList players;
     rules_result(&players);

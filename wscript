@@ -161,7 +161,7 @@ def build_rules(bld):
     bld.internal_lib(
         source = '''
             src/lib/rules/action.cc
-            src/lib/rules/state.cc
+            src/lib/rules/game-state.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
         target = 'rules',

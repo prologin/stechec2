@@ -1,9 +1,11 @@
 #ifndef ACTION_HH_
 # define ACTION_HH_
 
-# include "state.hh"
-
+# include <memory>
+# include <list>
 # include <utils/buffer.hh>
+
+# include "game-state.hh"
 
 namespace rules {
 
@@ -54,6 +56,9 @@ protected:
         apply_on(dynamic_cast<TState*>(st));
     }
 };
+
+typedef std::shared_ptr<IAction> IAction_sptr;
+typedef std::list<IAction_sptr> IActionList;
 
 } // namespace rules
 

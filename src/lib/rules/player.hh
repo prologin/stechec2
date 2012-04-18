@@ -2,6 +2,7 @@
 # define LIB_RULES_PLAYER_HH_
 
 # include <cstdint>
+# include <memory>
 # include <list>
 
 namespace rules {
@@ -18,7 +19,8 @@ public:
     int32_t score;
 };
 
-typedef std::list<Player> PlayerList;
+typedef std::shared_ptr<Player> Player_sptr;
+typedef std::list<Player_sptr> PlayerList;
 
 } // namespace rules
 

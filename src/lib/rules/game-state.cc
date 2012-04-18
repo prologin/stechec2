@@ -1,4 +1,4 @@
-#include "state.hh"
+#include "game-state.hh"
 
 namespace rules {
 
