@@ -7,17 +7,14 @@ ServerMessenger::ServerMessenger(ServerSocket_sptr sckt)
 {
 }
 
-void ServerMessenger::send(const RulesMessage& msg)
+void ServerMessenger::send(RulesMessage* rules_msg)
 {
-    (void) msg;
     // TODO
 }
 
-uint32_t ServerMessenger::recv(void** msg)
+void ServerMessenger::recv(RulesMessage* rules_msg)
 {
-    (void) msg;
     // TODO
-    return 0;
 }
 
 } // namespace net

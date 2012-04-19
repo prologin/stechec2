@@ -14,8 +14,8 @@ class ServerMessenger : public Messenger
 public:
     ServerMessenger(ServerSocket_sptr sckt);
 
-    virtual void send(const RulesMessage&);
-    virtual uint32_t recv(void** data);
+    virtual void send(RulesMessage*);
+    virtual void recv(RulesMessage*);
 
 private:
     ServerSocket_sptr sckt_;
