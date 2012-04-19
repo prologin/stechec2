@@ -6,6 +6,7 @@
 # include <net/messenger.hh>
 # include <net/server-socket.hh>
 # include <net/rules-message.hh>
+# include <utils/buffer.hh>
 
 namespace net {
 
@@ -14,8 +15,8 @@ class ServerMessenger : public Messenger
 public:
     ServerMessenger(ServerSocket_sptr sckt);
 
-    virtual void send(RulesMessage*);
-    virtual void recv(RulesMessage*);
+    virtual void send(const utils::Buffer&);
+    virtual utils::Buffer* recv();
 
 private:
     ServerSocket_sptr sckt_;

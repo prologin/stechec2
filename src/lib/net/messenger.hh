@@ -5,6 +5,7 @@
 # include <net/socket.hh>
 # include <net/message.hh>
 # include <net/rules-message.hh>
+# include <utils/buffer.hh>
 
 namespace net {
 
@@ -13,8 +14,8 @@ class Messenger
 public:
     virtual ~Messenger();
 
-    virtual void send(RulesMessage*) = 0;
-    virtual void recv(RulesMessage*) = 0;
+    virtual void send(const utils::Buffer&) = 0;
+    virtual utils::Buffer* recv() = 0;
 
 protected:
     virtual Message* to_msg(const uint8_t* data, uint32_t data_size);

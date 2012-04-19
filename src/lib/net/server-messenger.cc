@@ -7,17 +7,14 @@ ServerMessenger::ServerMessenger(ServerSocket_sptr sckt)
 {
 }
 
-void ServerMessenger::send(RulesMessage* rules_msg)
+void ServerMessenger::send(const utils::Buffer& buf)
 {
-    utils::Buffer buf;
-
-    rules_msg->handle_buffer(&buf);
     Message* msg = to_msg(buf.data(), buf.length());
-
     sckt_->send(*msg);
+    delete msg;
 }
 
-void ServerMessenger::recv(RulesMessage* rules_msg)
+utils::Buffer* ServerMessenger::recv()
 {
     Message* msg = sckt_->recv();
 
@@ -27,9 +24,9 @@ void ServerMessenger::recv(RulesMessage* rules_msg)
     std::vector<uint8_t> data_vector;
     data_vector.assign(data, data + size);
 
-    utils::Buffer buf(data_vector);
+    utils::Buffer* buf = new utils::Buffer(data_vector);
 
-    rules_msg->handle_buffer(&buf);
+    return buf;
 }
 
 } // namespace net

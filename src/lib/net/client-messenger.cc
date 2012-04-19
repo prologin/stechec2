@@ -1,7 +1,5 @@
 #include "client-messenger.hh"
 
-#include <utils/buffer.hh>
-
 namespace net {
 
 ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
@@ -9,17 +7,14 @@ ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
 {
 }
 
-void ClientMessenger::send(RulesMessage* rules_msg)
+void ClientMessenger::send(const utils::Buffer& buf)
 {
-    utils::Buffer buf;
-
-    rules_msg->handle_buffer(&buf);
     Message* msg = to_msg(buf.data(), buf.length());
-
     sckt_->send(*msg);
+    delete msg;
 }
 
-void ClientMessenger::recv(RulesMessage* rules_msg)
+utils::Buffer* ClientMessenger::recv()
 {
     Message* msg = sckt_->recv();
 
@@ -29,9 +24,8 @@ void ClientMessenger::recv(RulesMessage* rules_msg)
     std::vector<uint8_t> data_vector;
     data_vector.assign(data, data + size);
 
-    utils::Buffer buf(data_vector);
-
-    rules_msg->handle_buffer(&buf);
+    utils::Buffer* buf = new utils::Buffer(data_vector);
+    return buf;
 }
 
 } // namespace net
