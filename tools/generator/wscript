@@ -38,6 +38,7 @@ def build(bld):
         'files/interface.cc',
         'files/client.cc',
         'files/server.cc',
+        'files/rules.cc',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [

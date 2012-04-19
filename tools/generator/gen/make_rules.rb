@@ -31,6 +31,7 @@ files = %w{
   api.hh
   constant.hh
   interface.cc
+  rules.cc
   client.cc
   server.cc
 }

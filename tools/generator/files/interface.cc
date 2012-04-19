@@ -13,6 +13,7 @@
 #include "api.hh"
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 
 // from api.cc

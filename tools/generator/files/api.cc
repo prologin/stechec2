@@ -12,12 +12,12 @@
 
 #include <stdlib.h>
 
-#include "Api.hh"
+#include "api.hh"
 
 // global used in interface.cc
 Api* api;
 
-Api::Api(GameState* game_state, Player* player)
+Api::Api(rules::GameState* game_state, rules::Player* player)
     : game_state_(game_state),
       player_(player)
 {

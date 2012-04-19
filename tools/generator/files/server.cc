@@ -11,8 +11,9 @@
 */
 
 #include <cstdlib>
+#include <net/server-messenger.hh>
 
-extern "C" void server_loop()
+extern "C" void server_loop(net::ServerMessenger_sptr msgr)
 {
     // TODO
     abort();
