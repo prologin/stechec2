@@ -7,8 +7,8 @@
 # define VERSION_MESSAGE(name, version) \
     "Stechec2 " name " v" version "\n" \
     "Copyright (c) 2012 Prologin\n\n" \
-    "Written by Pierre Bourdon <delroth@gmail.com>\n" \
-    "       and Nicolas Hureau <nh@kalenz.fr>"
+    "Written by Nicolas Hureau <nh@kalenz.fr>\n" \
+    "       and Pierre Bourdon <delroth@gmail.com>"
 
 namespace utils {
 
