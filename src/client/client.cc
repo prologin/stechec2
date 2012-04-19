@@ -14,7 +14,7 @@ Client::Client(const Options& opt)
     // Get required functions from the rules library
     utils::DLL rules_lib(opt.rules_lib);
     rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
-    rules_turn = rules_lib.get<rules::f_rules_turn>("rules_turn");
+    client_loop = rules_lib.get<rules::f_client_loop>("client_loop");
     rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
 }
 
@@ -32,14 +32,7 @@ void Client::run()
     // Wait for the server ACK to start the game
     wait_for_game_start();
 
-    // Play turns
-    rules::PlayerActionsList actions_in;
-    rules::IActionList actions_out;
-
-    while (rules_turn(&actions_in, &actions_out))
-    {
-        // FIXME
-    }
+    client_loop(msgr_);
 
     rules::PlayerList players;
     rules_result(&players);

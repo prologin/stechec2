@@ -22,8 +22,8 @@ private:
     void wait_for_game_start();
 
     rules::f_rules_init rules_init;
-    rules::f_rules_turn rules_turn;
     rules::f_rules_result rules_result;
+    rules::f_client_loop client_loop;
 
 private:
     const Options& opt_;

@@ -1,11 +1,12 @@
-#ifndef ACTION_HH_
-# define ACTION_HH_
+#ifndef LIB_RULES_ACTION_HH_
+# define LIB_RULES_ACTION_HH_
 
 # include <memory>
 # include <list>
 # include <utils/buffer.hh>
 
 # include "game-state.hh"
+# include "player.hh"
 
 namespace rules {
 
@@ -60,6 +61,12 @@ protected:
 typedef std::shared_ptr<IAction> IAction_sptr;
 typedef std::list<IAction_sptr> IActionList;
 
+struct PlayerActions
+{
+    Player_sptr player;
+    IActionList actions;
+};
+
 } // namespace rules
 
-#endif // !ACTION_HH_
+#endif // !LIB_RULES_ACTION_HH_

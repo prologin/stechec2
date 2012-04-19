@@ -10,18 +10,10 @@
 ** Copyright (C) !!year!! !!provider!!
 */
 
-extern "C" {
+#include <cstdlib>
 
-void client_init()
+extern "C" void client_loop()
 {
+    // TODO
+    abort();
 }
-
-void client_turn()
-{
-}
-
-void client_result()
-{
-}
-
-} // extern "C"

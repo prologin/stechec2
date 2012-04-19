@@ -21,7 +21,7 @@ struct DeserializationError : public std::runtime_error
 };
 
 // Serializes or deserializes data to an internal buffer. To use it, use the
-// "do" method on a variable, or "do_array" on an array.
+// "handle" method on a variable, or "handle_array" on an array.
 class Buffer
 {
 public:

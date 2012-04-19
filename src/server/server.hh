@@ -6,6 +6,7 @@
 # include <memory>
 
 # include <net/server-socket.hh>
+# include <net/server-messenger.hh>
 # include <rules/types.hh>
 # include <utils/dll.hh>
 
@@ -25,8 +26,8 @@ private:
     void wait_for_players();
 
     rules::f_rules_init rules_init;
-    rules::f_rules_turn rules_turn;
     rules::f_rules_result rules_result;
+    rules::f_server_loop server_loop;
 
 private:
     const Options& opt_;
@@ -34,6 +35,7 @@ private:
     std::list<Client_ptr> clients_;
 
     net::ServerSocket_sptr sckt_;
+    net::ServerMessenger_sptr msgr_;
 };
 
 #endif // !SERVER_SERVER_HH_

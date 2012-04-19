@@ -3,7 +3,6 @@
 #include <utils/log.hh>
 #include <net/message.hh>
 #include <net/common.hh>
-#include <net/server-messenger.hh>
 #include <rules/player.hh>
 
 #include "options.hh"
@@ -15,7 +14,7 @@ Server::Server(const Options& opt)
     // Get required functions from the rules library
     utils::DLL rules_lib(opt.rules_lib);
     rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
-    rules_turn = rules_lib.get<rules::f_rules_turn>("rules_turn");
+    server_loop = rules_lib.get<rules::f_server_loop>("server_loop");
     rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
 }
 
@@ -31,8 +30,7 @@ void Server::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    net::ServerMessenger_sptr server_msgr = net::ServerMessenger_sptr(
-            new net::ServerMessenger(sckt_));
+    msgr_ = net::ServerMessenger_sptr(new net::ServerMessenger(sckt_));
 
     // Rules specific initializations
     rules_init();
@@ -40,14 +38,7 @@ void Server::run()
     // Send the server ACK to start the game
     sckt_->push(net::Message(net::MSG_GAMESTART));
 
-    // Play turns
-    rules::PlayerActionsList actions_in;
-    rules::IActionList actions_out;
-
-    while (rules_turn(&actions_in, &actions_out))
-    {
-        // FIXME
-    }
+    server_loop(msgr_);
 
     rules::PlayerList players;
     rules_result(&players);

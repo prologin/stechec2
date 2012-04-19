@@ -7,4 +7,17 @@ ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
 {
 }
 
+void ClientMessenger::send(const RulesMessage& msg)
+{
+    (void) msg;
+    // TODO
+}
+
+uint32_t ClientMessenger::recv(void** msg)
+{
+    (void) msg;
+    // TODO
+    return 0;
+}
+
 } // namespace net

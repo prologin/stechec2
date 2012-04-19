@@ -1,23 +1,21 @@
-#ifndef TYPES_HH_
-# define TYPES_HH_
+#ifndef LIB_RULES_TYPES_HH_
+# define LIB_RULES_TYPES_HH_
 
-# include "player.hh"
-# include "action.hh"
+# include <rules/player.hh>
+# include <rules/action.hh>
+# include <net/client-messenger.hh>
+# include <net/server-messenger.hh>
 
 namespace rules {
-
-struct PlayerActions
-{
-    Player_sptr player;
-    IActionList actions;
-};
 
 typedef std::list<PlayerActions> PlayerActionsList;
 
 typedef void (*f_rules_init)();
-typedef bool (*f_rules_turn)(PlayerActionsList* in, IActionList* out);
 typedef void (*f_rules_result)(PlayerList*);
+
+typedef void (*f_client_loop)(::net::ClientMessenger_sptr);
+typedef void (*f_server_loop)(::net::ServerMessenger_sptr);
 
 } // namespace rules
 
-#endif // !TYPES_HH_
+#endif // !LIB_RULES_TYPES_HH_

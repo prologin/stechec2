@@ -12,8 +12,18 @@
 
 #include <cstdlib>
 
-extern "C" void server_loop()
+extern "C" {
+
+void rules_init()
 {
     // TODO
     abort();
 }
+
+void rules_result()
+{
+    // TODO
+    abort();
+}
+
+} // extern "C"
