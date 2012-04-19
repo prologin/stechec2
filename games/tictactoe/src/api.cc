@@ -10,14 +10,17 @@
 ** Copyright (C) 2012 Prologin
 */
 
-#include <stdlib.h>
-
 #include "api.hh"
+
+#include <stdlib.h>
+#include <rules/game-state.hh>
+
+#include "action-play.hh"
 
 // global used in interface.cc
 Api* api;
 
-Api::Api(rules::GameState* game_state, rules::Player* player)
+Api::Api(GameState* game_state, rules::Player* player)
     : game_state_(game_state),
       player_(player)
 {
@@ -29,8 +32,7 @@ Api::Api(rules::GameState* game_state, rules::Player* player)
 //
 int Api::my_team()
 {
-  // TODO
-  abort();
+    return player_->id;
 }
 
 ///
@@ -38,8 +40,7 @@ int Api::my_team()
 //
 std::vector<int> Api::board()
 {
-  // TODO
-  abort();
+    return game_state_->board();
 }
 
 ///
@@ -47,8 +48,15 @@ std::vector<int> Api::board()
 //
 error Api::play(int x, int y)
 {
-  // TODO
-  abort();
+    ActionPlay action(x, y, player_->id);
+
+    error err;
+    if ((err = static_cast<error>(action.check(game_state_))) != OK)
+        return err;
+
+    game_state_ = action.apply(game_state_);
+
+    return OK;
 }
 
 ///
@@ -56,11 +64,10 @@ error Api::play(int x, int y)
 //
 bool Api::cancel()
 {
-  // TODO
-  abort();
+    if (!game_state_->can_cancel())
+        return false;
+
+    game_state_ = rules::cancel(game_state_);
+
+    return true;
 }
-
-///
-// Affiche le contenu d'une valeur de type error
-//
-

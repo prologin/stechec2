@@ -5,10 +5,10 @@
 
 # include "game-state.hh"
 
-class PlayAction : public rules::Action<GameState>
+class ActionPlay : public rules::Action<GameState>
 {
 public:
-    PlayAction(int x = -1, int y = -1, int player = -1);
+    ActionPlay(int x = -1, int y = -1, int player = -1);
 
     virtual int check(const GameState* st) const;
     virtual void handle_buffer(utils::Buffer& buf);

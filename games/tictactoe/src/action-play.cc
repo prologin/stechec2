@@ -4,14 +4,14 @@
 
 #include "constant.hh"
 
-PlayAction::PlayAction(int x, int y, int player)
+ActionPlay::ActionPlay(int x, int y, int player)
     : x_(x), y_(y), player_(player)
 {
 }
 
-int PlayAction::check(const GameState* st) const
+int ActionPlay::check(const GameState* st) const
 {
-    INFO("PlayAction::check");
+    INFO("ActionPlay::check");
 
     CHECK(player_ >= 0);
 
@@ -25,14 +25,14 @@ int PlayAction::check(const GameState* st) const
     return OK;
 }
 
-void PlayAction::handle_buffer(utils::Buffer& buf)
+void ActionPlay::handle_buffer(utils::Buffer& buf)
 {
     buf.handle(x_);
     buf.handle(y_);
     buf.handle(player_);
 }
 
-void PlayAction::apply_on(GameState* st) const
+void ActionPlay::apply_on(GameState* st) const
 {
     st->board()[3 * y_ + x_] = player_;
 }

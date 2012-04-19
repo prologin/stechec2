@@ -17,6 +17,7 @@
 # include <rules/game-state.hh>
 # include <rules/player.hh>
 
+# include "game-state.hh"
 # include "constant.hh"
 
 /*!
@@ -26,11 +27,11 @@ class Api
 {
 
 public:
-    Api(rules::GameState* game_state, rules::Player* player);
+    Api(GameState* game_state, rules::Player* player);
     virtual ~Api() { }
 
 private:
-    rules::GameState* game_state_;
+    GameState* game_state_;
     rules::Player* player_;
 
 public:
