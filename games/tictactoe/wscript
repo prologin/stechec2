@@ -9,7 +9,11 @@ def configure(cfg):
 def build(bld):
     bld.shlib(
         source = '''
-            src/tictactoe.cc
+            src/rules.cc
+            src/client.cc
+            src/server.cc
+            src/interface.cc
+            src/api.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
         target = 'tictactoe',
