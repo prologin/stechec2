@@ -33,7 +33,7 @@ void Server::run()
     msgr_ = net::ServerMessenger_sptr(new net::ServerMessenger(sckt_));
 
     // Rules specific initializations
-    rules_init();
+    rules_init("");
 
     // Send the server ACK to start the game
     sckt_->push(net::Message(net::MSG_GAMESTART));

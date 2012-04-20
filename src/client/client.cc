@@ -27,7 +27,7 @@ void Client::run()
     msgr_ = net::ClientMessenger_sptr(new net::ClientMessenger(sckt_));
 
     // Rules specific initializations
-    rules_init();
+    rules_init(opt_.champion_lib);
 
     // Wait for the server ACK to start the game
     wait_for_game_start();

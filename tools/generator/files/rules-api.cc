@@ -12,9 +12,36 @@
 
 #include <cstdlib>
 #include <net/client-messenger.hh>
+#include <net/server-messenger.hh>
 
-extern "C" void client_loop(net::ClientMessenger_sptr msgr)
+Rules* rules;
+
+extern "C" {
+
+void rules_init(const std::string& champion)
 {
-    // TODO
+    rules = new Rules(champion);
+
+    // FIXME
+}
+
+void rules_result()
+{
+    // FIXME
+
+    delete rules;
+}
+
+void client_loop(net::ClientMessenger_sptr msgr)
+{
+    // FIXME
     abort();
 }
+
+void server_loop(net::ServerMessenger_sptr msgr)
+{
+    // FIXME
+    abort();
+}
+
+} // extern "C"

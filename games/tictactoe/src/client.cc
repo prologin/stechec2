@@ -11,10 +11,10 @@
 */
 
 #include <cstdlib>
+#include <string>
 #include <net/client-messenger.hh>
 
-extern "C" void client_loop(net::ClientMessenger_sptr msgr)
+extern "C" void client_loop(net::ClientMessenger_sptr msgr,
+        const std::string& champion)
 {
-    // TODO
-    abort();
 }

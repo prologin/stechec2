@@ -32,8 +32,8 @@ files = %w{
   constant.hh
   interface.cc
   rules.cc
-  client.cc
-  server.cc
+  rules.hh
+  rules-api.cc
 }
 files.each do |x|
   if File.exist? 'files/' + x

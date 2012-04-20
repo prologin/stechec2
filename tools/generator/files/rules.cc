@@ -1,29 +1,12 @@
-/*
-** Stechec project is free software; you can redistribute it and/or modify
-** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 2 of the License, or
-** (at your option) any later version.
-**
-** The complete GNU General Public Licence Notice can be found as the
-** `NOTICE' file in the root directory.
-**
-** Copyright (C) !!year!! !!provider!!
-*/
+#include "rules.hh"
 
-#include <cstdlib>
-
-extern "C" {
-
-void rules_init()
+Rules::Rules(const std::string& champion)
 {
-    // TODO
-    abort();
+    if (!champion.empty())
+        champion_dll_ = new utils::DLL(champion);
 }
 
-void rules_result()
+Rules::~Rules()
 {
-    // TODO
-    abort();
+    delete champion_dll_;
 }
-
-} // extern "C"

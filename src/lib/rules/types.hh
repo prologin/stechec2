@@ -1,6 +1,7 @@
 #ifndef LIB_RULES_TYPES_HH_
 # define LIB_RULES_TYPES_HH_
 
+# include <string>
 # include <rules/player.hh>
 # include <rules/action.hh>
 # include <net/client-messenger.hh>
@@ -10,7 +11,7 @@ namespace rules {
 
 typedef std::list<PlayerActions> PlayerActionsList;
 
-typedef void (*f_rules_init)();
+typedef void (*f_rules_init)(const std::string& champion);
 typedef void (*f_rules_result)(PlayerList*);
 
 typedef void (*f_client_loop)(::net::ClientMessenger_sptr);
