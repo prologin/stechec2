@@ -14,6 +14,8 @@
 #include <net/client-messenger.hh>
 #include <net/server-messenger.hh>
 
+#include "rules.hh"
+
 Rules* rules;
 
 extern "C" {
