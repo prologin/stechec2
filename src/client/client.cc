@@ -5,6 +5,7 @@
 #include <net/message.hh>
 #include <rules/action.hh>
 #include <rules/player.hh>
+#include <rules/options.hh>
 
 #include "options.hh"
 
@@ -26,8 +27,13 @@ void Client::run()
     // Create a messenger for sending rules messages
     msgr_ = net::ClientMessenger_sptr(new net::ClientMessenger(sckt_));
 
+    // Set the rules options
+    rules::Options rules_opt;
+    rules_opt.champion_lib = opt_.champion_lib;
+    rules_opt.player = player_;
+
     // Rules specific initializations
-    rules_init(opt_.champion_lib);
+    rules_init(rules_opt);
 
     // Wait for the server ACK to start the game
     wait_for_game_start();
@@ -57,11 +63,11 @@ void Client::sckt_init()
             id_rep->client_id == 0)
         FATAL("Unable to get an ID from the server");
 
-    id_ = id_rep->client_id;
+    player_ = rules::Player_sptr(new rules::Player(id_rep->client_id, 0));
 
     delete id_rep;
 
-    NOTICE("Connected - id: %i", id_);
+    NOTICE("Connected - id: %i", player_->id);
 }
 
 void Client::wait_for_game_start()

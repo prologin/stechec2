@@ -11,18 +11,19 @@
 */
 
 #include <cstdlib>
+#include <rules/options.hh>
 #include <net/client-messenger.hh>
 #include <net/server-messenger.hh>
 
 #include "rules.hh"
 
-Rules* rules;
+static Rules* rules_;
 
 extern "C" {
 
-void rules_init(const std::string& champion)
+void rules_init(const rules::Options& opt)
 {
-    rules = new Rules(champion);
+    rules_ = new Rules(opt);
 
     // FIXME
 }
@@ -31,7 +32,7 @@ void rules_result()
 {
     // FIXME
 
-    delete rules;
+    delete rules_;
 }
 
 void client_loop(net::ClientMessenger_sptr msgr)

@@ -32,8 +32,12 @@ void Server::run()
     // Create a messenger for sending rules messages
     msgr_ = net::ServerMessenger_sptr(new net::ServerMessenger(sckt_));
 
+    // Set the rules options
+    rules::Options rules_opt;
+    rules_opt.champion_lib = "";
+
     // Rules specific initializations
-    rules_init("");
+    rules_init(rules_opt);
 
     // Send the server ACK to start the game
     sckt_->push(net::Message(net::MSG_GAMESTART));

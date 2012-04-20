@@ -27,12 +27,12 @@ class Api
 {
 
 public:
-    Api(GameState* game_state, rules::Player* player);
+    Api(GameState* game_state, rules::Player_sptr player);
     virtual ~Api() { }
 
 private:
     GameState* game_state_;
-    rules::Player* player_;
+    rules::Player_sptr player_;
 
 public:
 

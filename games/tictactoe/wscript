@@ -18,5 +18,10 @@ def build(bld):
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
         target = 'tictactoe',
-        use = ['net', 'utils'],
+        use = ['net', 'rules', 'utils'],
     )
+
+    bld.install_files('${PREFIX}/share/stechec2/tictactoe', [
+        'tictactoe.yml',
+        'tictactoe.cfg',
+    ])

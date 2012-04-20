@@ -7,9 +7,8 @@
 
 namespace rules {
 
-class Player
+struct Player
 {
-public:
     Player(uint32_t id_, int32_t score_)
         : id(id_),
           score(score_)

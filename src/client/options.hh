@@ -1,5 +1,5 @@
-#ifndef SERVER_OPTIONS_HH
-# define SERVER_OPTIONS_HH
+#ifndef CLIENT_OPTIONS_HH
+# define CLIENT_OPTIONS_HH
 
 # include <string>
 # include <cstdint>
@@ -45,4 +45,4 @@ public:
     unsigned verbose;
 };
 
-#endif // !SERVER_OPTIONS_HH
+#endif // !CLIENT_OPTIONS_HH

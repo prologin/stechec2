@@ -7,6 +7,7 @@
 # include <net/client-socket.hh>
 # include <net/client-messenger.hh>
 # include <rules/types.hh>
+# include <rules/player.hh>
 # include <utils/dll.hh>
 
 class Options;
@@ -27,7 +28,7 @@ private:
 
 private:
     const Options& opt_;
-    uint32_t id_;
+    rules::Player_sptr player_;
 
     net::ClientSocket_sptr sckt_;
     net::ClientMessenger_sptr msgr_;

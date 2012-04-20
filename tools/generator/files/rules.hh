@@ -9,8 +9,12 @@ public:
     explicit Rules(const std::string& champion);
     virtual ~Rules();
 
+    // FIXME
+
 private:
     utils::DLL* champion_dll_;
+
+    // FIXME
 };
 
 #endif // !RULES_RULES_HH_

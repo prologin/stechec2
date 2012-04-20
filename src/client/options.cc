@@ -61,27 +61,27 @@ void Options::process(int argc, char** argv)
 
     std::stringstream client_num_ss;
     client_num_ss << client_num;
-    std::string client_num_str = client_num_ss.str();
+    std::string client_num_str = "client." + client_num_ss.str();
 
     po::options_description config_opt("Config options");
     config_opt.add_options()
-        (("client" + client_num_str + ".req_addr").c_str(),
+        ((client_num_str + ".req_addr").c_str(),
             po::value<std::string>(&req_addr))
-        (("client." + client_num_str + ".sub_addr").c_str(),
+        ((client_num_str + ".sub_addr").c_str(),
             po::value<std::string>(&sub_addr))
-        (("client." + client_num_str + ".rules").c_str(),
+        ((client_num_str + ".rules").c_str(),
             po::value<std::string>(&rules_lib))
-        (("client." + client_num_str + ".champion").c_str(),
+        ((client_num_str + ".champion").c_str(),
             po::value<std::string>(&champion_lib))
-        (("client." + client_num_str + ".spectator").c_str(),
+        ((client_num_str + ".spectator").c_str(),
             po::value<bool>(&spectator))
-        (("client." + client_num_str + ".memory").c_str(),
+        ((client_num_str + ".memory").c_str(),
             po::value<unsigned>(&memory))
-        (("client." + client_num_str + ".time").c_str(),
+        ((client_num_str + ".time").c_str(),
             po::value<unsigned>(&time))
-        (("client." + client_num_str + ".log").c_str(),
+        ((client_num_str + ".log").c_str(),
             po::value<std::string>(&log))
-        (("client." + client_num_str + ".verbose").c_str(),
+        ((client_num_str + ".verbose").c_str(),
             po::value<unsigned>(&verbose));
 
     if (vm.count("config"))
