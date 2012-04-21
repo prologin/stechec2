@@ -10,6 +10,12 @@
 
 namespace rules {
 
+class IAction;
+
+typedef std::shared_ptr<IAction> IAction_sptr;
+typedef std::list<IAction_sptr> IActionList;
+
+
 // Interface to be implemented by all action types.
 class IAction
 {
@@ -19,7 +25,8 @@ public:
     // applied.
     virtual int check(const GameState* st) const = 0;
 
-    // Copies the current state and returns a new state with the action applied.
+    // Copies the current state, returns a new state with the action applied
+    // and add the applied action to the given list.
     GameState* apply(GameState* st) const;
 
     // Handles serialization and deserialization of the Action object to a
@@ -58,11 +65,11 @@ protected:
     }
 };
 
-typedef std::shared_ptr<IAction> IAction_sptr;
-typedef std::list<IAction_sptr> IActionList;
-
-struct PlayerActions
+class PlayerActions
 {
+public:
+    void handle_buffer(utils::Buffer& buf);
+
     Player_sptr player;
     IActionList actions;
 };

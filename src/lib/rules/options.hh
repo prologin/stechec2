@@ -21,6 +21,9 @@ struct Options
 
     // Player
     Player_sptr player;
+
+    // Verbosity of the logs displayed/written
+    unsigned verbose;
 };
 
 } // namespace rules

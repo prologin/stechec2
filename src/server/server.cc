@@ -23,8 +23,6 @@ void Server::run()
     // Launch the network server, listen for connections
     sckt_init();
 
-    rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
-
     INFO("Server Started");
 
     // We have to wait for the required number of clients specified in the
@@ -37,6 +35,7 @@ void Server::run()
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
+    rules_opt.verbose = opt_.verbose;
 
     // Rules specific initializations
     rules_init(rules_opt);

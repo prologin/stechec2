@@ -22,6 +22,9 @@ public:
     void server_loop(net::ServerMessenger_sptr msgr);
 
 protected:
+    int is_finished();
+
+protected:
     f_champion_init champion_init;
     f_champion_play champion_play;
     f_champion_end champion_end;
@@ -30,6 +33,8 @@ private:
     rules::Options opt_;
     utils::DLL* champion_;
     Api* api_;
+
+    int winner_;
 };
 
 #endif // !RULES_RULES_HH_

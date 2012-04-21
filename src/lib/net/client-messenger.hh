@@ -17,6 +17,10 @@ public:
 
     virtual void send(const utils::Buffer&);
     virtual utils::Buffer* recv();
+    virtual utils::Buffer* pull();
+
+protected:
+    virtual utils::Buffer* internal_recv(Message*);
 
 private:
     ClientSocket_sptr sckt_;

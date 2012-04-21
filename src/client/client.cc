@@ -31,6 +31,7 @@ void Client::run()
     rules::Options rules_opt;
     rules_opt.champion_lib = opt_.champion_lib;
     rules_opt.player = player_;
+    rules_opt.verbose = opt_.verbose;
 
     // Rules specific initializations
     rules_init(rules_opt);

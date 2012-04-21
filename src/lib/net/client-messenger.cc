@@ -17,7 +17,23 @@ void ClientMessenger::send(const utils::Buffer& buf)
 utils::Buffer* ClientMessenger::recv()
 {
     Message* msg = sckt_->recv();
+    utils::Buffer* buf = internal_recv(msg);
+    delete msg;
 
+    return buf;
+}
+
+utils::Buffer* ClientMessenger::pull()
+{
+    Message* msg = sckt_->pull();
+    utils::Buffer* buf = internal_recv(msg);
+    delete msg;
+
+    return buf;
+}
+
+utils::Buffer* ClientMessenger::internal_recv(Message* msg)
+{
     uint8_t* data;
     uint32_t size = from_msg(*msg, &data);
 
@@ -25,6 +41,7 @@ utils::Buffer* ClientMessenger::recv()
     data_vector.assign(data, data + size);
 
     utils::Buffer* buf = new utils::Buffer(data_vector);
+
     return buf;
 }
 

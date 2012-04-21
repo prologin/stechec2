@@ -12,8 +12,10 @@
 
 #include <cstdlib>
 #include <rules/options.hh>
+#include <rules/player.hh>
 #include <net/client-messenger.hh>
 #include <net/server-messenger.hh>
+#include <utils/log.hh>
 
 #include "rules.hh"
 
@@ -23,28 +25,24 @@ extern "C" {
 
 void rules_init(const rules::Options& opt)
 {
-    rules_ = new Rules(opt);
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
 
-    // FIXME
+    rules_ = new Rules(opt);
 }
 
-void rules_result()
+void rules_result(rules::PlayerList* players)
 {
-    // FIXME
-
     delete rules_;
 }
 
 void client_loop(net::ClientMessenger_sptr msgr)
 {
-    // FIXME
-    abort();
+    rules_->client_loop(msgr);
 }
 
 void server_loop(net::ServerMessenger_sptr msgr)
 {
-    // FIXME
-    abort();
+    rules_->server_loop(msgr);
 }
 
 } // extern "C"

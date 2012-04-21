@@ -10,7 +10,7 @@ def build(bld):
     bld.shlib(
         source = '''
             src/rules.cc
-            src/rules-api.cc
+            src/entry.cc
             src/interface.cc
             src/api.cc
             src/action-play.cc

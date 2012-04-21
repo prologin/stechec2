@@ -14,4 +14,8 @@ GameState* IAction::apply(GameState* st) const
     return new_st;
 }
 
+void PlayerActions::handle_buffer(utils::Buffer& buf)
+{
+}
+
 } // namespace rules

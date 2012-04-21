@@ -1,5 +1,5 @@
-#ifndef TICTACTOE_RULES_ACTION_PLAY_HH_
-# define TICTACTOE_RULES_ACTION_PLAY_HH_
+#ifndef TICTACTOE_ACTION_PLAY_HH_
+# define TICTACTOE_ACTION_PLAY_HH_
 
 # include <rules/action.hh>
 
@@ -23,4 +23,4 @@ protected:
     int player_;
 };
 
-#endif // !TICTACTOE_RULES_ACTION_PLAY_HH_
+#endif // !TICTACTOE_ACTION_PLAY_HH_
