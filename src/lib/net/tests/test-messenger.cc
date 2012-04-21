@@ -5,25 +5,31 @@
 #include <cstring>
 #include <cstdint>
 #include <cstdlib>
+#include <utils/buffer.hh>
 
 using namespace net;
 
 class TestMessenger : public ::testing::Test, public Messenger
 {
+public:
+    virtual void send(const utils::Buffer&)
+        {}
+    virtual utils::Buffer* recv()
+        { return nullptr; }
 };
 
 //TestMessenger::~TestMessenger(){}
 
 TEST_F(TestMessenger, CheckFrom)
 {
-    Message* msg = reinterpret_cast<Message*>(new char[sizeof (Message) + 6]);
+    Message* msg = reinterpret_cast<Message*>(new uint8_t[sizeof (Message) + 6]);
     msg->type = MSG_ERR;
     msg->client_id = 42;
     msg->size = 6;
     strcpy(msg->data, "Chiche");
 
-    char* data = nullptr;
-    uint32_t data_size = from_msg(*msg, reinterpret_cast<void**>(&data));
+    uint8_t* data = nullptr;
+    uint32_t data_size = from_msg(*msg, &data);
 
     ASSERT_EQ(data_size, (uint32_t) 6);
 
@@ -40,7 +46,7 @@ TEST_F(TestMessenger, CheckFrom)
 
 TEST_F(TestMessenger, CheckTo)
 {
-    const char data[7] = "Chiche";
+    const uint8_t data[7] = "Chiche";
 
     Message* msg = to_msg(data, 6);
 
