@@ -28,8 +28,9 @@ private:
 
 private:
     const Options& opt_;
-    rules::Player_sptr player_;
+    std::unique_ptr<utils::DLL> rules_lib_;
 
+    rules::Player_sptr player_;
     net::ClientSocket_sptr sckt_;
     net::ClientMessenger_sptr msgr_;
 };

@@ -10,13 +10,13 @@
 #include "options.hh"
 
 Client::Client(const Options& opt)
-    : opt_(opt)
+    : opt_(opt),
+      rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
 {
     // Get required functions from the rules library
-    utils::DLL rules_lib(opt.rules_lib);
-    rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
-    client_loop = rules_lib.get<rules::f_client_loop>("client_loop");
-    rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
+    rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
+    client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
+    rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 }
 
 void Client::run()

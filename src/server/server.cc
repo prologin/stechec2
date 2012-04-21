@@ -9,19 +9,21 @@
 
 Server::Server(const Options& opt)
     : opt_(opt),
-      nb_clients_(0)
+      nb_clients_(0),
+      rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
 {
     // Get required functions from the rules library
-    utils::DLL rules_lib(opt.rules_lib);
-    rules_init = rules_lib.get<rules::f_rules_init>("rules_init");
-    server_loop = rules_lib.get<rules::f_server_loop>("server_loop");
-    rules_result = rules_lib.get<rules::f_rules_result>("rules_result");
+    rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
+    server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
+    rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 }
 
 void Server::run()
 {
     // Launch the network server, listen for connections
     sckt_init();
+
+    rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
     INFO("Server Started");
 
@@ -44,6 +46,7 @@ void Server::run()
 
     server_loop(msgr_);
 
+    // Get the results
     rules::PlayerList players;
     rules_result(&players);
 }
@@ -89,6 +92,6 @@ void Server::wait_for_players()
         NOTICE("Client connected - id: %i - type: %s", new_client->id(),
                 clienttype_str(new_client->type()).c_str());
 
-        delete id_req;
+        delete[] reinterpret_cast<char*>(id_req);
     }
 }
