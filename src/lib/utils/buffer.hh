@@ -34,7 +34,8 @@ public:
 
     // Allow access to the serialized data
     const uint8_t* data() const { return &data_[0]; }
-    size_t length() const { return data_.size(); }
+    size_t size() const { return data_.size(); }
+    bool serialize() const { return serialize_; }
 
     // Handle a memory zone argument
     void handle_mem(char* mem, size_t len)

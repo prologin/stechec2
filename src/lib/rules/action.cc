@@ -16,6 +16,27 @@ GameState* IAction::apply(GameState* st) const
 
 void PlayerActions::handle_buffer(utils::Buffer& buf)
 {
+    buf.handle(player->id);
+    buf.handle(player->score);
+
+    if (buf.serialize())
+    {
+        for (int i = actions.size(); i > 0; --i)
+        {
+            IAction_sptr action(actions.front());
+            action->handle_buffer(buf);
+            actions.pop_front();
+        }
+    }
+    else
+    {
+        while (buf.size() > 0)
+        {
+            IAction_sptr action = IAction_sptr(action_factory());
+            action->handle_buffer(buf);
+            actions.push_front(action);
+        }
+    }
 }
 
 } // namespace rules

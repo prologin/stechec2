@@ -42,7 +42,7 @@ public:
 private:
     GameState* game_state_;
     rules::Player_sptr player_;
-    rules::IActionList action_list_;
+    rules::PlayerActions action_list_;
 
 public:
 

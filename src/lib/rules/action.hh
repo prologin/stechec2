@@ -14,7 +14,7 @@ class IAction;
 
 typedef std::shared_ptr<IAction> IAction_sptr;
 typedef std::list<IAction_sptr> IActionList;
-
+typedef IAction* (*f_action_factory)();
 
 // Interface to be implemented by all action types.
 class IAction
@@ -70,8 +70,14 @@ class PlayerActions
 public:
     void handle_buffer(utils::Buffer& buf);
 
+    void register_factory(f_action_factory action_factory_)
+        { action_factory = action_factory_; }
+
     Player_sptr player;
     IActionList actions;
+
+protected:
+    f_action_factory action_factory;
 };
 
 } // namespace rules

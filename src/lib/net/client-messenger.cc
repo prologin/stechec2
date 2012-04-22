@@ -9,7 +9,7 @@ ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
 
 void ClientMessenger::send(const utils::Buffer& buf)
 {
-    Message* msg = to_msg(buf.data(), buf.length());
+    Message* msg = to_msg(buf.data(), buf.size());
     sckt_->send(*msg);
     delete msg;
 }
