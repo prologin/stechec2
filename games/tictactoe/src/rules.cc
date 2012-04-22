@@ -42,10 +42,15 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
-        // Receive actions
-        utils::Buffer* pull_buf = msgr->pull();
+        for (uint32_t i = 0; i < players_.size(); ++i)
+        {
+            // Receive actions
+            utils::Buffer* pull_buf = msgr->pull();
 
-        // Apply actions
+            api_->player_actions()->handle_buffer(*pull_buf);
+
+            // Apply actions
+        }
 
         // Play
         champion_play();
@@ -53,7 +58,7 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
         // Send actions
         utils::Buffer send_buf;
 
-        //for (const auto& action : api_->actions())
+        //for (const auto& action : api_->player_actions())
         //    action.handle_buffer(send_buf);
 
         msgr->send(send_buf);

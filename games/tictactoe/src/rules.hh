@@ -33,6 +33,7 @@ private:
     rules::Options opt_;
     utils::DLL* champion_;
     Api* api_;
+    rules::PlayerList players_;
 
     int winner_;
 };

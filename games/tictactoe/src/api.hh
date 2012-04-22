@@ -16,7 +16,7 @@
 # include <vector>
 # include <rules/game-state.hh>
 # include <rules/player.hh>
-# include <rules/action.hh>
+# include <rules/player-actions.hh>
 
 # include "game-state.hh"
 # include "constant.hh"
@@ -36,13 +36,16 @@ public:
     void player_set(rules::Player_sptr player)
         { player_ = player; }
 
+    rules::PlayerActions* player_actions()
+        { return &player_actions_; }
+
     const GameState* game_state() const
         { return game_state_; }
 
 private:
     GameState* game_state_;
     rules::Player_sptr player_;
-    rules::PlayerActions action_list_;
+    rules::PlayerActions player_actions_;
 
 public:
 

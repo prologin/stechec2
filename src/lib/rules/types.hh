@@ -1,15 +1,12 @@
 #ifndef LIB_RULES_TYPES_HH_
 # define LIB_RULES_TYPES_HH_
 
-# include <rules/player.hh>
-# include <rules/action.hh>
+# include <rules/player-actions.hh>
 # include <rules/options.hh>
 # include <net/client-messenger.hh>
 # include <net/server-messenger.hh>
 
 namespace rules {
-
-typedef std::list<PlayerActions> PlayerActionsList;
 
 typedef void (*f_rules_init)(const Options&);
 typedef void (*f_rules_result)(PlayerList*);
