@@ -5,7 +5,10 @@
 #include "constant.hh"
 
 ActionPlay::ActionPlay(int x, int y, int player)
-    : x_(x), y_(y), player_(player)
+    : x_(x),
+      y_(y),
+      player_(player),
+      id_(0)
 {
 }
 

@@ -1,6 +1,7 @@
 #ifndef TICTACTOE_ACTION_PLAY_HH_
 # define TICTACTOE_ACTION_PLAY_HH_
 
+# include <cstdint>
 # include <rules/action.hh>
 
 # include "game-state.hh"
@@ -13,14 +14,21 @@ public:
     virtual int check(const GameState* st) const;
     virtual void handle_buffer(utils::Buffer& buf);
 
+    uint32_t player_id() const
+        { return player_; }
+    uint32_t id() const
+        { return id_; }
+
 protected:
     virtual void apply_on(GameState* st) const;
 
     // Coordinates of the play.
-    int x_, y_;
+    int32_t x_, y_;
 
     // Player id
-    int player_;
+    int32_t player_;
+
+    uint32_t id_;
 };
 
 #endif // !TICTACTOE_ACTION_PLAY_HH_

@@ -3,6 +3,7 @@
 
 # include <cstdint>
 # include <list>
+# include <memory>
 # include <unordered_map>
 # include <utils/buffer.hh>
 
@@ -23,6 +24,9 @@ public:
     void add_action(IAction_sptr action)
         { actions_.push_back(action); }
 
+    void clear()
+        { actions_.clear(); }
+
     const IActionList& actions() const
         { return actions_; }
 
@@ -30,6 +34,8 @@ private:
     IActionList actions_;
     std::unordered_map<uint32_t, f_action_factory> action_factory_;
 };
+
+typedef std::shared_ptr<Actions> Actions_sptr;
 
 } // namespace rules
 

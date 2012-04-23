@@ -9,15 +9,19 @@ void Actions::handle_buffer(utils::Buffer& buf)
         for (int i = actions_.size(); i > 0; --i)
         {
             IAction_sptr action(actions_.front());
+
+            // The id is needed to reconstruct the action when unserializing
+            uint32_t action_id = action->id();
+            buf.handle(action_id);
+
             action->handle_buffer(buf);
-            actions_.pop_front();
         }
     }
     else
     {
         while (!buf.empty())
         {
-            // get the action id
+            // Get the action id
             uint32_t action_id;
             buf.handle(action_id);
 

@@ -50,7 +50,9 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
-        std::cout << *api_->game_state();
+        DEBUG("NEW TURN");
+
+        api_->actions()->clear();
 
         // Play
         champion_play();
@@ -58,11 +60,12 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
         // Send actions
         utils::Buffer send_buf;
 
-        for (auto& action : api_->actions()->actions())
-            action->handle_buffer(send_buf);
+        api_->actions()->handle_buffer(send_buf);
 
         msgr->send(send_buf);
         msgr->wait_for_ack();
+
+        api_->actions()->clear();
 
         for (uint32_t i = 0; i < players_->players.size(); ++i)
         {
@@ -74,29 +77,31 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
             // Apply them onto the gamestate
             for (auto& action : api_->actions()->actions())
+            {
+                // Only apply others actions
+                if (action->player_id() == api_->player()->id)
+                    continue;
+
                 api_->game_state_set(action->apply(api_->game_state()));
+            }
         }
+
+        // XXX: debug
+        std::cout << *api_->game_state();
     }
 
-    // Send actions
-    utils::Buffer send_buf;
-
-    for (auto& action : api_->actions()->actions())
-        action->handle_buffer(send_buf);
-
-    msgr->send(send_buf);
-    msgr->wait_for_ack();
+    DEBUG("winner = %i", winner_);
 }
 
 void Rules::server_loop(net::ServerMessenger_sptr msgr)
 {
-    rules::IActionList action_list;
+    rules::Actions actions;
 
     while ((winner_ = is_finished()) == -1)
     {
-        std::cout << *api_->game_state();
+        DEBUG("NEW TURN");
 
-        DEBUG("winner = %i", winner_);
+        api_->actions()->clear();
 
         for (uint32_t i = 0; i < players_->players.size(); ++i)
         {
@@ -106,11 +111,13 @@ void Rules::server_loop(net::ServerMessenger_sptr msgr)
             // Put them in the API container
             api_->actions()->handle_buffer(*pull_buf);
 
+            delete pull_buf;
+
             // Apply them onto the gamestate
             for (auto& action : api_->actions()->actions())
             {
                 api_->game_state_set(action->apply(api_->game_state()));
-                action_list.push_back(action);
+                actions.add_action(action);
             }
 
             msgr->ack();
@@ -119,11 +126,15 @@ void Rules::server_loop(net::ServerMessenger_sptr msgr)
         // Send actions
         utils::Buffer send_buf;
 
-        for (auto& action : action_list)
-            action->handle_buffer(send_buf);
+        actions.handle_buffer(send_buf);
 
         msgr->push(send_buf);
+
+        // XXX: debug
+        std::cout << *api_->game_state();
     }
+
+    DEBUG("winner = %i", winner_);
 }
 
 int Rules::is_finished()

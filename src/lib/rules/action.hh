@@ -27,6 +27,13 @@ public:
     // buffer.
     virtual void handle_buffer(utils::Buffer& buf) = 0;
 
+    // Get the id of the action, necessaryr for multiple actions
+    // serialization/unserialization
+    virtual uint32_t id() const = 0;
+
+    // Get the player id, which is useful for not applying an action twice
+    virtual uint32_t player_id() const = 0;
+
 private:
     // Only applies the action to a given state, without handling action
     // cancellation.
