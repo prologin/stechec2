@@ -26,10 +26,10 @@ void Options::process(int argc, char** argv)
     po::options_description config_cli_opt("Config options");
     config_cli_opt.add_options()
         ("rep_addr,r",
-            po::value<std::string>(&rep_addr)->default_value("tcp://*:4242"),
+            po::value<std::string>(&rep_addr)->default_value("tcp://*:42124"),
                         "Set reply address binding (ZeroMQ)")
         ("pub_addr,p",
-            po::value<std::string>(&pub_addr)->default_value("tcp://*:4243"),
+            po::value<std::string>(&pub_addr)->default_value("tcp://*:42125"),
                         "Set publishing address binding (ZeroMQ)")
         ("rules,u",
             po::value<std::string>(&rules_lib)->default_value("rules.so"),
