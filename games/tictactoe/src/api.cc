@@ -48,13 +48,14 @@ std::vector<int> Api::board()
 //
 error Api::play(int x, int y)
 {
-    ActionPlay action(x, y, player_->id);
+    rules::IAction_sptr action(new ActionPlay(x, y, player_->id));
 
     error err;
-    if ((err = static_cast<error>(action.check(game_state_))) != OK)
+    if ((err = static_cast<error>(action->check(game_state_))) != OK)
         return err;
 
-    game_state_ = action.apply(game_state_);
+    game_state_ = dynamic_cast<GameState*>(action->apply(game_state_));
+    actions_.add_action(action);
 
     return OK;
 }

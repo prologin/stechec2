@@ -20,6 +20,9 @@ public:
     // Serialization/Unserialization
     void handle_buffer(utils::Buffer& buf);
 
+    void add_action(IAction_sptr action)
+        { actions_.push_back(action); }
+
     const IActionList& actions() const
         { return actions_; }
 
