@@ -161,6 +161,7 @@ def build_rules(bld):
     bld.internal_lib(
         source = '''
             src/lib/rules/action.cc
+            src/lib/rules/player-actions.cc
             src/lib/rules/game-state.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
@@ -197,7 +198,6 @@ def build_server(bld):
             src/server/main.cc
             src/server/options.cc
             src/server/server.cc
-            src/server/client.cc
         ''',
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',

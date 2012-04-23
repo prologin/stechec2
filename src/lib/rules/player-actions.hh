@@ -20,6 +20,9 @@ public:
     // Serialization/Unserialization
     void handle_buffer(utils::Buffer& buf);
 
+    const IActionList& actions() const
+        { return actions_; }
+
 private:
     Player_sptr player_;
     IActionList actions_;

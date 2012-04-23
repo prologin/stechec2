@@ -1,7 +1,6 @@
 #include "client.hh"
 
 #include <utils/log.hh>
-#include <net/common.hh>
 #include <net/message.hh>
 #include <rules/action.hh>
 #include <rules/player.hh>
@@ -57,7 +56,7 @@ void Client::sckt_init()
     // Send a message to get an ID from the server
     // To avoid useless message, the client_id of the request corresponds
     // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-    net::Message id_req(net::MSG_CONNECT, net::PLAYER);
+    net::Message id_req(net::MSG_CONNECT, rules::PLAYER);
     net::Message* id_rep = nullptr;
 
     if (!sckt_->send(id_req) || !(id_rep = sckt_->recv()) ||

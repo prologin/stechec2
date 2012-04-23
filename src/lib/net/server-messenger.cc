@@ -14,6 +14,13 @@ void ServerMessenger::send(const utils::Buffer& buf)
     delete msg;
 }
 
+void ServerMessenger::push(const utils::Buffer& buf)
+{
+    Message* msg = to_msg(buf.data(), buf.size());
+    sckt_->push(*msg);
+    delete msg;
+}
+
 utils::Buffer* ServerMessenger::recv()
 {
     Message* msg = sckt_->recv();
@@ -27,6 +34,11 @@ utils::Buffer* ServerMessenger::recv()
     utils::Buffer* buf = new utils::Buffer(data_vector);
 
     return buf;
+}
+
+void ServerMessenger::ack()
+{
+    sckt_->send(Message(MSG_ACK));
 }
 
 } // namespace net

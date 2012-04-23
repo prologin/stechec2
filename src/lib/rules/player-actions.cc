@@ -1,5 +1,7 @@
 #include "player-actions.hh"
 
+namespace rules {
+
 void PlayerActions::handle_buffer(utils::Buffer& buf)
 {
     buf.handle(player_->id);
@@ -37,3 +39,5 @@ void PlayerActions::register_action(uint32_t action_id,
 {
     action_factory_[action_id] = action_factory;
 }
+
+} // namespace rules

@@ -1,5 +1,7 @@
 #include "client-messenger.hh"
 
+#include <utils/log.hh>
+
 namespace net {
 
 ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
@@ -43,6 +45,13 @@ utils::Buffer* ClientMessenger::internal_recv(Message* msg)
     utils::Buffer* buf = new utils::Buffer(data_vector);
 
     return buf;
+}
+
+void ClientMessenger::wait_for_ack()
+{
+    Message* msg = sckt_->recv();
+
+    CHECK_EXC(ClientMessengerError, msg->type == MSG_ACK);
 }
 
 } // namespace net

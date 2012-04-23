@@ -2,6 +2,7 @@
 # define LIB_NET_CLIENTMESSENGER_HH_
 
 # include <memory>
+# include <stdexcept>
 
 # include <net/messenger.hh>
 # include <net/client-socket.hh>
@@ -9,6 +10,12 @@
 # include <utils/buffer.hh>
 
 namespace net {
+
+class ClientMessengerError : public std::runtime_error
+{
+public:
+    ClientMessengerError() : std::runtime_error("Client messenger error") {}
+};
 
 class ClientMessenger : public Messenger
 {
@@ -18,6 +25,8 @@ public:
     virtual void send(const utils::Buffer&);
     virtual utils::Buffer* recv();
     virtual utils::Buffer* pull();
+
+    virtual void wait_for_ack();
 
 protected:
     virtual utils::Buffer* internal_recv(Message*);

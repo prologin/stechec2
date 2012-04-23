@@ -16,7 +16,10 @@ public:
     ServerMessenger(ServerSocket_sptr sckt);
 
     virtual void send(const utils::Buffer&);
+    virtual void push(const utils::Buffer&);
     virtual utils::Buffer* recv();
+
+    virtual void ack();
 
 private:
     ServerSocket_sptr sckt_;

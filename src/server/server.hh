@@ -10,8 +10,6 @@
 # include <rules/types.hh>
 # include <utils/dll.hh>
 
-# include "client.hh"
-
 // Forward declarations
 class Options;
 
@@ -34,7 +32,7 @@ private:
     uint32_t nb_clients_;
     std::unique_ptr<utils::DLL> rules_lib_;
 
-    std::list<Client_ptr> clients_;
+    rules::PlayerList clients_;
     net::ServerSocket_sptr sckt_;
     net::ServerMessenger_sptr msgr_;
 };

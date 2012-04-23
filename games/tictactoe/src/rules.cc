@@ -3,6 +3,7 @@
 #include <utils/log.hh>
 #include <utils/buffer.hh>
 
+#include "action-play.hh"
 #include "game-state.hh"
 
 Rules::Rules(const rules::Options& opt)
@@ -23,6 +24,10 @@ Rules::Rules(const rules::Options& opt)
 
         champion_init();
     }
+
+    // Register Actions
+    api_->player_actions()->register_action(0,
+            []() -> rules::IAction* { return new ActionPlay(); });
 }
 
 Rules::~Rules()
@@ -47,9 +52,12 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
             // Receive actions
             utils::Buffer* pull_buf = msgr->pull();
 
+            // Put them in the API container
             api_->player_actions()->handle_buffer(*pull_buf);
 
-            // Apply actions
+            // Apply them onto the gamestate
+            for (auto& action : api_->player_actions()->actions())
+                api_->game_state_set(action->apply(api_->game_state()));
         }
 
         // Play
@@ -58,15 +66,46 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
         // Send actions
         utils::Buffer send_buf;
 
-        //for (const auto& action : api_->player_actions())
-        //    action.handle_buffer(send_buf);
+        for (auto& action : api_->player_actions()->actions())
+            action->handle_buffer(send_buf);
 
         msgr->send(send_buf);
+        msgr->wait_for_ack();
     }
 }
 
 void Rules::server_loop(net::ServerMessenger_sptr msgr)
 {
+    rules::IActionList action_list;
+
+    while ((winner_ = is_finished()) == -1)
+    {
+        for (uint32_t i = 0; i < players_.size(); ++i)
+        {
+            // Receive actions
+            utils::Buffer* pull_buf = msgr->recv();
+
+            // Put them in the API container
+            api_->player_actions()->handle_buffer(*pull_buf);
+
+            // Apply them onto the gamestate
+            for (auto& action : api_->player_actions()->actions())
+            {
+                api_->game_state_set(action->apply(api_->game_state()));
+                action_list.push_back(action);
+            }
+
+            msgr->ack();
+        }
+
+        // Send actions
+        utils::Buffer send_buf;
+
+        for (auto& action : action_list)
+            action->handle_buffer(send_buf);
+
+        msgr->push(send_buf);
+    }
 }
 
 int Rules::is_finished()

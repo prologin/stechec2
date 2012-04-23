@@ -2,7 +2,6 @@
 
 #include <utils/log.hh>
 #include <net/message.hh>
-#include <net/common.hh>
 #include <rules/player.hh>
 
 #include "options.hh"
@@ -80,16 +79,18 @@ void Server::wait_for_players()
 
         // To avoid useless message, the client_id of the request corresponds
         // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-        Client_ptr new_client = Client_ptr(new Client(++nb_clients_,
-                        (net::ClientType) id_req->client_id));
+        rules::Player_sptr new_client =
+            rules::Player_sptr(new rules::Player(++nb_clients_,
+                        (rules::PlayerType) id_req->client_id));
 
-        net::Message id_rep(net::MSG_CONNECT, new_client->id());
+        net::Message id_rep(net::MSG_CONNECT, new_client->id);
         sckt_->send(id_rep);
 
         clients_.push_back(new_client);
 
-        NOTICE("Client connected - id: %i - type: %s", new_client->id(),
-                clienttype_str(new_client->type()).c_str());
+        NOTICE("Client connected - id: %i - type: %s", new_client->id,
+                rules::playertype_str(
+                    static_cast<rules::PlayerType>(new_client->type)).c_str());
 
         delete[] reinterpret_cast<char*>(id_req);
     }
