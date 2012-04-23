@@ -28,9 +28,6 @@ public:
 
     virtual void wait_for_ack();
 
-protected:
-    virtual utils::Buffer* internal_recv(Message*);
-
 private:
     ClientSocket_sptr sckt_;
 };

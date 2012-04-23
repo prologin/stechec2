@@ -18,7 +18,6 @@ public:
     virtual void send(const utils::Buffer&);
     virtual void push(const utils::Buffer&);
     virtual utils::Buffer* recv();
-
     virtual void ack();
 
 private:

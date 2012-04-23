@@ -30,7 +30,7 @@ void rules_init(const rules::Options& opt)
     rules_ = new Rules(opt);
 }
 
-void rules_result(rules::PlayerList* players)
+void rules_result()
 {
     delete rules_;
 }

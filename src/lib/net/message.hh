@@ -3,6 +3,7 @@
 
 # include <cstdint>
 # include <iostream>
+# include <utils/buffer.hh>
 
 namespace net {
 
@@ -13,13 +14,20 @@ enum MsgType
     MSG_CONNECT = 1,
     MSG_RULES   = 2,
     MSG_IGNORED = 3,
-    MSG_GAMESTART = 4,
-    MSG_ACK     = 5
+    MSG_PLAYERS = 4,
+    MSG_GAMESTART = 5,
+    MSG_ACK     = 6
 };
 
 struct Message
 {
     Message(uint32_t type_ = 0, uint32_t client_id_ = 0);
+
+    void handle_buffer(utils::Buffer& buf)
+    {
+        buf.handle(type);
+        buf.handle(client_id);
+    }
 
     // String representation of a Message
     std::string str() const;
@@ -30,12 +38,6 @@ struct Message
     // Id of the client that sent the message
     // Ignored for replies
     uint32_t client_id;
-
-    // Size of data to send
-    uint32_t size;
-
-    // Data to send
-    char data[1];
 };
 
 } // namespace net

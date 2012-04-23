@@ -38,7 +38,7 @@ void ClientSocket::init()
     }
 }
 
-Message* ClientSocket::pull(int flags)
+utils::Buffer* ClientSocket::pull(int flags)
 {
     return recv_sckt(pubsub_sckt_, flags);
 }

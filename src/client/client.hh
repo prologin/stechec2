@@ -20,6 +20,7 @@ public:
 
 private:
     void sckt_init();
+    void wait_for_players();
     void wait_for_game_start();
 
     rules::f_rules_init rules_init;
@@ -31,6 +32,7 @@ private:
     std::unique_ptr<utils::DLL> rules_lib_;
 
     rules::Player_sptr player_;
+    rules::PlayerVector_sptr players_;
     net::ClientSocket_sptr sckt_;
     net::ClientMessenger_sptr msgr_;
 };

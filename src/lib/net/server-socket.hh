@@ -3,6 +3,7 @@
 
 # include <string>
 # include <memory>
+# include <utils/buffer.hh>
 
 # include <net/socket.hh>
 # include <net/message.hh>
@@ -19,7 +20,7 @@ public:
 
     virtual void init();
 
-    bool push(const Message& msg, int flags = 0);
+    bool push(const utils::Buffer& buf, int flags = 0);
 };
 
 typedef std::shared_ptr<ServerSocket> ServerSocket_sptr;

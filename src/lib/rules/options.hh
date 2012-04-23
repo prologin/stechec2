@@ -22,6 +22,9 @@ struct Options
     // Player
     Player_sptr player;
 
+    // Players
+    PlayerVector_sptr players;
+
     // Verbosity of the logs displayed/written
     unsigned verbose;
 };

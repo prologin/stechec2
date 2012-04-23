@@ -25,6 +25,8 @@ Rules::Rules(const rules::Options& opt)
         champion_init();
     }
 
+    players_ = opt.players;
+
     // Register Actions
     api_->player_actions()->register_action(0,
             []() -> rules::IAction* { return new ActionPlay(); });
@@ -47,7 +49,7 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
-        for (uint32_t i = 0; i < players_.size(); ++i)
+        for (uint32_t i = 0; i < players_->players.size(); ++i)
         {
             // Receive actions
             utils::Buffer* pull_buf = msgr->pull();
@@ -80,7 +82,7 @@ void Rules::server_loop(net::ServerMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
-        for (uint32_t i = 0; i < players_.size(); ++i)
+        for (uint32_t i = 0; i < players_->players.size(); ++i)
         {
             // Receive actions
             utils::Buffer* pull_buf = msgr->recv();

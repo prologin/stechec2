@@ -1,6 +1,7 @@
 #include "client.hh"
 
 #include <utils/log.hh>
+#include <utils/buffer.hh>
 #include <net/message.hh>
 #include <rules/action.hh>
 #include <rules/player.hh>
@@ -16,12 +17,17 @@ Client::Client(const Options& opt)
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
+
+    players_ = rules::PlayerVector_sptr(new rules::PlayerVector());
 }
 
 void Client::run()
 {
     // Register to the stechec2 server
     sckt_init();
+
+    // Wait for the players list to be sent by the server
+    wait_for_players();
 
     // Create a messenger for sending rules messages
     msgr_ = net::ClientMessenger_sptr(new net::ClientMessenger(sckt_));
@@ -31,6 +37,7 @@ void Client::run()
     rules_opt.champion_lib = opt_.champion_lib;
     rules_opt.player = player_;
     rules_opt.verbose = opt_.verbose;
+    rules_opt.players = players_;
 
     // Rules specific initializations
     rules_init(rules_opt);
@@ -38,10 +45,11 @@ void Client::run()
     // Wait for the server ACK to start the game
     wait_for_game_start();
 
+    // Play the game
     client_loop(msgr_);
 
-    rules::PlayerList players;
-    rules_result(&players);
+    // Results
+    rules_result();
 }
 
 void Client::sckt_init()
@@ -56,29 +64,53 @@ void Client::sckt_init()
     // Send a message to get an ID from the server
     // To avoid useless message, the client_id of the request corresponds
     // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-    net::Message id_req(net::MSG_CONNECT, rules::PLAYER);
-    net::Message* id_rep = nullptr;
+    utils::Buffer buf_req;
+    net::Message msg(net::MSG_CONNECT, rules::PLAYER);
+    msg.handle_buffer(buf_req);
 
-    if (!sckt_->send(id_req) || !(id_rep = sckt_->recv()) ||
-            id_rep->client_id == 0)
+    utils::Buffer* buf_rep = nullptr;
+
+    if (!sckt_->send(buf_req) || !(buf_rep = sckt_->recv()) ||
+            (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
 
-    player_ = rules::Player_sptr(new rules::Player(id_rep->client_id, 0));
+    player_ = rules::Player_sptr(new rules::Player(msg.client_id, 0));
 
-    delete id_rep;
+    delete buf_rep;
 
     NOTICE("Connected - id: %i", player_->id);
 }
 
+void Client::wait_for_players()
+{
+    utils::Buffer* buf = nullptr;
+    net::Message msg;
+    uint32_t msg_type = net::MSG_IGNORED;
+
+    while (msg_type != net::MSG_PLAYERS)
+    {
+        buf = sckt_->pull();
+        msg.handle_buffer(*buf);
+
+        if (msg.type == net::MSG_PLAYERS)
+            players_->handle_buffer(*buf);
+
+        msg_type = msg.type;
+        delete buf;
+    }
+}
+
 void Client::wait_for_game_start()
 {
-    net::Message* msg = nullptr;
+    utils::Buffer* buf = nullptr;
+    net::Message msg;
     uint32_t msg_type = net::MSG_IGNORED;
 
     while (msg_type != net::MSG_GAMESTART)
     {
-        msg = sckt_->pull();
-        msg_type = msg->type;
-        delete msg;
+        buf = sckt_->pull();
+        msg.handle_buffer(*buf);
+        msg_type = msg.type;
+        delete buf;
     }
 }

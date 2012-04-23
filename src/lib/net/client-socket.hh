@@ -3,6 +3,7 @@
 
 # include <string>
 # include <memory>
+# include <utils/buffer.hh>
 
 # include <net/socket.hh>
 
@@ -18,7 +19,7 @@ public:
 
     virtual void init();
 
-    Message* pull(int flags = 0);
+    utils::Buffer* pull(int flags = 0);
 };
 
 typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;

@@ -8,13 +8,15 @@
 
 Server::Server(const Options& opt)
     : opt_(opt),
-      nb_clients_(0),
+      nb_players_(0),
       rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
 {
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
+
+    players_ = rules::PlayerVector_sptr(new rules::PlayerVector());
 }
 
 void Server::run()
@@ -35,18 +37,22 @@ void Server::run()
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
     rules_opt.verbose = opt_.verbose;
+    rules_opt.players = players_;
 
     // Rules specific initializations
     rules_init(rules_opt);
 
     // Send the server ACK to start the game
-    sckt_->push(net::Message(net::MSG_GAMESTART));
+    utils::Buffer buf_gamestart;
+    net::Message msg_gamestart(net::MSG_GAMESTART);
+    msg_gamestart.handle_buffer(buf_gamestart);
+    sckt_->push(buf_gamestart);
 
+    // Play the game
     server_loop(msgr_);
 
-    // Get the results
-    rules::PlayerList players;
-    rules_result(&players);
+    // Results
+    rules_result();
 }
 
 void Server::sckt_init()
@@ -64,14 +70,17 @@ void Server::wait_for_players()
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
-    while (clients_.size() < opt_.nb_clients)
+    while (players_->players.size() < opt_.nb_clients)
     {
-        net::Message* id_req = nullptr;
+        utils::Buffer* buf_req = nullptr;
 
-        if (!(id_req = sckt_->recv()))
+        if (!(buf_req = sckt_->recv()))
             continue;
 
-        if (id_req->type != net::MSG_CONNECT)
+        net::Message id_req;
+        id_req.handle_buffer(*buf_req);
+
+        if (id_req.type != net::MSG_CONNECT)
         {
             ERR("Message is not of type MSG_CONNECT, ignoring request");
             continue;
@@ -79,19 +88,30 @@ void Server::wait_for_players()
 
         // To avoid useless message, the client_id of the request corresponds
         // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-        rules::Player_sptr new_client =
-            rules::Player_sptr(new rules::Player(++nb_clients_,
-                        (rules::PlayerType) id_req->client_id));
+        rules::Player_sptr new_player =
+            rules::Player_sptr(new rules::Player(++nb_players_,
+                        (rules::PlayerType) id_req.client_id));
 
-        net::Message id_rep(net::MSG_CONNECT, new_client->id);
-        sckt_->send(id_rep);
+        delete buf_req;
 
-        clients_.push_back(new_client);
+        // Send the reply with a uid
+        net::Message id_rep(net::MSG_CONNECT, new_player->id);
+        utils::Buffer buf_rep;
+        id_rep.handle_buffer(buf_rep);
+        sckt_->send(buf_rep);
 
-        NOTICE("Client connected - id: %i - type: %s", new_client->id,
+        // Add the player to the list
+        players_->players.push_back(new_player);
+
+        NOTICE("Client connected - id: %i - type: %s", new_player->id,
                 rules::playertype_str(
-                    static_cast<rules::PlayerType>(new_client->type)).c_str());
-
-        delete[] reinterpret_cast<char*>(id_req);
+                    static_cast<rules::PlayerType>(new_player->type)).c_str());
     }
+
+    // Then send players info to all clients
+    utils::Buffer buf;
+    net::Message msg(net::MSG_PLAYERS);
+    msg.handle_buffer(buf);
+    players_->handle_buffer(buf);
+    sckt_->push(buf);
 }

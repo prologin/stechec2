@@ -9,7 +9,7 @@
 namespace rules {
 
 typedef void (*f_rules_init)(const Options&);
-typedef void (*f_rules_result)(PlayerList*);
+typedef void (*f_rules_result)();
 
 typedef void (*f_client_loop)(::net::ClientMessenger_sptr);
 typedef void (*f_server_loop)(::net::ServerMessenger_sptr);

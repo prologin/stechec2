@@ -18,7 +18,7 @@ void PlayerActions::handle_buffer(utils::Buffer& buf)
     }
     else
     {
-        while (buf.size() > 0)
+        while (!buf.empty())
         {
             // get the action id
             uint32_t action_id;

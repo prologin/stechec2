@@ -16,10 +16,6 @@ public:
 
     virtual void send(const utils::Buffer&) = 0;
     virtual utils::Buffer* recv() = 0;
-
-protected:
-    virtual Message* to_msg(const uint8_t* data, uint32_t data_size);
-    virtual uint32_t from_msg(const Message& msg, uint8_t** data);
 };
 
 } // namespace net

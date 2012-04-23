@@ -3,7 +3,7 @@
 
 # include <cstdint>
 # include <memory>
-# include <list>
+# include <vector>
 # include <string>
 # include <utils/buffer.hh>
 
@@ -30,7 +30,34 @@ struct Player
 };
 
 typedef std::shared_ptr<Player> Player_sptr;
-typedef std::list<Player_sptr> PlayerList;
+
+struct PlayerVector
+{
+    void handle_buffer(utils::Buffer& buf)
+    {
+        if (buf.serialize())
+        {
+            for (int i = players.size() - 1; i >= 0; --i)
+                players[i]->handle_buffer(buf);
+        }
+        else
+        {
+            while (!buf.empty())
+            {
+                // Get a player
+                Player_sptr player = Player_sptr(new Player(0, 0));
+
+                // And unserialize it
+                player->handle_buffer(buf);
+                players.push_back(player);
+            }
+        }
+    }
+
+    std::vector<Player_sptr> players;
+};
+
+typedef std::shared_ptr<PlayerVector> PlayerVector_sptr;
 
 enum PlayerType
 {

@@ -9,36 +9,44 @@ ServerMessenger::ServerMessenger(ServerSocket_sptr sckt)
 
 void ServerMessenger::send(const utils::Buffer& buf)
 {
-    Message* msg = to_msg(buf.data(), buf.size());
-    sckt_->send(*msg);
-    delete msg;
+    utils::Buffer out_buf;
+    Message msg(MSG_RULES);
+
+    msg.handle_buffer(out_buf);
+    out_buf += buf;
+
+    sckt_->send(out_buf);
 }
 
 void ServerMessenger::push(const utils::Buffer& buf)
 {
-    Message* msg = to_msg(buf.data(), buf.size());
-    sckt_->push(*msg);
-    delete msg;
+    utils::Buffer out_buf;
+    Message msg(MSG_RULES);
+
+    msg.handle_buffer(out_buf);
+    out_buf += buf;
+
+    sckt_->push(out_buf);
 }
 
 utils::Buffer* ServerMessenger::recv()
 {
-    Message* msg = sckt_->recv();
+    utils::Buffer* buf = sckt_->recv();
 
-    uint8_t* data;
-    uint32_t size = from_msg(*msg, &data);
-
-    std::vector<uint8_t> data_vector;
-    data_vector.assign(data, data + size);
-
-    utils::Buffer* buf = new utils::Buffer(data_vector);
+    Message msg;
+    msg.handle_buffer(*buf);
 
     return buf;
 }
 
 void ServerMessenger::ack()
 {
-    sckt_->send(Message(MSG_ACK));
+    utils::Buffer buf;
+    Message msg(MSG_ACK);
+
+    msg.handle_buffer(buf);
+
+    sckt_->send(buf);
 }
 
 } // namespace net

@@ -4,6 +4,7 @@
 # include <string>
 # include <memory>
 # include <zmq.hpp>
+# include <utils/buffer.hh>
 
 namespace net {
 
@@ -23,14 +24,14 @@ public:
            int io_thread);
 
     virtual void init() = 0;
-    virtual bool send(const Message& msg, int flags = 0);
-    virtual Message* recv(int flags = 0);
+    virtual bool send(const utils::Buffer& msg, int flags = 0);
+    virtual utils::Buffer* recv(int flags = 0);
 
 protected:
-    bool send_sckt(const Message& msg, std::shared_ptr<zmq::socket_t> sckt,
-            int flags);
+    bool send_sckt(const utils::Buffer& buf,
+            std::shared_ptr<zmq::socket_t> sckt, int flags);
     // recv_sckt allocates a Message, it has to be deleted after its use
-    Message* recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
+    utils::Buffer* recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
 
 protected:
     std::string pubsub_addr_;

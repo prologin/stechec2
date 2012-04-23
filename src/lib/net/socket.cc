@@ -16,23 +16,23 @@ Socket::Socket(const std::string& pubsub_addr,
 {
 }
 
-bool Socket::send(const Message& msg, int flags)
+bool Socket::send(const utils::Buffer& msg, int flags)
 {
     return send_sckt(msg, reqrep_sckt_, flags);
 }
 
-Message* Socket::recv(int flags)
+utils::Buffer* Socket::recv(int flags)
 {
     return recv_sckt(reqrep_sckt_, flags);
 }
 
-bool Socket::send_sckt(const Message& msg, std::shared_ptr<zmq::socket_t> sckt,
-        int flags)
+bool Socket::send_sckt(const utils::Buffer& buf,
+        std::shared_ptr<zmq::socket_t> sckt, int flags)
 {
     try
     {
-        zmq::message_t zmsg(sizeof (Message) + msg.size);
-        memcpy(zmsg.data(), &msg, sizeof (Message) + msg.size);
+        zmq::message_t zmsg(buf.size());
+        memcpy(zmsg.data(), buf.data(), buf.size());
 
         if (!sckt->send(zmsg, flags))
             throw std::runtime_error("Could not send message");
@@ -46,7 +46,7 @@ bool Socket::send_sckt(const Message& msg, std::shared_ptr<zmq::socket_t> sckt,
     }
 }
 
-Message* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
+utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
 {
     try
     {
@@ -55,10 +55,12 @@ Message* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
         if (!sckt->recv(&zmsg, flags))
             throw std::runtime_error("Could not get message");
 
-        Message* msg = reinterpret_cast<Message*>(new char[zmsg.size()]);
-        memcpy(msg, zmsg.data(), zmsg.size());
+        std::vector<uint8_t> data;
+        data.assign((uint8_t*)zmsg.data(), (uint8_t*)zmsg.data() + zmsg.size());
 
-        return msg;
+        utils::Buffer* buf = new utils::Buffer(data);
+
+        return buf;
     }
     catch(const std::exception& e)
     {

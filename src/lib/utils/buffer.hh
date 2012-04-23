@@ -36,6 +36,7 @@ public:
     const uint8_t* data() const { return &data_[0]; }
     size_t size() const { return data_.size(); }
     bool serialize() const { return serialize_; }
+    bool empty() const { return idx_ >= data_.size(); }
 
     // Handle a memory zone argument
     void handle_mem(char* mem, size_t len)
@@ -78,6 +79,13 @@ public:
     void handle(T& x)
     {
         handle_mem((char*)&x, sizeof (T));
+    }
+
+    Buffer& operator+=(const Buffer& b)
+    {
+        handle_mem((char*)b.data(), b.size());
+
+        return *this;
     }
 
 private:

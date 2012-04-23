@@ -11,47 +11,43 @@ ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
 
 void ClientMessenger::send(const utils::Buffer& buf)
 {
-    Message* msg = to_msg(buf.data(), buf.size());
-    sckt_->send(*msg);
-    delete msg;
+    utils::Buffer out_buf;
+    Message msg(MSG_RULES);
+
+    msg.handle_buffer(out_buf);
+    out_buf += buf;
+
+    sckt_->send(out_buf);
 }
 
 utils::Buffer* ClientMessenger::recv()
 {
-    Message* msg = sckt_->recv();
-    utils::Buffer* buf = internal_recv(msg);
-    delete msg;
+    utils::Buffer* buf = sckt_->recv();
+
+    Message msg;
+    msg.handle_buffer(*buf);
 
     return buf;
 }
 
 utils::Buffer* ClientMessenger::pull()
 {
-    Message* msg = sckt_->pull();
-    utils::Buffer* buf = internal_recv(msg);
-    delete msg;
+    utils::Buffer* buf = sckt_->pull();
 
-    return buf;
-}
-
-utils::Buffer* ClientMessenger::internal_recv(Message* msg)
-{
-    uint8_t* data;
-    uint32_t size = from_msg(*msg, &data);
-
-    std::vector<uint8_t> data_vector;
-    data_vector.assign(data, data + size);
-
-    utils::Buffer* buf = new utils::Buffer(data_vector);
+    Message msg;
+    msg.handle_buffer(*buf);
 
     return buf;
 }
 
 void ClientMessenger::wait_for_ack()
 {
-    Message* msg = sckt_->recv();
+    utils::Buffer* buf = sckt_->recv();
 
-    CHECK_EXC(ClientMessengerError, msg->type == MSG_ACK);
+    Message msg;
+    msg.handle_buffer(*buf);
+
+    CHECK_EXC(ClientMessengerError, msg.type == MSG_ACK);
 }
 
 } // namespace net

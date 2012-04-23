@@ -29,10 +29,10 @@ private:
 
 private:
     const Options& opt_;
-    uint32_t nb_clients_;
+    uint32_t nb_players_;
     std::unique_ptr<utils::DLL> rules_lib_;
 
-    rules::PlayerList clients_;
+    rules::PlayerVector_sptr players_;
     net::ServerSocket_sptr sckt_;
     net::ServerMessenger_sptr msgr_;
 };
