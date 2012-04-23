@@ -1,12 +1,9 @@
-#include "player-actions.hh"
+#include "actions.hh"
 
 namespace rules {
 
-void PlayerActions::handle_buffer(utils::Buffer& buf)
+void Actions::handle_buffer(utils::Buffer& buf)
 {
-    buf.handle(player_->id);
-    buf.handle(player_->score);
-
     if (buf.serialize())
     {
         for (int i = actions_.size(); i > 0; --i)
@@ -34,7 +31,7 @@ void PlayerActions::handle_buffer(utils::Buffer& buf)
     }
 }
 
-void PlayerActions::register_action(uint32_t action_id,
+void Actions::register_action(uint32_t action_id,
         f_action_factory action_factory)
 {
     action_factory_[action_id] = action_factory;

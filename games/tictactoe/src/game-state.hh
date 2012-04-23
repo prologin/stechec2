@@ -3,8 +3,9 @@
 
 // Defines the game state.
 
-# include <rules/game-state.hh>
 # include <vector>
+# include <ostream>
+# include <rules/game-state.hh>
 
 class GameState : public rules::GameState
 {
@@ -23,5 +24,7 @@ protected:
 
     std::vector<int> board_;
 };
+
+std::ostream& operator<<(std::ostream& out, const GameState& gs);
 
 #endif // !TICTACTOE_RULES_STATE_HH_

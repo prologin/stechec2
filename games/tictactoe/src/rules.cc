@@ -2,6 +2,7 @@
 
 #include <utils/log.hh>
 #include <utils/buffer.hh>
+#include <iostream>
 
 #include "action-play.hh"
 #include "game-state.hh"
@@ -28,7 +29,7 @@ Rules::Rules(const rules::Options& opt)
     players_ = opt.players;
 
     // Register Actions
-    api_->player_actions()->register_action(0,
+    api_->actions()->register_action(0,
             []() -> rules::IAction* { return new ActionPlay(); });
 }
 
@@ -49,18 +50,7 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
-        for (uint32_t i = 0; i < players_->players.size(); ++i)
-        {
-            // Receive actions
-            utils::Buffer* pull_buf = msgr->pull();
-
-            // Put them in the API container
-            api_->player_actions()->handle_buffer(*pull_buf);
-
-            // Apply them onto the gamestate
-            for (auto& action : api_->player_actions()->actions())
-                api_->game_state_set(action->apply(api_->game_state()));
-        }
+        std::cout << *api_->game_state();
 
         // Play
         champion_play();
@@ -68,12 +58,34 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
         // Send actions
         utils::Buffer send_buf;
 
-        for (auto& action : api_->player_actions()->actions())
+        for (auto& action : api_->actions()->actions())
             action->handle_buffer(send_buf);
 
         msgr->send(send_buf);
         msgr->wait_for_ack();
+
+        for (uint32_t i = 0; i < players_->players.size(); ++i)
+        {
+            // Receive actions
+            utils::Buffer* pull_buf = msgr->pull();
+
+            // Put them in the API container
+            api_->actions()->handle_buffer(*pull_buf);
+
+            // Apply them onto the gamestate
+            for (auto& action : api_->actions()->actions())
+                api_->game_state_set(action->apply(api_->game_state()));
+        }
     }
+
+    // Send actions
+    utils::Buffer send_buf;
+
+    for (auto& action : api_->actions()->actions())
+        action->handle_buffer(send_buf);
+
+    msgr->send(send_buf);
+    msgr->wait_for_ack();
 }
 
 void Rules::server_loop(net::ServerMessenger_sptr msgr)
@@ -82,16 +94,20 @@ void Rules::server_loop(net::ServerMessenger_sptr msgr)
 
     while ((winner_ = is_finished()) == -1)
     {
+        std::cout << *api_->game_state();
+
+        DEBUG("winner = %i", winner_);
+
         for (uint32_t i = 0; i < players_->players.size(); ++i)
         {
             // Receive actions
             utils::Buffer* pull_buf = msgr->recv();
 
             // Put them in the API container
-            api_->player_actions()->handle_buffer(*pull_buf);
+            api_->actions()->handle_buffer(*pull_buf);
 
             // Apply them onto the gamestate
-            for (auto& action : api_->player_actions()->actions())
+            for (auto& action : api_->actions()->actions())
             {
                 api_->game_state_set(action->apply(api_->game_state()));
                 action_list.push_back(action);

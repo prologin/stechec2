@@ -10,7 +10,7 @@
 
 namespace rules {
 
-class PlayerActions
+class Actions
 {
 public:
     // To handle unserialization of multiple Actions, we have to be able to
@@ -24,12 +24,9 @@ public:
         { return actions_; }
 
 private:
-    Player_sptr player_;
     IActionList actions_;
     std::unordered_map<uint32_t, f_action_factory> action_factory_;
 };
-
-typedef std::list<PlayerActions> PlayerActionsList;
 
 } // namespace rules
 

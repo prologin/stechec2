@@ -11,7 +11,7 @@ ActionPlay::ActionPlay(int x, int y, int player)
 
 int ActionPlay::check(const GameState* st) const
 {
-    INFO("ActionPlay::check");
+    DEBUG("ActionPlay::check");
 
     CHECK(player_ >= 0);
 

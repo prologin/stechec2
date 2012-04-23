@@ -14,7 +14,19 @@ GameState::~GameState()
 
 rules::GameState* GameState::copy() const
 {
-    DEBUG("GameState::copy");
-
     return new GameState(*this);
+}
+
+std::ostream& operator<<(std::ostream& out, const GameState& gs)
+{
+    for (size_t i = 0; i < gs.board().size(); ++i)
+    {
+        if (i % 3 == 0 && i != 0)
+            out << "\n";
+        out << gs.board().at(i);
+    }
+
+    out << std::endl;
+
+    return out;
 }

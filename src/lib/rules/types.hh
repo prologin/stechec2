@@ -1,7 +1,6 @@
 #ifndef LIB_RULES_TYPES_HH_
 # define LIB_RULES_TYPES_HH_
 
-# include <rules/player-actions.hh>
 # include <rules/options.hh>
 # include <net/client-messenger.hh>
 # include <net/server-messenger.hh>
