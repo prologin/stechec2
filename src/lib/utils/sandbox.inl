@@ -102,6 +102,9 @@ void* thread_proc(void* arg)
 template <typename Ret, typename... Args>
 Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
 {
+    if (get_timeout() == 0)
+        return func(args...);
+
     // Initialize the thread parameters object.
     std::tuple<Args...> args_t = std::make_tuple(args...);
     Ret retval;

@@ -57,3 +57,9 @@ TEST(UtilsSandbox, VoidRet)
     s.execute(useless);
     s.execute(useless_lambda);
 }
+
+TEST(UtilsSandbox, NoTimeout)
+{
+    Sandbox s(0);
+    s.execute(usleep, 50000u);
+}
