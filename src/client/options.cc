@@ -38,6 +38,9 @@ void Options::process(int argc, char** argv)
         ("champion,a",
             po::value<std::string>(&champion_lib)->default_value("champion.so"),
                         "Champion library")
+        ("map,f",
+            po::value<std::string>(&champion_lib)->default_value("map.casus"),
+                        "Map file")
         ("spectator,s",
             po::value<bool>(&spectator)->default_value(false),
                         "Set if the client is a spectator")

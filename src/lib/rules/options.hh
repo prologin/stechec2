@@ -13,6 +13,9 @@ struct Options
     // Path to the champion library
     std::string champion_lib;
 
+    // Map file name
+    std::string map_name;
+
     // Memory limit for the champion
     uint32_t memory;
 

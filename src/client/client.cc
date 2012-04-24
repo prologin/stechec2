@@ -35,6 +35,7 @@ void Client::run()
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = opt_.champion_lib;
+    rules_opt.map_name = opt_.map_file;
     rules_opt.player = player_;
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;

@@ -34,6 +34,9 @@ void Options::process(int argc, char** argv)
         ("rules,u",
             po::value<std::string>(&rules_lib)->default_value("rules.so"),
                         "Rules library")
+        ("map,f",
+            po::value<std::string>(&rules_lib)->default_value("map.casus"),
+                        "Map file")
         ("nb_clients,n",
             po::value<uint32_t>(&nb_clients)->default_value(2),
                         "Number of players to expect")

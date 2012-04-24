@@ -26,6 +26,9 @@ public:
     // Number of clients the server has to expect before beginning a game
     uint32_t nb_clients;
 
+    // Path of the map file
+    std::string map_file;
+
     // Time a player has to play a turn before he timeouts
     uint32_t turn_timeout;
 

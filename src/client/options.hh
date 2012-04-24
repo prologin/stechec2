@@ -29,6 +29,9 @@ public:
     // Path to the champion library
     std::string champion_lib;
 
+    // Path to the map file
+    std::string map_file;
+
     // Is this client a spectator? (Not yet implemented)
     bool spectator;
 
