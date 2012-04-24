@@ -35,7 +35,7 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&rules_lib)->default_value("rules.so"),
                         "Rules library")
         ("map,f",
-            po::value<std::string>(&rules_lib)->default_value("map.casus"),
+            po::value<std::string>(&map_file)->default_value("map.casus"),
                         "Map file")
         ("nb_clients,n",
             po::value<uint32_t>(&nb_clients)->default_value(2),
@@ -61,6 +61,7 @@ void Options::process(int argc, char** argv)
         ("server.rep_addr", po::value<std::string>(&rep_addr))
         ("server.pub_addr", po::value<std::string>(&pub_addr))
         ("server.rules", po::value<std::string>(&rules_lib))
+        ("server.map", po::value<std::string>(&map_file))
         ("server.nb_clients", po::value<unsigned>(&nb_clients))
         ("server.turn_timeout", po::value<unsigned>(&turn_timeout))
         ("server.log", po::value<std::string>(&log))
