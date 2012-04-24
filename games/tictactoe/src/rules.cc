@@ -58,22 +58,13 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
         champion_play();
 
         // Send actions
-        utils::Buffer send_buf;
-
-        api_->actions()->handle_buffer(send_buf);
-
-        msgr->send(send_buf);
+        msgr->send_actions(*api_->actions());
         msgr->wait_for_ack();
 
         api_->actions()->clear();
 
-        // Receive actions
-        utils::Buffer* pull_buf = msgr->pull();
-
-        // Put them in the API container
-        api_->actions()->handle_buffer(*pull_buf);
-
-        delete pull_buf;
+        // Pull actions
+        msgr->pull_actions(api_->actions());
 
         // Apply them onto the gamestate
         for (auto& action : api_->actions()->actions())

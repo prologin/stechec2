@@ -10,6 +10,9 @@
 
 namespace rules {
 
+// Forward decls
+class Actions;
+
 class ClientMessengerError : public std::runtime_error
 {
 public:
@@ -22,8 +25,12 @@ public:
     ClientMessenger(net::ClientSocket_sptr sckt);
 
     virtual void send(const utils::Buffer&);
-    virtual utils::Buffer* recv();
-    virtual utils::Buffer* pull();
+    void send_actions(Actions&);
+
+    utils::Buffer* recv();
+
+    utils::Buffer* pull();
+    void pull_actions(Actions*);
 
     virtual void wait_for_ack();
 

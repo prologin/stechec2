@@ -2,6 +2,7 @@
 
 #include <utils/log.hh>
 #include <net/message.hh>
+#include <rules/actions.hh>
 
 namespace rules {
 
@@ -19,6 +20,15 @@ void ClientMessenger::send(const utils::Buffer& buf)
     out_buf += buf;
 
     sckt_->send(out_buf);
+}
+
+void ClientMessenger::send_actions(Actions& actions)
+{
+    utils::Buffer buf;
+
+    actions.handle_buffer(buf);
+
+    send(buf);
 }
 
 utils::Buffer* ClientMessenger::recv()
@@ -39,6 +49,15 @@ utils::Buffer* ClientMessenger::pull()
     msg.handle_buffer(*buf);
 
     return buf;
+}
+
+void ClientMessenger::pull_actions(Actions* actions)
+{
+    utils::Buffer* buf = pull();
+
+    actions->handle_buffer(*buf);
+
+    delete buf;
 }
 
 void ClientMessenger::wait_for_ack()
