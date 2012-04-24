@@ -33,7 +33,7 @@ files = %w{
   interface.cc
   rules.cc
   rules.hh
-  rules-api.cc
+  entry.cc
 }
 files.each do |x|
   if File.exist? 'files/' + x

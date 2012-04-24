@@ -11,39 +11,42 @@
 */
 
 #include <cstdlib>
-#include <net/client-messenger.hh>
-#include <net/server-messenger.hh>
+#include <memory>
+#include <rules/client-messenger.hh>
+#include <rules/server-messenger.hh>
+#include <utils/log.hh>
 
 #include "rules.hh"
 
-Rules* rules;
+// Forward decls
+namespace rules {
+    struct Options;
+
+}
+
+static Rules* rules_;
 
 extern "C" {
 
-void rules_init(const std::string& champion)
+void rules_init(const rules::Options& opt)
 {
-    rules = new Rules(champion);
-
-    // FIXME
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
+    rules_ = new Rules(opt);
 }
 
 void rules_result()
 {
-    // FIXME
-
-    delete rules;
+    delete rules_;
 }
 
 void client_loop(net::ClientMessenger_sptr msgr)
 {
-    // FIXME
-    abort();
+    rules_->client_loop(msgr);
 }
 
 void server_loop(net::ServerMessenger_sptr msgr)
 {
-    // FIXME
-    abort();
+    rules_->server_loop(msgr);
 }
 
 } // extern "C"

@@ -12,7 +12,6 @@
 
 #include <cstdlib>
 #include <rules/options.hh>
-#include <rules/player.hh>
 #include <rules/client-messenger.hh>
 #include <rules/server-messenger.hh>
 #include <utils/log.hh>
