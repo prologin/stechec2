@@ -77,6 +77,9 @@ def configure(conf):
     # Ruby
     conf.check_ruby_version((1, 9))
 
+    # -lrt
+    conf.check_cxx(lib = "rt", mandatory = True, uselib_store = "rt")
+
     # Werror support - at the end to avoid false negatives in the checks
     if conf.options.werror:
         conf.check_cxx(cxxflags = '-Werror')
@@ -143,10 +146,11 @@ def build_utils(bld):
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
         target = 'utils',
+        use = ['rt'],
         export_includes = 'src/lib'
     )
 
-    for test in ['buffer', 'options']:
+    for test in ['buffer', 'options', 'sandbox']:
         bld.program(
             features = 'gtest',
             source = 'src/lib/utils/tests/test-%s.cc' % test,
