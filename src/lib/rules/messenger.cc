@@ -1,9 +1,9 @@
 #include "messenger.hh"
 
-namespace net {
+namespace rules {
 
 Messenger::~Messenger()
 {
 }
 
-} // namespace net
+} // namespace rules

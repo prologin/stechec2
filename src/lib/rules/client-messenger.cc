@@ -1,10 +1,11 @@
 #include "client-messenger.hh"
 
 #include <utils/log.hh>
+#include <net/message.hh>
 
-namespace net {
+namespace rules {
 
-ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
+ClientMessenger::ClientMessenger(net::ClientSocket_sptr sckt)
     : sckt_(sckt)
 {
 }
@@ -12,7 +13,7 @@ ClientMessenger::ClientMessenger(ClientSocket_sptr sckt)
 void ClientMessenger::send(const utils::Buffer& buf)
 {
     utils::Buffer out_buf;
-    Message msg(MSG_RULES);
+    net::Message msg(net::MSG_RULES);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;
@@ -24,7 +25,7 @@ utils::Buffer* ClientMessenger::recv()
 {
     utils::Buffer* buf = sckt_->recv();
 
-    Message msg;
+    net::Message msg;
     msg.handle_buffer(*buf);
 
     return buf;
@@ -34,7 +35,7 @@ utils::Buffer* ClientMessenger::pull()
 {
     utils::Buffer* buf = sckt_->pull();
 
-    Message msg;
+    net::Message msg;
     msg.handle_buffer(*buf);
 
     return buf;
@@ -44,10 +45,10 @@ void ClientMessenger::wait_for_ack()
 {
     utils::Buffer* buf = sckt_->recv();
 
-    Message msg;
+    net::Message msg;
     msg.handle_buffer(*buf);
 
-    CHECK_EXC(ClientMessengerError, msg.type == MSG_ACK);
+    CHECK_EXC(ClientMessengerError, msg.type == net::MSG_ACK);
 }
 
-} // namespace net
+} // namespace rules

@@ -44,7 +44,7 @@ Rules::~Rules()
     delete api_;
 }
 
-void Rules::client_loop(net::ClientMessenger_sptr msgr)
+void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 {
     CHECK(champion_ != nullptr);
 
@@ -67,23 +67,22 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
 
         api_->actions()->clear();
 
-        for (uint32_t i = 0; i < players_->players.size(); ++i)
+        // Receive actions
+        utils::Buffer* pull_buf = msgr->pull();
+
+        // Put them in the API container
+        api_->actions()->handle_buffer(*pull_buf);
+
+        delete pull_buf;
+
+        // Apply them onto the gamestate
+        for (auto& action : api_->actions()->actions())
         {
-            // Receive actions
-            utils::Buffer* pull_buf = msgr->pull();
+            // Only apply others actions
+            if (action->player_id() == api_->player()->id)
+                continue;
 
-            // Put them in the API container
-            api_->actions()->handle_buffer(*pull_buf);
-
-            // Apply them onto the gamestate
-            for (auto& action : api_->actions()->actions())
-            {
-                // Only apply others actions
-                if (action->player_id() == api_->player()->id)
-                    continue;
-
-                api_->game_state_set(action->apply(api_->game_state()));
-            }
+            api_->game_state_set(action->apply(api_->game_state()));
         }
 
         // XXX: debug
@@ -93,7 +92,7 @@ void Rules::client_loop(net::ClientMessenger_sptr msgr)
     DEBUG("winner = %i", winner_);
 }
 
-void Rules::server_loop(net::ServerMessenger_sptr msgr)
+void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 {
     rules::Actions actions;
 

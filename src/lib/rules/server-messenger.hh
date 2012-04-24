@@ -1,19 +1,18 @@
-#ifndef LIB_NET_SERVERMESSENGER_HH_
-# define LIB_NET_SERVERMESSENGER_HH_
+#ifndef LIB_RULES_SERVERMESSENGER_HH_
+# define LIB_RULES_SERVERMESSENGER_HH_
 
 # include <memory>
 
-# include <net/messenger.hh>
+# include <rules/messenger.hh>
 # include <net/server-socket.hh>
-# include <net/rules-message.hh>
 # include <utils/buffer.hh>
 
-namespace net {
+namespace rules {
 
 class ServerMessenger : public Messenger
 {
 public:
-    ServerMessenger(ServerSocket_sptr sckt);
+    ServerMessenger(net::ServerSocket_sptr sckt);
 
     virtual void send(const utils::Buffer&);
     virtual void push(const utils::Buffer&);
@@ -21,11 +20,11 @@ public:
     virtual void ack();
 
 private:
-    ServerSocket_sptr sckt_;
+    net::ServerSocket_sptr sckt_;
 };
 
 typedef std::shared_ptr<ServerMessenger> ServerMessenger_sptr;
 
-} // namespace net
+} // namespace rules
 
-#endif // !LIB_NET_SERVERMESSENGER_HH_
+#endif // !LIB_RULES_SERVERMESSENGER_HH_

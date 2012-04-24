@@ -1,8 +1,10 @@
 #include "server-messenger.hh"
 
-namespace net {
+#include <net/message.hh>
 
-ServerMessenger::ServerMessenger(ServerSocket_sptr sckt)
+namespace rules {
+
+ServerMessenger::ServerMessenger(net::ServerSocket_sptr sckt)
     : sckt_(sckt)
 {
 }
@@ -10,7 +12,7 @@ ServerMessenger::ServerMessenger(ServerSocket_sptr sckt)
 void ServerMessenger::send(const utils::Buffer& buf)
 {
     utils::Buffer out_buf;
-    Message msg(MSG_RULES);
+    net::Message msg(net::MSG_RULES);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;
@@ -21,7 +23,7 @@ void ServerMessenger::send(const utils::Buffer& buf)
 void ServerMessenger::push(const utils::Buffer& buf)
 {
     utils::Buffer out_buf;
-    Message msg(MSG_RULES);
+    net::Message msg(net::MSG_RULES);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;
@@ -33,7 +35,7 @@ utils::Buffer* ServerMessenger::recv()
 {
     utils::Buffer* buf = sckt_->recv();
 
-    Message msg;
+    net::Message msg;
     msg.handle_buffer(*buf);
 
     return buf;
@@ -42,7 +44,7 @@ utils::Buffer* ServerMessenger::recv()
 void ServerMessenger::ack()
 {
     utils::Buffer buf;
-    Message msg(MSG_ACK);
+    net::Message msg(net::MSG_ACK);
 
     msg.handle_buffer(buf);
 

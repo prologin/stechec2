@@ -1,13 +1,12 @@
-#ifndef LIB_NET_MESSENGER_HH_
-# define LIB_NET_MESSENGER_HH_
+#ifndef LIB_RULES_MESSENGER_HH_
+# define LIB_RULES_MESSENGER_HH_
 
 # include <cstdint>
 # include <net/socket.hh>
 # include <net/message.hh>
-# include <net/rules-message.hh>
 # include <utils/buffer.hh>
 
-namespace net {
+namespace rules {
 
 class Messenger
 {
@@ -18,6 +17,6 @@ public:
     virtual utils::Buffer* recv() = 0;
 };
 
-} // namespace net
+} // namespace rules
 
-#endif // !LIB_NET_MESSENGER_HH_
+#endif // !LIB_RULES_MESSENGER_HH_

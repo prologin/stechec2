@@ -31,7 +31,7 @@ struct Player
 
 typedef std::shared_ptr<Player> Player_sptr;
 
-struct PlayerVector
+struct Players
 {
     void handle_buffer(utils::Buffer& buf)
     {
@@ -57,7 +57,7 @@ struct PlayerVector
     std::vector<Player_sptr> players;
 };
 
-typedef std::shared_ptr<PlayerVector> PlayerVector_sptr;
+typedef std::shared_ptr<Players> Players_sptr;
 
 enum PlayerType
 {

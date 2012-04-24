@@ -3,8 +3,8 @@
 
 # include <utils/dll.hh>
 # include <rules/options.hh>
-# include <net/client-messenger.hh>
-# include <net/server-messenger.hh>
+# include <rules/client-messenger.hh>
+# include <rules/server-messenger.hh>
 
 # include "api.hh"
 
@@ -18,8 +18,8 @@ public:
     explicit Rules(const rules::Options& opt);
     virtual ~Rules();
 
-    void client_loop(net::ClientMessenger_sptr msgr);
-    void server_loop(net::ServerMessenger_sptr msgr);
+    void client_loop(rules::ClientMessenger_sptr msgr);
+    void server_loop(rules::ServerMessenger_sptr msgr);
 
 protected:
     int is_finished();
@@ -33,7 +33,7 @@ private:
     rules::Options opt_;
     utils::DLL* champion_;
     Api* api_;
-    rules::PlayerVector_sptr players_;
+    rules::Players_sptr players_;
 
     int winner_;
 };

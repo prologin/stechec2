@@ -6,7 +6,7 @@
 # include <memory>
 
 # include <net/server-socket.hh>
-# include <net/server-messenger.hh>
+# include <rules/server-messenger.hh>
 # include <rules/types.hh>
 # include <utils/dll.hh>
 
@@ -32,9 +32,9 @@ private:
     uint32_t nb_players_;
     std::unique_ptr<utils::DLL> rules_lib_;
 
-    rules::PlayerVector_sptr players_;
+    rules::Players_sptr players_;
     net::ServerSocket_sptr sckt_;
-    net::ServerMessenger_sptr msgr_;
+    rules::ServerMessenger_sptr msgr_;
 };
 
 #endif // !SERVER_SERVER_HH_

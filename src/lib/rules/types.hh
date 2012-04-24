@@ -2,16 +2,16 @@
 # define LIB_RULES_TYPES_HH_
 
 # include <rules/options.hh>
-# include <net/client-messenger.hh>
-# include <net/server-messenger.hh>
+# include <rules/client-messenger.hh>
+# include <rules/server-messenger.hh>
 
 namespace rules {
 
 typedef void (*f_rules_init)(const Options&);
 typedef void (*f_rules_result)();
 
-typedef void (*f_client_loop)(::net::ClientMessenger_sptr);
-typedef void (*f_server_loop)(::net::ServerMessenger_sptr);
+typedef void (*f_client_loop)(ClientMessenger_sptr);
+typedef void (*f_server_loop)(ServerMessenger_sptr);
 
 } // namespace rules
 

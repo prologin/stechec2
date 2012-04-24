@@ -16,7 +16,7 @@ Server::Server(const Options& opt)
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
-    players_ = rules::PlayerVector_sptr(new rules::PlayerVector());
+    players_ = rules::Players_sptr(new rules::Players());
 }
 
 void Server::run()
@@ -31,7 +31,7 @@ void Server::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    msgr_ = net::ServerMessenger_sptr(new net::ServerMessenger(sckt_));
+    msgr_ = rules::ServerMessenger_sptr(new rules::ServerMessenger(sckt_));
 
     // Set the rules options
     rules::Options rules_opt;

@@ -18,7 +18,7 @@ Client::Client(const Options& opt)
     client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
-    players_ = rules::PlayerVector_sptr(new rules::PlayerVector());
+    players_ = rules::Players_sptr(new rules::Players());
 }
 
 void Client::run()
@@ -30,7 +30,7 @@ void Client::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    msgr_ = net::ClientMessenger_sptr(new net::ClientMessenger(sckt_));
+    msgr_ = rules::ClientMessenger_sptr(new rules::ClientMessenger(sckt_));
 
     // Set the rules options
     rules::Options rules_opt;

@@ -119,9 +119,6 @@ def build_net(bld):
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
-            src/lib/net/messenger.cc
-            src/lib/net/client-messenger.cc
-            src/lib/net/server-messenger.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'net',
@@ -163,10 +160,13 @@ def build_rules(bld):
             src/lib/rules/action.cc
             src/lib/rules/actions.cc
             src/lib/rules/game-state.cc
+            src/lib/rules/messenger.cc
+            src/lib/rules/client-messenger.cc
+            src/lib/rules/server-messenger.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
         target = 'rules',
-        use = ['utils'],
+        use = ['utils', 'net'],
         export_includes = 'src/lib'
     )
 
@@ -188,7 +188,7 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'BOOST'],
+        use = ['utils', 'net', 'rules', 'BOOST'],
         lib = ['dl']
     )
 
@@ -202,6 +202,6 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'BOOST'],
+        use = ['utils', 'net', 'rules', 'BOOST'],
         lib = ['dl']
     )

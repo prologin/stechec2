@@ -13,8 +13,8 @@
 #include <cstdlib>
 #include <rules/options.hh>
 #include <rules/player.hh>
-#include <net/client-messenger.hh>
-#include <net/server-messenger.hh>
+#include <rules/client-messenger.hh>
+#include <rules/server-messenger.hh>
 #include <utils/log.hh>
 
 #include "rules.hh"
@@ -35,12 +35,12 @@ void rules_result()
     delete rules_;
 }
 
-void client_loop(net::ClientMessenger_sptr msgr)
+void client_loop(rules::ClientMessenger_sptr msgr)
 {
     rules_->client_loop(msgr);
 }
 
-void server_loop(net::ServerMessenger_sptr msgr)
+void server_loop(rules::ServerMessenger_sptr msgr)
 {
     rules_->server_loop(msgr);
 }
