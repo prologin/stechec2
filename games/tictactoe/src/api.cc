@@ -55,7 +55,7 @@ error Api::play(int x, int y)
         return err;
 
     game_state_ = dynamic_cast<GameState*>(action->apply(game_state_));
-    actions_.add_action(action);
+    actions_.add(action);
 
     return OK;
 }

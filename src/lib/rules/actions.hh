@@ -21,7 +21,7 @@ public:
     // Serialization/Unserialization
     void handle_buffer(utils::Buffer& buf);
 
-    void add_action(IAction_sptr action)
+    void add(IAction_sptr action)
         { actions_.push_back(action); }
 
     void clear()
@@ -34,8 +34,6 @@ private:
     IActionList actions_;
     std::unordered_map<uint32_t, f_action_factory> action_factory_;
 };
-
-typedef std::shared_ptr<Actions> Actions_sptr;
 
 } // namespace rules
 

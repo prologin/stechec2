@@ -107,7 +107,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
             for (auto& action : api_->actions()->actions())
             {
                 api_->game_state_set(action->apply(api_->game_state()));
-                actions.add_action(action);
+                actions.add(action);
             }
 
             msgr->ack();
