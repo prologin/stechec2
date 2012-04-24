@@ -28,7 +28,7 @@ TEST(UtilsBuffer, Serialize)
     s.handle_buffer(buf);
 
     // Check if the size is as expected
-    EXPECT_EQ(15u, buf.length());
+    EXPECT_EQ(15u, buf.size());
 
     // Check if the contents are as expected
     char contents[16] = "\x2A\x00\x00\x00" // int x

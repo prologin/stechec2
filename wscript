@@ -129,7 +129,7 @@ def build_net(bld):
         export_includes = 'src/lib'
     )
 
-    for test in ['messenger']:
+    for test in []:
         bld.program(
             features = 'gtest',
             source = 'src/lib/net/tests/test-%s.cc' % test,

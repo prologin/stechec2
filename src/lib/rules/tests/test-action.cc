@@ -21,6 +21,8 @@ public:
 class MyIncrAction : public Action<MyGameState>
 {
 public:
+    virtual ~MyIncrAction() {}
+
     virtual int check(const MyGameState* st) const
     {
         if (st->x >= 3)
@@ -33,6 +35,16 @@ public:
     {
     }
 
+    virtual uint32_t player_id() const
+    {
+        return 0;
+    }
+
+    virtual uint32_t id() const
+    {
+        return 0;
+    }
+
 private:
     virtual void apply_on(MyGameState* st) const
     {
@@ -43,6 +55,8 @@ private:
 class MyDecrAction : public Action<MyGameState>
 {
 public:
+    virtual ~MyDecrAction() {}
+
     virtual int check(const MyGameState* st) const
     {
         if (st->x <= 0)
@@ -53,6 +67,16 @@ public:
 
     virtual void handle_buffer(utils::Buffer&)
     {
+    }
+
+    virtual uint32_t player_id() const
+    {
+        return 0;
+    }
+
+    virtual uint32_t id() const
+    {
+        return 0;
     }
 
 private:
