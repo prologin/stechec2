@@ -62,8 +62,7 @@ typedef std::shared_ptr<Players> Players_sptr;
 enum PlayerType
 {
     PLAYER                      = 1,
-    SPECTATOR                   = 2,
-    NONBLOCKING_SPECTATOR       = 3
+    SPECTATOR                   = 2
 };
 
 static inline std::string playertype_str(PlayerType type)
@@ -74,8 +73,6 @@ static inline std::string playertype_str(PlayerType type)
         return "PLAYER";
     case SPECTATOR:
         return "SPECTATOR";
-    case NONBLOCKING_SPECTATOR:
-        return "NONBLOCKING SPECTATOR";
     }
 
     return "";

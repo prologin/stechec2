@@ -27,6 +27,7 @@ Rules::Rules(const rules::Options& opt)
     }
 
     players_ = opt.players;
+    spectators_ = opt.spectators;
 
     // Register Actions
     api_->actions()->register_action(0,
@@ -48,11 +49,16 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 {
     CHECK(champion_ != nullptr);
 
+    uint32_t playing_id;
+
     while (true)
     {
         while (((winner_ = is_finished()) == -1) &&
-                msgr->wait_for_turn(opt_.player->id))
+                msgr->wait_for_turn(opt_.player->id, &playing_id))
         {
+            if (is_spectator(playing_id))
+                continue;
+
             // Pull actions
             api_->actions()->clear();
             msgr->pull_actions(api_->actions());
@@ -129,6 +135,54 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
     DEBUG("winner = %i", winner_);
 }
 
+void Rules::spectator_loop(rules::ClientMessenger_sptr msgr)
+{
+    CHECK(champion_ != nullptr);
+
+    uint32_t playing_id;
+
+    while (true)
+    {
+        while (((winner_ = is_finished()) == -1) &&
+                msgr->wait_for_turn(opt_.player->id, &playing_id))
+        {
+            if (is_spectator(playing_id))
+                continue;
+
+            // Pull actions
+            api_->actions()->clear();
+            msgr->pull_actions(api_->actions());
+
+            // Apply them onto the gamestate
+            for (auto& action : api_->actions()->actions())
+            {
+                // Only apply others actions
+                if (action->player_id() == api_->player()->id)
+                    continue;
+
+                api_->game_state_set(action->apply(api_->game_state()));
+            }
+        }
+
+        if (winner_ != -1)
+            break;
+
+        DEBUG("NEW TURN");
+
+        // Spectate
+        champion_play();
+
+        // Notify the server we are done
+        msgr->ack();
+        msgr->wait_for_ack();
+
+        // XXX: debug
+        std::cout << *api_->game_state();
+    }
+
+    DEBUG("winner = %i", winner_);
+}
+
 int Rules::is_finished()
 {
     const std::vector<int> board = api_->game_state()->board();
@@ -157,4 +211,13 @@ int Rules::is_finished()
         return board[2];
 
     return -1;
+}
+
+bool Rules::is_spectator(uint32_t id)
+{
+    for (rules::Player_sptr spectator : spectators_->players)
+        if (spectator->id == id)
+            return true;
+
+    return false;
 }

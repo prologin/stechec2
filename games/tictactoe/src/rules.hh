@@ -21,9 +21,11 @@ public:
 
     void client_loop(rules::ClientMessenger_sptr msgr);
     void server_loop(rules::ServerMessenger_sptr msgr);
+    void spectator_loop(rules::ClientMessenger_sptr msgr);
 
 protected:
     int is_finished();
+    bool is_spectator(uint32_t id);
 
 protected:
     f_champion_init champion_init;
@@ -32,11 +34,13 @@ protected:
 
 private:
     const rules::Options& opt_;
+
     utils::DLL* champion_;
-    Api* api_;
-    rules::Players_sptr players_;
     utils::Sandbox sandbox_;
 
+    Api* api_;
+    rules::Players_sptr players_;
+    rules::Players_sptr spectators_;
     int winner_;
 };
 

@@ -17,6 +17,7 @@ Server::Server(const Options& opt)
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
     players_ = rules::Players_sptr(new rules::Players());
+    spectators_ = rules::Players_sptr(new rules::Players());
 }
 
 void Server::run()
@@ -38,6 +39,7 @@ void Server::run()
     rules_opt.champion_lib = "";
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;
+    rules_opt.spectators = spectators_;
 
     // Rules specific initializations
     rules_init(rules_opt);
@@ -90,7 +92,7 @@ void Server::wait_for_players()
         // to the type of the client connecting (PLAYER, SPECTATOR, ...)
         rules::Player_sptr new_player =
             rules::Player_sptr(new rules::Player(++nb_players_,
-                        (rules::PlayerType) id_req.client_id));
+                        static_cast<rules::PlayerType>(id_req.client_id)));
 
         delete buf_req;
 
@@ -101,7 +103,10 @@ void Server::wait_for_players()
         sckt_->send(buf_rep);
 
         // Add the player to the list
-        players_->players.push_back(new_player);
+        if (static_cast<rules::PlayerType>(id_req.client_id) == rules::SPECTATOR)
+            spectators_->players.push_back(new_player);
+        else
+            players_->players.push_back(new_player);
 
         NOTICE("Client connected - id: %i - type: %s", new_player->id,
                 rules::playertype_str(
@@ -109,9 +114,20 @@ void Server::wait_for_players()
     }
 
     // Then send players info to all clients
-    utils::Buffer buf;
-    net::Message msg(net::MSG_PLAYERS);
-    msg.handle_buffer(buf);
-    players_->handle_buffer(buf);
-    sckt_->push(buf);
+    utils::Buffer buf_players;
+    net::Message msg_players(net::MSG_PLAYERS);
+
+    msg_players.handle_buffer(buf_players);
+    players_->handle_buffer(buf_players);
+
+    sckt_->push(buf_players);
+
+    // And spectators
+    utils::Buffer buf_spectators;
+    net::Message msg_spectators(net::MSG_PLAYERS);
+
+    msg_spectators.handle_buffer(buf_spectators);
+    spectators_->handle_buffer(buf_spectators);
+
+    sckt_->push(buf_spectators);
 }

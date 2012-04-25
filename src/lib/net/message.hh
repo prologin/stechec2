@@ -15,8 +15,9 @@ enum MsgType
     MSG_RULES   = 2,
     MSG_IGNORED = 3,
     MSG_PLAYERS = 4,
-    MSG_GAMESTART = 5,
-    MSG_ACK     = 6
+    MSG_SPECTATORS = 5,
+    MSG_GAMESTART = 6,
+    MSG_ACK     = 7
 };
 
 struct Message

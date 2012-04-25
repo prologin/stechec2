@@ -15,10 +15,15 @@ Client::Client(const Options& opt)
 {
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
-    client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
+    if (opt_.spectator)
+        client_loop = rules_lib_->get<rules::f_client_loop>("spectator_loop");
+    else
+        client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
+
     players_ = rules::Players_sptr(new rules::Players());
+    spectators_ = rules::Players_sptr(new rules::Players());
 }
 
 void Client::run()
@@ -39,6 +44,7 @@ void Client::run()
     rules_opt.player = player_;
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;
+    rules_opt.spectators = spectators_;
 
     // Rules specific initializations
     rules_init(rules_opt);
@@ -67,10 +73,14 @@ void Client::sckt_init()
     // to the type of the client connecting (PLAYER, SPECTATOR, ...)
     utils::Buffer buf_req;
     net::Message msg(net::MSG_CONNECT, rules::PLAYER);
+
+    if (opt_.spectator)
+        msg.client_id = rules::SPECTATOR;
+
     msg.handle_buffer(buf_req);
 
+    // Send the request
     utils::Buffer* buf_rep = nullptr;
-
     if (!sckt_->send(buf_req) || !(buf_rep = sckt_->recv()) ||
             (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
@@ -86,17 +96,30 @@ void Client::wait_for_players()
 {
     utils::Buffer* buf = nullptr;
     net::Message msg;
-    uint32_t msg_type = net::MSG_IGNORED;
 
+    // Wait for players
+    uint32_t msg_type = net::MSG_IGNORED;
     while (msg_type != net::MSG_PLAYERS)
     {
         buf = sckt_->pull();
         msg.handle_buffer(*buf);
 
-        if (msg.type == net::MSG_PLAYERS)
+        if ((msg_type = msg.type) == net::MSG_PLAYERS)
             players_->handle_buffer(*buf);
 
-        msg_type = msg.type;
+        delete buf;
+    }
+
+    // Wait for spectators
+    msg_type = net::MSG_IGNORED;
+    while (msg_type != net::MSG_PLAYERS)
+    {
+        buf = sckt_->pull();
+        msg.handle_buffer(*buf);
+
+        if ((msg_type = msg.type) == net::MSG_PLAYERS)
+            spectators_->handle_buffer(*buf);
+
         delete buf;
     }
 }

@@ -33,8 +33,10 @@ private:
     std::unique_ptr<utils::DLL> rules_lib_;
 
     rules::Players_sptr players_;
-    net::ServerSocket_sptr sckt_;
+    rules::Players_sptr spectators_;
     rules::ServerMessenger_sptr msgr_;
+
+    net::ServerSocket_sptr sckt_;
 };
 
 #endif // !SERVER_SERVER_HH_

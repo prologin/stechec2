@@ -1,6 +1,5 @@
 * Handle server-side timeout, not to hang forever in case a client segfaults
 * Fix client config file loading
-* Add the spectator mode
 * Find a way to identify champions in the server results
 * Fix C# generator (sigsegv)
 

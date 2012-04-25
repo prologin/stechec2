@@ -28,6 +28,9 @@ struct Options
     // Players
     Players_sptr players;
 
+    // Spactators
+    Players_sptr spectators;
+
     // Verbosity of the logs displayed/written
     unsigned verbose;
 };

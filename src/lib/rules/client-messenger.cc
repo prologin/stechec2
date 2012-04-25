@@ -83,13 +83,11 @@ void ClientMessenger::wait_for_ack()
     CHECK_EXC(ClientMessengerError, msg.type == net::MSG_ACK);
 }
 
-bool ClientMessenger::wait_for_turn(uint32_t player_id)
+bool ClientMessenger::wait_for_turn(uint32_t player_id, uint32_t* pulled_id)
 {
-    uint32_t id;
+    pull_id(pulled_id);
 
-    pull_id(&id);
-
-    return player_id != id;
+    return player_id != *pulled_id;
 }
 
 } // namespace rules
