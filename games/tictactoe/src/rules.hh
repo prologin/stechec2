@@ -1,10 +1,11 @@
 #ifndef RULES_RULES_HH_
 # define RULES_RULES_HH_
 
-# include <utils/dll.hh>
-# include <rules/options.hh>
 # include <rules/client-messenger.hh>
+# include <rules/options.hh>
 # include <rules/server-messenger.hh>
+# include <utils/dll.hh>
+# include <utils/sandbox.hh>
 
 # include "api.hh"
 
@@ -34,6 +35,7 @@ private:
     utils::DLL* champion_;
     Api* api_;
     rules::Players_sptr players_;
+    utils::Sandbox sandbox_;
 
     int winner_;
 };

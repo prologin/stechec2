@@ -1,5 +1,5 @@
 * Handle server-side timeout, not to hang forever in case a client segfaults
 * Fix client config file loading
-* Add Sandbox to tictactoe
+* Fix tictactoe game end detection in the client
 * Add the spectator mode
 * Find a way to identify champions in the server results

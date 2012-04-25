@@ -23,7 +23,7 @@ Rules::Rules(const rules::Options& opt)
         champion_play = champion_->get<f_champion_play>("play_turn");
         champion_end = champion_->get<f_champion_end>("end_game");
 
-        champion_init();
+        sandbox_.execute(champion_init);
     }
 
     players_ = opt.players;
@@ -37,7 +37,7 @@ Rules::~Rules()
 {
     if (champion_)
     {
-        champion_end();
+        sandbox_.execute(champion_end);
         delete champion_;
     }
 
@@ -71,7 +71,7 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 
         // Play
         api_->actions()->clear();
-        champion_play();
+        sandbox_.execute(champion_play);
 
         // Send actions
         msgr->send_actions(*api_->actions());
@@ -118,7 +118,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
                 break;
         }
 
-        if (winner_ != -1)
+        if ((winner_ = is_finished()) != -1)
             break;
     }
 
