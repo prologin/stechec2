@@ -71,10 +71,11 @@ class CSharpCxxFileGenerator < CxxProto
 #include <map>
 #include <vector>
 #include <string>
-#include <glib.h>
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+
+typedef int32_t gint32;
 
 class CSharpInterface
 {
@@ -155,7 +156,32 @@ bool lang2cxx< gint32, bool >(gint32 in)
 {
   return (bool)in;
 }
-    EOF
+
+template <>
+MonoArray* cxx2lang< MonoArray*, std::vector<int> >(std::vector<int> in)
+{
+  gint32 size = in.size();
+  MonoClass* mcKlass = mono_get_int32_class();
+  if (size == 0)
+    return mono_array_new(gl_csharp.getDomain(), mcKlass, 0);
+
+  MonoArray * maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
+  for (int i = 0; i < size; ++i)
+		mono_array_set(maArray, gint32, i, (cxx2lang< gint32, int >(in[i])));
+  return maArray;
+}
+
+template <>
+std::vector<int> lang2cxx< MonoArray*, std::vector<int> >(MonoArray* in)
+{
+  std::vector< int > out;
+  gint32 size = mono_array_length(in);
+
+  for (int i = 0; i < size; ++i)
+		out.push_back(lang2cxx< gint32, int >(mono_array_get(in, gint32, i)));
+  return out;
+}
+EOF
   end
 
   def build_enum_wrappers(enum)
@@ -332,8 +358,6 @@ CSharpInterface gl_csharp;
 
     for_each_enum   { |e| build_array(e,"enum") }
     for_each_struct { |s| build_array(s,"struct") }
-    build_array("int", "prim")
-    build_array("bool", "prim")
     build_helper_funcs
     target = $conf['conf']['player_lib']
     @f.puts <<-EOF
