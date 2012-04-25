@@ -444,7 +444,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists += api.php interface.hh
-#{target}-srcs = interface.cc ../includes/main.cc
+#{target}-srcs = interface.cc
 #{target}-cxxflags = -fPIC $(shell php-config --includes) -Wno-write-strings
 #{target}-ldflags = -s $(shell php-config --libs --ldflags) -lphp5
 

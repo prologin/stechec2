@@ -454,7 +454,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists += api.py interface.hh
-#{target}-srcs = interface.cc ../includes/main.cc
+#{target}-srcs = interface.cc
 
 pc = $(shell which python2-config >/dev/null 2>&1 && echo python2-config || echo python-config)
 #{target}-cxxflags = -fPIC $(shell $(pc) --includes)

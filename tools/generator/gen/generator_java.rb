@@ -486,7 +486,7 @@ EOF
     @f.puts
     @f.print <<-EOF
 #{target}-dists = interface.hh
-#{target}-srcs += interface.cc ../includes/main.cc
+#{target}-srcs += interface.cc
 include ../includes/rules.mk
     EOF
     @f.close
