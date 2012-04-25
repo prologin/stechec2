@@ -97,7 +97,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
         {
             DEBUG("NEW TURN");
 
-            // Send id of the player
+            // Send id of the player who should play
             msgr->push_id(player->id);
 
             // Receive actions

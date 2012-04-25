@@ -1,0 +1,4 @@
+* Handle server-side timeout, not to hang forever in case a client segfaults
+* Fix client config file loading
+* Fix tictactoe having inconstant moves between server and client
+* Add Sandbox to tictactoe
