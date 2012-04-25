@@ -50,7 +50,8 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 
     while (true)
     {
-        while (msgr->wait_for_turn(opt_.player->id))
+        while (((winner_ = is_finished()) == -1) &&
+                msgr->wait_for_turn(opt_.player->id))
         {
             // Pull actions
             api_->actions()->clear();
@@ -66,6 +67,9 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
                 api_->game_state_set(action->apply(api_->game_state()));
             }
         }
+
+        if (winner_ != -1)
+            break;
 
         DEBUG("NEW TURN");
 
