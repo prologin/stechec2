@@ -33,13 +33,13 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&sub_addr)->default_value("tcp://*:42125"),
                         "Set subscribe address binding (ZeroMQ)")
         ("rules,u",
-            po::value<std::string>(&rules_lib)->default_value("rules.so"),
+            po::value<std::string>(&rules_lib)->default_value("./rules.so"),
                         "Rules library")
         ("champion,a",
-            po::value<std::string>(&champion_lib)->default_value("champion.so"),
+            po::value<std::string>(&champion_lib)->default_value("./champion.so"),
                         "Champion library")
         ("map,f",
-            po::value<std::string>(&champion_lib)->default_value("map.casus"),
+            po::value<std::string>(&map_file)->default_value("default.map"),
                         "Map file")
         ("spectator,s",
             po::value<bool>(&spectator)->default_value(false),
@@ -76,6 +76,8 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&rules_lib))
         ((client_num_str + ".champion").c_str(),
             po::value<std::string>(&champion_lib))
+        ((client_num_str + ".map").c_str(),
+            po::value<std::string>(&map_file))
         ((client_num_str + ".spectator").c_str(),
             po::value<bool>(&spectator))
         ((client_num_str + ".memory").c_str(),
