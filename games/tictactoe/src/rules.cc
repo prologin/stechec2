@@ -89,8 +89,6 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 
 void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 {
-    rules::Actions actions;
-
     while (true)
     {
         for (auto& player : players_->players)
@@ -106,15 +104,12 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 
             // Apply them onto the gamestate
             for (auto& action : api_->actions()->actions())
-            {
                 api_->game_state_set(action->apply(api_->game_state()));
-                actions.add(action);
-            }
 
             msgr->ack();
 
             // Send actions
-            msgr->push_actions(actions);
+            msgr->push_actions(*api_->actions());
 
             // XXX: debug
             std::cout << *api_->game_state();
