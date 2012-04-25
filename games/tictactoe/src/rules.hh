@@ -30,7 +30,7 @@ protected:
     f_champion_end champion_end;
 
 private:
-    rules::Options opt_;
+    const rules::Options& opt_;
     utils::DLL* champion_;
     Api* api_;
     rules::Players_sptr players_;

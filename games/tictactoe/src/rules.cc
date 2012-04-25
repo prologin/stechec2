@@ -48,33 +48,37 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
 {
     CHECK(champion_ != nullptr);
 
-    while ((winner_ = is_finished()) == -1)
+    while (true)
     {
+        while (msgr->wait_for_turn(opt_.player->id))
+        {
+            // Pull actions
+            api_->actions()->clear();
+            msgr->pull_actions(api_->actions());
+
+            // Apply them onto the gamestate
+            for (auto& action : api_->actions()->actions())
+            {
+                // Only apply others actions
+                if (action->player_id() == api_->player()->id)
+                    continue;
+
+                api_->game_state_set(action->apply(api_->game_state()));
+            }
+        }
+
         DEBUG("NEW TURN");
 
-        api_->actions()->clear();
-
         // Play
+        api_->actions()->clear();
         champion_play();
 
         // Send actions
         msgr->send_actions(*api_->actions());
         msgr->wait_for_ack();
 
-        api_->actions()->clear();
-
-        // Pull actions
+        // Drop our own actions the server sends back
         msgr->pull_actions(api_->actions());
-
-        // Apply them onto the gamestate
-        for (auto& action : api_->actions()->actions())
-        {
-            // Only apply others actions
-            if (action->player_id() == api_->player()->id)
-                continue;
-
-            api_->game_state_set(action->apply(api_->game_state()));
-        }
 
         // XXX: debug
         std::cout << *api_->game_state();
@@ -87,21 +91,18 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 {
     rules::Actions actions;
 
-    while ((winner_ = is_finished()) == -1)
+    while (true)
     {
-        DEBUG("NEW TURN");
-
-        api_->actions()->clear();
-
-        for (uint32_t i = 0; i < players_->players.size(); ++i)
+        for (auto& player : players_->players)
         {
+            DEBUG("NEW TURN");
+
+            // Send id of the player
+            msgr->push_id(player->id);
+
             // Receive actions
-            utils::Buffer* pull_buf = msgr->recv();
-
-            // Put them in the API container
-            api_->actions()->handle_buffer(*pull_buf);
-
-            delete pull_buf;
+            api_->actions()->clear();
+            msgr->recv_actions(api_->actions());
 
             // Apply them onto the gamestate
             for (auto& action : api_->actions()->actions())
@@ -111,17 +112,19 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
             }
 
             msgr->ack();
+
+            // Send actions
+            msgr->push_actions(actions);
+
+            // XXX: debug
+            std::cout << *api_->game_state();
+
+            if ((winner_ = is_finished()) != -1)
+                break;
         }
 
-        // Send actions
-        utils::Buffer send_buf;
-
-        actions.handle_buffer(send_buf);
-
-        msgr->push(send_buf);
-
-        // XXX: debug
-        std::cout << *api_->game_state();
+        if ((winner_ = is_finished()) != -1)
+            break;
     }
 
     DEBUG("winner = %i", winner_);
