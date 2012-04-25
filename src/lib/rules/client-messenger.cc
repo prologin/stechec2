@@ -25,9 +25,7 @@ void ClientMessenger::send(const utils::Buffer& buf)
 void ClientMessenger::send_actions(Actions& actions)
 {
     utils::Buffer buf;
-
     actions.handle_buffer(buf);
-
     send(buf);
 }
 
@@ -54,9 +52,14 @@ utils::Buffer* ClientMessenger::pull()
 void ClientMessenger::pull_actions(Actions* actions)
 {
     utils::Buffer* buf = pull();
-
     actions->handle_buffer(*buf);
+    delete buf;
+}
 
+void ClientMessenger::pull_id(uint32_t* id)
+{
+    utils::Buffer* buf = pull();
+    buf->handle(*id);
     delete buf;
 }
 
@@ -68,6 +71,15 @@ void ClientMessenger::wait_for_ack()
     msg.handle_buffer(*buf);
 
     CHECK_EXC(ClientMessengerError, msg.type == net::MSG_ACK);
+}
+
+bool ClientMessenger::wait_for_turn(uint32_t player_id)
+{
+    uint32_t id;
+
+    pull_id(&id);
+
+    return player_id != id;
 }
 
 } // namespace rules

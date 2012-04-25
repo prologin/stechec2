@@ -27,12 +27,14 @@ public:
     virtual void send(const utils::Buffer&);
     void send_actions(Actions&);
 
-    utils::Buffer* recv();
+    virtual utils::Buffer* recv();
 
     utils::Buffer* pull();
     void pull_actions(Actions*);
+    void pull_id(uint32_t*);
 
-    virtual void wait_for_ack();
+    void wait_for_ack();
+    bool wait_for_turn(uint32_t player_id);
 
 private:
     net::ClientSocket_sptr sckt_;

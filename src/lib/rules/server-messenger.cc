@@ -1,6 +1,7 @@
 #include "server-messenger.hh"
 
 #include <net/message.hh>
+#include <rules/actions.hh>
 
 namespace rules {
 
@@ -31,6 +32,20 @@ void ServerMessenger::push(const utils::Buffer& buf)
     sckt_->push(out_buf);
 }
 
+void ServerMessenger::push_actions(Actions& actions)
+{
+    utils::Buffer buf;
+    actions.handle_buffer(buf);
+    push(buf);
+}
+
+void ServerMessenger::push_id(uint32_t id)
+{
+    utils::Buffer buf;
+    buf.handle(id);
+    push(buf);
+}
+
 utils::Buffer* ServerMessenger::recv()
 {
     utils::Buffer* buf = sckt_->recv();
@@ -39,6 +54,15 @@ utils::Buffer* ServerMessenger::recv()
     msg.handle_buffer(*buf);
 
     return buf;
+}
+
+void ServerMessenger::recv_actions(Actions* actions)
+{
+    utils::Buffer* buf = recv();
+
+    actions->handle_buffer(*buf);
+
+    delete buf;
 }
 
 void ServerMessenger::ack()

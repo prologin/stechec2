@@ -9,15 +9,23 @@
 
 namespace rules {
 
+class Actions;
+
 class ServerMessenger : public Messenger
 {
 public:
     ServerMessenger(net::ServerSocket_sptr sckt);
 
     virtual void send(const utils::Buffer&);
-    virtual void push(const utils::Buffer&);
+
     virtual utils::Buffer* recv();
-    virtual void ack();
+    void recv_actions(Actions* actions);
+
+    void push(const utils::Buffer&);
+    void push_actions(Actions& actions);
+    void push_id(uint32_t id);
+
+    void ack();
 
 private:
     net::ServerSocket_sptr sckt_;
