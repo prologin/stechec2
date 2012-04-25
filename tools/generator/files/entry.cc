@@ -39,12 +39,12 @@ void rules_result()
     delete rules_;
 }
 
-void client_loop(net::ClientMessenger_sptr msgr)
+void client_loop(rules::ClientMessenger_sptr msgr)
 {
     rules_->client_loop(msgr);
 }
 
-void server_loop(net::ServerMessenger_sptr msgr)
+void server_loop(rules::ServerMessenger_sptr msgr)
 {
     rules_->server_loop(msgr);
 }
