@@ -75,4 +75,14 @@ void ServerMessenger::ack()
     sckt_->send(buf);
 }
 
+void ServerMessenger::wait_for_ack()
+{
+    utils::Buffer* buf = sckt_->recv();
+
+    net::Message msg;
+    msg.handle_buffer(*buf);
+
+    CHECK_EXC(ServerMessengerError, msg.type == net::MSG_ACK);
+}
+
 } // namespace net

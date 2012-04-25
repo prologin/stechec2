@@ -2,6 +2,7 @@
 # define LIB_RULES_SERVERMESSENGER_HH_
 
 # include <memory>
+# include <stdexcept>
 
 # include <rules/messenger.hh>
 # include <net/server-socket.hh>
@@ -10,6 +11,12 @@
 namespace rules {
 
 class Actions;
+
+class ServerMessengerError : public std::runtime_error
+{
+public:
+    ServerMessengerError() : std::runtime_error("Server messenger error") {}
+};
 
 class ServerMessenger : public Messenger
 {
@@ -26,6 +33,7 @@ public:
     void push_id(uint32_t id);
 
     void ack();
+    void wait_for_ack();
 
 private:
     net::ServerSocket_sptr sckt_;
