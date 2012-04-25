@@ -33,6 +33,7 @@ public:
     void pull_actions(Actions*);
     void pull_id(uint32_t*);
 
+    void ack();
     void wait_for_ack();
     bool wait_for_turn(uint32_t player_id);
 

@@ -63,6 +63,16 @@ void ClientMessenger::pull_id(uint32_t* id)
     delete buf;
 }
 
+void ClientMessenger::ack()
+{
+    utils::Buffer buf;
+    net::Message msg(net::MSG_ACK);
+
+    msg.handle_buffer(buf);
+
+    sckt_->send(buf);
+}
+
 void ClientMessenger::wait_for_ack()
 {
     utils::Buffer* buf = sckt_->recv();
