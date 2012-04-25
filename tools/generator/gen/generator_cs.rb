@@ -520,7 +520,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists = interface.hh
-#{target}-srcs += api.cs interface.cc ../includes/main.cc
+#{target}-srcs += api.cs interface.cc
 #{target}-cxxflags = -fPIC \
     $(shell pkg-config --cflags glib-2.0 mono-2)
 #{target}-ldflags = -lm \
