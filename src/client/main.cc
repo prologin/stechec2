@@ -13,8 +13,4 @@ int main(int argc, char** argv)
 
     Client client(opt);
     client.run();
-
-    INFO("Stechec2 version MODULE_VERSION_alpha");
-    INFO("DO NOT USE FOR PRODUCTION IN PROLGIN 2012");
-    INFO(":)");
 }
