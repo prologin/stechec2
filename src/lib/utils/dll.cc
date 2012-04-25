@@ -11,7 +11,7 @@ DLLError::DLLError() : std::runtime_error(dlerror())
 
 DLL::DLL(const std::string& filename) : filename_(filename)
 {
-    handle_ = dlopen(filename.c_str(), RTLD_NOW);
+    handle_ = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
     CHECK_EXC(DLLError, handle_ != NULL);
 }
 
