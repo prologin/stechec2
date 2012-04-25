@@ -123,7 +123,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
                 break;
         }
 
-        if ((winner_ = is_finished()) != -1)
+        if (winner_ != -1)
             break;
     }
 
