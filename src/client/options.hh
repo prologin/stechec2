@@ -20,8 +20,9 @@ public:
     // ZeroMQ binding for SUB socket
     std::string sub_addr;
 
-    // Client number (to get the right section in conf file)
-    unsigned client_num;
+    // Client name (to get the right section in conf file and to properly show
+    // results)
+    std::string client_name;
 
     // Path to the rules library
     std::string rules_lib;

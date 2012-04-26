@@ -20,9 +20,9 @@ void Options::process(int argc, char** argv)
         ("version", "Show version")
         ("config,c", po::value<std::string>(&config),
                         "Set configuration file to use")
-        ("client_num,n",
-            po::value<unsigned>(&client_num)->default_value(1),
-                        "Client number (to get the right section in conf file");
+        ("client_name,n",
+            po::value<std::string>(&client_name)->default_value("anonymous"),
+                        "Client name (used for the configuration file and results)");
 
     po::options_description config_cli_opt("Config options");
     config_cli_opt.add_options()
@@ -33,10 +33,10 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&sub_addr)->default_value("tcp://*:42125"),
                         "Set subscribe address binding (ZeroMQ)")
         ("rules,u",
-            po::value<std::string>(&rules_lib)->default_value("./rules.so"),
+            po::value<std::string>(&rules_lib)->default_value("rules.so"),
                         "Rules library")
         ("champion,a",
-            po::value<std::string>(&champion_lib)->default_value("./champion.so"),
+            po::value<std::string>(&champion_lib)->default_value("champion.so"),
                         "Champion library")
         ("map,f",
             po::value<std::string>(&map_file)->default_value("default.map"),
@@ -62,31 +62,29 @@ void Options::process(int argc, char** argv)
 
     process_cli(opt, vm, argc, argv);
 
-    std::stringstream client_num_ss;
-    client_num_ss << client_num;
-    std::string client_num_str = "client." + client_num_ss.str();
+    std::string client_str = "stechec2.client." + client_name;
 
     po::options_description config_opt("Config options");
     config_opt.add_options()
-        ((client_num_str + ".req_addr").c_str(),
+        ((client_str + ".req_addr").c_str(),
             po::value<std::string>(&req_addr))
-        ((client_num_str + ".sub_addr").c_str(),
+        ((client_str + ".sub_addr").c_str(),
             po::value<std::string>(&sub_addr))
-        ((client_num_str + ".rules").c_str(),
+        ((client_str + ".rules").c_str(),
             po::value<std::string>(&rules_lib))
-        ((client_num_str + ".champion").c_str(),
+        ((client_str + ".champion").c_str(),
             po::value<std::string>(&champion_lib))
-        ((client_num_str + ".map").c_str(),
+        ((client_str + ".map").c_str(),
             po::value<std::string>(&map_file))
-        ((client_num_str + ".spectator").c_str(),
+        ((client_str + ".spectator").c_str(),
             po::value<bool>(&spectator))
-        ((client_num_str + ".memory").c_str(),
+        ((client_str + ".memory").c_str(),
             po::value<unsigned>(&memory))
-        ((client_num_str + ".time").c_str(),
+        ((client_str + ".time").c_str(),
             po::value<unsigned>(&time))
-        ((client_num_str + ".log").c_str(),
+        ((client_str + ".log").c_str(),
             po::value<std::string>(&log))
-        ((client_num_str + ".verbose").c_str(),
+        ((client_str + ".verbose").c_str(),
             po::value<unsigned>(&verbose));
 
     if (vm.count("config"))

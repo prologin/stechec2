@@ -35,7 +35,7 @@ void Options::process(int argc, char** argv)
             po::value<std::string>(&rules_lib)->default_value("rules.so"),
                         "Rules library")
         ("map,f",
-            po::value<std::string>(&map_file)->default_value("map.casus"),
+            po::value<std::string>(&map_file)->default_value("default.map"),
                         "Map file")
         ("nb_clients,n",
             po::value<uint32_t>(&nb_clients)->default_value(2),
@@ -58,14 +58,14 @@ void Options::process(int argc, char** argv)
     // Config file server options
     po::options_description config_opt("Config options");
     config_opt.add_options()
-        ("server.rep_addr", po::value<std::string>(&rep_addr))
-        ("server.pub_addr", po::value<std::string>(&pub_addr))
-        ("server.rules", po::value<std::string>(&rules_lib))
-        ("server.map", po::value<std::string>(&map_file))
-        ("server.nb_clients", po::value<unsigned>(&nb_clients))
-        ("server.turn_timeout", po::value<unsigned>(&turn_timeout))
-        ("server.log", po::value<std::string>(&log))
-        ("server.verbose", po::value<unsigned>(&verbose));
+        ("stechec2.server.rep_addr", po::value<std::string>(&rep_addr))
+        ("stechec2.server.pub_addr", po::value<std::string>(&pub_addr))
+        ("stechec2.server.rules", po::value<std::string>(&rules_lib))
+        ("stechec2.server.map", po::value<std::string>(&map_file))
+        ("stechec2.server.nb_clients", po::value<unsigned>(&nb_clients))
+        ("stechec2.server.turn_timeout", po::value<unsigned>(&turn_timeout))
+        ("stechec2.server.log", po::value<std::string>(&log))
+        ("stechec2.server.verbose", po::value<unsigned>(&verbose));
 
     if (vm.count("config"))
         process_config(config_opt, vm, config);
