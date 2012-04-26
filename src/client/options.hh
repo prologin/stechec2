@@ -32,13 +32,13 @@ public:
     // Path to the map file
     std::string map_file;
 
-    // Is this client a spectator? (Not yet implemented)
+    // Is this client a spectator?
     bool spectator;
 
     // Memory limit for the champion
     uint32_t memory;
 
-    // Turn time limit for the champion
+    // Turn time limit for the champion in ms
     uint32_t time;
 
     // Path to the file to write the logs to

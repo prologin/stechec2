@@ -16,10 +16,10 @@ struct Options
     // Map file name
     std::string map_name;
 
-    // Memory limit for the champion
+    // Memory limit for the champion in MB
     uint32_t memory;
 
-    // Turn time limit for the champion
+    // Turn time limit for the champion in ms
     uint32_t time;
 
     // Player

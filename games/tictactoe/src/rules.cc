@@ -9,7 +9,8 @@
 
 Rules::Rules(const rules::Options& opt)
     : opt_(opt),
-      champion_(nullptr)
+      champion_(nullptr),
+      sandbox_(opt.time)
 {
     GameState* game_state = new GameState();
     api_ = new Api(game_state, opt.player);

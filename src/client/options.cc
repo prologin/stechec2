@@ -45,8 +45,8 @@ void Options::process(int argc, char** argv)
             po::value<bool>(&spectator)->default_value(false),
                         "Set if the client is a spectator")
         ("memory,m",
-            po::value<unsigned>(&memory)->default_value(1000),
-                        "Max memory the client can use (in KiB)")
+            po::value<unsigned>(&memory)->default_value(42),
+                        "Max memory the client can use (in MiB)")
         ("time,t",
             po::value<unsigned>(&time)->default_value(1000),
                         "Max time the client can use (in ms)")
