@@ -38,6 +38,7 @@ void Server::run()
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
     rules_opt.time = opt_.turn_timeout;
+    rules_opt.map_file = opt_.map_file;
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;
