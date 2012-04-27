@@ -14,7 +14,7 @@ struct Options
     std::string champion_lib;
 
     // Map file name
-    std::string map_name;
+    std::string map_file;
 
     // Memory limit for the champion in MB
     uint32_t memory;

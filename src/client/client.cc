@@ -41,7 +41,7 @@ void Client::run()
     rules::Options rules_opt;
     rules_opt.champion_lib = opt_.champion_lib;
     rules_opt.time = opt_.time;
-    rules_opt.map_name = opt_.map_file;
+    rules_opt.map_file = opt_.map_file;
     rules_opt.player = player_;
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;
