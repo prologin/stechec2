@@ -192,7 +192,7 @@ int Rules::is_finished()
     for (int i = 0; i < 9; i += 3)
     {
         if (board[i] != -1 &&
-                board[i] == board[i + 1] && board[i + 1] == board[i + 6])
+                board[i] == board[i + 1] && board[i + 1] == board[i + 2])
             return board[i];
     }
 
