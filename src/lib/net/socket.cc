@@ -29,10 +29,10 @@ utils::Buffer* Socket::recv(int flags)
 bool Socket::poll(long timeout)
 {
     zmq::pollitem_t pollitem;
-    pollitem.socket = static_cast<void*>(reqrep_sckt_.get());
+    pollitem.socket = static_cast<void*>(*reqrep_sckt_.get());
     pollitem.events = ZMQ_POLLIN;
 
-    return zmq::poll(&pollitem, 1, timeout) > 0;
+    return zmq::poll(&pollitem, 1, timeout * 1000) > 0;
 }
 
 bool Socket::send_sckt(const utils::Buffer& buf,

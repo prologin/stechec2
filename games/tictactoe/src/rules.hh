@@ -26,6 +26,8 @@ public:
 protected:
     int is_finished();
     bool is_spectator(uint32_t id);
+    void timeout_player(rules::Player_sptr);
+    void erase_timeout_players();
 
 protected:
     f_champion_init champion_init;
@@ -41,6 +43,8 @@ private:
     Api* api_;
     rules::Players_sptr players_;
     rules::Players_sptr spectators_;
+    rules::Players_sptr timeout_players_;
+    rules::Players_sptr to_erase_players_;
     int winner_;
 };
 

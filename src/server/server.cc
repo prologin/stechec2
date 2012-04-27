@@ -37,6 +37,7 @@ void Server::run()
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
+    rules_opt.time = opt_.turn_timeout;
     rules_opt.verbose = opt_.verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;

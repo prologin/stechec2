@@ -3,6 +3,7 @@
 #include <utils/log.hh>
 #include <utils/buffer.hh>
 #include <iostream>
+#include <algorithm>
 
 #include "action-play.hh"
 #include "game-state.hh"
@@ -29,6 +30,8 @@ Rules::Rules(const rules::Options& opt)
 
     players_ = opt.players;
     spectators_ = opt.spectators;
+    timeout_players_ = rules::Players_sptr(new rules::Players());
+    to_erase_players_ = rules::Players_sptr(new rules::Players());
 
     // Register Actions
     api_->actions()->register_action(0,
@@ -111,13 +114,20 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 
             // Receive actions
             api_->actions()->clear();
-            msgr->recv_actions(api_->actions());
 
-            // Apply them onto the gamestate
-            for (auto& action : api_->actions()->actions())
-                api_->game_state_set(action->apply(api_->game_state()));
+            // Timeout handling
+            if (!msgr->poll(opt_.time))
+                timeout_player(player);
+            else
+            {
+                msgr->recv_actions(api_->actions());
 
-            msgr->ack();
+                // Apply them onto the gamestate
+                for (auto& action : api_->actions()->actions())
+                    api_->game_state_set(action->apply(api_->game_state()));
+
+                msgr->ack();
+            }
 
             // Send actions
             msgr->push_actions(*api_->actions());
@@ -128,6 +138,11 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
             if ((winner_ = is_finished()) != -1)
                 break;
         }
+
+        erase_timeout_players();
+
+        if (players_->players.empty())
+             return;
 
         if ((winner_ = is_finished()) != -1)
             break;
@@ -221,4 +236,19 @@ bool Rules::is_spectator(uint32_t id)
             return true;
 
     return false;
+}
+
+void Rules::timeout_player(rules::Player_sptr player)
+{
+    timeout_players_->players.push_back(player);
+    to_erase_players_->players.push_back(player);
+}
+
+void Rules::erase_timeout_players()
+{
+    for (auto player = to_erase_players_->players.begin();
+            player != to_erase_players_->players.end(); player++)
+        players_->players.erase(player);
+
+    to_erase_players_->players.clear();
 }
