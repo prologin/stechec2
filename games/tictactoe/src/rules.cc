@@ -25,6 +25,13 @@ Rules::Rules(const rules::Options& opt)
         champion_play = champion_->get<f_champion_play>("play_turn");
         champion_end = champion_->get<f_champion_end>("end_game");
 
+        // Caml corner case
+        typedef void (*caml_init)(char**);
+        caml_init caml_startup = champion_->get<caml_init>("caml_startup");
+
+        if (caml_startup != nullptr)
+            caml_startup(nullptr);
+
         sandbox_.execute(champion_init);
     }
 
@@ -114,6 +121,8 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 
             // Receive actions
             api_->actions()->clear();
+
+            std::cout << opt_.time << std::endl;
 
             // Timeout handling
             if (!msgr->poll(opt_.time))
