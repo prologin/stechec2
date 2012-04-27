@@ -1,7 +1,8 @@
-* Handle server-side timeout, not to hang forever in case a client segfaults
 * Find a way to identify champions in the server results
 * Fix C# generator (sigsegv)
 
 After Prologin 2012:
 * CLEAN THE CODE
 * write a doc
+* Better handling of timeouts
+* Client should tell server if they SEGV or INT
