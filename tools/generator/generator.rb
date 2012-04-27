@@ -92,13 +92,11 @@ def make_includes
   install_path.mkpath
 
   FileUtils.cp Pathname.new(PKGDATADIR) + 'files/README', 'README'
-  # copy main.c and rules.ml into includes.
-  if Pathname.new('files/main.cc').exist?
-    FileUtils.cp 'files/main.cc', install_path.to_s
+  # copy rules.mk and toposort.py into includes.
+  if Pathname.new('files/rules.mk').exist?
     FileUtils.cp 'files/rules.mk', install_path.to_s
     FileUtils.cp 'files/toposort.py', install_path.to_s
   else
-    FileUtils.cp Pathname.new(PKGDATADIR) + 'files/main.cc', install_path.to_s
     FileUtils.cp Pathname.new(PKGDATADIR) + 'files/rules.mk', install_path.to_s
     FileUtils.cp Pathname.new(PKGDATADIR) + 'files/toposort.py', install_path.to_s
   end
@@ -132,10 +130,10 @@ def make_server
   CSharpMakefile.new.build_metaserver(install_path)
   CxxMakefile.new.build_metaserver(install_path)
   JavaMakefile.new.build_metaserver(install_path)
-#  PascalMakefile.new.build_metaserver(install_path)
+  # PascalMakefile.new.build_metaserver(install_path)
   CamlMakefile.new.build_metaserver(install_path)
- # HaskellMakefile.new.build_metaserver(install_path)
- # LuaMakefile.new.build_metaserver(install_path)
+  # HaskellMakefile.new.build_metaserver(install_path)
+  # LuaMakefile.new.build_metaserver(install_path)
   PythonMakefile.new.build_metaserver(install_path)
   PhpMakefile.new.build_metaserver(install_path)
   # PrologMakefile.new.build_metaserver(install_path)
@@ -143,7 +141,6 @@ def make_server
   # JsMakefile.new.build_metaserver(install_path) TODO
   # copy some used files
   path = Pathname.new(PKGDATADIR) + "files"
-  FileUtils.cp((path + "main.cc").to_s, (install_path + "stechec_main.cc").to_s)
   FileUtils.cp((path + "toposort.py").to_s, install_path.to_s)
   FileUtils.cp((path + "rules.mk").to_s, install_path.to_s)
 end

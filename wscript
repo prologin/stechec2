@@ -122,6 +122,7 @@ def build_net(bld):
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
+            src/lib/net/signal.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
         target = 'net',
