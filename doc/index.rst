@@ -5,3 +5,6 @@ Pages:
 
 .. toctree::
    :maxdepth: 1
+
+   faq
+   how-to
