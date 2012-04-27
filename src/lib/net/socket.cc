@@ -26,6 +26,15 @@ utils::Buffer* Socket::recv(int flags)
     return recv_sckt(reqrep_sckt_, flags);
 }
 
+bool Socket::poll(long timeout)
+{
+    zmq::pollitem_t pollitem;
+    pollitem.socket = static_cast<void*>(reqrep_sckt_.get());
+    pollitem.events = ZMQ_POLLIN;
+
+    return zmq::poll(&pollitem, 1, timeout) > 0;
+}
+
 bool Socket::send_sckt(const utils::Buffer& buf,
         std::shared_ptr<zmq::socket_t> sckt, int flags)
 {

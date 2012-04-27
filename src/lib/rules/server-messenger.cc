@@ -32,6 +32,11 @@ void ServerMessenger::push(const utils::Buffer& buf)
     sckt_->push(out_buf);
 }
 
+bool ServerMessenger::poll(long timeout)
+{
+    return sckt_->poll(timeout);
+}
+
 void ServerMessenger::push_actions(Actions& actions)
 {
     utils::Buffer buf;

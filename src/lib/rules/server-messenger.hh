@@ -28,6 +28,8 @@ public:
     virtual utils::Buffer* recv();
     void recv_actions(Actions* actions);
 
+    bool poll(long timeout);
+
     void push(const utils::Buffer&);
     void push_actions(Actions& actions);
     void push_id(uint32_t id);
