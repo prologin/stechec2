@@ -58,6 +58,8 @@ utils::Buffer* ServerMessenger::recv()
     net::Message msg;
     msg.handle_buffer(*buf);
 
+    last_client_id_ = msg.client_id;
+
     return buf;
 }
 
