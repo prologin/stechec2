@@ -31,7 +31,9 @@ Rules::Rules(const rules::Options& opt)
             typedef void (*caml_init)(char**);
             caml_init caml_startup = champion_->get<caml_init>("caml_startup");
 
-            caml_startup(nullptr);
+            // XXX: ugly
+            const char* argv[2] = {"./caml", nullptr};
+            caml_startup(const_cast<char**>(argv));
         }
         catch (utils::DLLError& e)
         {
