@@ -26,11 +26,16 @@ Rules::Rules(const rules::Options& opt)
         champion_end = champion_->get<f_champion_end>("end_game");
 
         // Caml corner case
-        typedef void (*caml_init)(char**);
-        caml_init caml_startup = champion_->get<caml_init>("caml_startup");
+        try
+        {
+            typedef void (*caml_init)(char**);
+            caml_init caml_startup = champion_->get<caml_init>("caml_startup");
 
-        if (caml_startup != nullptr)
             caml_startup(nullptr);
+        }
+        catch (utils::DLLError& e)
+        {
+        }
 
         sandbox_.execute(champion_init);
     }
