@@ -129,8 +129,6 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
             // Receive actions
             api_->actions()->clear();
 
-            std::cout << opt_.time << std::endl;
-
             // Timeout handling
             if (!msgr->poll(opt_.time))
                 timeout_player(player);
