@@ -39,7 +39,7 @@ class CompilationTask(object):
         return "<Compilation: %s/%d>" % (self.user, self.champ_id)
 
 class PlayerTask(object):
-    def __init__(self, config, mid, hostname, req_port, sub_port, cid, mpid, user):
+    def __init__(self, config, mid, hostname, req_port, sub_port, cid, mpid, user, opts):
         self.contest = config['master']['contest']
         self.secret = config['master']['shared_secret']
         self.mid = mid
@@ -49,6 +49,7 @@ class PlayerTask(object):
         self.cid = cid
         self.mpid = mpid
         self.user = user
+        self.opts = opts
 
     @property
     def slots_taken(self):
@@ -57,7 +58,7 @@ class PlayerTask(object):
     def execute(self, master, worker):
         worker.rpc.run_client(
             self.secret, self.contest, self.mid, self.hostname, self.req_port,
-            self.sub_port, self.user, self.cid, self.mpid
+            self.sub_port, self.user, self.cid, self.mpid, self.opts
         )
 
 class MatchTask(object):
@@ -89,7 +90,7 @@ class MatchTask(object):
             self.player_tasks.add(mpid)
 
             t = PlayerTask(self.config, self.mid, worker.hostname, req_port,
-                sub_port, cid, mpid, user)
+                sub_port, cid, mpid, user, self.opts)
             master.worker_tasks.append(t)
         master.to_dispatch.set()
         del master.matches[self.mid]
