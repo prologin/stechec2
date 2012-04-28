@@ -197,7 +197,7 @@ def spawn_client(cmd, path, match_id, champ_id, tid, callback):
     open(log_path, "w").write(stdout)
     callback(retcode, stdout, match_id, champ_id, tid)
 
-def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id, tid, cb):
+def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id, tid, opts, cb):
     dir_path = champion_path(config, contest, user, champ_id)
     mp = match_path(config, contest, match_id)
     cmd = [paths.stechec_client,
@@ -208,6 +208,5 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
                "-p", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
                "-m", "250000",
                "-t", "50",
-               "-f", "320000",
-    ]
+               "-f", opts.split('=')[1]]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)

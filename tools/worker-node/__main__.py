@@ -150,12 +150,12 @@ class WorkerNode(object):
         except socket.error:
             pass
 
-    def run_client(self, contest, match_id, ip, req_port, sub_port, user, champ_id, pl_id):
+    def run_client(self, contest, match_id, ip, req_port, sub_port, user, champ_id, pl_id, opts):
         logging.info('running champion %d from %s for match %d' % (
                          champ_id, user, match_id
         ))
         operations.run_client(self.config, ip, req_port, sub_port, contest, match_id, user,
-                              champ_id, pl_id, self.client_done)
+                              champ_id, pl_id, opts, self.client_done)
         return False, self.master.client_ready, (match_id, pl_id)
 
     def client_done(self, retcode, stdout, match_id, champ_id, pl_id):
