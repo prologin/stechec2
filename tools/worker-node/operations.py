@@ -197,6 +197,12 @@ def spawn_client(cmd, path, match_id, champ_id, tid, callback):
     open(log_path, "w").write(stdout)
     callback(retcode, stdout, match_id, champ_id, tid)
 
+def handle_opts(opts):
+    path = opts.split('=')[1]
+    path = path[len("/exports/homes/")-1:]
+    path = "/home/" + path
+    return path
+
 def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id, tid, opts, cb):
     dir_path = champion_path(config, contest, user, champ_id)
     mp = match_path(config, contest, match_id)
@@ -208,5 +214,5 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
                "-p", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
                "-m", "250000",
                "-t", "50",
-               "-f", opts.split('=')[1]]
+               "-f", handle_opts(opts)]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
