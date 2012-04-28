@@ -109,7 +109,7 @@ void Rules::client_loop(rules::ClientMessenger_sptr msgr)
         msgr->pull_actions(api_->actions());
 
         // XXX: debug
-        std::cout << *api_->game_state();
+        std::cerr << *api_->game_state();
     }
 
     DEBUG("winner = %i", winner_);
@@ -147,7 +147,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
             msgr->push_actions(*api_->actions());
 
             // XXX: debug
-            std::cout << *api_->game_state();
+            std::cerr << *api_->game_state();
 
             if ((winner_ = is_finished()) != -1)
                 break;
