@@ -23,7 +23,7 @@ lib_TARGETS = #{target}
 #{target}-cflags = -ggdb3 -Wall -Wextra
 
 # Evite de toucher a ce qui suit
-#{target}-srcs += interface.cc stechec_main.cc
+#{target}-srcs += interface.cc
 
 V=1
 include $(MFPATH)/rules.mk

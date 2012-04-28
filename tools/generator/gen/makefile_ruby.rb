@@ -22,7 +22,7 @@ class RubyMakefile
 #####################
 
 CXX 	= g++
-SRC     = interface.cc ../includes/main.cc
+SRC     = interface.cc
 OBJS 	= ${SRC:.cc=.o}
 RM 	= /bin/rm -f
 

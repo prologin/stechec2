@@ -16,7 +16,7 @@ def initialize
     @makefile = <<-EOF
 # -*- Makefile -*-
 all:
-	plld -o interface interface.cc ../includes/main.cc \$SRC -shared
+	plld -o interface interface.cc \$SRC -shared
 	ld -lpl interface.so -fPIC -shared -o champion.so
 
 EOF

@@ -24,7 +24,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists += interface.hh
-#{target}-srcs = interface.cc stechec_main.cc
+#{target}-srcs = interface.cc
 
 pc = $(shell for p in python2-config python-config; do if which $$p &>/dev/null; then echo $$p; fi done | head -n 1)
 #{target}-cxxflags = -fPIC $(shell $(pc) --includes)

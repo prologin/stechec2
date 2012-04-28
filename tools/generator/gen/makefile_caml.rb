@@ -24,7 +24,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists = interface.hh
-#{target}-srcs += interface.cc stechec_main.cc
+#{target}-srcs += interface.cc
 
 V=1
 include $(MFPATH)/rules.mk
