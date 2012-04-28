@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+{% load substract %}
+
+{% block "title" %}Détail du match{% endblock %}
+{% block "titleh1" %}Détail du match{% endblock %}
+{% block "head" %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.5.2.min.js"></script>
+{% endblock %}
+
+{% block "content" %}
+
+<dl>
+    <dt>ID</dt>
+    <dd>{{ match.id }}</dd>
+
+    <dt>Auteur</dt>
+    <dd>{{ match.author }}</dd>
+
+    <dt>État</dt>
+    <dd>{{ match.get_status_display }}</dd>
+
+    <dt>Date &amp; heure</dt>
+    <dd>{{ match.ts|naturalday }} à {{ match.ts|time:"H:i:s" }}</dd>
+
+    {% if match.is_done %}
+    <dt>Replay</dt>
+    <dd><a href="{% url match-dump match.id %}">Télécharger</a></dd>
+    {% endif %}
+</dl>
+
+<h2>Participants</h2>
+<table>
+    <thead>
+        <tr>
+            <th>UID</th>
+            <th>ID champion</th>
+            <th>Champion</th>
+            <th>Score</th>
+            <th>Log</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for player in match.matchplayer_set.all %}
+        <tr class="{% cycle "row1" "row2" %}">
+            <td>{{ player.id|substract:match.matchplayer__id__min }}</td>
+            <td>{{ player.champion.id }}</td>
+            <td>{{ player.champion }}</td>
+            {% if match.is_done %}
+            <td>{{ player.score }}</td>
+            <td>
+                {% if user == match.champion.author or user.is_staff %}
+                <p><a href="#" id="toggle-log-{{ player.id }}">Afficher / cacher le log</a></p>
+                <pre id="log-{{ player.id }}">{{ player.log }}</pre>
+                {% else %}
+                -
+                {% endif %}
+            </td>
+            {% else %}
+            <td colspan="2">Non terminé</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if user.is_staff %}
+<p><a href="#" id="toggle-serv-log">Afficher / cacher le log serveur</a></p>
+<pre id="serv-log">{{ match.log }}</pre>
+{% endif %}
+
+<script type="text/javascript">
+    {% for player in match.matchplayer_set.all %}
+    $("#log-{{ player.id }}").hide();
+    $("#toggle-log-{{ player.id }}").click(function() {
+        $("#log-{{ player.id }}").slideToggle();
+        return false;
+    });
+    {% endfor %}
+
+    {% if user.is_staff %}
+    $("#serv-log").hide();
+    $("#toggle-serv-log").click(function() {
+        $("#serv-log").slideToggle();
+        return false;
+    });
+    {% endif %}
+</script>
+
+{% endblock %}

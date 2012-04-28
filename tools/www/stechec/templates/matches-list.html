@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block "title" %}Tous les matches{% endblock %}
+{% block "titleh1" %}Tous les matches{% endblock %}
+
+{% block "content" %}
+
+<p class="intro">{{ explanation_text }}</p>
+
+{% if is_paginated %}{% load paginator %}{% paginator 5 %}{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date &amp; heure</th>
+            <th>État</th>
+            {% if show_creator %}<th>Créateur</th>{% endif %}
+            <th>Carte</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match, map_name in matches %}
+        <tr class="{% cycle "row1" "row2" %}">
+            <td>{{ match.id }}</td>
+            <td>{{ match.ts|naturalday }} à {{ match.ts|time:"H:i:s" }}</td>
+            <td>{{ match.get_status_display }}</td>
+            {% if show_creator %}<td>{{ match.author }}</td>{% endif %}
+            <td>{{ map_name }}</td>
+            <td><a href="{{ match.get_absolute_url }}">Détails</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">Aucun match réalisé pour le moment.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

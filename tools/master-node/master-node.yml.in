@@ -1,0 +1,95 @@
+master:
+  port: 8067
+  shared_secret: <undefined>
+  contest: @contest@
+
+worker:
+  timeout_secs: 12
+
+sql:
+  host: localhost
+  port: 5432
+  user: stechec
+  password: prologin
+  database: stechec
+  queries:
+    get_champions:
+      select
+        stechec_champion.id as id,
+        auth_user.username as name
+      from
+        stechec_champion
+      left join auth_user
+        on auth_user.id = stechec_champion.author_id
+      where
+        stechec_champion.status = %(champion_status)s
+
+    set_champion_status:
+      update
+        stechec_champion
+      set
+        status = %(champion_status)s
+      where
+        stechec_champion.id = %(champion_id)s
+
+    get_matches:
+      select
+        stechec_match.id as match_id,
+        stechec_match.options as match_options,
+        array_agg(stechec_champion.id) as champion_ids,
+        array_agg(stechec_matchplayer.id) as match_player_ids,
+        array_agg(auth_user.username) as user_names
+      from
+        stechec_match
+      left join stechec_matchplayer
+        on stechec_matchplayer.match_id = stechec_match.id
+      left join stechec_champion
+        on stechec_matchplayer.champion_id = stechec_champion.id
+      left join auth_user
+        on stechec_champion.author_id = auth_user.id
+      where
+        stechec_match.status = %(match_status)s
+      group by
+        stechec_match.id,
+        stechec_match.options
+
+    set_match_status:
+      update
+        stechec_match
+      set
+        status = %(match_status)s
+      where
+        stechec_match.id = %(match_id)s
+
+    set_player_score:
+      update
+        stechec_matchplayer
+      set
+        score = %(player_score)s
+      where
+        stechec_matchplayer.id = %(player_id)s
+
+    update_tournament_score:
+      update
+        stechec_tournamentplayer
+      set
+        score = score + %(champion_score)s
+      where
+        stechec_tournamentplayer.tournament_id = (
+          select
+            stechec_match.tournament_id
+          from
+            stechec_match
+          where
+            stechec_match.id = %(match_id)s
+        )
+        and stechec_tournamentplayer.champion_id = (
+          select
+            stechec_champion.id
+          from
+            stechec_champion
+          left join stechec_matchplayer
+            on stechec_champion.id = stechec_matchplayer.champion_id
+          where
+            stechec_matchplayer.id = %(player_id)s
+        )

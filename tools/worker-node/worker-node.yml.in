@@ -1,0 +1,17 @@
+master:
+  host: localhost
+  port: 8067
+  heartbeat_secs: 5
+  shared_secret: <undefined>
+
+worker:
+  port: 8068
+  available_slots: 20
+  port_range_start: 40000
+  port_range_end: 41000
+
+contest:
+  dumper: no
+
+paths:
+  data_root: @stechec@

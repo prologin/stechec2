@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Prologin - {% block "title" %}{% endblock %}</title>
+
+        <link rel="stylesheet" title="Main" href="{{ STATIC_URL }}css/main.css" type="text/css" media="screen">
+        {% block "head" %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <div id="logo">&nbsp;</div>
+            <h1>{% block "titleh1" %}{% endblock %}</h1>
+        </header>
+        <nav>
+            <div class="block">
+                <h1>Champions</h1>
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url champions-my %}">Mes champions</a></li>
+                    <li><a href="{% url champion-new %}">Envoyer un champion</a></li>
+                    {% endif %}
+                    <li><a href="{% url champions-all %}">Tous les champions</a></li>
+                </ul>
+            </div>
+            <div class="block">
+                <h1>Matches</h1>
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url matches-my %}">Mes matches</a></li>
+                    <li><a href="{% url match-new %}">Lancer un match</a></li>
+                    {% endif %}
+                    <li><a href="{% url matches-all %}">Tous les matches</a></li>
+                    <li><a href="{% url status %}">Statut des serveurs</a></li>
+                </ul>
+            </div>
+            <div class="block">
+                <h1>Cartes</h1>
+                <ul>
+                    {% if user.is_authenticated %}
+                    <li><a href="{% url map-new %}">Uploader une carte</a></li>
+                    {% endif %}
+                    <li><a href="{% url maps-all %}">Liste des cartes</a></li>
+                </ul>
+            </div>
+            {% comment %}
+            <div class="block">
+                <h1>Tournois</h1>
+                <ul>
+                    <li><a href="/tournois/all/">Tous les tournois</a></li>
+                </ul>
+            </div>
+            {% endcomment %}
+            <div class="block">
+                <h1>Mon compte</h1>
+                <ul>
+                    {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                    <li><a href="{% url admin:index %}">Administration</a></li>
+                    {% endif %}
+                    <li><a href="{% url logout %}">Déconnexion</a></li>
+                    {% else %}
+                    <li><a href="{% url login %}">Connexion</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="block">
+                <h1>Liens relatifs</h1>
+                <ul>
+                    <li><a href="http://doc/">Documentation des langages</a></li>
+                    <li><a href="http://wiki/">Wiki de documentation</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div id="content">
+            {% block "content" %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

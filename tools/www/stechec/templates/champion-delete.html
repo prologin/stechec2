@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block "title" %}Envoi d'un champion{% endblock %}
+{% block "titleh1" %}Envoi d'un champion{% endblock %}
+
+{% block "content" %}
+
+<p>Confirmez la suppression de votre champion :</p>
+
+<form action="" method="post">
+    {% csrf_token %}
+    <p><input type="submit" value="Confirmer"></p>
+</form>
+
+{% endblock %}

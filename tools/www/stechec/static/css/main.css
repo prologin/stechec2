@@ -1,0 +1,228 @@
+/**
+ * Main style sheet
+ * Author: Zopieux
+ */
+@font-face
+{
+	font-family: 'exocet';
+	src: url('/static/font/exocet-heavy.ttf') format('truetype');
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family:Verdana;
+    font-size: 0.8em;
+    font-weight: 700;
+    background: #FFFFAA;
+    color: #000;
+}
+
+a, a:visited {
+    color: #0077AA; /* #069; */
+    text-decoration: none;
+}
+a:hover {
+    color: #0077CC;
+}
+
+header {
+    margin-top: 5px;
+    padding-top: 5px;
+    height: 160px;
+    border-bottom: 1px solid #EA8951;
+}
+header #logo {
+    margin-left: 10px;
+    background: url('../img/head.png') no-repeat left top;
+    height: 150px;
+    width: 137px;
+    float: left;
+}
+header h1 {
+    background: url('../img/back.png') no-repeat center top;
+    line-height: 150px;
+    margin-left: 137px;
+    color: #C00;
+    font-size: 2em;
+    font-family:exocet;
+    text-align: center;
+}
+
+nav {
+    margin-left: 8px;
+    float: left;
+    width: 200px;
+}
+
+nav div.block {
+    border-right: 1px solid #EA8951;
+    border-bottom: 1px solid #EA8951;
+    -moz-border-radius-bottomright: 6px;
+    -webkit-border-bottom-right-radius: 6px;
+    padding: 6px;
+    margin: 8px 15px 0 0;
+}
+
+nav div.block h1 {
+    font-size: 1.5em;
+    color: #030;
+}
+
+nav div.block ul {
+    list-style-type: none;
+    margin-left: 10px;
+}
+
+nav div.block li {
+    list-style-image: none;
+}
+
+#content {
+    margin: 8px 10px 8px 210px;
+}
+
+#footer {
+    clear: both;
+    color: gray;
+    font-size: 0.7em;
+    text-align: center;
+    margin: 8px 20px;
+}
+
+#content p {
+    margin: 2px 0;
+    padding: 0;
+    text-align: justify;
+}
+#content p.intro {
+    margin-bottom: 8px !important;
+}
+
+/* Forms */
+form {
+    border: 1px solid #EA8951;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    margin: 0;
+    padding: 6px  10px;
+}
+
+label {
+    float: left;
+    width: 200px;
+    font-weight: bold;
+    text-align: right;
+    margin: 4px;
+}
+
+input, select, button, textarea {
+    margin: 4px;
+    border: 1px solid #777;
+    background-color: #004;
+    color: #fdf;
+    font-family: 'Trebuchet MS',Verdana,Tahoma,sans-serif;
+    font-size: 1em;
+}
+button, input[type=submit] {
+    background: #004;
+    padding: 0 6px;
+    padding-bottom: 3px;
+    height: 22px;
+    line-height: 22px;
+}
+input[type=text], input[type=password], input[type=file] {
+    width: 180px;
+    height: 22px;
+    line-height: 22px;
+}
+input:focus, select:focus, textarea:focus {
+    border: 1px solid #333;
+}
+
+#content ul.errorlist {
+    margin-left: 120px; /* 130 + 4*2 + 4 */
+    color: #c50;
+    list-style-type: none;
+}
+#content ul.errorlist li {
+    background: url('../img/err.png') no-repeat left center;
+    padding-left: 20px;
+}
+
+/* TABLES */
+table {
+    border-collapse: collapse;
+    width: 98%;
+    margin: 10px 6px;
+    border: 1px solid #004;
+    font-weight: normal;
+}
+thead th, tfoot td {
+    background: #000044;
+    border-bottom: 1px solid #004;
+    color: #FFF;
+    text-align: left;
+    padding: 1px 4px;
+}
+td, th {
+    padding: 3px;
+    vertical-align: top;
+    border-bottom: 1px solid #004;
+    border-left: 1px solid #004;
+}
+
+.row1 { background-color: #4488DD; }
+.row2 { background-color: #77AAFF; }
+
+.row1 a, .row1 a:visited, .row2 a, .row1 a:visited { color: #FFF; font-weight: bold; text-decoration:underline}
+
+.row1 a:hover, .row2 a:hover { color: #FFAA00; text-decoration:none}
+
+.row1:hover { background-color:#888}
+.row2:hover { background-color:#AAA}
+
+/* PAGINATION */
+p.pagination {
+    background: url('../img/page.png') no-repeat;
+    background-position: 3px center;
+    padding: 1px 8px 1px 28px !important;
+    text-align: left !important;
+    display: block;
+    /*border: 1px dotted #ddd;*/
+    margin: 12px 0 !important;
+}
+
+/* MISC */
+dl {
+    margin: 10px 0;
+}
+dt {
+    font-weight: bold;
+    color: #030;
+    margin-top: 0.75em;
+}
+dd {
+    padding-left: 20px;
+}
+
+#content ul {
+    margin: 4px 10px;
+    padding: 0 0 0 20px;
+}
+#content ul li {
+    margin: 1px;
+    padding: 0;
+}
+
+/* SPECIFIC */
+div.pbar {
+    height: 18px;
+}
+
+#edit_tabs {
+    float: left;
+}

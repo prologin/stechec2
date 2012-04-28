@@ -8,3 +8,6 @@ def configure(conf):
 
 def build(bld):
     bld.recurse('generator')
+    bld.recurse('worker-node')
+    bld.recurse('master-node')
+    bld.recurse('www')

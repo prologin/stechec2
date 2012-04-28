@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block "title" %}Détail du match{% endblock %}
+{% block "titleh1" %}Détail du match{% endblock %}
+
+{% block "content" %}
+
+<dl>
+    <dt>ID</dt>
+    <dd>{{ map.id }}</dd>
+
+    <dt>Nom</dt>
+    <dd>{{ map.name }}
+
+    <dt>Auteur</dt>
+    <dd>{{ map.author }}</dd>
+
+    <dt>Vue de la map</dt>
+    <dd><pre>
+{{ map.contents }}
+    </pre></dd>
+</dl>
+
+{% endblock %}

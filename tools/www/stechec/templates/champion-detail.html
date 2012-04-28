@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block "title" %}Détails du champion - {{ champion.name }}{% endblock %}
+{% block "titleh1" %}Détails du champion - {{ champion.name }}{% endblock %}
+{% block "head" %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.5.2.min.js"></script>
+{% endblock %}
+
+{% block "content" %}
+
+<dl>
+    <dt>Nom</dt>
+    <dd>{{ champion.name }}</dd>
+
+    <dt>Auteur</dt>
+    <dd>{{ champion.author }}</dd>
+
+    <dt>État</dt>
+    <dd>{{ champion.get_status_display }}</dd>
+
+    <dt>Commentaire</dt>
+    <dd>{{ champion.comment|linebreaksbr }}</dd>
+</dl>
+
+{% if champion.compilation_log and can_see_log %}
+<p><a id="toggle-log" href="#">Afficher/cacher le log de compilation</a></p>
+<pre id="log">{{ champion.compilation_log }}</pre>
+<script type="text/javascript">
+    $("#log").hide();
+    $("#toggle-log").click(function() {
+        $("#log").slideToggle();
+    });
+</script>
+{% endif %}
+
+{% endblock %}

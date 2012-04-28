@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block "title" %}Nouveau match{% endblock %}
+{% block "titleh1" %}Nouveau match{% endblock %}
+
+{% block "content" %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><input type="submit" value="Envoyer"></p>
+</form>
+
+{% endblock %}

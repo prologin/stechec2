@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block "title" %}Envoi d'un champion{% endblock %}
+{% block "titleh1" %}Envoi d'un champion{% endblock %}
+
+{% block "content" %}
+
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <p><input type="submit" value="Envoyer"></p>
+</form>
+
+{% endblock %}

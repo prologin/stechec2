@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block "title" %}Statut du serveur{% endblock %}
+{% block "titleh1" %}Statut du serveur{% endblock %}
+{% block "head" %}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/jquery-ui-1.8.11.css" type="text/css" />
+{% endblock %}
+
+{% block "content" %}
+
+<p class="intro">Cette page présente l'utilisation des serveurs de la finale.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Serveur</th>
+            <th>Utilisation</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for host, port, usage in status %}
+        <tr class="{% cycle "row1" "row2" %}">
+            <td style="vertical-align: middle;"><strong>{{ host }}</strong>:{{ port }}</td>
+            <td>
+                <div class="ui-progressbar ui-widget ui-widget-content ui-corner-all">
+                    <div style="width: {{ usage }}%;" class="ui-progressbar-value ui-widget-header ui-corner-left"></div>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="2">Aucun serveur trouvé.</td>
+        </tr>
+        {% endfor %}
+
+{% endblock %}

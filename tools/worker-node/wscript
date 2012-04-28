@@ -1,0 +1,41 @@
+#! /usr/bin/env python2
+
+from waflib import Utils
+
+def options(opt):
+    pass
+
+def configure(conf):
+    pass
+
+def build(bld):
+    bld.new_task_gen (
+        features = "subst",
+        source= "worker-node.in",
+        target= "worker-node",
+        PYTHON = "/usr/bin/python",
+        prefix = bld.env.PREFIX)
+    bld.new_task_gen (
+        features = "subst",
+        source= "paths.py.in",
+        target= "paths.py",
+        prefix = bld.env.PREFIX,
+        sysconfdir = bld.env.PREFIX + '/share/worker-node',
+        libdir = bld.env.PREFIX + '/lib/',
+        bindir = bld.env.PREFIX + '/bin/')
+    bld.new_task_gen (
+        features = "subst",
+        source= "worker-node.yml.in",
+        target= "worker-node.yml",
+        stechec = bld.env.PREFIX + '/stechec/')
+    bld.install_files('${PREFIX}/lib/worker-node', [
+        'paths.py',
+        '__init__.py',
+        '__main__.py',
+        'operations.py',
+    ])
+    bld.install_files('${PREFIX}/lib/worker-node', \
+        ['compile-champion.sh'], chmod=Utils.O755)
+    bld.install_files('${PREFIX}/share/worker-node', ['worker-node.yml'])
+    bld.install_files('${PREFIX}/bin', ['worker-node'], chmod=Utils.O755)
+	
