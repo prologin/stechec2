@@ -1,5 +1,6 @@
 #include "server.hh"
 
+#include <iostream>
 #include <utils/log.hh>
 #include <net/message.hh>
 #include <rules/player.hh>
@@ -57,6 +58,11 @@ void Server::run()
 
     // Results
     rules_result();
+
+    for (auto player : players_->players)
+        std::cout << player->name.c_str() << " "
+                  << player->score << " "
+                  << "0" << std::endl;
 }
 
 void Server::sckt_init()
@@ -95,6 +101,7 @@ void Server::wait_for_players()
         rules::Player_sptr new_player =
             rules::Player_sptr(new rules::Player(++nb_players_,
                         static_cast<rules::PlayerType>(id_req.client_id)));
+        buf_req->handle(new_player->name);
 
         delete buf_req;
 

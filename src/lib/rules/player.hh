@@ -14,7 +14,8 @@ struct Player
     Player(uint32_t id_, uint32_t type_)
         : id(id_),
           type(type_),
-          score(0)
+          score(0),
+          name("anonymous")
     {}
 
     void handle_buffer(utils::Buffer& buf)
@@ -22,11 +23,13 @@ struct Player
         buf.handle(id);
         buf.handle(type);
         buf.handle(score);
+        buf.handle(name);
     }
 
     uint32_t id;
     uint32_t type;
     int32_t score;
+    std::string name;
 };
 
 typedef std::shared_ptr<Player> Player_sptr;

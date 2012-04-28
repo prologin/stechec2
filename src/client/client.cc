@@ -9,7 +9,7 @@
 
 #include "options.hh"
 
-Client::Client(const Options& opt)
+Client::Client(Options& opt)
     : opt_(opt),
       rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
 {
@@ -79,6 +79,7 @@ void Client::sckt_init()
         msg.client_id = rules::SPECTATOR;
 
     msg.handle_buffer(buf_req);
+    buf_req.handle(opt_.client_name);
 
     // Send the request
     utils::Buffer* buf_rep = nullptr;
@@ -87,6 +88,7 @@ void Client::sckt_init()
         FATAL("Unable to get an ID from the server");
 
     player_ = rules::Player_sptr(new rules::Player(msg.client_id, 0));
+    player_->name = opt_.client_name;
 
     delete buf_rep;
 
