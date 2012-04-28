@@ -41,7 +41,7 @@ void Options::process(int argc, char** argv)
             po::value<uint32_t>(&nb_clients)->default_value(2),
                         "Number of players to expect")
         ("turn_timeout,t",
-            po::value<uint32_t>(&turn_timeout)->default_value(1500),
+            po::value<uint32_t>(&turn_timeout)->default_value(10000),
                         "Timeout for a player turn (in ms)")
         ("log,o",
             po::value<std::string>(&log)->default_value("stechec2d.log"),
