@@ -29,6 +29,7 @@ import os
 import os.path
 import sys
 import tempfile
+import signal
 
 def communicate(cmdline, data=''):
     """
@@ -77,11 +78,15 @@ def communicate(cmdline, data=''):
         chunks.append("\n\nLog truncated to stay below 256K\n")
 
     # Wait for process completion
-    while p.poll() is None:
-        gevent.sleep(0.05)
-
+    """while p.poll() is None:
+        gevent.sleep(0.05)"""
+    gevent.sleep(0.1)
+    try:
+        p.kill()
+    except OSError:
+        pass
     # Return data
-    return (p.returncode, ''.join(chunks))
+    return (0, ''.join(chunks))
 
 def champion_path(config, contest, user, champ_id):
     return os.path.join(config['paths']['data_root'], contest, 'champions',
