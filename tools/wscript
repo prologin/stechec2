@@ -1,5 +1,7 @@
 #! /usr/bin/env python2
 
+from waflib import Utils
+
 def options(opt):
     pass
 
@@ -11,3 +13,5 @@ def build(bld):
     bld.recurse('worker-node')
     bld.recurse('master-node')
     bld.recurse('www')
+    bld.install_files('${PREFIX}/bin', \
+        ['run.sh'], chmod=Utils.O755)
