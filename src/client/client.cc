@@ -69,14 +69,18 @@ void Client::sckt_init()
     NOTICE("Requesting on %s", opt_.req_addr.c_str());
     NOTICE("Subscribing on %s", opt_.sub_addr.c_str());
 
+    // Compute the client type
+    uint32_t client_type;
+    if (opt_.spectator)
+        client_type = rules::SPECTATOR;
+    else
+        client_type = rules::PLAYER;
+
     // Send a message to get an ID from the server
     // To avoid useless message, the client_id of the request corresponds
     // to the type of the client connecting (PLAYER, SPECTATOR, ...)
     utils::Buffer buf_req;
-    net::Message msg(net::MSG_CONNECT, rules::PLAYER);
-
-    if (opt_.spectator)
-        msg.client_id = rules::SPECTATOR;
+    net::Message msg(net::MSG_CONNECT, client_type);
 
     msg.handle_buffer(buf_req);
     buf_req.handle(opt_.client_name);
@@ -87,7 +91,7 @@ void Client::sckt_init()
             (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
 
-    player_ = rules::Player_sptr(new rules::Player(msg.client_id, 0));
+    player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));
     player_->name = opt_.client_name;
 
     delete buf_rep;
