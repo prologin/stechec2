@@ -136,7 +136,7 @@ class WorkerNode(object):
 
         lines = stdout.split('\n')
         result = []
-        score_re = re.compile(r'^(\d+) (\d+) (-?\d+) \(.*\)$')
+        score_re = re.compile(r'^(\d+) (-?\d+) (-?\d+) \(.*\)$')
         for line in lines:
             m = score_re.match(line)
             if m is None:
