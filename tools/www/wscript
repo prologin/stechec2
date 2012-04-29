@@ -28,7 +28,8 @@ def build(bld):
         '__init__.py',
         'manage.py',
         'settings.py',
-        'urls.py'])
+        'urls.py',
+	'tournoi.py'])
     bld.install_files('${PREFIX}/www/concours/stechec', [
         'stechec/admin.py',
         'stechec/models.py',
