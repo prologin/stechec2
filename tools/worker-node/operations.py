@@ -196,7 +196,7 @@ pub_addr=tcp://{ip}:{pub_port}
                "-r", "tcp://{ip}:{port}".format(ip='localhost', port=rep_port),
                "-p", "tcp://{ip}:{port}".format(ip='localhost', port=pub_port),
                "-m", "250000",
-               "-t", "50",
+               "-t", "3000",
                "-f", handle_opts(opts) , "-s"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server, "-c", config_path]
@@ -219,6 +219,6 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
                "-r", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
                "-p", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
                "-m", "250000",
-               "-t", "50",
+               "-t", "1500",
                "-f", handle_opts(opts)]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
