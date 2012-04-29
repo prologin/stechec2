@@ -1,5 +1,5 @@
 master:
-  host: localhost
+  host: prologin
   port: 8067
   heartbeat_secs: 5
   shared_secret: <undefined>

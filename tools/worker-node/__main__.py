@@ -76,11 +76,8 @@ class WorkerNode(object):
         - nobody will use the ports in the port range but us
         - there will never be more servers than ports in the range
         """
-        port = self.srv_port
-        self.srv_port += 1
-        if self.srv_port > self.max_srv_port:
-            self.srv_port = self.min_srv_port
-        return port
+        self.srv_port = str(randint(10000000, 100000000000000000000000000000000000))
+        return self.srv_port
 
     def send_heartbeat(self):
         logging.info('sending heartbeat to the server, %d/%d slots' % (
