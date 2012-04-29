@@ -121,16 +121,17 @@ def spawn_dumper(cmd, path):
     dump_path = tempfile.mktemp()
     def set_path():
         os.environ['DUMP_PATH'] = dump_path
-
+    print("launching")
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=STDOUT, preexec_fn=set_path)
     fcntl.fcntl(p.stdin, fcntl.F_SETFL, os.O_NONBLOCK)
     fcntl.fcntl(p.stdout, fcntl.F_SETFL, os.O_NONBLOCK)
     p.stdin.close()
-
+    print(launch)
     # Read stdout data
     while True:
         try:
             chunk = p.stdout.read(4096)
+            print(chunk)
             if not chunk:
                 break
         except IOError, ex:
