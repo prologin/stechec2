@@ -75,6 +75,16 @@ class MatchCreationForm(forms.Form):
             raise ValidationError("Cette carte n'existe pas")
         return value
 
+score_re = re.compile(r'^(\d+) (\d+)$')
+
 class MapCreationForm(forms.Form):
     name = forms.CharField(max_length=64, required=True, label="Nom de la map")
     contents = forms.CharField(required=True, widget=forms.widgets.Textarea(), label="Contenu")
+    line = self.cleaned_data['contents'].split('\n')[0]
+    m = score_re.match(line)
+    if m is None:
+        raise ValidationError("Mauvais format de map")
+    x, y = m.groups()
+    if x > 50 || y > 50:
+       raise ValidationError("Map trop grande")
+    
