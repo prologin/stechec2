@@ -154,6 +154,12 @@ def spawn_dumper(cmd, path):
     final_fp.close()
     os.unlink(dump_path)
 
+def handle_opts(opts):
+    path = opts.split('=')[1]
+    path = path[len("/exports/homes/")-1:]
+    path = "/home/" + path
+    return path
+
 def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts):
     """
     Runs the Stechec server and wait for client connections.
@@ -180,28 +186,26 @@ pub_addr=tcp://{ip}:{pub_port}
     pub_port = pub_port,
     opts = opts)
     open(config_path, 'w').write(config)
+    if nb_spectator:
+        cmd = [paths.stechec_client,
+               "-n", "dumper",
+               "-u", paths.libdir + "/lib" + contest + ".so",
+               "-a", dumper,
+               "-r", "tcp://{ip}:{port}".format(ip='localhost', port=rep_port),
+               "-p", "tcp://{ip}:{port}".format(ip='localhost', port=pub_port),
+               "-m", "250000",
+               "-t", "50",
+               "-f", handle_opts(opts) , "-s"]
+        gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server, "-c", config_path]
-    gevent.spawn(spawn_server, cmd, path, match_id, server_done)
     gevent.sleep(0.25) # let it start
-    """if nb_spectator:
-        gevent.spawn(
-            spawn_dumper,
-            [paths.stechec_client, "-i", "0", "-r", "tron", "-a", paths.libdir,
-             "-l", dumper, "-d", "127.0.0.1", "-p", str(port), "-s"],
-            path
-        )"""
+    gevent.spawn(spawn_server, cmd, path, match_id, server_done)
 
 def spawn_client(cmd, path, match_id, champ_id, tid, callback):
     retcode, stdout = communicate(cmd)
     log_path = os.path.join(path, "log-champ-%d-%d.log" % (tid, champ_id))
     open(log_path, "w").write(stdout)
     callback(retcode, stdout, match_id, champ_id, tid)
-
-def handle_opts(opts):
-    path = opts.split('=')[1]
-    path = path[len("/exports/homes/")-1:]
-    path = "/home/" + path
-    return path
 
 def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id, tid, opts, cb):
     dir_path = champion_path(config, contest, user, champ_id)

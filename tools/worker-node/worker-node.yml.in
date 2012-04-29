@@ -11,7 +11,7 @@ worker:
   port_range_end: 41000
 
 contest:
-  dumper: no
+  dumper: /usr/lib/dumper.so
 
 paths:
   data_root: @stechec@
