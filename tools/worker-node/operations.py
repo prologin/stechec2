@@ -122,6 +122,7 @@ def spawn_dumper(cmd, path):
     def set_path():
         os.environ['DUMP_PATH'] = dump_path
     print("launching")
+    print(cmd)
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=STDOUT, preexec_fn=set_path)
     fcntl.fcntl(p.stdin, fcntl.F_SETFL, os.O_NONBLOCK)
     fcntl.fcntl(p.stdout, fcntl.F_SETFL, os.O_NONBLOCK)
@@ -172,7 +173,7 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
         pass
 
     dumper = config['contest']['dumper']
-    nb_spectator = 0 if dumper == 'no' else 1
+    nb_spectator = 1 if dumper else 0
     config_path = os.path.join(path, "config_server.ini")
     config = '''
 [stechec2.server]
