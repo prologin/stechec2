@@ -6,10 +6,8 @@ void Actions::handle_buffer(utils::Buffer& buf)
 {
     if (buf.serialize())
     {
-        for (int i = actions_.size(); i > 0; --i)
+        for (auto action : actions_)
         {
-            IAction_sptr action(actions_.front());
-
             // The id is needed to reconstruct the action when unserializing
             uint32_t action_id = action->id();
             buf.handle(action_id);
