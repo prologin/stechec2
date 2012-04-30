@@ -179,7 +179,8 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
 [stechec2.server]
 rules={rules}
 rep_addr=ipc:///tmp/{rep_port}
-pub_addr=tcp:///tmp/{pub_port}
+pub_addr=ipc
+:///tmp/{pub_port}
 turn=4000
 {opts}
 '''.format(
@@ -194,8 +195,8 @@ turn=4000
                "-n", "dumper",
                "-u", paths.libdir + "/lib" + contest + ".so",
                "-a", dumper,
-               "-r", "tcp://ipc:///tmp/{port}".format(ip='localhost', port=rep_port),
-               "-p", "tcp://ipc:///tmp/{port}".format(ip='localhost', port=pub_port),
+               "-r", "ipc:///tmp/{port}".format(ip='localhost', port=rep_port),
+               "-p", "ipc:///tmp/{port}".format(ip='localhost', port=pub_port),
                "-m", "250000",
                "-t", "2000",
                "-f", handle_opts(opts) , "-s"]
