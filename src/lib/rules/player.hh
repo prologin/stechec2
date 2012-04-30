@@ -40,7 +40,7 @@ struct Players
     {
         if (buf.serialize())
         {
-            for (int i = players.size() - 1; i >= 0; --i)
+            for (unsigned i = 0; i < players.size(); ++i)
                 players[i]->handle_buffer(buf);
         }
         else
