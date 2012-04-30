@@ -180,6 +180,8 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
 rules={rules}
 rep_addr=tcp://{ip}:{rep_port}
 pub_addr=tcp://{ip}:{pub_port}
+nb_clients = 7
+verbose = 1
 {opts}
 '''.format(
     rules = paths.libdir + "/lib" + contest + ".so",
@@ -197,7 +199,8 @@ pub_addr=tcp://{ip}:{pub_port}
                "-p", "tcp://{ip}:{port}".format(ip='localhost', port=pub_port),
                "-m", "250000",
                "-t", "3000",
-               "-f", handle_opts(opts) , "-s"]
+               "-f", handle_opts(opts) , "-s",
+               "-v", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server, "-c", config_path]
     gevent.sleep(0.25) # let it start
