@@ -89,12 +89,8 @@ class MatchTask(object):
                 continue
             self.player_tasks.add(mpid)
 
-            """t = PlayerTask(self.config, self.mid, worker.hostname, req_port,
+            t = PlayerTask(self.config, self.mid, worker.hostname, req_port,
                 sub_port, cid, mpid, user, self.opts)
-            master.worker_tasks.append(t)"""
-            worker.rpc.run_client(
-            self.secret, self.contest, self.mid, worker.hostname, req_port,
-            sub_port, user, cid, mpid, self.opts
-               )
+            master.worker_tasks.append(t)
         master.to_dispatch.set()
         del master.matches[self.mid]

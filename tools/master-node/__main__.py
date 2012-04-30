@@ -81,7 +81,9 @@ class MasterNode(object):
 
     def heartbeat(self, worker, first):
         hostname, port, slots, max_slots = worker
-        usage = (1.0 - float(slots) / max_slots) * 100
+        if hostname == "prologin-":
+            return
+	usage = (1.0 - float(slots) / max_slots) * 100
         logging.info('received heartbeat from %s:%d, usage is %.2f%%' % (
                          hostname, port, usage
                     ))

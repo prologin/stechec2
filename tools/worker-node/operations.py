@@ -178,10 +178,8 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
     config = '''
 [stechec2.server]
 rules={rules}
-rep_addr=ipc:///tmp/{rep_port}
-pub_addr=ipc
-:///tmp/{pub_port}
-turn=4000
+rep_addr=tcp://{ip}:{rep_port}
+pub_addr=tcp://{ip}:{pub_port}
 {opts}
 '''.format(
     rules = paths.libdir + "/lib" + contest + ".so",
@@ -195,10 +193,10 @@ turn=4000
                "-n", "dumper",
                "-u", paths.libdir + "/lib" + contest + ".so",
                "-a", dumper,
-               "-r", "ipc:///tmp/{port}".format(ip='localhost', port=rep_port),
-               "-p", "ipc:///tmp/{port}".format(ip='localhost', port=pub_port),
+               "-r", "tcp://{ip}:{port}".format(ip='localhost', port=rep_port),
+               "-p", "tcp://{ip}:{port}".format(ip='localhost', port=pub_port),
                "-m", "250000",
-               "-t", "2000",
+               "-t", "3000",
                "-f", handle_opts(opts) , "-s"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server, "-c", config_path]
@@ -218,9 +216,9 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
                "-n", str(tid),
                "-u", paths.libdir + "/lib" + contest + ".so",
                "-a", dir_path + "/champion.so",
-               "-r", "ipc:///tmp/{port}".format(ip=ip, port=req_port),
-               "-p", "ipc:///tmp/{port}".format(ip=ip, port=sub_port),
+               "-r", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
+               "-p", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
                "-m", "250000",
-               "-t", "2000",
+               "-t", "1500",
                "-f", handle_opts(opts)]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
