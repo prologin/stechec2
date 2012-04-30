@@ -65,7 +65,7 @@ def communicate(cmdline, data=''):
             if not chunk:
                 break
 
-            if read_size < 2**18:
+            if read_size < 2**32:
                 chunks.append(chunk)
         except IOError, ex:
             if ex[0] != errno.EAGAIN:
