@@ -21,7 +21,7 @@ lib_TARGETS = #{target}
 
 # Tu peux rajouter des fichiers sources, headers, ou changer
 # des flags de compilation.
-#{target}-srcs = $(wildcard *.cc)
+#{target}-srcs = $(wildcard *.cc) $(wildcard *.cpp)
 #{target}-cxxflags = -O2 -Wall
 
 V=1
