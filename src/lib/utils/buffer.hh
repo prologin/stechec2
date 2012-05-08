@@ -10,6 +10,7 @@
 # include <stdexcept>
 # include <string>
 # include <vector>
+# include <list>
 
 namespace utils {
 
@@ -35,8 +36,6 @@ public:
     // Allow access to the serialized data
     const uint8_t* data() const { return &data_[0]; }
     size_t size() const { return data_.size(); }
-    bool serialize() const { return serialize_; }
-    bool empty() const { return idx_ >= data_.size(); }
 
     // Handle a memory zone argument
     void handle_mem(char* mem, size_t len)
@@ -67,6 +66,29 @@ public:
         }
     }
 
+    // Handle a list of simple types
+    template <typename T>
+    void handle(std::list<T>& l)
+    {
+        unsigned int size = l.size();
+        handle(size);
+
+        if (serialize_)
+        {
+            for (auto el : l)
+                handle(el);
+        }
+        else
+        {
+            for (unsigned i = 0; i < size; ++i)
+            {
+                T element;
+                handle(element);
+                l.push_back(element);
+            }
+        }
+    }
+
     // Handle arrays
     template <typename T>
     void handle_array(T* arr, size_t count)
@@ -87,6 +109,10 @@ public:
 
         return *this;
     }
+
+public:
+    bool empty() const { return idx_ >= data_.size(); }
+    bool serialize() const { return serialize_; }
 
 private:
     std::vector<uint8_t> data_;
