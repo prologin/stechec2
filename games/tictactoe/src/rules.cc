@@ -25,20 +25,6 @@ Rules::Rules(const rules::Options& opt)
         champion_play = champion_->get<f_champion_play>("play_turn");
         champion_end = champion_->get<f_champion_end>("end_game");
 
-        // Caml corner case
-        try
-        {
-            typedef void (*caml_init)(char**);
-            caml_init caml_startup = champion_->get<caml_init>("caml_startup");
-
-            // XXX: ugly
-            const char* argv[2] = {"./caml", nullptr};
-            caml_startup(const_cast<char**>(argv));
-        }
-        catch (utils::DLLError& e)
-        {
-        }
-
         sandbox_.execute(champion_init);
     }
 

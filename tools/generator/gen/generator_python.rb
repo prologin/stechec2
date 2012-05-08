@@ -318,7 +318,7 @@ static void _init_python()
 {
   PyObject* name;
   const char* champion_path;
-      
+
   champion_path = getenv("CHAMPION_PATH");
   if (champion_path == NULL)
     champion_path = ".";
@@ -366,7 +366,7 @@ static PyObject* _call_python_function(const char* name)
 
   PyObject *arglist, *func;
   PyObject *result = NULL;
-  
+
   func = PyObject_GetAttrString(champ_module, (char*)name);
   if (func && PyCallable_Check(func))
   {

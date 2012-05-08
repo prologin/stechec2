@@ -97,7 +97,7 @@ void* thread_proc(void* arg)
     return nullptr;
 }
 
-}
+} // namespace sandbox_impl
 
 template <typename Ret, typename... Args>
 Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
@@ -147,4 +147,4 @@ void Sandbox::execute(const std::function<void(Args...)>& func, Args... args)
     execute(sandbox_impl::wrap_void(func), args...);
 }
 
-}
+} // namespace utils

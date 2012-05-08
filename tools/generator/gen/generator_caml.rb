@@ -226,6 +226,25 @@ EOF
     for_each_enum { |enum| build_enum_wrappers enum }
     for_each_struct { |struct| build_struct_wrappers struct }
 
+    @f.puts <<-EOF
+/*
+** Inititialize caml
+*/
+static inline void _init_caml()
+{
+    static bool is_initialized = false;
+
+    if (!is_initialized)
+    {
+        is_initialized = true;
+
+        const char* argv[2] = {"./caml", NULL};
+        caml_startup(const_cast<char**>(argv));
+    }
+}
+
+    EOF
+
     for_each_fun do |fn|
       @f.print proto(fn)
       @f.puts "", "{"
@@ -276,6 +295,7 @@ EOF
     for_each_user_fun do |fn|
       @f.print cxx_proto(fn)
       @f.puts "", "{"
+      @f.puts "  _init_caml();"
       @f.puts "  CAMLparam0();"
       @f.puts "  CAMLlocal1(_ret);"
       @f.puts "  static value *closure = NULL;"

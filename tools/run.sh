@@ -23,7 +23,6 @@ EOF
     exit 0
 fi
 
-
 clis=`grep '\\[stechec2.client.' $1`
 
 stechec2-server -c "$1" &
@@ -42,7 +41,7 @@ done
 kill_server()
 {
     for i in `echo "$pids"`; do
-	kill $i
+        kill $i
     done
 }
 
