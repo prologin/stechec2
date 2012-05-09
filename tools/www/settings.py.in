@@ -1,6 +1,15 @@
 # Django settings for concours project.
 
-DEBUG = True
+import os.path
+import yaml
+
+if not os.path.exists("/etc/stechec/website.yml"):
+    raise RuntimeError("The website configuration file could not be found. "
+                       "Please copy the sample from @config_sample@ to "
+                       "/etc/stechec/website.yml and change the values.")
+cfg = yaml.load(open("/etc/stechec/website.yml"))
+
+DEBUG = cfg['website']['debug']
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -12,11 +21,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '@bdd@',                      # Or path to database file if using sqlite3.
-        'USER': '@user@',                      # Not used with sqlite3.
-        'PASSWORD': '@password@',                  # Not used with sqlite3.
-        'HOST': '@server@',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '@port@',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': cfg['sql']['database'],
+        'USER': cfg['sql']['user'],
+        'PASSWORD': cfg['sql']['password'],
+        'HOST': cfg['sql']['host'],
+        'PORT': cfg['sql']['port'],
     }
 }
 
@@ -27,7 +36,7 @@ DATABASES = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = 'America/Chicago'
+TIME_ZONE = cfg['website']['timezone']
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -86,7 +95,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = 'CHANGE_ME'
+SECRET_KEY = cfg['website']['secret_key']
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -147,7 +156,7 @@ LOGGING = {
     }
 }
 
-STECHEC_ROOT = "@stechec@"
-STECHEC_CONTEST = "@contest@"
-STECHEC_MASTER = "@url@"
-STECHEC_NPLAYERS = @nb_player@
+STECHEC_ROOT = cfg["contest"]["directory"]
+STECHEC_CONTEST = cfg["contest"]["game"]
+STECHEC_MASTER = cfg["master"]["url"]
+STECHEC_NPLAYERS = cfg["contest"]["nb_players"]

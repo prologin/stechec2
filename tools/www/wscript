@@ -2,6 +2,8 @@
 
 from waflib import Utils
 
+import os.path
+
 def options(opt):
     pass
 
@@ -9,39 +11,42 @@ def configure(conf):
     pass
 
 def build(bld):
-    bld.new_task_gen (
+    bld.env.WEBPREFIX = os.path.join(bld.env.PREFIX, 'share', 'stechec2',
+                                     'www', 'concours')
+    bld.new_task_gen(
         features = "subst",
-        source= "settings.py.in",
-        target= "settings.py",
-        prefix = bld.env.PREFIX,
-        contest = bld.env.GAMES[0],
-        stechec = bld.env.PREFIX + '/stechec/',
-        url = "http://127.0.0.1:8067/",
-        nb_player = 2,
-        bdd = 'stechec',
-        user = 'stechec',
-        password = 'prologin',
-        server = 'localhost',
-        port = 5432
-        )
-    bld.install_files('${PREFIX}/www/concours/', [
+        source = "settings.py.in",
+        target = "settings.py",
+        config_sample = os.path.join(bld.env.WEBPREFIX, 'website.yml'),
+    )
+    bld.new_task_gen(
+        features = "subst",
+        source = "website.yml.in",
+        target = "website.yml",
+        available_games = ','.join(bld.env.GAMES)
+    )
+    bld.install_files('${WEBPREFIX}', [
         '__init__.py',
         'manage.py',
         'settings.py',
         'urls.py',
-	'tournoi.py'])
-    bld.install_files('${PREFIX}/www/concours/stechec', [
+        'tournoi.py',
+        'website.yml'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec', [
         'stechec/admin.py',
         'stechec/models.py',
         'stechec/__init__.py',
         'stechec/urls.py',
         'stechec/views.py',
-        'stechec/forms.py'])
-    bld.install_files('${PREFIX}/www/concours/stechec/templatetags', [
+        'stechec/forms.py'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/templatetags', [
         'stechec/templatetags/substract.py',
         'stechec/templatetags/__init__.py',
-        'stechec/templatetags/paginator.py'])
-    bld.install_files('${PREFIX}/www/concours/stechec/templates', [
+        'stechec/templatetags/paginator.py'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/templates', [
         'stechec/templates/champions-list.html',
         'stechec/templates/champion-new.html',
         'stechec/templates/master-status.html',
@@ -56,14 +61,17 @@ def build(bld):
         'stechec/templates/map-new.html',
         'stechec/templates/base.html',
         'stechec/templates/match-new.html',
-        'stechec/templates/matches-list.html'])
-    bld.install_files('${PREFIX}/www/concours/stechec/static/js', [
-        'stechec/static/js/jquery-1.5.2.min.js'])
-    bld.install_files('${PREFIX}/www/concours/stechec/static/img/', [
+        'stechec/templates/matches-list.html'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/static/js', [
+        'stechec/static/js/jquery-1.5.2.min.js'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/static/img/', [
         'stechec/static/img/head.png',
         'stechec/static/img/back.png',
-        'stechec/static/img/page.png'])
-    bld.install_files('${PREFIX}/www/concours/stechec/static/img/jquery-ui/', [
+        'stechec/static/img/page.png'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/static/img/jquery-ui/', [
         'stechec/static/img/jquery-ui/ui-icons_222222_256x240.png',
         'stechec/static/img/jquery-ui/ui-icons_ffffff_256x240.png',
         'stechec/static/img/jquery-ui/ui-bg_glass_65_ffffff_1x400.png',
@@ -77,10 +85,12 @@ def build(bld):
         'stechec/static/img/jquery-ui/ui-bg_flat_10_000000_40x100.png',
         'stechec/static/img/jquery-ui/ui-bg_glass_100_f6f6f6_1x400.png',
         'stechec/static/img/jquery-ui/ui-icons_228ef1_256x240.png',
-        'stechec/static/img/jquery-ui/ui-bg_glass_100_fdf5ce_1x400.png'])
-    bld.install_files('${PREFIX}/www/concours/stechec/static/css/', [
+        'stechec/static/img/jquery-ui/ui-bg_glass_100_fdf5ce_1x400.png'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/static/css/', [
         'stechec/static/css/jquery-ui-1.8.11.css',
-        'stechec/static/css/main.css'])
-    bld.install_files('${PREFIX}/www/concours/stechec/static/font/', [
-        'stechec/static/font/exocet-heavy.ttf'])
-    
+        'stechec/static/css/main.css'
+    ])
+    bld.install_files('${WEBPREFIX}/stechec/static/font/', [
+        'stechec/static/font/exocet-heavy.ttf'
+    ])
