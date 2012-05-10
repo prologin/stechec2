@@ -1,11 +1,22 @@
+# Master server settings.
 master:
-  port: 8067
-  shared_secret: <undefined>
-  contest: @contest@
+  port: 8067                    # Both the website and the worker nodes will
+                                # connect to the node through this port.
+                                # Configure your firewall!
+
+  shared_secret: CHANGEME       # A shared secret used to avoid malicious
+                                # requests impersonating a worker node.
+
+  game: CHANGEME                # One of this list: [@available_games@].
 
 worker:
-  timeout_secs: 12
+  timeout_secs: 12      # After this number of seconds has elapsed, if a worker
+                        # node has not sent a ping it will be considered as
+                        # dead. This value must be grater than the one
+                        # configured as the ping interval in the worker nodes.
 
+# SQL connection informations and queries. If you are using the standard
+# stechec website, do not change the queries!
 sql:
   host: localhost
   port: 5432

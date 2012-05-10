@@ -33,6 +33,7 @@ import gevent.event
 import logging
 import logging.handlers
 import optparse
+import os.path
 import paths
 import psycopg2
 import psycopg2.extras
@@ -81,9 +82,7 @@ class MasterNode(object):
 
     def heartbeat(self, worker, first):
         hostname, port, slots, max_slots = worker
-        if hostname == "prologin-":
-            return
-	usage = (1.0 - float(slots) / max_slots) * 100
+        usage = (1.0 - float(slots) / max_slots) * 100
         logging.info('received heartbeat from %s:%d, usage is %.2f%%' % (
                          hostname, port, usage
                     ))
@@ -335,6 +334,11 @@ if __name__ == '__main__':
     logging.getLogger('').setLevel(
         logging.DEBUG if options.verbose else logging.INFO
     )
+
+    if not os.path.exists(options.config_file):
+        raise RuntimeError("No configuration file found at %s. Copy the sample"
+                           " configuration and adapt it to your needs."
+                           % options.config_file)
 
     config = yaml.load(open(options.config_file))
     s = SimpleXMLRPCServer(('0.0.0.0', config['master']['port']),

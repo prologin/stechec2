@@ -32,6 +32,12 @@ def configure(conf):
     conf.load('unittest_gtest')
     conf.load('ruby')
 
+    # Look for Python 2
+    try:
+        conf.find_program('python2', var='PYTHON')
+    except conf.errors.ConfigurationError:
+        conf.find_program('python', var='PYTHON')
+
     # Warning flags
     conf.check_cxx(cxxflags = '-Wall')
     conf.check_cxx(cxxflags = '-Wextra')

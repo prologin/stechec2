@@ -23,7 +23,7 @@ import re
 paths = {
     "prefix": "@prefix@",
     "sysconfdir": "@sysconfdir@",
-    "cfgdir": "@sysconfdir@/@PACKAGE@",
+    "cfgdir": "/etc/stechec",
 }
 
 def expand_path(p):

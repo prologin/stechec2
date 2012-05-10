@@ -9,27 +9,26 @@ def configure(conf):
     pass
 
 def build(bld):
-    package = ""
-    bld.new_task_gen (
+    bld.new_task_gen(
         features = "subst",
         source= "master-node.in",
         target= "master-node",
-        PYTHON = "/usr/bin/python",
-        prefix = bld.env.PREFIX,
-        PACKAGE = package)
-    bld.new_task_gen (
+        prefix = bld.env.PREFIX
+    )
+    bld.new_task_gen(
         features = "subst",
         source= "paths.py.in",
         target= "paths.py",
         prefix = bld.env.PREFIX,
-        PACKAGE = package,
-        sysconfdir = bld.env.PREFIX + '/share/master-node')
-    bld.new_task_gen (
+        sysconfdir = bld.env.PREFIX + '/share/stechec2/master-node'
+    )
+    bld.new_task_gen(
         features = "subst",
         source= "master-node.yml.in",
         target= "master-node.yml",
-        contest = bld.env.GAMES[0])
-    bld.install_files('${PREFIX}/lib/master-node', [
+        available_games = ','.join(bld.env.GAMES),
+    )
+    bld.install_files('${PREFIX}/lib/stechec2/master-node', [
         'paths.py',
         '__init__.py',
         '__main__.py',
@@ -37,6 +36,5 @@ def build(bld):
         'utils.py',
         'worker.py',
     ])
-    bld.install_files('${PREFIX}/share/master-node', ['master-node.yml'])
+    bld.install_files('${PREFIX}/share/stechec2/master-node', ['master-node.yml'])
     bld.install_files('${PREFIX}/bin', ['master-node'], chmod=Utils.O755)
-	

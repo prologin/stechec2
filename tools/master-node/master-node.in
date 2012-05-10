@@ -1,3 +1,3 @@
 #! /bin/sh
 
-exec @PYTHON@ @prefix@/lib/@PACKAGE@/master-node $*
+exec @PYTHON@ @prefix@/lib/stechec2/master-node $*
