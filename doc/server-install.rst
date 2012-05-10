@@ -87,3 +87,16 @@ And configuring an ``nginx`` virtual host like this one::
             root ${PREFIX}/share/stechec2/www/concours/stechec;
         }
     }
+
+Master node deployment
+----------------------
+
+The master node is very easy to deploy: copy its sample configuration file from
+``${PREFIX}/share/stechec2/master-node/master-node.yml`` to ``/etc/stechec``
+and change the database informations and the contest game name. After that,
+launch ``master-node`` and the master node should be running properly and
+logging informations to syslog.
+
+Don't forget to accept connections to the master node in your firewall, and
+change the master node URL in the website configuration if you haven't already
+done so.
