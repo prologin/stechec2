@@ -1,6 +1,6 @@
 #include "rules.hh"
 
-Rules::Rules(const std::rules::Options opt)
+Rules::Rules(const rules::Options opt)
 {
     if (!opt.champion_lib.empty())
         champion_dll_ = new utils::DLL(opt.champion_lib);
