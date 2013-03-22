@@ -24,6 +24,8 @@ void Actions::handle_buffer(utils::Buffer& buf)
             buf.handle(action_id);
 
             // Use it to instantiate the right rules Action
+            if (action_factory_.find(action_id) == action_factory_.end())
+                FATAL("Action %d isn't registered", action_id);
             IAction_sptr action = IAction_sptr(action_factory_[action_id]());
 
             // And finally unserialize
