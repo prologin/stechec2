@@ -32,9 +32,7 @@ void client_signal_handler(int sig)
     Message msg(MSG_EXIT, client_id_);
     msg.handle_buffer(buf);
 
-    zmq::message_t zmsg(buf.size());
-    memcpy(zmsg.data(), buf.data(), buf.size());
-    sckt.send(zmsg);
+    sckt.send(buf.data(), buf.size());
 }
 
 static
@@ -58,9 +56,7 @@ void server_signal_handler(int sig)
         Message msg(MSG_EXIT);
         msg.handle_buffer(buf);
 
-        zmq::message_t zmsg(buf.size());
-        memcpy(zmsg.data(), buf.data(), buf.size());
-        sckt.send(zmsg);
+        sckt.send(buf.data(), buf.size());
     }
 }
 

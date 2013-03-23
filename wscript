@@ -74,7 +74,7 @@ def configure(conf):
 
     # ZeroMQ
     conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
-                   args = ['--cflags', '--libs'])
+                   atleast_version = '3.2.0', args = ['--cflags', '--libs'])
 
     # Google Flags
     conf.check_cxx(lib = "gflags", mandatory = True, uselib_store = "gflags")

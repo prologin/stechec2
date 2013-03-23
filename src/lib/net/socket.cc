@@ -32,7 +32,7 @@ bool Socket::poll(long timeout)
     pollitem.socket = static_cast<void*>(*reqrep_sckt_.get());
     pollitem.events = ZMQ_POLLIN;
 
-    return zmq::poll(&pollitem, 1, timeout * 1000) > 0;
+    return zmq::poll(&pollitem, 1, timeout) > 0;
 }
 
 bool Socket::send_sckt(const utils::Buffer& buf,
@@ -40,10 +40,7 @@ bool Socket::send_sckt(const utils::Buffer& buf,
 {
     try
     {
-        zmq::message_t zmsg(buf.size());
-        memcpy(zmsg.data(), buf.data(), buf.size());
-
-        if (!sckt->send(zmsg, flags))
+        if (!sckt->send(buf.data(), buf.size(), flags))
             throw std::runtime_error("Could not send message");
 
         return true;

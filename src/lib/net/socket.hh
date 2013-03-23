@@ -8,7 +8,7 @@
 
 namespace net {
 
-const int SCKT_NOBLOCK = ZMQ_NOBLOCK;
+const int SCKT_NOBLOCK = ZMQ_DONTWAIT;
 
 struct Message;
 
