@@ -76,9 +76,8 @@ def configure(conf):
     conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
                    args = ['--cflags', '--libs'])
 
-    # Boost
-    conf.load('boost')
-    conf.check_boost(lib = 'program_options')
+    # Google Flags
+    conf.check_cxx(lib = "gflags", mandatory = True, uselib_store = "gflags")
 
     # Ruby
     conf.check_ruby_version((1, 9))
@@ -141,7 +140,7 @@ def build_net(bld):
             features = 'gtest',
             source = 'src/lib/net/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['net', 'BOOST']
+            use = ['net']
         )
 
 def build_utils(bld):
@@ -149,20 +148,19 @@ def build_utils(bld):
         source = '''
             src/lib/utils/dll.cc
             src/lib/utils/log.cc
-            src/lib/utils/options.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
         target = 'utils',
-        use = ['rt'],
+        use = ['rt', 'gflags'],
         export_includes = 'src/lib'
     )
 
-    for test in ['buffer', 'options', 'sandbox']:
+    for test in ['buffer', 'sandbox']:
         bld.program(
             features = 'gtest',
             source = 'src/lib/utils/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['utils', 'BOOST']
+            use = ['utils']
         )
 
 def build_rules(bld):
@@ -193,13 +191,12 @@ def build_client(bld):
     bld.program(
         source = '''
             src/client/main.cc
-            src/client/options.cc
             src/client/client.cc
         ''',
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'rules', 'BOOST'],
+        use = ['utils', 'net', 'rules', 'gflags'],
         lib = ['dl']
     )
 
@@ -207,12 +204,11 @@ def build_server(bld):
     bld.program(
         source = '''
             src/server/main.cc
-            src/server/options.cc
             src/server/server.cc
         ''',
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'rules', 'BOOST'],
+        use = ['utils', 'net', 'rules', 'gflags'],
         lib = ['dl']
     )

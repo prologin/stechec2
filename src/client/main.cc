@@ -1,16 +1,11 @@
 #include "client.hh"
 
-#include "options.hh"
-
-#include <utils/log.hh>
+#include <gflags/gflags.h>
 
 int main(int argc, char** argv)
 {
-    Options opt;
-    opt.process(argc, argv);
+    google::ParseCommandLineFlags(&argc, &argv, true);
 
-    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
-
-    Client client(opt);
+    Client client;
     client.run();
 }

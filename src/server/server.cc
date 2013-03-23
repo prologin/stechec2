@@ -1,17 +1,24 @@
 #include "server.hh"
 
+#include <gflags/gflags.h>
 #include <iostream>
 #include <utils/log.hh>
 #include <net/message.hh>
 #include <rules/player.hh>
 
-#include "options.hh"
+DEFINE_string(rep_addr, "tcp://0.0.0.0:42124",
+              "Set reply address binding (ZeroMQ)");
+DEFINE_string(pub_addr, "tcp://0.0.0.0:42125",
+              "Set publishing address binding (ZeroMQ)");
+DEFINE_int32(turn_timeout, 10000, "Timeout for a player turn (in ms)");
+DEFINE_int32(nb_clients, 2, "Number of players to expect");
+DEFINE_string(map_file, "default.map", "Map file");
+DEFINE_string(rules_lib, "rules.so", "Rules library");
 
-Server::Server(const Options& opt)
-    : opt_(opt),
-      nb_players_(0),
-      rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
+Server::Server()
+    : nb_players_(0)
 {
+    rules_lib_.reset(new utils::DLL(FLAGS_rules_lib));
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
@@ -38,9 +45,9 @@ void Server::run()
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
-    rules_opt.time = opt_.turn_timeout;
-    rules_opt.map_file = opt_.map_file;
-    rules_opt.verbose = opt_.verbose;
+    rules_opt.time = FLAGS_turn_timeout;
+    rules_opt.map_file = FLAGS_map_file;
+    rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;
 
@@ -68,11 +75,11 @@ void Server::run()
 void Server::sckt_init()
 {
     sckt_ = net::ServerSocket_sptr(
-            new net::ServerSocket(opt_.pub_addr, opt_.rep_addr));
+            new net::ServerSocket(FLAGS_pub_addr, FLAGS_rep_addr));
     sckt_->init();
 
-    NOTICE("Replying on %s", opt_.rep_addr.c_str());
-    NOTICE("Publishing on %s", opt_.pub_addr.c_str());
+    NOTICE("Replying on %s", FLAGS_pub_addr.c_str());
+    NOTICE("Publishing on %s", FLAGS_rep_addr.c_str());
 }
 
 void Server::wait_for_players()
@@ -80,7 +87,7 @@ void Server::wait_for_players()
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
-    while (players_->players.size() < opt_.nb_clients)
+    while (players_->players.size() < (size_t)FLAGS_nb_clients)
     {
         utils::Buffer* buf_req = nullptr;
 

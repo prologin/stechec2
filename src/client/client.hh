@@ -10,12 +10,10 @@
 # include <rules/player.hh>
 # include <utils/dll.hh>
 
-class Options;
-
 class Client
 {
 public:
-    Client(Options& opt);
+    Client();
     void run();
 
 private:
@@ -28,7 +26,6 @@ private:
     rules::f_client_loop client_loop;
 
 private:
-    Options& opt_;
     std::unique_ptr<utils::DLL> rules_lib_;
 
     rules::Player_sptr player_;

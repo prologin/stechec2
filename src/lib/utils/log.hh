@@ -3,8 +3,11 @@
 
 // Implementation of a logger based on the one in the first version of Stechec.
 
+# include <gflags/gflags.h>
 # include <iostream>
 # include <ostream>
+
+DECLARE_int32(verbose);
 
 namespace utils {
 
@@ -48,7 +51,7 @@ public:
     }
 
 private:
-    Logger(DisplayLevel level = WARNING_LEVEL) : level_(level) {}
+    Logger();
     DisplayLevel level_;
 };
 

@@ -1,5 +1,6 @@
 #include "client.hh"
 
+#include <gflags/gflags.h>
 #include <utils/log.hh>
 #include <utils/buffer.hh>
 #include <net/message.hh>
@@ -7,17 +8,27 @@
 #include <rules/player.hh>
 #include <rules/options.hh>
 
-#include "options.hh"
+DEFINE_string(client_name, "anonymous", "Client name (used for results)");
+DEFINE_string(req_addr, "tcp://0.0.0.0:42124",
+              "Set request address binding (ZeroMQ)");
+DEFINE_string(sub_addr, "tcp://0.0.0.0:42125",
+              "Set subscribe address binding (ZeroMQ)");
+DEFINE_string(rules, "rules.so", "Rules library");
+DEFINE_string(champion, "champion.so", "Champion library");
+DEFINE_string(map, "default.map", "Map file");
+DEFINE_bool(spectator, false, "Set if the client is a spectator");
+DEFINE_int32(memory, 42, "Max memory the client can use (in MiB)");
+DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
 
-Client::Client(Options& opt)
-    : opt_(opt),
-      rules_lib_(std::unique_ptr<utils::DLL>(new utils::DLL(opt.rules_lib)))
+Client::Client()
 {
+    rules_lib_.reset(new utils::DLL(FLAGS_rules));
+
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
 
-    if (opt_.spectator)
+    if (FLAGS_spectator)
         client_loop = rules_lib_->get<rules::f_client_loop>("spectator_loop");
     else
         client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
@@ -39,11 +50,11 @@ void Client::run()
 
     // Set the rules options
     rules::Options rules_opt;
-    rules_opt.champion_lib = opt_.champion_lib;
-    rules_opt.time = opt_.time;
-    rules_opt.map_file = opt_.map_file;
+    rules_opt.champion_lib = FLAGS_champion;
+    rules_opt.time = FLAGS_time;
+    rules_opt.map_file = FLAGS_map;
     rules_opt.player = player_;
-    rules_opt.verbose = opt_.verbose;
+    rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;
 
@@ -63,15 +74,15 @@ void Client::run()
 void Client::sckt_init()
 {
     sckt_ = net::ClientSocket_sptr(
-            new net::ClientSocket(opt_.sub_addr, opt_.req_addr));
+            new net::ClientSocket(FLAGS_sub_addr, FLAGS_req_addr));
     sckt_->init();
 
-    NOTICE("Requesting on %s", opt_.req_addr.c_str());
-    NOTICE("Subscribing on %s", opt_.sub_addr.c_str());
+    NOTICE("Requesting on %s", FLAGS_req_addr.c_str());
+    NOTICE("Subscribing on %s", FLAGS_sub_addr.c_str());
 
     // Compute the client type
     uint32_t client_type;
-    if (opt_.spectator)
+    if (FLAGS_spectator)
         client_type = rules::SPECTATOR;
     else
         client_type = rules::PLAYER;
@@ -83,7 +94,7 @@ void Client::sckt_init()
     net::Message msg(net::MSG_CONNECT, client_type);
 
     msg.handle_buffer(buf_req);
-    buf_req.handle(opt_.client_name);
+    buf_req.handle(FLAGS_client_name);
 
     // Send the request
     utils::Buffer* buf_rep = nullptr;
@@ -92,7 +103,7 @@ void Client::sckt_init()
         FATAL("Unable to get an ID from the server");
 
     player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));
-    player_->name = opt_.client_name;
+    player_->name = FLAGS_client_name;
 
     delete buf_rep;
 

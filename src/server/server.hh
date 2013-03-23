@@ -10,13 +10,10 @@
 # include <rules/types.hh>
 # include <utils/dll.hh>
 
-// Forward declarations
-class Options;
-
 class Server
 {
 public:
-    Server(const Options& opt);
+    Server();
     void run();
 
 private:
@@ -28,7 +25,6 @@ private:
     rules::f_server_loop server_loop;
 
 private:
-    const Options& opt_;
     uint32_t nb_players_;
     std::unique_ptr<utils::DLL> rules_lib_;
 

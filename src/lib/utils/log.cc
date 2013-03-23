@@ -3,8 +3,13 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+#include <gflags/gflags.h>
+
+DEFINE_int32(verbose, 5, "Verbosity of the log (0-5)");
 
 namespace utils {
+
+Logger::Logger() : level_((Logger::DisplayLevel)FLAGS_verbose) {}
 
 void log(Logger::DisplayLevel lvl, const char* file, int line,
          const char* module_name, const char* module_color,
