@@ -25,9 +25,7 @@ paths = {
     "exec_prefix": "@exec_prefix@",
     "sysconfdir": "@sysconfdir@",
     "workernodedir": "@libdir@/worker-node",
-    "cfgdir": "@sysconfdir@/",
-    "bindir": "@bindir@",
-    "libdir": "@libdir@",
+    "cfgdir": "/etc/stechec",
 }
 
 def expand_path(p):

@@ -22,7 +22,10 @@ Prerequisites
 * PostgreSQL 8.3 or newer.
 * A filesystem shared by the worker nodes and the website. Stechec2 has only
   been tested using NFS4 when this doc was written but any POSIX compliant
-  filesystem should work fine (GFS, GlusterFS, Ceph, AFS, ...).
+  filesystem should work fine (GFS, GlusterFS, Ceph, AFS, ...). Currently this
+  filesystem must be mounted to the same path on every worker node and on the
+  website in order for the system to work. This is a bug, and patches are
+  welcome.
 * Python 2.6 or newer.
 * Some Python libraries: `Django`_ (v1.4), `gevent`_, `yaml`_.
 

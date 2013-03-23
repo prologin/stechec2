@@ -89,13 +89,13 @@ def communicate(cmdline, data=''):
     return (0, ''.join(chunks))
 
 def champion_path(config, contest, user, champ_id):
-    return os.path.join(config['paths']['data_root'], contest, 'champions',
+    return os.path.join(config['contest']['directory'], contest, 'champions',
                         user, str(champ_id))
 
 def match_path(config, contest, match_id):
     match_id_high = "%03d" % (match_id / 1000)
     match_id_low = "%03d" % (match_id % 1000)
-    return os.path.join(config['paths']['data_root'], contest, "matches",
+    return os.path.join(config['contest']['directory'], contest, "matches",
                         match_id_high, match_id_low)
 
 def compile_champion(config, contest, user, champ_id):
@@ -106,7 +106,7 @@ def compile_champion(config, contest, user, champ_id):
     output of the compilation script.
     """
     dir_path = champion_path(config, contest, user, champ_id)
-    cmd = [paths.compile_script, config['paths']['data_root'], dir_path]
+    cmd = [paths.compile_script, config['contest']['directory'], dir_path]
     retcode, stdout = communicate(cmd)
     return retcode == 0
 
@@ -121,13 +121,10 @@ def spawn_dumper(cmd, path):
     dump_path = tempfile.mktemp()
     def set_path():
         os.environ['DUMP_PATH'] = dump_path
-    print("launching")
-    print(cmd)
     p = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=STDOUT, preexec_fn=set_path)
     fcntl.fcntl(p.stdin, fcntl.F_SETFL, os.O_NONBLOCK)
     fcntl.fcntl(p.stdout, fcntl.F_SETFL, os.O_NONBLOCK)
     p.stdin.close()
-    print(launch)
     # Read stdout data
     while True:
         try:
@@ -156,12 +153,6 @@ def spawn_dumper(cmd, path):
     final_fp.close()
     os.unlink(dump_path)
 
-def handle_opts(opts):
-    path = opts.split('=')[1]
-    path = path[len("/exports/homes/")-1:]
-    path = "/home/" + path
-    return path
-
 def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts):
     """
     Runs the Stechec server and wait for client connections.
@@ -174,35 +165,24 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
 
     dumper = config['contest']['dumper']
     nb_spectator = 1 if dumper else 0
-    config_path = os.path.join(path, "config_server.ini")
-    config = '''
-[stechec2.server]
-rules={rules}
-rep_addr=tcp://{ip}:{rep_port}
-pub_addr=tcp://{ip}:{pub_port}
-nb_clients = 7
-verbose = 1
-{opts}
-'''.format(
-    rules = paths.libdir + "/lib" + contest + ".so",
-    ip = "*",
-    rep_port = rep_port,
-    pub_port = pub_port,
-    opts = opts)
-    open(config_path, 'w').write(config)
     if nb_spectator:
         cmd = [paths.stechec_client,
-               "-n", "dumper",
-               "-u", paths.libdir + "/lib" + contest + ".so",
-               "-a", dumper,
-               "-r", "tcp://{ip}:{port}".format(ip='localhost', port=rep_port),
-               "-p", "tcp://{ip}:{port}".format(ip='localhost', port=pub_port),
-               "-m", "250000",
-               "-t", "3000",
-               "-f", handle_opts(opts) , "-s",
-               "-v", "1"]
+               "-client_name", "dumper",
+               "-rules_lib", paths.libdir + "/lib" + contest + ".so",
+               "-champion", dumper,
+               "-req_addr", "tcp://localhost:%d" % rep_port,
+               "-sub_addr", "tcp://localhost:%d" % pub_port,
+               "-memory", "250000",
+               "-time", "3000",
+               "-spectator",
+               "-verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
-    cmd = [paths.stechec_server, "-c", config_path]
+    cmd = [paths.stechec_server,
+                "-rules_lib", paths.libdir + "/lib" + contest + ".so",
+                "-rep_addr", "tcp://*:%d" % rep_port,
+                "-pub_addr", "tcp://*:%d" % pub_port,
+                "-nb_clients", "7",
+                "-verbose", "1"]
     gevent.sleep(0.25) # let it start
     gevent.spawn(spawn_server, cmd, path, match_id, server_done)
 
@@ -216,12 +196,12 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
     dir_path = champion_path(config, contest, user, champ_id)
     mp = match_path(config, contest, match_id)
     cmd = [paths.stechec_client,
-               "-n", str(tid),
-               "-u", paths.libdir + "/lib" + contest + ".so",
-               "-a", dir_path + "/champion.so",
-               "-r", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
-               "-p", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
-               "-m", "250000",
-               "-t", "1500",
-               "-f", handle_opts(opts)]
+               "-client_name", str(tid),
+               "-rules_lib", paths.libdir + "/lib" + contest + ".so",
+               "-champion", dir_path + "/champion.so",
+               "-req_addr", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
+               "-sub_addr", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
+               "-memory", "250000",
+               "-time", "1500"
+          ]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
