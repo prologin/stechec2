@@ -72,9 +72,10 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-ffast-math')
         conf.env.append_value('CXXFLAGS', ['-O2', '-ffast-math'])
 
-    # ZeroMQ
+    # ZeroMQ and C++ binding (cppzmq)
     conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
                    atleast_version = '3.2.0', args = ['--cflags', '--libs'])
+    conf.check(header_name='zmq.hpp')
 
     # Google Flags
     conf.check_cxx(lib = "gflags", mandatory = True, uselib_store = "gflags")
