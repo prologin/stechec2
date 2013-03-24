@@ -163,6 +163,7 @@ def build_rules(bld):
             src/lib/rules/messenger.cc
             src/lib/rules/client-messenger.cc
             src/lib/rules/server-messenger.cc
+            src/lib/rules/rules.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
         target = 'stechec2-rules',
