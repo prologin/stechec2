@@ -142,6 +142,7 @@ def build_utils(bld):
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
         target = 'stechec2-utils',
         use = ['rt', 'gflags'],
+        lib = ['dl'],
         export_includes = 'src/lib'
     )
 
@@ -186,8 +187,7 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags'],
-        lib = ['dl']
+        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags']
     )
 
 def build_server(bld):
@@ -199,6 +199,5 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags'],
-        lib = ['dl']
+        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags']
     )
