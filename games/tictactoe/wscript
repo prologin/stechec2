@@ -18,7 +18,7 @@ def build(bld):
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
         target = 'tictactoe',
-        use = ['net', 'rules', 'utils'],
+        use = ['stechec2-net', 'stechec2-rules', 'stechec2-utils'],
     )
 
     bld.install_files('${PREFIX}/share/stechec2/tictactoe', [

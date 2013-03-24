@@ -97,18 +97,7 @@ def configure(conf):
     # Configure tools
     conf.recurse('tools')
 
-def _build_internal_lib(bld, **kwargs):
-    """Helper to build an internal library, which is static but can be linked
-    with a shared library."""
-    cxxflags = kwargs.get('cxxflags', [])
-    cxxflags.extend(bld.env.CXXFLAGS_cxxshlib)
-    kwargs['cxxflags'] = cxxflags
-    bld.stlib(**kwargs)
-
 def build(bld):
-    # Add some extensions to the bld object
-    bld.internal_lib = types.MethodType(_build_internal_lib, bld)
-
     build_libs(bld)
     build_client(bld)
     build_server(bld)
@@ -122,7 +111,7 @@ def build_libs(bld):
     build_utils(bld)
 
 def build_net(bld):
-    bld.internal_lib(
+    bld.shlib(
         source = '''
             src/lib/net/socket.cc
             src/lib/net/server-socket.cc
@@ -131,8 +120,8 @@ def build_net(bld):
             src/lib/net/signal.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
-        target = 'net',
-        use = ['ZeroMQ', 'utils'],
+        target = 'stechec2-net',
+        use = ['ZeroMQ', 'stechec2-utils'],
         export_includes = 'src/lib'
     )
 
@@ -141,17 +130,17 @@ def build_net(bld):
             features = 'gtest',
             source = 'src/lib/net/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['net']
+            use = ['stechec2-net']
         )
 
 def build_utils(bld):
-    bld.internal_lib(
+    bld.shlib(
         source = '''
             src/lib/utils/dll.cc
             src/lib/utils/log.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
-        target = 'utils',
+        target = 'stechec2-utils',
         use = ['rt', 'gflags'],
         export_includes = 'src/lib'
     )
@@ -161,11 +150,11 @@ def build_utils(bld):
             features = 'gtest',
             source = 'src/lib/utils/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['utils']
+            use = ['stechec2-utils']
         )
 
 def build_rules(bld):
-    bld.internal_lib(
+    bld.shlib(
         source = '''
             src/lib/rules/action.cc
             src/lib/rules/actions.cc
@@ -175,8 +164,8 @@ def build_rules(bld):
             src/lib/rules/server-messenger.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
-        target = 'rules',
-        use = ['utils', 'net'],
+        target = 'stechec2-rules',
+        use = ['stechec2-utils', 'stechec2-net'],
         export_includes = 'src/lib'
     )
 
@@ -185,7 +174,7 @@ def build_rules(bld):
             features = 'gtest',
             source = 'src/lib/rules/tests/test-%s.cc' % test,
             target = 'rules-test-%s' % test,
-            use = ['rules']
+            use = ['stechec2-rules']
         )
 
 def build_client(bld):
@@ -197,7 +186,7 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'rules', 'gflags'],
+        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags'],
         lib = ['dl']
     )
 
@@ -210,6 +199,6 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['utils', 'net', 'rules', 'gflags'],
+        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags'],
         lib = ['dl']
     )
