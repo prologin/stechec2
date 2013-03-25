@@ -8,12 +8,12 @@
 #include <rules/player.hh>
 #include <rules/options.hh>
 
-DEFINE_string(client_name, "anonymous", "Client name (used for results)");
+DEFINE_string(name, "anonymous", "Client name (used for results)");
 DEFINE_string(req_addr, "tcp://0.0.0.0:42124",
               "Set request address binding (ZeroMQ)");
 DEFINE_string(sub_addr, "tcp://0.0.0.0:42125",
               "Set subscribe address binding (ZeroMQ)");
-DEFINE_string(rules_lib, "rules.so", "Rules library");
+DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(champion, "champion.so", "Champion library");
 DEFINE_string(map, "default.map", "Map file");
 DEFINE_bool(spectator, false, "Set if the client is a spectator");
@@ -22,7 +22,7 @@ DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
 
 Client::Client()
 {
-    rules_lib_.reset(new utils::DLL(FLAGS_rules_lib));
+    rules_lib_.reset(new utils::DLL(FLAGS_rules));
 
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
@@ -94,7 +94,7 @@ void Client::sckt_init()
     net::Message msg(net::MSG_CONNECT, client_type);
 
     msg.handle_buffer(buf_req);
-    buf_req.handle(FLAGS_client_name);
+    buf_req.handle(FLAGS_name);
 
     // Send the request
     utils::Buffer* buf_rep = nullptr;
@@ -103,7 +103,7 @@ void Client::sckt_init()
         FATAL("Unable to get an ID from the server");
 
     player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));
-    player_->name = FLAGS_client_name;
+    player_->name = FLAGS_name;
 
     delete buf_rep;
 

@@ -12,13 +12,13 @@ DEFINE_string(pub_addr, "tcp://0.0.0.0:42125",
               "Set publishing address binding (ZeroMQ)");
 DEFINE_int32(turn_timeout, 10000, "Timeout for a player turn (in ms)");
 DEFINE_int32(nb_clients, 2, "Number of players to expect");
-DEFINE_string(map_file, "default.map", "Map file");
-DEFINE_string(rules_lib, "rules.so", "Rules library");
+DEFINE_string(map, "default.map", "Map file");
+DEFINE_string(rules, "rules.so", "Rules library");
 
 Server::Server()
     : nb_players_(0)
 {
-    rules_lib_.reset(new utils::DLL(FLAGS_rules_lib));
+    rules_lib_.reset(new utils::DLL(FLAGS_rules));
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
@@ -46,7 +46,7 @@ void Server::run()
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
     rules_opt.time = FLAGS_turn_timeout;
-    rules_opt.map_file = FLAGS_map_file;
+    rules_opt.map_file = FLAGS_map;
     rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;
