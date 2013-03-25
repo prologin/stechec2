@@ -73,7 +73,7 @@ lib_TARGETS = #{target}
 # des flags de compilation.
 #{target}-srcs = #{@source_file}
 #{target}-dists =
-#{target}-cxxflags = -ggdb3 -Wall
+#{target}-cxxflags = -ggdb3 -Wall -std=c++11
 
 # Evite de toucher a ce qui suit
 #{target}-dists += #{@header_file}

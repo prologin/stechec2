@@ -20,7 +20,7 @@ class CMakefile
 lib_TARGETS = #{target}
 
 #{target}-srcs = $(wildcard *.c)
-#{target}-cflags = -ggdb3 -Wall -Wextra
+#{target}-cflags = -ggdb3 -Wall -Wextra -std=c11
 
 # Evite de toucher a ce qui suit
 #{target}-srcs += interface.cc

@@ -331,7 +331,7 @@ lib_TARGETS = #{target}
 # des flags de compilation.
 #{target}-srcs = #{@user_file}
 #{target}-dists =
-#{target}-cflags = -ggdb3 -Wall -Wextra
+#{target}-cflags = -ggdb3 -Wall -Wextra -std=c11
 
 # Evite de toucher a ce qui suit
 #{target}-dists += #{@header_file} interface.hh
