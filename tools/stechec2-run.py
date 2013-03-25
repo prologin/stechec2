@@ -22,6 +22,15 @@ def usage():
 Example:
    {0} config.yml       to run a match, using configuration file config.yml
 
+Configuration file example:
+    rules: libprologin2013.so
+    map: ./simple.map
+    verbose: 3
+    nb_clients: 2
+    clients:
+      - ./champion.so
+      - ./champion.so
+
 Report bugs to <serveur@prologin.org>'''.format(sys.argv[0]))
 
 
