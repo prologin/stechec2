@@ -69,6 +69,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
                 apply_action(action);
             actions->clear();
             end_of_turn();
+            start_of_turn();
         }
     }
 
@@ -121,6 +122,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
                 apply_action(action);
             actions->clear();
             end_of_turn();
+            start_of_turn();
         }
     }
 
@@ -158,6 +160,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             apply_action(action);
         msgr->push_actions(*actions);
         end_of_turn();
+        start_of_turn();
     }
 
     at_end();
@@ -212,7 +215,10 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
 
         /* End of each turn */
         if (last_player_id == playing_id)
+        {
             end_of_turn();
+            start_of_turn();
+        }
     }
 
     at_end();
@@ -262,7 +268,10 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
         }
         /* End of each turn */
         if (last_player_id == playing_id)
+        {
             end_of_turn();
+            start_of_turn();
+        }
     }
 
     at_end();
@@ -307,6 +316,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         }
 
         end_of_turn();
+        start_of_turn();
     }
 
     at_end();

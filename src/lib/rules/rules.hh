@@ -55,7 +55,8 @@ public:
     // Spectator's turn: call the champion wihout any sandbox
     virtual void spectator_turn() {}
 
-    // Called once every player has played
+    // Called before / after every player has played
+    virtual void start_of_turn() {}
     virtual void end_of_turn() {}
 
 protected:
@@ -85,7 +86,7 @@ public:
     explicit TurnBasedRules(const Options opt);
 
     // Called each time a player has finished its turn
-    virtual void end_of_player_turn(uint32_t player_id) = 0;
+    virtual void end_of_player_turn(uint32_t) {}
 
     virtual void client_loop(ClientMessenger_sptr msgr) final;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final;
