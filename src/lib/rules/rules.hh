@@ -57,7 +57,7 @@ protected:
     int timeout_;
 };
 
-class SynchronousRules : Rules
+class SynchronousRules : public Rules
 {
 public:
     explicit SynchronousRules(const Options opt);
@@ -67,7 +67,7 @@ public:
     virtual void server_loop(ServerMessenger_sptr msgr) final;
 };
 
-class TurnBasedRules : Rules
+class TurnBasedRules : public Rules
 {
 public:
     explicit TurnBasedRules(const Options opt);
