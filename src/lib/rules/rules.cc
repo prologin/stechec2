@@ -27,6 +27,7 @@ SynchronousRules::SynchronousRules(const Options opt)
 void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
 {
     at_start();
+    at_client_start();
 
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
@@ -72,11 +73,13 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
+    at_client_end();
 }
 
 void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 {
     at_start();
+    at_spectator_start();
 
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
@@ -122,11 +125,13 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
+    at_spectator_end();
 }
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
     at_start();
+    at_server_start();
 
     while (!is_finished())
     {
@@ -156,6 +161,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     }
 
     at_end();
+    at_server_end();
 }
 
 TurnBasedRules::TurnBasedRules(const Options opt)
@@ -169,6 +175,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
     msgr->pull_id(&last_player_id);
 
     at_start();
+    at_client_start();
 
     while (!is_finished())
     {
@@ -209,6 +216,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
+    at_client_end();
 }
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -217,6 +225,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     msgr->pull_id(&last_player_id);
 
     at_start();
+    at_spectator_start();
 
     while (!is_finished())
     {
@@ -257,12 +266,15 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
+    at_spectator_end();
 }
 
 void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 {
     msgr->push_id(players_->players[players_->players.size() - 1]->id);
+
     at_start();
+    at_server_start();
 
     while (!is_finished())
     {
@@ -298,6 +310,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     }
 
     at_end();
+    at_server_end();
 }
 
 } // namespace rules
