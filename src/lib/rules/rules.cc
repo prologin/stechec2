@@ -32,6 +32,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
+    start_of_turn();
     while (!is_finished())
     {
         uint32_t playing_id;
@@ -85,6 +86,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
+    start_of_turn();
     while (!is_finished())
     {
         uint32_t playing_id;
@@ -135,6 +137,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start();
 
+    start_of_turn();
     while (!is_finished())
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
@@ -180,6 +183,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
     at_start();
     at_client_start();
 
+    start_of_turn();
     while (!is_finished())
     {
         uint32_t playing_id;
@@ -233,6 +237,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     at_start();
     at_spectator_start();
 
+    start_of_turn();
     while (!is_finished())
     {
 
@@ -285,6 +290,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start();
 
+    start_of_turn();
     while (!is_finished())
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
