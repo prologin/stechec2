@@ -211,10 +211,6 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
             get_actions()->clear();
             player_turn();
             Actions* actions = get_actions();
-
-            for (auto action : actions->actions())
-                apply_action(action);
-
             msgr->send_actions(*actions);
             msgr->wait_for_ack();
             msgr->pull_actions(actions);
