@@ -142,7 +142,22 @@ Cxx lang2cxx(Out in)
 template <>
 std::string lang2cxx< MonoString*, std::string >(MonoString* in)
 {
-  return mono_string_to_utf8(in);
+  std::string s_out;
+  MonoError error;
+  char *c_out;
+
+  if (!in)
+    return std::string("(null)");
+  c_out = mono_string_to_utf8_checked(in, &error);
+  if (!mono_error_ok(&error)) {
+    s_out = std::string(mono_error_get_message(&error));
+    mono_error_cleanup(&error);
+    return s_out;
+  } else {
+    s_out = std::string(c_out);
+    mono_free(c_out);
+    return s_out;
+  }
 }
 
 template <>
