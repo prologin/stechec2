@@ -517,9 +517,9 @@ class CSharpFileGenerator < CSharpProto
     @f.puts '// ' + str if str
   end
 
-  def print_multiline_comment(str)
+  def print_multiline_comment(str, prestr = '')
     return unless str
-    str.each_line {|s| @f.print '// ', s }
+    str.each_line {|s| @f.print prestr + '// ', s }
     @f.puts ""
   end
 

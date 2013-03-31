@@ -8,8 +8,6 @@
 # `NOTICE' file in the root directory.
 #
 # Copyright (C) 2005, 2006 Prologin
-#
-
 
 class JavaMakefile
   def build_metaserver(path)
@@ -21,27 +19,15 @@ class JavaMakefile
 lib_TARGETS = #{target}
 
 #{target}-srcs = Interface.java Prologin.java $(wildcard *.java)
-#{target}-cxxflags = -I. -ggdb3
+#{target}-cxxflags = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -ggdb3
+#{target}-ldflags = -Wl,-rpath -Wl,$(JAVA_HOME)/jre/lib/amd64/server/ -L$(JAVA_HOME)/jre/lib/amd64/server/ -ljvm
 
-# Evite de toucher a ce qui suit
-EOF
-    f.print "#{target}-jclassopt ="
-    $conf['struct'].each do |x|
-		next if x['doc_extra']
-        f.print " ", x['str_name'].capitalize, ".class"
-    end
-    $conf['enum'].each do |x|
-		next if x['doc_extra']
-       f.print " ", x['enum_name'].capitalize, ".class"
-    end
-    f.puts
-    f.print <<-EOF
 #{target}-dists = interface.hh
 #{target}-srcs += interface.cc
 
 V=1
 include $(MFPATH)/rules.mk
-    EOF
+EOF
     f.close
   end
 

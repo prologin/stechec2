@@ -222,7 +222,7 @@ class FileGenerator
     for_each_enum do |e|
       name = e['enum_name']
       fields = e['enum_field']
-      
+
       @f.puts "const char *enum2string_#{name}[] = { #{(fields.map do |f| "\"#{f[0]}\"" end ).join(", ") } }; " 
       @f.puts "#{name} string2int_#{name}(char * e){"
       c = 0;
@@ -232,7 +232,7 @@ class FileGenerator
         c = c + 1
       end
       @f.puts "  return -1;\n}"
-    end 
+    end
   end
 
   def print_banner(script)
@@ -243,10 +243,10 @@ to the script file : gen/" + script
     @f.puts
   end
 
-  def build_constants
+  def build_constants(prestr = '')
     $conf['constant'].delete_if {|x| x['doc_extra'] }
     $conf['constant'].each do |x|
-      print_multiline_comment(x['cst_comment'])
+      print_multiline_comment(x['cst_comment'], prestr)
       print_constant(x['cst_type'], x['cst_name'], x['cst_val'])
       @f.puts "\n"
     end
@@ -324,11 +324,11 @@ class CProto < FileGenerator
     @f.puts '/* ' + str + ' */' if str
   end
 
-  def print_multiline_comment(str)
+  def print_multiline_comment(str, prestr = '')
     return unless str
-    @f.puts '/*!'
-    str.each_line {|s| @f.print '** ', s }
-    @f.puts "", "*/"
+    @f.puts prestr + '/*!'
+    str.each_line {|s| @f.print prestr + '** ', s }
+    @f.puts "", prestr + "*/"
   end
 
   def print_include(file, std_path = false)
@@ -456,12 +456,12 @@ class CxxProto < CProto
     @f.puts '// ' + str if str
   end
 
-  def print_multiline_comment(str)
+  def print_multiline_comment(str, prestr = '')
     return unless str
-    @f.puts '///'
-    str.each_line {|s| @f.print '// ', s }
+    @f.puts prestr + '///'
+    str.each_line {|s| @f.print prestr + '// ', s }
     # @f.puts
-    @f.puts "", "//"
+    @f.puts "", prestr + "//"
   end
 
   def print_empty_arg
@@ -629,6 +629,12 @@ class JavaProto < FileGenerator
     end
   end
 
+  def camel_case(str)
+    strs = str.split("_")
+    strs.each { |s| s.capitalize! }
+    strs.join
+  end
+
   def for_each_user_fun(print_comment = true, prestr = '', &block)
     for_each_fun(print_comment, 'user_function', prestr) { |fn| block.call(fn) }
   end
@@ -653,27 +659,20 @@ class JavaProto < FileGenerator
     @f.print ")"
   end
 
-  def conv_java_type(x)
-    if x.is_a?(String) then t = @types[x] else t = x end
-    conv_java_type_aux(t, false)
-  end
+  def conv_java_type(t)
+    t = @types[t] if t.is_a?(String)
 
-  def conv_java_type_aux(t, in_generic)
     if t.is_array?
     then
-      "#{ conv_java_type_aux(t.type, false) }[]"
-    elsif t.is_struct? then
-      t.name.capitalize()
+      "#{ conv_java_type(t.type) }[]"
     elsif t.is_simple? then
       if t.name == "string" then
         "String"
-      elsif in_generic then
-        (@java_obj_types[t.name]).capitalize()
       else
         @java_types[t.name]
       end
     else
-      t.name.capitalize()
+      camel_case(t.name)
     end
   end
 end

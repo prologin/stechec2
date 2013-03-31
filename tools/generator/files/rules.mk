@@ -26,7 +26,6 @@ ifndef NOCOLORS
   quiet_cmd_cxx		= [1;32mcxx  $< -> $@[0m
   quiet_cmd_gmcs	= [1;34mcs   $^ -> $@[0m
   quiet_cmd_java	= [1;34mjava $< -> $@[0m
-  quiet_cmd_javai	= [1;37mjint $< -> $@[0m
   quiet_cmd_ocaml	= [1;33mcaml $< -> $@[0m
   quiet_cmd_ocamlo	= [1;33mcaml $< -> $@[0m
   quiet_cmd_ld_shared	= [1;36mlib  $@[0m
@@ -38,7 +37,6 @@ else
   quiet_cmd_cxx		= CXX     $@
   quiet_cmd_gmcs	= CS      $@
   quiet_cmd_java	= JAVA    $@
-  quiet_cmd_javai	= JAVAI   $@
   quiet_cmd_ocaml	= OCAML   $@
   quiet_cmd_ocamlo	= OCAML   $@
   quiet_cmd_ld_shared	= LINK    $@
@@ -58,10 +56,9 @@ exists = $(if $(shell test -e $(1) && echo exists),$(1),)
 
 CC		= $(CROSS)gcc
 CXX		= $(CROSS)g++
-GMCS    = MONO_SHARED_DIR=/tmp gmcs </dev/null
+GMCS		= MONO_SHARED_DIR=/tmp gmcs </dev/null
 CPP		= $(CROSS)cpp
-CJ       	= $(CROSS)gcj
-CJH	 	= $(CROSS)gcjh
+JAVAC		= javac
 OCAMLC 		= $(CROSS)ocamlc
 LD		= $(CROSS)ld
 
@@ -96,22 +93,6 @@ define get_ocaml_objs
 	  $$(call cmd,ocamlo)
 endef
 
-define get_jclass
-  src := $$(filter %.java,$$($(1)-srcs))
-  $(1)-objs := $(value $(1)-objs)
-  $(1)-jclass := $$(foreach s,$$(filter %.java,$$($(1)-srcs)),$$(s:.java=.class)) $$($(1)-jclassopt)
-  $(1)-jheaders := $$(foreach s,$$(filter %.java,$$($(1)-srcs)),$$(s:.java=.h)) $$(foreach s,$$($(1)-jclassopt),$$(s:.class=.h))
-  cleanfiles := $$($(1)-jclass) $$($(1)-jheaders) $$(cleanfiles)
-
-  ifneq ($$(src),)
-    $(1)-deps := $$($(1)-jclass) $$($(1)-objs)
-    cmd_ld_shared = $(CJ) $$($(1)-jclass) $$($(1)-objs) $(ld_flags) -shared -fPIC -o $(1).so $(_LDLIBS)
-  endif
-
-  $$($(1)-jheaders): $$($(1)-jclass)
-  $$($(1)-objs): $$($(1)-jheaders)
-endef
-
 define get_csclass
   src := $$(filter %.cs,$$($(1)-srcs))
   ifneq ($$(src),)
@@ -120,6 +101,13 @@ define get_csclass
 $(1)-prologin.dll: $$(src)
 	$$(call cmd,gmcs)
 	$(Q)$(GMCS) -out:$$@ $$($(1)-csflags) $$^
+  endif
+endef
+
+define get_jclass
+  src := $$(filter %.java,$$($(1)-srcs))
+  ifneq ($$(src),)
+    _targets := $$(_targets) $$(src:.java=.class)
   endif
 endef
 
@@ -146,8 +134,7 @@ cxx_flags	= $(_CXXFLAGS) -MD -MP -MF $(@D)/.$(@F).d
 cpp_flags	= $(_CPPFLAGS)
 cmd_cc		= $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
 cmd_cxx		= $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
-cmd_java	= $(CJ) $(java_flags) -C $<
-cmd_javai	= $(CJH) -classpath /usr/share/java/libgcj.jar:. $(@:.h=)
+cmd_java	= $(JAVAC) $(java_flags) $<
 cmd_ocaml	= $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
 cmd_ocamlo	= $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
 
@@ -174,8 +161,8 @@ $(foreach t,$(lib_TARGETS),$(eval $(call build_lib,$(t))))
 _dist		:= $(foreach t,$(lib_TARGETS),$($(t)-dists) $(filter-out ../%,$($(t)-srcs)))
 _deps		:= $(foreach f,$(_objs),$(dir $(f)).$(notdir $(f)).d)
 _cleanfiles	:= $(cleanfiles) $(_objs) $(_deps)
-_dcleanfiles	:= $(_targets) champion.tgz
-_run_reqs   := $(_targets) $(foreach t,$(lib_TARGETS),$($(t)-dists))
+_dcleanfiles	:= $(_targets) champion.tgz *.class
+_run_reqs	:= $(_targets) $(foreach t,$(lib_TARGETS),$($(t)-dists))
 
 # ==============================================================================
 # rules
@@ -216,10 +203,6 @@ list-run-reqs:
 
 %.class : %.java
 	$(call cmd,java)
-
-%.h 	: %.class
-	$(call cmd,javai)
-	@touch $@
 
 %.cmi   : %.mli
 	$(call cmd,ocaml)

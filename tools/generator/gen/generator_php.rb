@@ -402,11 +402,11 @@ class PhpFileGenerator < FileGenerator
     @f.puts '// ' + str if str
   end
 
-  def print_multiline_comment(str)
+  def print_multiline_comment(str, prestr = '')
     return unless str
-    @f.puts '/*'
-    str.each_line { |s| @f.print ' * ', s }
-    @f.puts "", " */"
+    @f.puts prestr + '/*'
+    str.each_line { |s| @f.print prestr + ' * ', s }
+    @f.puts "", prestr + " */"
   end
 
   def build_user_fun_stubs
