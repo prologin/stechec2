@@ -19,7 +19,7 @@ class JavaMakefile
 lib_TARGETS = #{target}
 
 #{target}-srcs = Interface.java Prologin.java $(wildcard *.java)
-#{target}-cxxflags = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -ggdb3
+#{target}-cxxflags = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -O2
 #{target}-ldflags = -Wl,-rpath -Wl,$(JAVA_HOME)/jre/lib/amd64/server/ -L$(JAVA_HOME)/jre/lib/amd64/server/ -ljvm
 
 #{target}-dists = interface.hh

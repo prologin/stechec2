@@ -23,7 +23,7 @@ lib_TARGETS = #{target}
 
 #{target}-dists = interface.hh
 #{target}-srcs += api.cs interface.cc
-#{target}-cxxflags = -fPIC \
+#{target}-cxxflags = -O2 -fPIC \
     $(shell pkg-config --cflags glib-2.0 mono)
 #{target}-ldflags = -lm \
     $(shell pkg-config --libs glib-2.0 mono)

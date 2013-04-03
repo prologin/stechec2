@@ -122,6 +122,7 @@ class JavaCxxFileGenerator < CxxProto
 #ifndef INTERFACE_HH_
 # define INTERFACE_HH_
 
+# include <cstdlib>
 # include <jni.h>
 # include <vector>
 # include <string>
@@ -383,7 +384,9 @@ ProloginJavaRunTime::ProloginJavaRunTime()
 {
   JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
   JavaVMOption options;
-  options.optionString = (char*)"-Djava.class.path=/home/jicks/prologin/stechec2/install/java";
+  options.optionString = getenv("CHAMPION_PATH");
+  if (!options.optionString)
+    options.optionString = (char*)".";
   vm_args.version = JNI_VERSION_1_6;
   vm_args.nOptions = 1;
   vm_args.options = &options;

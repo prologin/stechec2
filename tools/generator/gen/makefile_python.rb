@@ -27,7 +27,7 @@ lib_TARGETS = #{target}
 #{target}-srcs = interface.cc
 
 pc = $(shell for p in python2-config python-config; do if which $$p &>/dev/null; then echo $$p; fi done | head -n 1)
-#{target}-cxxflags = -fPIC $(shell $(pc) --includes)
+#{target}-cxxflags = -O2 -fPIC $(shell $(pc) --includes)
 #{target}-ldflags = -s $(shell $(pc) --ldflags)
 
 V=1

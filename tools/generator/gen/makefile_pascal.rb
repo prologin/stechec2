@@ -77,6 +77,9 @@ NAME      = #{$conf['conf']['player_lib']}.so
 CHECK_CHEAT = `while read i; do echo -wrap $$i; done < forbidden_fun-pascal`
 LIMEOBJ = stechec_main.o
 
+MY_CFLAGS = -O2
+MY_CXXFLAGS = -O2
+
 list-run-reqs:
 \t@true
 

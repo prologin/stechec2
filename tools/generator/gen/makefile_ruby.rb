@@ -34,7 +34,7 @@ INCLUDES = -I${RBINC} -I${RBINC}/${RBARCH}
 
 RBLIB= $(shell ruby -rrbconfig -e \"print Config::CONFIG['LIBRUBYARG_SHARED']\" )
 
-CXXFLAGS = -fPIC $(shell ruby -rrbconfig -e \"print Config::CONFIG['CFLAGS']\" ) ${INCLUDES}
+CXXFLAGS = -O2 -fPIC $(shell ruby -rrbconfig -e \"print Config::CONFIG['CFLAGS']\" ) ${INCLUDES}
 LDFLAGS  = ${RBLIB} $(shell ruby -rrbconfig -e \"print Config::CONFIG['LDFLAGS']\" )
 
 
