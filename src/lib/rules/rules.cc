@@ -301,8 +301,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             msgr->send_actions(*actions);
             DEBUG("Waiting for acknowledgement...");
             msgr->wait_for_ack();
-            msgr->pull_actions(actions);
-            actions->clear();
+            /* The server do not publish spectators' actions: do not try to
+             * pull them.  */
         }
         /* End of each turn */
         if (last_player_id == playing_id)
