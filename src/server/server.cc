@@ -87,7 +87,7 @@ void Server::wait_for_players()
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
-    while (players_->players.size() < (size_t)FLAGS_nb_clients)
+    while (players_->size() + spectators_->size() < (size_t)FLAGS_nb_clients)
     {
         utils::Buffer* buf_req = nullptr;
 

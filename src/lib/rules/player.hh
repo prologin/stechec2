@@ -57,6 +57,11 @@ struct Players
         }
     }
 
+    size_t size() const
+    {
+        return players.size();
+    }
+
     std::vector<Player_sptr> players;
 };
 
