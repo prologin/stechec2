@@ -19,6 +19,7 @@ public:
     ServerSocket(const std::string& pub_addr, const std::string& rep_addr);
 
     virtual void init();
+    virtual void close();
 
     bool push(const utils::Buffer& buf, int flags = 0);
 };

@@ -38,6 +38,27 @@ void ServerSocket::init()
     }
 }
 
+void ServerSocket::close()
+{
+    try
+    {
+        pubsub_sckt_->close();
+    }
+    catch (const zmq::error_t& e)
+    {
+        FATAL("SUB: close: %s", e.what());
+    }
+
+    try
+    {
+        reqrep_sckt_->close();
+    }
+    catch (const zmq::error_t& e)
+    {
+        FATAL("REQ: close: %s", e.what());
+    }
+}
+
 bool ServerSocket::push(const utils::Buffer& buf, int flags)
 {
     return send_sckt(buf, pubsub_sckt_, flags);

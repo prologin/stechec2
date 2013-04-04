@@ -18,6 +18,7 @@ public:
 
 private:
     void sckt_init();
+    void sckt_close();
     void wait_for_players();
     void wait_for_game_start();
 

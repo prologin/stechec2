@@ -69,6 +69,8 @@ void Client::run()
 
     // Results
     rules_result();
+
+    sckt_close();
 }
 
 void Client::sckt_init()
@@ -108,6 +110,11 @@ void Client::sckt_init()
     delete buf_rep;
 
     NOTICE("Connected - id: %i", player_->id);
+}
+
+void Client::sckt_close()
+{
+    sckt_->close();
 }
 
 void Client::wait_for_players()

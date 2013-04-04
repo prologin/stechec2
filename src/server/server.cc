@@ -70,6 +70,8 @@ void Server::run()
         std::cout << player->name.c_str() << " "
                   << player->score << " "
                   << "0" << std::endl;
+
+    sckt_close();
 }
 
 void Server::sckt_init()
@@ -80,6 +82,11 @@ void Server::sckt_init()
 
     NOTICE("Replying on %s", FLAGS_pub_addr.c_str());
     NOTICE("Publishing on %s", FLAGS_rep_addr.c_str());
+}
+
+void Server::sckt_close()
+{
+    sckt_->close();
 }
 
 void Server::wait_for_players()

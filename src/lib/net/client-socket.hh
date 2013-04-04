@@ -18,6 +18,7 @@ public:
     ClientSocket(const std::string& sub_addr, const std::string& req_addr);
 
     virtual void init();
+    virtual void close();
 
     utils::Buffer* pull(int flags = 0);
 };

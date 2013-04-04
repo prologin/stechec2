@@ -27,6 +27,7 @@ public:
     virtual bool send(const utils::Buffer& msg, int flags = 0);
     virtual utils::Buffer* recv(int flags = 0);
     virtual bool poll(long timeout);
+    virtual void close() = 0;
 
 protected:
     bool send_sckt(const utils::Buffer& buf,

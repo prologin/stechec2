@@ -38,6 +38,27 @@ void ClientSocket::init()
     }
 }
 
+void ClientSocket::close()
+{
+    try
+    {
+        pubsub_sckt_->close();
+    }
+    catch (const zmq::error_t& e)
+    {
+        FATAL("SUB: close: %s", e.what());
+    }
+
+    try
+    {
+        reqrep_sckt_->close();
+    }
+    catch (const zmq::error_t& e)
+    {
+        FATAL("REQ: close: %s", e.what());
+    }
+}
+
 utils::Buffer* ClientSocket::pull(int flags)
 {
     return recv_sckt(pubsub_sckt_, flags);
