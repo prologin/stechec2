@@ -35,6 +35,9 @@ public:
 
     void ack();
     void wait_for_ack();
+
+    /* Wait until a new turn. Put the ID of the correspondin player into
+     * `pulled_id` and return if this is the same as `player_id`. */
     bool wait_for_turn(uint32_t player_id, uint32_t* pulled_id);
 
 private:

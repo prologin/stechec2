@@ -250,6 +250,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
 {
+    bool last_turn = false;
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
@@ -257,7 +258,9 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     at_spectator_start();
 
     start_of_turn();
-    while (!is_finished())
+    /* `last_turn` allows us to inspect the final state of the game, when no
+     * other player can play anymore. */
+    while (!is_finished() || last_turn)
     {
 
         uint32_t playing_id;
@@ -305,12 +308,23 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
              * pull them.  */
         }
         /* End of each turn */
+        if (last_turn)
+        {
+            /* If that was the last turn, stop there. */
+            DEBUG("That was the last turn, bye!");
+            break;
+        }
         if (last_player_id == playing_id)
         {
             DEBUG("End of turn!");
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
+            else
+            {
+                DEBUG("The next turn will be the last one!");
+                last_turn = true;
+            }
         }
     }
 
@@ -332,39 +346,42 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         {
             DEBUG("Turn for player %d", players_->players[i]->id);
             msgr->push_id(players_->players[i]->id);
-            if (!msgr->poll(timeout_))
-            {
-                DEBUG("Timeout reached, never mind");
-                continue;
-            }
-
             Actions* actions = get_actions();
             actions->clear();
-            DEBUG("Getting actions...");
-            msgr->recv_actions(actions);
-            DEBUG("Got %u actions", actions->size());
-            DEBUG("Acknowledging...");
-            msgr->ack();
+            if (!msgr->poll(timeout_))
+                DEBUG("Timeout reached, never mind");
+            else
+            {
+                DEBUG("Getting actions...");
+                msgr->recv_actions(actions);
+                DEBUG("Got %u actions", actions->size());
+                DEBUG("Acknowledging...");
+                msgr->ack();
 
-            for (auto action: actions->actions())
-                apply_action(action);
+                for (auto action: actions->actions())
+                    apply_action(action);
+            }
 
             DEBUG("Alright, publish actions");
             msgr->push_actions(*actions);
 
             end_of_player_turn(players_->players[i]->id);
-        }
 
-        for (unsigned int i = 0; i < spectators_->players.size(); i++)
-        {
-            DEBUG("Turn for spectator %d", spectators_->players[i]->id);
-            msgr->push_id(spectators_->players[i]->id);
-            Actions* actions = get_actions();
-            actions->clear();
-            DEBUG("Receiving its only Ack action...");
-            msgr->recv_actions(actions);
-            DEBUG("Acknowledging...");
-            msgr->ack();
+            /* Spectators must be able to see the state of the game between
+             * after each player has finished its turn. */
+            for (unsigned int i = 0; i < spectators_->players.size(); i++)
+            {
+                DEBUG("Turn for spectator %d", spectators_->players[i]->id);
+                msgr->push_id(spectators_->players[i]->id);
+                Actions* actions = get_actions();
+                actions->clear();
+                DEBUG("Receiving its only Ack action...");
+                msgr->recv_actions(actions);
+                DEBUG("Acknowledging...");
+                msgr->ack();
+
+                end_of_player_turn(spectators_->players[i]->id);
+            }
         }
 
         end_of_turn();

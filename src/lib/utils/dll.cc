@@ -13,6 +13,8 @@ DLL::DLL(const std::string& filename) : filename_(filename)
 {
     handle_ = dlopen(filename.c_str(), RTLD_NOW | RTLD_GLOBAL);
     CHECK_EXC(DLLError, handle_ != NULL);
+    if (handle_ == NULL)
+        WARN("Cannot open shared library: %d", filename.c_str());
 }
 
 DLL::~DLL()

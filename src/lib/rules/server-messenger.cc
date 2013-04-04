@@ -59,6 +59,7 @@ utils::Buffer* ServerMessenger::recv()
     msg.handle_buffer(*buf);
 
     last_client_id_ = msg.client_id;
+    CHECK_EXC(ServerMessengerError, msg.type == net::MSG_RULES);
 
     return buf;
 }
