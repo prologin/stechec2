@@ -24,6 +24,9 @@ public:
     void add(IAction_sptr action)
         { actions_.push_back(action); }
 
+    size_t size()
+        { return actions_.size(); }
+
     void clear()
         { actions_.clear(); }
 
