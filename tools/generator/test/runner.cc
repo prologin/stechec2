@@ -55,7 +55,7 @@ void api_send_me_42s(struct_with_array s)
     assert(s.field_str_arr.size() == 42);
     for (auto& s2 : s.field_str_arr)
     {
-        assert(s2.field_int == 42);
+        assert(s2.field_i == 42);
         assert(s2.field_bool);
     }
 }
@@ -138,58 +138,16 @@ std::string convert_to_string(std::vector<test_enum> in){
   }
 }
 std::string convert_to_string(simple_struct in){
-  std::string field_int = convert_to_string(in.field_int);
+  std::string field_i = convert_to_string(in.field_i);
   std::string field_bool = convert_to_string(in.field_bool);
   std::string out = "{";
-  out += "field_int:" + field_int;
+  out += "field_i:" + field_i;
   out += ", ";
   out += "field_bool:" + field_bool;
   return out + "}";
 }
 
 std::string convert_to_string(std::vector<simple_struct> in){
-  if (in.size()){
-    std::string s = "[" + convert_to_string(in[0]);
-    for (int i = 1, l = in.size(); i < l; i++){
-      s = s + ", " + convert_to_string(in[i]);
-    }
-    return s + "]";
-  }else{
-    return "[]";
-  }
-}
-std::string convert_to_string(tuple_struct in){
-  std::string field_int = convert_to_string(in.field_int);
-  std::string field_bool = convert_to_string(in.field_bool);
-  std::string out = "{";
-  out += "field_int:" + field_int;
-  out += ", ";
-  out += "field_bool:" + field_bool;
-  return out + "}";
-}
-
-std::string convert_to_string(std::vector<tuple_struct> in){
-  if (in.size()){
-    std::string s = "[" + convert_to_string(in[0]);
-    for (int i = 1, l = in.size(); i < l; i++){
-      s = s + ", " + convert_to_string(in[i]);
-    }
-    return s + "]";
-  }else{
-    return "[]";
-  }
-}
-std::string convert_to_string(struct_with_struct in){
-  std::string field_int = convert_to_string(in.field_int);
-  std::string field_struct = convert_to_string(in.field_struct);
-  std::string out = "{";
-  out += "field_int:" + field_int;
-  out += ", ";
-  out += "field_struct:" + field_struct;
-  return out + "}";
-}
-
-std::string convert_to_string(std::vector<struct_with_struct> in){
   if (in.size()){
     std::string s = "[" + convert_to_string(in[0]);
     for (int i = 1, l = in.size(); i < l; i++){
@@ -247,47 +205,13 @@ extern "C" void api_afficher_test_enum(test_enum v)
 std::ostream& operator<<(std::ostream& os, simple_struct v)
 {
   os << "{ ";
-  os << "field_int" << "=" << v.field_int;
+  os << "field_i" << "=" << v.field_i;
   os << ", ";
   os << "field_bool" << "=" << v.field_bool;
   os << " }";
   return os;
 }
 extern "C" void api_afficher_simple_struct(simple_struct v)
-{
-  std::cerr << v << std::endl;
-}
-
-///
-// Affiche le contenu d'une valeur de type tuple_struct
-//
-std::ostream& operator<<(std::ostream& os, tuple_struct v)
-{
-  os << "{ ";
-  os << "field_int" << "=" << v.field_int;
-  os << ", ";
-  os << "field_bool" << "=" << v.field_bool;
-  os << " }";
-  return os;
-}
-extern "C" void api_afficher_tuple_struct(tuple_struct v)
-{
-  std::cerr << v << std::endl;
-}
-
-///
-// Affiche le contenu d'une valeur de type struct_with_struct
-//
-std::ostream& operator<<(std::ostream& os, struct_with_struct v)
-{
-  os << "{ ";
-  os << "field_int" << "=" << v.field_int;
-  os << ", ";
-  os << "field_struct" << "=" << v.field_struct;
-  os << " }";
-  return os;
-}
-extern "C" void api_afficher_struct_with_struct(struct_with_struct v)
 {
   std::cerr << v << std::endl;
 }

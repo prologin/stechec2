@@ -23,22 +23,8 @@ struct:
     str_summary: Simple structure with nothing special.
     str_tuple: no
     str_field:
-      - [field_int, int, "Integer field"]
+      - [field_i, int, "Integer field"]
       - [field_bool, bool, "Bool field"]
-  -
-    str_name: tuple_struct
-    str_summary: Structure that is represented as a tuple when possible.
-    str_tuple: yes
-    str_field:
-      - [field_int, int, "Integer field"]
-      - [field_bool, bool, "Bool field"]
-  -
-    str_name: struct_with_struct
-    str_summary: Structure which contains a structure.
-    str_tuple: no
-    str_field:
-      - [field_int, int, "Integer field"]
-      - [field_struct, simple_struct, "Structure field"]
   -
     str_name: struct_with_array
     str_summary: Structure which contains an array.

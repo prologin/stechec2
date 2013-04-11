@@ -67,7 +67,7 @@ void test()
         for (int j = 0; j < 42; ++j)
         {
             assert(l[i].field_int_arr[j] == 42);
-            assert(l[i].field_str_arr[j].field_int == 42);
+            assert(l[i].field_str_arr[j].field_i == 42);
             assert(l[i].field_str_arr[j].field_bool == true);
         }
     }
