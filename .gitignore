@@ -4,3 +4,13 @@ build
 __pycache__
 *.pyc
 .waf*
+games/prologin*
+tools/generator/test/c
+tools/generator/test/caml
+tools/generator/test/cs
+tools/generator/test/cxx
+tools/generator/test/includes
+tools/generator/test/java
+tools/generator/test/php
+tools/generator/test/python
+tools/generator/test/README
