@@ -322,7 +322,7 @@ EOF
     end
 
     @f.puts <<-EOF
-static function_entry module_functions_table[] = {
+static zend_function_entry module_functions_table[] = {
 EOF
     for_each_fun(false) do |f|
       @f.print "    PHP_FALIAS(#{f.name}, php_api_#{f.name}, NULL)"
