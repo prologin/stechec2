@@ -74,6 +74,7 @@ class CSharpCxxFileGenerator < CxxProto
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/threads.h>
 
 typedef int32_t gint32;
 
@@ -444,10 +445,13 @@ CSharpInterface::~CSharpInterface()
 */
 MonoObject* CSharpInterface::callCSharpMethod(const char* name)
 {
-  MonoMethod*	method;
+  MonoThread*   thread = mono_thread_attach(_domain);
+  MonoMethod*   method = mono_class_get_method_from_name(_class, name, 0);
+  MonoObject*   object = mono_runtime_invoke(method, _object, NULL, NULL);
 
-  method = mono_class_get_method_from_name(_class, name, 0);
-  return mono_runtime_invoke(method, _object, NULL, NULL);
+  mono_thread_detach(thread);
+
+  return object;
 }
 
 /*
