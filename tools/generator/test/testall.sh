@@ -29,6 +29,7 @@ runtest() {
     cd ..
 }
 
+runtest caml prologin.ml
 runtest cxx prologin.cc
 runtest python prologin.py
 
