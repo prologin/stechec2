@@ -72,7 +72,7 @@ function:
       - [m, int, lower bound]
       - [n, int, upper bound]
   -
-    fct_name: sort
+    fct_name: returns_sorted
     fct_summary: Sorts a list of integers.
     fct_ret_type: int array
     fct_arg:

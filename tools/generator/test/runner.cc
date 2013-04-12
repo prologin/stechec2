@@ -40,7 +40,7 @@ std::vector<int> api_returns_range(int m, int n)
     return v;
 }
 
-std::vector<int> api_sort(std::vector<int> l)
+std::vector<int> api_returns_sorted(std::vector<int> l)
 {
     std::sort(l.begin(), l.end());
     return l;

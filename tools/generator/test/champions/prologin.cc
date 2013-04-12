@@ -28,11 +28,11 @@ void test()
         assert(r[i - 1] == i);
 
     std::vector<int> v = {1, 3, 2, 4, 5, 7, 6};
-    v = sort(v);
+    v = returns_sorted(v);
     for (int i = 0; i < 7; ++i)
         assert(v[i] == i + 1);
 
-    assert(sort(r) == r);
+    assert(returns_sorted(r) == r);
 
     struct_with_array s;
     s.field_int = 42;

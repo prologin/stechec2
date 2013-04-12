@@ -1,0 +1,5 @@
+To generate the tests environment, use :
+
+generator player ./test.yml .
+
+Then you can run the tests with ./testall.sh

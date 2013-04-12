@@ -20,15 +20,20 @@ def test():
     assert returns_true() == True
     assert returns_range(1, 100) == range(1, 100)
     assert returns_range(1, 10000) == range(1, 10000)
-    assert sort([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
-    assert sort(range(10000)) == range(10000)
-    send_me_42s(struct_with_array(field_int=42,
-                                  field_int_arr=[42] * 42,
-                                  field_str_arr=[simple_struct(42, True)] * 42))
+    assert returns_sorted([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
+    assert returns_sorted(range(10000)) == range(10000)
+    send_me_42s(struct_with_array(
+        field_int=42,
+        field_int_arr=[42] * 42,
+        field_str_arr=[simple_struct(42, True)] * 42))
+
     send_me_test_enum(VAL1, VAL2)
-    l = send_me_struct_array([struct_with_array(field_int=42,
-                                                field_int_arr=[42] * 42,
-                                                field_str_arr=[simple_struct(42, True)] * 42)] * 42)
-    assert l == [struct_with_array(field_int=42,
-                                   field_int_arr=[42] * 42,
-                                   field_str_arr=[simple_struct(42, True)] * 42)] * 42
+    l = send_me_struct_array([struct_with_array(
+        field_int=42,
+        field_int_arr=[42] * 42,
+        field_str_arr=[simple_struct(42, True)] * 42)] * 42)
+
+    assert l == [struct_with_array(
+        field_int=42,
+        field_int_arr=[42] * 42,
+        field_str_arr=[simple_struct(42, True)] * 42)] * 42
