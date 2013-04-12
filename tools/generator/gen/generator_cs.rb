@@ -21,7 +21,6 @@ end
 def cs_proto(fn)
   # Returns the prototype of a C function
   # WARNING: arrays are hard to handle in C...
-  buf = ""
   if fn.ret.is_array?
     rettype = "void"
   else
@@ -32,7 +31,7 @@ def cs_proto(fn)
     rettype = camel_case(rettype)
   end
 
-  buf += "\t\tpublic " + rettype + " " + camel_case(fn.name) + "("
+  buf = "\t\tpublic " + rettype + " " + camel_case(fn.name) + "("
 
   # Handle arguments
   args = []
@@ -89,11 +88,11 @@ public:
 
 private:
 
-  MonoDomain*		_domain;
-  MonoAssembly*		_assembly;
-  MonoImage*		_image;
-  MonoClass*		_class;
-  MonoObject*       _object;
+  MonoDomain*   _domain;
+  MonoAssembly* _assembly;
+  MonoImage*    _image;
+  MonoClass*    _class;
+  MonoObject*   _object;
 };
 
     EOF
@@ -178,12 +177,11 @@ MonoArray* cxx2lang< MonoArray*, std::vector<int> >(std::vector<int> in)
 {
   gint32 size = in.size();
   MonoClass* mcKlass = mono_get_int32_class();
-  if (size == 0)
-    return mono_array_new(gl_csharp.getDomain(), mcKlass, 0);
-
   MonoArray * maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
+
   for (int i = 0; i < size; ++i)
-		mono_array_set(maArray, gint32, i, (cxx2lang< gint32, int >(in[i])));
+    mono_array_set(maArray, gint32, i, (cxx2lang< gint32, int >(in[i])));
+
   return maArray;
 }
 
@@ -194,7 +192,8 @@ std::vector<int> lang2cxx< MonoArray*, std::vector<int> >(MonoArray* in)
   gint32 size = mono_array_length(in);
 
   for (int i = 0; i < size; ++i)
-		out.push_back(lang2cxx< gint32, int >(mono_array_get(in, gint32, i)));
+    out.push_back(lang2cxx< gint32, int >(mono_array_get(in, gint32, i)));
+
   return out;
 }
 EOF
@@ -219,13 +218,11 @@ EOF
 
   def build_array(typex, tn)
     if tn == "enum"
-        name = typex['enum_name']
+      name = typex['enum_name']
+    elsif tn == "struct"
+      name = typex['str_name']
     else
-        if tn == "struct"
-            name = typex['str_name']
-        else
-            name = typex
-        end
+      name = typex
     end
     @f.puts <<-EOF
 template <>
@@ -233,18 +230,15 @@ MonoArray* cxx2lang< MonoArray*, std::vector<#{name}> >(std::vector<#{name}> in)
 {
   gint32 size = in.size();
   MonoClass* mcKlass = mono_class_from_name(gl_csharp.getImage(), "Prologin", \"#{camel_case(name)}\");
-  if (size == 0)
-    return mono_array_new(gl_csharp.getDomain(), mcKlass, 0);
-
   MonoArray * maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
   for (int i = 0; i < size; ++i)
     EOF
     if tn == "struct"
-        @f.puts "\t\tmono_array_setref(maArray, i, (cxx2lang< MonoObject*, #{name} >(in[i])));"
+      @f.puts "    mono_array_setref(maArray, i, (cxx2lang< MonoObject*, #{name} >(in[i])));"
     else
-        @f.puts "\t\tmono_array_set(maArray, gint32, i, (cxx2lang< gint32, #{name} >(in[i])));"
+      @f.puts "    mono_array_set(maArray, gint32, i, (cxx2lang< gint32, #{name} >(in[i])));"
     end
-@f.puts <<-EOF
+    @f.puts <<-EOF
   return maArray;
 }
 
@@ -257,11 +251,11 @@ std::vector<#{name}> lang2cxx< MonoArray*, std::vector<#{name}> >(MonoArray* in)
   for (int i = 0; i < size; ++i)
     EOF
     if tn == "struct"
-        @f.puts "\t\tout.push_back(lang2cxx< MonoObject*, #{name} >(reinterpret_cast<MonoObject*>(mono_array_get(in, MonoObject*, i))));"
+      @f.puts "    out.push_back(lang2cxx< MonoObject*, #{name} >(reinterpret_cast<MonoObject*>(mono_array_get(in, MonoObject*, i))));"
     else
-        @f.puts "\t\tout.push_back(lang2cxx< gint32, #{name} >(mono_array_get(in, gint32, i)));"
+      @f.puts "    out.push_back(lang2cxx< gint32, #{name} >(mono_array_get(in , gint32, i)));"
     end
-@f.puts <<-EOF
+    @f.puts <<-EOF
   return out;
 }
     EOF
@@ -269,86 +263,62 @@ std::vector<#{name}> lang2cxx< MonoArray*, std::vector<#{name}> >(MonoArray* in)
 
   def cmonotype(ft)
     if ft.is_array?
-        "MonoArray*"
+      "MonoArray*"
+    elsif ft.is_struct?
+      "MonoObject*"
+    elsif ft.is_nil?
+      "void"
+    elsif ft.name == "string"
+      "MonoString*"
     else
-        if ft.is_struct?
-            "MonoObject*"
-        else
-            if ft.is_nil?
-                "void"
-            elsif ft.name == "string"
-                "MonoString*"
-            else
-                "gint32"
-            end
-        end
+      "gint32"
     end
   end
 
   def build_struct_wrappers(str)
     name = str['str_name']
-    @f.puts "template <>"
-    @f.puts "MonoObject* cxx2lang< MonoObject*, #{name} >(#{name} in)"
-    @f.puts "{"
-    @f.puts "  void* arg;"
-    @f.puts "  MonoClass*  mcKlass  = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");"
-    @f.puts "  MonoObject* moObj    = mono_object_new(gl_csharp.getDomain(), mcKlass);"
-    @f.puts "  mono_runtime_object_init(moObj);"
+    @f.puts <<-EOF
+template <>
+MonoObject* cxx2lang< MonoObject*, #{name} >(#{name} in)
+{
+  void* arg;
+  MonoClass*  mcKlass  = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");
+  MonoObject* moObj    = mono_object_new(gl_csharp.getDomain(), mcKlass);
+mono_runtime_object_init(moObj);
+    EOF
     str['str_field'].each do |f|
       fn = f[0]
       ft = @types[f[1]]
-      if ft.is_struct? or ft.is_array? then
-        @f.puts "  cxx2lang(in.#{fn}, " +
-                "mono_field_get_value_object(gl_csharp.getDomain(), mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), moObj));"
-      else
-        @f.puts "  arg = reinterpret_cast< void* >(cxx2lang< gint32, #{ft.name} >(in.#{fn}));"
-        @f.puts "  mono_field_set_value(moObj, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &arg);"
-     end
+      @f.puts <<-EOF
+  arg = reinterpret_cast< void* >(cxx2lang< #{cmonotype(ft)}, #{cxx_type(ft)} >(in.#{fn}));
+  mono_field_set_value(moObj, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &arg);
+      EOF
     end
-    @f.puts "  return moObj;"
-    @f.puts "}\n"
+    @f.puts <<-EOF
+  return moObj;
+}
 
-    @f.puts "template <>"
-    @f.puts "#{name} lang2cxx< MonoObject*, #{name} >(MonoObject* in)"
-    @f.puts "{"
-    @f.puts "  #{name} out;"
-    @f.puts "  void*      field_out;"
-    @f.puts "  MonoClass* mcKlass = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");"
-    @f.puts "  (void)field_out;\n"
+template <>
+#{name} lang2cxx< MonoObject*, #{name} >(MonoObject* in)
+{
+    #{name} out;
+  void*      field_out;
+  MonoClass* mcKlass = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");
+  (void)field_out;
+    EOF
     str['str_field'].each do |f|
       fn = f[0]
       ft = @types[f[1]]
       if ft.is_array? or ft.is_struct? then
-        @f.puts  "  mono_field_get_value(in, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &field_out);"
-        @f.puts  "  out.#{fn} = lang2cxx< #{cmonotype(ft)}, #{ft.name} >(reinterpret_cast< #{cmonotype(ft)} >(field_out));"
+        @f.puts <<-EOF
+  mono_field_get_value(in, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &field_out);
+  out.#{fn} = lang2cxx< #{cmonotype(ft)}, #{cxx_type(ft)} >(reinterpret_cast< #{cmonotype(ft)} >(field_out));
+        EOF
       else
         @f.puts  "  mono_field_get_value(in, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &out.#{fn});"
       end
     end
-    @f.puts "  return out;"
-    @f.puts "}"
-  end
-
-  def build_struct_wrappers_inside(str)
-    name = str['str_name']
-    @f.puts "void cxx2lang(#{name} in, MonoObject* moObj = NULL)"
-    @f.puts "{"
-    @f.puts "  void* arg;"
-    @f.puts "  MonoClass*  mcKlass  = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");"
-    @f.puts "  if (!moObj) moObj    = mono_object_new(gl_csharp.getDomain(), mcKlass);"
-    @f.puts "  mono_runtime_object_init(moObj);"
-    str['str_field'].each do |f|
-      fn = f[0]
-      ft = @types[f[1]]
-      if ft.is_struct? or ft.is_array? then
-        @f.puts "  cxx2lang(in.#{fn}, " +
-                "mono_field_get_value_object(gl_csharp.getDomain(), mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), moObj));"
-      else
-        @f.puts "  arg = reinterpret_cast< void* >(cxx2lang< gint32, #{ft.name} >(in.#{fn}));"
-        @f.puts "  mono_field_set_value(moObj, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &arg);"
-     end
-    end
-    @f.puts "}"
+    @f.puts "  return out;", "}", ""
   end
 
   def generate_source()
@@ -367,13 +337,10 @@ CSharpInterface gl_csharp;
 
     EOF
     build_common_wrappers
-    for_each_enum   { |e| build_enum_wrappers e }
+    for_each_enum   { |e| build_enum_wrappers e; build_array(e,"enum") }
 
-    for_each_struct { |s| build_struct_wrappers_inside s }
-    for_each_struct { |s| build_struct_wrappers s }
+    for_each_struct { |s| build_struct_wrappers s; build_array(s,"struct") }
 
-    for_each_enum   { |e| build_array(e,"enum") }
-    for_each_struct { |s| build_array(s,"struct") }
     build_helper_funcs
     target = $conf['conf']['player_lib']
     @f.puts <<-EOF
@@ -412,13 +379,13 @@ CSharpInterface::CSharpInterface()
   mono_runtime_object_init(_object);
 
   // Register API functions as internal Mono functions
-     EOF
+    EOF
 
-     for_each_fun(false) do |fn|
-       @f.puts "  mono_add_internal_call(\"Prologin.Api::" + camel_case(fn.name) + "\", (const void*)" + fn.name + ");"
-     end
+    for_each_fun(false) do |fn|
+      @f.puts "  mono_add_internal_call(\"Prologin.Api::" + camel_case(fn.name) + "\", (const void*)" + fn.name + ");"
+    end
 
-     @f.puts <<-EOF
+    @f.puts <<-EOF
 }
 
 MonoImage* CSharpInterface::getImage()
@@ -462,41 +429,32 @@ MonoObject* CSharpInterface::callCSharpMethod(const char* name)
     for_each_user_fun(false) do |fn|
       @f.print cxx_proto(fn, '')
       if cxx_type(fn.ret) != "void"
-        print_body "  return lang2cxx< MonoObject*, " + cxx_type(fn.ret) + " >(gl_csharp.callCSharpMethod(\"" + camel_case(fn.name) + "\"));"
+        print_body "  return lang2cxx< #{cmonotype(fn.ret)}, #{cxx_type(fn.ret)} >(gl_csharp.callCSharpMethod(\"" + camel_case(fn.name) + "\"));"
       else
         print_body "  gl_csharp.callCSharpMethod(\"" + camel_case(fn.name) + "\");"
       end
-     end
-
-
-   @f.close
+    end
+    @f.close
   end
 
   def build_helper_funcs
     for_each_fun(false) do |fn|
       @f.print cmonotype(fn.ret) + " " + fn.name + "("
       args = fn.args.map { |arg|
-        if arg.type.is_array?
-          at = "MonoArray*"
-        elsif arg.type.is_struct?
-          at = "MonoObject*"
-        elsif arg.type.name == "string"
-          at = "MonoString*"
-        else
-          at = cxx_type(arg.type)
-        end
+        at = cmonotype(arg.type)
         "#{at} #{arg.name}"
       }
       @f.puts args.join(", ") + ")"
       @f.puts "{"
       @f.print "\t"
-      @f.print "return cxx2lang< #{cmonotype(fn.ret)}, #{cxx_type(fn.ret)} >(" if not fn.ret.is_nil?
-      @f.print "api_" + fn.name + "("
+      call = "api_" + fn.name + "("
       args = fn.args.map { |arg|
-           "lang2cxx< " + cmonotype(arg.type) + ", #{cxx_type(arg.type)} >(#{arg.name})" }
-      @f.print args.join(", ") + ")"
-      @f.print ")" if not fn.ret.is_nil?
-      @f.puts ";\n}"
+        "lang2cxx< " + cmonotype(arg.type) + ", #{cxx_type(arg.type)} >(#{arg.name})" }
+        call += args.join(", ") + ")"
+        if not fn.ret.is_nil?
+          call = "return cxx2lang< #{cmonotype(fn.ret)}, #{cxx_type(fn.ret)} >(" + call + ")"
+        end
+        @f.puts call, ";", "}", ""
     end
   end
 
@@ -571,8 +529,8 @@ lib_TARGETS = #{target}
 #{target}-csflags = -target:library -nowarn:0169,0649
 
 include ../includes/rules.mk
-    EOF
-    @f.close
+EOF
+@f.close
   end
 
 
