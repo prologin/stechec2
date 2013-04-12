@@ -192,7 +192,7 @@ Lang cxx2lang(Cxx in)
 }
 
 template<typename Lang, typename Cxx>
-std::vector<Cxx> lang2cxx_array(jarray in);
+std::vector<Cxx> lang2cxx_array(jobject in);
 
 template<typename Cxx, typename Lang>
 jarray cxx2lang_array(std::vector<Cxx> in);
@@ -226,13 +226,14 @@ jarray cxx2lang_array<#{type}, #{jnitype}>(std::vector<#{type}> in)
 }
 
 template <>
-std::vector<#{type}> lang2cxx_array<#{jnitype}, #{type}>(jarray in)
+std::vector<#{type}> lang2cxx_array<#{jnitype}, #{type}>(jobject in)
 {
   #{arraytype} array = (#{arraytype})in;
   jsize size = jrt.env()->GetArrayLength(array);
-  #{jnitype}* datas;
-  jrt.env()->Get#{type.capitalize}ArrayRegion(array, (jsize)0, size, datas);
-  return std::vector<#{type}>((#{type}*)datas, (#{type}*)datas + (size_t)size);
+  #{jnitype}* datas = jrt.env()->Get#{type.capitalize}ArrayElements(array, NULL);
+  std::vector<#{type}> out(datas, datas + size);
+  jrt.env()->Release#{type.capitalize}ArrayElements(array, datas, JNI_ABORT);
+  return out;
 }
 
 EOF
@@ -274,10 +275,10 @@ jarray cxx2lang_array(std::vector<Cxx> in)
 }
 
 template <typename Lang, typename Cxx>
-std::vector<Cxx> lang2cxx_array(jarray in)
+std::vector<Cxx> lang2cxx_array(jobject in)
 {
   jobjectArray array = (jobjectArray)in;
-  size_t size = (size_t)jrt.env()->GetArrayLength(in);
+  size_t size = (size_t)jrt.env()->GetArrayLength(array);
   std::vector<Cxx> out;
   for (size_t i = 0; i < size; i++)
     out.push_back(lang2cxx<jobject, Cxx>(jrt.env()->GetObjectArrayElement(array, (jsize)i)));
@@ -351,8 +352,17 @@ EOF
     @f.puts "  jmethodID method = jrt.env()->GetMethodID(Prologin::Class(), \"#{fn.name}\", \"#{get_fn_signature(fn)}\");"
     args = fn.args.map { |arg| get_lang2cxx(arg.type) + "(#{arg.name})"}.join(", ")
     call = "jrt.env()->Call#{get_java_type(fn.ret)}Method(jrt.prologin, method" + args + ")"
-    call = "return #{get_lang2cxx(fn.ret)}(" + call + ")" if not fn.ret.is_nil?
-    @f.puts "  #{call};", "}", ""
+    call = "#{get_cxx_type(fn.ret)} out = #{get_lang2cxx(fn.ret)}(" + call + ")" if not fn.ret.is_nil?
+    @f.puts <<-EOF
+  #{call};
+  if (jrt.env()->ExceptionOccurred())
+  {
+    jrt.env()->ExceptionDescribe();
+    exit(1);
+  }
+EOF
+  @f.puts "  return out;" if not fn.ret.is_nil?
+  @f.puts "}", ""
   end
 
   def build_vm_init
@@ -382,14 +392,19 @@ ProloginJavaRunTime jrt;
 
 ProloginJavaRunTime::ProloginJavaRunTime()
 {
+ std::string classpath = "-Djava.class.path=";
+  char* champion_path = getenv("CHAMPION_PATH");
+  if (champion_path == NULL)
+    champion_path = (char*)"./";
+  classpath.append(champion_path);
+
   JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
-  JavaVMOption options;
-  options.optionString = getenv("CHAMPION_PATH");
-  if (!options.optionString)
-    options.optionString = (char*)".";
+  JavaVMOption options[2];
+  options[0].optionString = (char*)classpath.c_str();
+  options[1].optionString = (char*)"-ea";
   vm_args.version = JNI_VERSION_1_6;
-  vm_args.nOptions = 1;
-  vm_args.options = &options;
+  vm_args.nOptions = 2;
+  vm_args.options = options;
   vm_args.ignoreUnrecognized = false;
   JNI_CreateJavaVM(&jvm, (void**)&env_, &vm_args);
   prologin = env_->NewObject(Prologin::Class(), env_->GetMethodID(Prologin::Class(), "<init>", "()V"));
