@@ -300,9 +300,9 @@ std::vector<Cxx> lang2cxx_array(zval* in)
 
     for (size_t i = 0; i < s; ++i)
     {
-        zval* v;
+        zval** v;
         zend_hash_index_find(ht, i, (void**)&v);
-        out.push_back(lang2cxx<zval*, Cxx>(v));
+        out.push_back(lang2cxx<zval*, Cxx>(*v));
     }
 
     return out;
