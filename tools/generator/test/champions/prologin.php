@@ -22,6 +22,28 @@ function test()
     assert("returns_range(1, 10000) === range(1, 9999)");
     assert("returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7)");
     assert("returns_sorted(range(1, 1000)) === range(1, 1000)");
+
+    send_me_test_enum(VAL1, VAL2);
+
+    $struct1 = array(42, true);
+    send_me_42s(array(
+        "field_int" => 42,
+        "field_int_arr" => array_fill(0, 42, 42),
+        "field_str_arr" => array_fill(0, 42, $struct1)
+    ));
+    /*$l1 = send_me_struct_array(array_fill(0, 42, array(
+        "field_int" => 42,
+        "field_int_arr" => array_fill(0, 42, 42),
+        "field_str_arr" => array_fill(0, 42, array_fill(0, 42, $struct1))
+    )));
+
+    $l2 = array_fill(0, 42, array(
+        "field_int" => 42,
+        "field_int_arr" => array_fill(0, 42, 42),
+        "field_str_arr" => array_fill(0, 42, array_fill(0, 42, $struct1))
+    ));
+
+    assert('$l1 == $l2');*/
 }
 
 ?>
