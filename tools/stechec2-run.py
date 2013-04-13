@@ -26,10 +26,12 @@ Configuration file example:
     rules: libprologin2013.so
     map: ./simple.map
     verbose: 3
-    nb_clients: 2
     clients:
       - ./champion.so
       - ./champion.so
+    spectators:
+      - ./dumper.so
+      - ./gui.so
 
 Report bugs to <serveur@prologin.org>'''.format(sys.argv[0]))
 
@@ -48,15 +50,27 @@ def stechec2_run(options):
             client_opt += ['--' + i, str(options[i])]
 
     # Used by server only
-    for i in ['nb_clients']:
-        if i in options:
-            server_opt += ['--' + i, str(options[i])]
+    clients = options.get('clients', [])
+    spectators = options.get('spectators', [])
+    server_opt += ['--nb_clients', str(len(clients) + len(spectators))]
 
+    # Start the server
     poll.append(subprocess.Popen(server_opt, **popt))
-    for i, client in enumerate(options['clients']):
-        poll.append(subprocess.Popen(client_opt + 
-            ['--champion', client, '--name', str(i + 1)], **popt))
 
+    def run_client(client, name, is_spectator):
+        opts = client_opt + ['--champion', client, '--name', name]
+        if is_spectator:
+            opts.append('--spectator')
+        poll.append(subprocess.Popen(opts,**popt))
+
+    # Start clients, then spectators
+    for i, lib_so in enumerate(clients):
+        run_client(lib_so, 'client-{}'.format(i + 1), False)
+
+    for i, lib_so in enumerate(spectators):
+        run_client(lib_so, 'spectator-{}'.format(i + 1), True)
+
+    # Wait them all
     for p in poll:
         p.wait()
 
