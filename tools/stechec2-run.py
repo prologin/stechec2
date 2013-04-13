@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
 import yaml
@@ -52,19 +52,10 @@ def stechec2_run(options):
         if i in options:
             server_opt += ['--' + i, str(options[i])]
 
-    if not options.get('no_server', False):
-        print '---', ' '.join(server_opt)
-        poll.append(subprocess.Popen(server_opt, **popt))
+    poll.append(subprocess.Popen(server_opt, **popt))
     for i, client in enumerate(options['clients']):
-        args = ['--champion', client]
-        if 'dumper' in client:
-            args.append('--spectator')
-            kind = 'spectator'
-        else:
-            kind = 'champion'
-        args += ['--name', '{}-{}'.format(kind, i + 1)]
-        print '>>>', ' '.join(client_opt + args)
-        poll.append(subprocess.Popen(client_opt + args, **popt))
+        poll.append(subprocess.Popen(client_opt + 
+            ['--champion', client, '--name', str(i + 1)], **popt))
 
     for p in poll:
         p.wait()
