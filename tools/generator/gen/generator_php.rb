@@ -191,20 +191,20 @@ EOF
     @f.puts "        zend_error(E_WARNING, \"parameter is not a structure\");"
     @f.puts "        throw 42;"
     @f.puts "    }"
-    @f.puts "    zval* tmp;"
+    @f.puts "    zval** tmp;"
     @f.puts "    HashTable* ht = Z_ARRVAL_P(in);"
     s['str_field'].each do |f|
       n = f[0]
       t = @types[f[1]]
       @f.puts "    zend_symtable_find(ht, \"#{n}\", #{n.length + 1}, (void**)&tmp);"
       if t.is_array? then
-        @f.puts "    tmp = (zval*)tmp->value.ht;"
+        @f.puts "    *tmp = (zval*)((*tmp)->value.ht);"
       end
       @f.print "    out.#{n} = "
       if t.is_array? then
-        @f.print "lang2cxx_array<#{t.type.name}>(tmp)"
+        @f.print "lang2cxx_array<#{t.type.name}>(*tmp)"
       else
-        @f.print "lang2cxx<zval*, #{t.name}>(tmp)"
+        @f.print "lang2cxx<zval*, #{t.name}>(*tmp)"
       end
       @f.puts ";"
     end
