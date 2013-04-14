@@ -1,9 +1,42 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
-import yaml
-import sys
+import argparse
+import itertools
 import subprocess
+import sys
+import yaml
+
+
+parser = argparse.ArgumentParser(
+    description='Run stechec processes for a match',
+    epilog='''Configuration file example:
+    rules: libprologin2013.so
+    map: ./simple.map
+    verbose: 3
+    clients:
+      - ./champion.so
+      - ./champion.so
+    spectators:
+      - ./dumper.so
+      - ./gui.so
+
+Report bugs to <serveur@prologin.org>''',
+    formatter_class=argparse.RawDescriptionHelpFormatter
+)
+parser.add_argument(
+    '-v', '--version', action='store_true',
+    help='Display version information'
+)
+parser.add_argument(
+    '-n', '--inhibit', metavar='P', type=int, action='append', default=[],
+    help='Do not start process number P (0 = server, 1=first client, ...'
+    ' (champions first, spectators last)'
+)
+parser.add_argument(
+    'config-file', metavar='F',
+    help='use F as a configuration file for the match'
+)
 
 
 def version():
@@ -16,27 +49,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 Written by Antoine Pietri.''')
 
 
-def usage():
-    print('''Usage: {0} [-h|-v] <config-file.yml>
-
-Example:
-   {0} config.yml       to run a match, using configuration file config.yml
-
-Configuration file example:
-    rules: libprologin2013.so
-    map: ./simple.map
-    verbose: 3
-    clients:
-      - ./champion.so
-      - ./champion.so
-    spectators:
-      - ./dumper.so
-      - ./gui.so
-
-Report bugs to <serveur@prologin.org>'''.format(sys.argv[0]))
-
-
-def stechec2_run(options):
+def stechec2_run(args, options):
     poll = []
 
     popt = {'stderr': sys.stdin, 'stdout': sys.stdout}
@@ -54,14 +67,27 @@ def stechec2_run(options):
     spectators = options.get('spectators', [])
     server_opt += ['--nb_clients', str(len(clients) + len(spectators))]
 
+    next_process = iter(itertools.count())
+
+    def start_proc(name, opts, popt):
+        p = next(next_process)
+        cmd_line = ' '.join(opts)
+        if p in args.inhibit:
+            print '>>> Not starting {}[P={}]:'.format(name, p)
+            print '    {}'.format(cmd_line)
+        else:
+            print '>>> Starting {}[P={}]:'.format(name, p)
+            print '    {}'.format(cmd_line)
+            poll.append(subprocess.Popen(opts, **popt))
+
     # Start the server
-    poll.append(subprocess.Popen(server_opt, **popt))
+    start_proc('server', server_opt, popt)
 
     def run_client(client, name, is_spectator):
         opts = client_opt + ['--champion', client, '--name', name]
         if is_spectator:
             opts.append('--spectator')
-        poll.append(subprocess.Popen(opts,**popt))
+        start_proc(name, opts, popt)
 
     # Start clients, then spectators
     for i, lib_so in enumerate(clients):
@@ -76,16 +102,15 @@ def stechec2_run(options):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or sys.argv[1] in ['-h', '--help']:
-        usage()
-        sys.exit(1)
-    elif sys.argv[1] in ['-v', '--version']:
+    args = parser.parse_args()
+    if args.version:
         version()
-        sys.exit(1)
+        sys.exit(0)
     else:
+        config_file = vars(args)['config-file']
         try:
-            c = yaml.load(open(sys.argv[1]))
+            c = yaml.load(open(config_file))
         except yaml.YAMLError as e:
-            print('Parse error in {}: {}'.format(sys.argv[1], e))
+            print('Parse error in {}: {}'.format(config_file, e))
             sys.exit(1)
-        stechec2_run(c)
+        stechec2_run(args, c)
