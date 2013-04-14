@@ -19,6 +19,9 @@ parser = argparse.ArgumentParser(
     clients:
       - ./champion.so
       - ./champion.so
+    names:
+      - Blue ones
+      - Red ones
     spectators:
       - ./dumper.so
       - ./gui.so
@@ -66,6 +69,7 @@ def stechec2_run(args, options):
 
     # Used by server only
     clients = options.get('clients', [])
+    client_names = options.get('names', [])
     spectators = options.get('spectators', [])
     server_opt += ['--nb_clients', str(len(clients) + len(spectators))]
 
@@ -96,7 +100,11 @@ def stechec2_run(args, options):
 
     # Start clients, then spectators
     for i, lib_so in enumerate(clients):
-        run_client(lib_so, 'client-{}'.format(i + 1), False)
+        try:
+            name = client_names[i]
+        except IndexError:
+            name = 'client-{}'.format(i + 1)
+        run_client(lib_so, name, False)
 
     for i, lib_so in enumerate(spectators):
         run_client(lib_so, 'spectator-{}'.format(i + 1), True)
