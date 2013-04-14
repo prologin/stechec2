@@ -3,6 +3,8 @@
 
 import argparse
 import itertools
+import os
+import os.path
 import subprocess
 import sys
 import yaml
@@ -87,7 +89,10 @@ def stechec2_run(args, options):
         opts = client_opt + ['--champion', client, '--name', name]
         if is_spectator:
             opts.append('--spectator')
-        start_proc(name, opts, popt)
+        client_popt = dict(popt)
+        client_popt['env'] = dict(os.environ)
+        client_popt['env']['CHAMPION_PATH'] = os.path.dirname(client)
+        start_proc(name, opts, client_popt)
 
     # Start clients, then spectators
     for i, lib_so in enumerate(clients):
