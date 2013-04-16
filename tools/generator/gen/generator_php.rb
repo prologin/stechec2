@@ -197,9 +197,6 @@ EOF
       n = f[0]
       t = @types[f[1]]
       @f.puts "    zend_symtable_find(ht, \"#{n}\", #{n.length + 1}, (void**)&tmp);"
-      if t.is_array? then
-        @f.puts "    *tmp = (zval*)((*tmp)->value.ht);"
-      end
       @f.print "    out.#{n} = "
       if t.is_array? then
         @f.print "lang2cxx_array<#{t.type.name}>(*tmp)"
