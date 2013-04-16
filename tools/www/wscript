@@ -15,7 +15,7 @@ def build(bld):
                                      'www', 'concours')
     bld.new_task_gen(
         features = "subst",
-        source = "settings.py.in",
+        source = "settings.py.ini",
         target = "settings.py",
         config_sample = os.path.join(bld.env.WEBPREFIX, 'website.yml'),
     )
@@ -63,34 +63,29 @@ def build(bld):
         'stechec/templates/match-new.html',
         'stechec/templates/matches-list.html'
     ])
-    bld.install_files('${WEBPREFIX}/stechec/static/js', [
-        'stechec/static/js/jquery-1.5.2.min.js'
+    bld.install_files('${WEBPREFIX}/static/js', [
+        'static/js/jquery-1.5.2.min.js'
     ])
-    bld.install_files('${WEBPREFIX}/stechec/static/img/', [
-        'stechec/static/img/head.png',
-        'stechec/static/img/back.png',
-        'stechec/static/img/page.png'
+    bld.install_files('${WEBPREFIX}/static/img/', [
+        'static/img/page.png'
     ])
-    bld.install_files('${WEBPREFIX}/stechec/static/img/jquery-ui/', [
-        'stechec/static/img/jquery-ui/ui-icons_222222_256x240.png',
-        'stechec/static/img/jquery-ui/ui-icons_ffffff_256x240.png',
-        'stechec/static/img/jquery-ui/ui-bg_glass_65_ffffff_1x400.png',
-        'stechec/static/img/jquery-ui/ui-bg_highlight-soft_75_ffe45c_1x100.png',
-        'stechec/static/img/jquery-ui/ui-bg_gloss-wave_35_f6a828_500x100.png',
-        'stechec/static/img/jquery-ui/ui-icons_ef8c08_256x240.png',
-        'stechec/static/img/jquery-ui/ui-bg_diagonals-thick_18_b81900_40x40.png',
-        'stechec/static/img/jquery-ui/ui-bg_diagonals-thick_20_666666_40x40.png',
-        'stechec/static/img/jquery-ui/ui-bg_highlight-soft_100_eeeeee_1x100.png',
-        'stechec/static/img/jquery-ui/ui-icons_ffd27a_256x240.png',
-        'stechec/static/img/jquery-ui/ui-bg_flat_10_000000_40x100.png',
-        'stechec/static/img/jquery-ui/ui-bg_glass_100_f6f6f6_1x400.png',
-        'stechec/static/img/jquery-ui/ui-icons_228ef1_256x240.png',
-        'stechec/static/img/jquery-ui/ui-bg_glass_100_fdf5ce_1x400.png'
+    bld.install_files('${WEBPREFIX}/static/img/jquery-ui/', [
+        'static/img/jquery-ui/ui-icons_222222_256x240.png',
+        'static/img/jquery-ui/ui-icons_ffffff_256x240.png',
+        'static/img/jquery-ui/ui-bg_glass_65_ffffff_1x400.png',
+        'static/img/jquery-ui/ui-bg_highlight-soft_75_ffe45c_1x100.png',
+        'static/img/jquery-ui/ui-bg_gloss-wave_35_f6a828_500x100.png',
+        'static/img/jquery-ui/ui-icons_ef8c08_256x240.png',
+        'static/img/jquery-ui/ui-bg_diagonals-thick_18_b81900_40x40.png',
+        'static/img/jquery-ui/ui-bg_diagonals-thick_20_666666_40x40.png',
+        'static/img/jquery-ui/ui-bg_highlight-soft_100_eeeeee_1x100.png',
+        'static/img/jquery-ui/ui-icons_ffd27a_256x240.png',
+        'static/img/jquery-ui/ui-bg_flat_10_000000_40x100.png',
+        'static/img/jquery-ui/ui-bg_glass_100_f6f6f6_1x400.png',
+        'static/img/jquery-ui/ui-icons_228ef1_256x240.png',
+        'static/img/jquery-ui/ui-bg_glass_100_fdf5ce_1x400.png'
     ])
-    bld.install_files('${WEBPREFIX}/stechec/static/css/', [
-        'stechec/static/css/jquery-ui-1.8.11.css',
-        'stechec/static/css/main.css'
-    ])
-    bld.install_files('${WEBPREFIX}/stechec/static/font/', [
-        'stechec/static/font/exocet-heavy.ttf'
+    bld.install_files('${WEBPREFIX}/static/css/', [
+        'static/css/jquery-ui-1.8.11.css',
+        'static/css/main.css'
     ])

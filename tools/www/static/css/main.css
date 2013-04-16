@@ -2,12 +2,6 @@
  * Main style sheet
  * Author: Zopieux
  */
-@font-face
-{
-	font-family: 'exocet';
-	src: url('/static/font/exocet-heavy.ttf') format('truetype');
-}
-
 * {
     margin: 0;
     padding: 0;
@@ -37,18 +31,15 @@ header {
 }
 header #logo {
     margin-left: 10px;
-    background: url('../img/head.png') no-repeat left top;
     height: 150px;
     width: 137px;
     float: left;
 }
 header h1 {
-    background: url('../img/back.png') no-repeat center top;
     line-height: 150px;
     margin-left: 137px;
     color: #C00;
     font-size: 2em;
-    font-family:exocet;
     text-align: center;
 }
 

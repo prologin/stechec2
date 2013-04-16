@@ -24,3 +24,5 @@ website:
   debug: false              # Error 500 pages have debugging informations.
   timezone: America/Chicago # Used to display time on the website.
   secret_key: CHANGEME      # Change this to a random string!
+  static_path: CHANGEME     # Directory containing static files for the custom
+                            # web design
