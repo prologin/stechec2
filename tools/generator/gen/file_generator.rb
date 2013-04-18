@@ -434,7 +434,6 @@ end
 # A generic Cxx file generator (proto, ...)
 class CxxProto < CProto
 
-
   def cxx_type_for_pascal_and_c(t)
     if t.is_array? then
       "std::vector<#{cxx_type(t.type)}>"

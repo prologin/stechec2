@@ -13,61 +13,92 @@
 require "pathname"
 require "gen/file_generator"
 
-def g_c_type(type)
-  if type.name == "bool" then
-    "int"
-  elsif type.name == "string" then
-    "charp"
+def get_array_types()
+  def add_array_types(store, type)
+    if type.is_array?
+      add_array_types(store, type.type)
+      store = store << [c_typename(type), type.type]
+    end
+  end
+
+  array_types = []
+  for_each_struct(false) do |x|
+    x['str_field'].each do |f|
+      add_array_types(array_types, @types[f[1]])
+    end
+  end
+  for_each_fun(false) do |fn|
+    add_array_types(array_types, fn.ret)
+    fn.args.each do |arg|
+      add_array_types(array_types, arg.type)
+    end
+  end
+  for_each_user_fun(false) do |f|
+    add_array_types(array_types, f.ret)
+    f.args.each do |arg|
+      add_array_types(array_types, arg.type)
+    end
+  end
+  array_types.uniq
+end
+
+def cxx_typename(type)
+  if type.is_array? then
+    "std::vector<#{cxx_typename(type.type)}>"
+  elsif type.is_struct?
+    "__internal__cxx__#{type.name}"
+  elsif type.is_simple? && type.name == "string"
+    "std::string"
   else
     type.name
   end
 end
 
-def c_type(type)
-  g_c_type(type)
+def c_typename(type)
+  if type.name == "string"
+    "char*"
+  elsif type.is_array?
+    c_typename(type.type) + "_array"
+  else
+    type.name
+  end
 end
 
-def c_proto(fn, array_like_c = true)
+def c_proto(fn)
   # Returns the prototype of a C function
-  # WARNING: arrays are hard to handle in C...
-  buf = ""
-  if fn.ret.is_array?
-    if array_like_c then
-      rettype = "void"
-    elsif fn.ret.name == "string" then "char*"
-    else
-      rettype = "#{c_type(fn.ret.type)}*"
-    end
+  args = fn.args.map { |arg| "#{c_typename(arg.type)} #{arg.name}" }.join(", ")
+  "#{c_typename(fn.ret)} #{fn.name}(#{(args.empty? ? "void" : args)})"
+end
+
+def cxx_internal_proto(fn)
+  # Returns the prototype of a CXX function
+  args = fn.args.map { |arg| "#{cxx_typename(arg.type)} #{arg.name}" }.join(", ")
+  "extern \"C\" #{cxx_typename(fn.ret)} api_#{fn.name}(#{(args.empty? ? "void" : args)})"
+end
+
+def get_lang2cxx(type)
+  ctype = c_typename(type)
+  cxxtype = cxx_typename(type)
+  if type.is_array? and type.name != "string"
+    # We want to remove the "_array" suffix to get the underlying type
+    # We also want to remove the "std::vector<...>"
+    "lang2cxx_array<#{ctype[0..-7]}, #{ctype}, #{cxxtype[12..-2]} >"
   else
-    rettype = c_type(fn.ret)
+    "lang2cxx<#{ctype}, #{cxxtype} >"
+  end
+end
+
+def get_cxx2lang(type)
+  ctype = c_typename(type)
+  cxxtype = cxx_typename(type)
+  if type.is_array? and type.name != "string"
+    # We want to remove the "_array" suffix to get the underlying type
+    # We also want to remove the "std::vector<...>"
+    "cxx2lang_array<#{ctype[0..-7]}, #{ctype}, #{cxxtype[12..-2]} >"
+  else
+    "cxx2lang<#{ctype}, #{cxxtype} >"
   end
 
-  buf += rettype + " " + fn.name + "("
-
-  # Handle arguments
-  args = []
-  fn.args.each do |arg|
-    if not arg.type.is_array?
-      type = c_type(arg.type)
-      args = args << "#{type} #{arg.name}"
-    else
-      if array_like_c then
-        args = args << "#{arg.type.type.name}* #{arg.name}_arr"
-        args = args << "size_t #{arg.name}_len"
-      else
-        args = args << "#{arg.type.type.name}* #{arg.name}"
-      end
-    end
-  end
-  if fn.ret.is_array? and array_like_c then
-    args = args << "#{fn.ret.type.name}** ret_arr"
-    args = args << "size_t* ret_len"
-  end
-  if args.empty?
-    args = args << "void"
-  end
-  buf += args.join(", ")
-  buf + ")"
 end
 
 class CCxxFileGenerator < CxxProto
@@ -86,174 +117,94 @@ class CCxxFileGenerator < CxxProto
 template<typename Lang, typename Cxx>
 Cxx lang2cxx(Lang in)
 {
-  return in.error;
-}
-
-template<>
-std_string lang2cxx<charp, std_string>(charp in)
-{
   return in;
 }
 
 template<>
-int lang2cxx<int, int>(int in)
+std::string lang2cxx<char*, std::string>(char* in)
 {
   return in;
 }
 
-template<>
-bool lang2cxx<int, bool>(int in)
+template<typename Lang, typename Lang_array, typename Cxx>
+std::vector<Cxx> lang2cxx_array(Lang_array in)
 {
-  return in;
-}
-
-template<typename Lang, typename Cxx>
-void lang2cxx_array(Lang* tab, size_t len, std::vector<Cxx>& vect)
-{
-  vect.reserve(len);
-  for (size_t i = 0; i < len; ++i)
-    vect.push_back( lang2cxx<Lang, Cxx>(tab[i]) );
+  std::vector<Cxx> out(in.length);
+  for (size_t i = 0; i < in.length; ++i)
+    out[i] = lang2cxx<Lang, Cxx>(in.datas[i]);
+  return out;
 }
 
 template<typename Lang, typename Cxx>
 Lang cxx2lang(Cxx in)
 {
-  return in.error;
+  return in;
 }
 
 template<>
-charp cxx2lang<charp, std_string>(std_string in)
+char* cxx2lang<char*, std::string>(std::string in)
 {
   size_t l = in.length();
-  char * out = (char *) malloc(l + 1);
+  char* out = (char *) malloc(l + 1);
   for (int i = 0; i < l; i++) out[i] = in[i];
   out[l] = 0;
   return out;
 }
 
-template<>
-int cxx2lang<int, bool>(bool in)
+template<typename Lang, typename Lang_array, typename Cxx>
+Lang_array cxx2lang_array(const std::vector<Cxx>& in)
 {
-  return in;
-}
-
-template<>
-int cxx2lang<int, int>(int in)
-{
-  return in;
-}
-
-template<typename Lang, typename Cxx>
-void cxx2lang_array(Lang** tab, size_t* len, const std::vector<Cxx>& vect)
-{
-  *len = vect.size();
-  *tab = (Lang *)malloc((*len) * sizeof(Lang));
-  for (int i = 0; i < *len; ++i)
-    (*tab)[i] = cxx2lang<Lang, Cxx>(vect[i]);
+  Lang_array out = { NULL, in.size() };
+  out.datas = (Lang *)malloc((out.length) * sizeof(Lang));
+  for (int i = 0; i < out.length; ++i)
+    out.datas[i] = cxx2lang<Lang, Cxx>(in[i]);
+  return out;
 }
 EOF
-    for_each_enum do |x|
-      name = x['enum_name']
-      @f.puts "template<>"
-      @f.puts "#{name} lang2cxx<#{name}, #{name}>(#{name} in) {"
-      @f.puts " return in;"
-      @f.puts "}"
-      @f.puts "template<>"
-      @f.puts "#{name} cxx2lang<#{name}, #{name}>(#{name} in) {"
-      @f.puts " return in;"
-      @f.puts "}"
-    end
 
     for_each_struct do |x|
-      def aux(fields, name_fun, lang, cxx, ref)
-        fields['str_field'].each do |f|
-          name =f[0]
-          type = @types[f[1]]
-          if type.is_array? then type_ = type.type
-          else type_ = type
-          end
-          lang_type = c_type(type_)
-          cxx_type = cxx_type(type_)
-          if type.is_array? then
-            @f.puts "#{name_fun}_array<#{lang_type}, #{cxx_type}>(#{ref}#{lang}.#{name}_arr, #{ref}#{lang}.#{name}_len, #{cxx}.#{name});"
-          else
-            @f.puts "out.#{name} = #{name_fun}<#{lang_type}, #{cxx_type}>(in.#{name});"
-          end
-        end
+      ctype = x['str_name']
+      cxxtype = "__internal__cxx__#{ctype}"
+      @f.puts <<-EOF
+template<>
+#{cxxtype} lang2cxx<#{ctype}, #{cxxtype}>(#{ctype} in)
+{
+  #{cxxtype} out;
+EOF
+      x['str_field'].each do |f|
+        name = f[0]
+        type = @types[f[1]]
+        @f.puts "  out.#{name} = #{get_lang2cxx(type)}(in.#{name});"
       end
-      c_name = x['str_name']
-      cxx_name = "__internal__cxx__#{c_name}"
-      @f.puts "template<>"
-      @f.puts "#{cxx_name} lang2cxx<#{c_name}, #{cxx_name}>(#{c_name} in) {"
-      @f.puts "#{cxx_name} out;"
-      aux(x, "lang2cxx", "in", "out", "")
-      @f.puts " return out;"
-      @f.puts "}"
-      @f.puts "template<>"
-      @f.puts "#{c_name} cxx2lang<#{c_name}, #{cxx_name}>(#{cxx_name} in) {"
-      @f.puts "#{c_name} out;"
-      aux(x, "cxx2lang", "out", "in", "&")
-      @f.puts " return out;"
-      @f.puts "}"
+      @f.puts <<-EOF
+  return out;
+}
+
+template<>
+#{ctype} cxx2lang<#{ctype}, #{cxxtype}>(#{cxxtype} in)
+{
+  #{ctype} out;
+EOF
+      x['str_field'].each do |f|
+        name = f[0]
+        type = @types[f[1]]
+        @f.puts "  out.#{name} = #{get_cxx2lang(type)}(in.#{name});"
+      end
+      @f.puts "  return out;", "}", ""
     end
-    
+
     @f.puts <<-EOF
 extern "C" {
 EOF
     for_each_fun do |fn|
       @f.puts c_proto(fn)
-      @f.puts "{"
-      if not fn.ret.is_nil? then
-        @f.print "  ", cxx_type(fn.ret), " ", "_retval;\n"
-      end
-      # Check if some of the arguments need conversion
-      fn.args.each do |arg|
-        if arg.type.is_array? then
-          # Make a vector from the arr + len
-          arrname = arg.name + "_arr"
-          lenname = arg.name + "_len"
-          name = arg.name
-          lang_type = c_type(arg.type.type)
-          cxx_type = cxx_type(arg.type.type)
-          @f.puts "  std::vector<#{cxx_type}> param_#{ name };"
-          @f.puts "  lang2cxx_array<#{lang_type}, #{cxx_type}>(#{arrname}, #{lenname}, param_#{name});"
-        else
-          name = arg.name
-          lang_type = c_type(arg.type)
-          cxx_type = cxx_type(arg.type)
-          @f.puts "  #{cxx_type} param_#{ name } = lang2cxx<#{lang_type}, #{cxx_type}>(#{name});"
-        end  
-      end
-      if not fn.ret.is_nil? then
-        @f.print "  _retval = "
-      end
-      @f.print "api_", fn.name, "("
-      argnames = fn.args.map { |arg| "param_#{arg.name}" }
-      @f.print argnames.join(", ")
-      @f.puts ");"
-
-      unless fn.ret.is_nil?
-        if not fn.ret.is_array? then
-          @f.print "  return "
-          ln = c_type(fn.ret)
-          cxx = cxx_type(fn.ret)
-          @f.puts "cxx2lang<#{ln}, #{cxx}>(_retval);"
-        else
-          @f.print "  "
-          ln = c_type(fn.ret.type)
-          cxx = cxx_type(fn.ret.type)
-          @f.puts "cxx2lang_array<#{ln}, #{cxx}>(ret_arr, ret_len, _retval);"
-        end
-      end
-
-      @f.puts "}"
+      buffer = "api_#{fn.name}("
+      buffer += fn.args.map { |arg| "#{get_lang2cxx(arg.type)}(#{arg.name})" }.join(", ") + ")"
+      buffer = "return #{get_cxx2lang(fn.ret)}(#{buffer})" if not fn.ret.is_nil?
+      @f.puts "{", "  #{buffer};", "}", ""
     end
     @f.puts "}"
     @f.close
-  end
-
-  def cxx_type(type)
-    cxx_type_for_pascal_and_c(type)
   end
 
   def generate_header
@@ -264,10 +215,18 @@ EOF
     @f.puts 'extern "C" {'
     @f.puts "# include \"#{$conf['conf']['player_filename']}.h\""
     @f.puts "}", ""
-    @f.puts "typedef std::string std_string;"
-    build_struct_for_pascal_and_c_to_cxx
+
+    for_each_struct do |s|
+      name = s['str_name']
+      @f.puts "typedef struct __internal__cxx__#{name} {"
+      s['str_field'].each do |f|
+        @f.puts "  #{cxx_typename(@types[f[1]])} #{f[0]};"
+      end
+      @f.puts "} __internal__cxx__#{name};"
+    end
+
     for_each_fun do |fn|
-      @f.print cxx_proto(fn, "api_", 'extern "C"'), ";\n"
+      @f.print cxx_internal_proto(fn), ";\n"
     end
     @f.puts "#endif"
     @f.close
@@ -287,17 +246,37 @@ class CFileGenerator < CProto
   def generate_header
     @f = File.open(@path + @header_file, 'w')
     print_banner "generator_c.rb"
-    @f.puts "#include <stdlib.h>"
-    @f.puts "typedef char * charp;"
+    @f.puts "#include <stdlib.h>", "#include <stdbool.h>", ""
     build_constants
     build_enums
+
+    array_types = get_array_types()
+
+    # Forward declaration in case of interdependencies
+    for_each_struct(false) { |s| @f.puts "struct #{s['str_name']};" }
+    @f.puts ""
+
+    # Declaration of the array structures.
+    array_types.each do |name, type|
+      @f.puts "typedef struct #{name} {"
+      if type.is_struct?
+        # [0..-7] removes the "_array"
+        @f.puts "  struct #{name[0..-7]}* datas;"
+      else
+        @f.puts "  #{name[0..-7]}* datas;"
+      end
+      @f.puts "  size_t length;", "} #{name};", ""
+    end
+
     build_structs_generic do |field, type|
       type = @types[type]
-      if type.is_array? then
-        "  size_t #{field}_len;\n  #{type.type.name} *#{field}_arr;"
-      else "  #{c_type(type)} #{field};"
+      if type.is_array? and not type.name == "string"
+        "  struct #{c_typename(type)} #{field};"
+      else
+        "  #{c_typename(type)} #{field};"
       end
     end
+
     for_each_fun do |f|
       @f.print c_proto(f), ";\n"
     end
