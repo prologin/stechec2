@@ -46,6 +46,12 @@ std::vector<int> api_returns_sorted(std::vector<int> l)
     return l;
 }
 
+void api_send_me_simple(simple_struct s)
+{
+    assert(s.field_i == 42);
+    assert(s.field_bool);
+}
+
 void api_send_me_42s(struct_with_array s)
 {
     assert(s.field_int == 42);

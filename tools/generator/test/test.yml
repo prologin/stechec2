@@ -78,6 +78,12 @@ function:
     fct_arg:
       - [l, int array, the list]
   -
+    fct_name: send_me_simple
+    fct_summary: Send me a simple struct
+    fct_ret_type: void
+    fct_arg:
+      - [s, simple_struct, the struct]
+  -
     fct_name: send_me_42s
     fct_summary: Send me this struct filled with 42s and a list of 42 elems.
     fct_ret_type: void

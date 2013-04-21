@@ -196,7 +196,11 @@ EOF
     s['str_field'].each do |f|
       n = f[0]
       t = @types[f[1]]
-      @f.puts "    zend_symtable_find(ht, \"#{n}\", #{n.length + 1}, (void**)&tmp);"
+      @f.print "    if (zend_hash_find(ht, \"#{n}\", #{n.length + 1},"
+      @f.puts " (void**)&tmp) != SUCCESS) {"
+      @f.puts "        zend_error(E_WARNING, \"field #{n} not found\");"
+      @f.puts "        throw 42;"
+      @f.puts "    }"
       @f.print "    out.#{n} = "
       if t.is_array? then
         @f.print "lang2cxx_array<#{t.type.name}>(*tmp)"
@@ -275,24 +279,41 @@ Cxx lang2cxx(Lang in)
 template <>
 int lang2cxx<zval*, int>(zval* in)
 {
+    if (in->type != IS_LONG) {
+        zend_error(E_WARNING, "parameter should be an int");
+        throw 42;
+    }
     return (int)Z_LVAL_P(in);
 }
 
 template <>
 bool lang2cxx<zval*, bool>(zval* in)
 {
+    if (in->type != IS_BOOL) {
+        zend_error(E_WARNING, "parameter should be a boolean");
+        throw 42;
+    }
     return Z_BVAL_P(in);
 }
 
 template <>
 std::string lang2cxx<zval*, std::string>(zval* in)
 {
-    return in->value.str.val;
+    if (in->type != IS_STRING) {
+        zend_error(E_WARNING, "parameter should be a string");
+        throw 42;
+    }
+    return Z_STRVAL_P(in);
 }
 
 template <typename Cxx>
 std::vector<Cxx> lang2cxx_array(zval* in)
 {
+    if (in->type != IS_ARRAY) {
+        zend_error(E_WARNING, "parameter should be an array");
+        throw 42;
+    }
+
     HashTable* ht = Z_ARRVAL_P(in);
     std::vector<Cxx> out;
     size_t s = zend_hash_num_elements(ht);

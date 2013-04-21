@@ -25,18 +25,19 @@ function test()
 
     send_me_test_enum(VAL1, VAL2);
 
-    $struct1 = array(42, true);
+    $struct1 = array("field_i" => 42, "field_bool" => true);
+    send_me_simple($struct1);
     send_me_42s(array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
         "field_str_arr" => array_fill(0, 42, $struct1)
     ));
-    /*$l1 = send_me_struct_array(array_fill(0, 42, array(
+    $l1 = send_me_struct_array(array_fill(0, 42, array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
         "field_str_arr" => array_fill(0, 42, array_fill(0, 42, $struct1))
     )));
-
+    /*
     $l2 = array_fill(0, 42, array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
