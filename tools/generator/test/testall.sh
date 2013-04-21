@@ -32,7 +32,6 @@ runtest() {
 runtest php prologin.php
 runtest c prologin.c
 runtest cs prologin.cs
-runtest cs prologin.cs
 runtest java Prologin.java
 runtest caml prologin.ml
 runtest cxx prologin.cc
