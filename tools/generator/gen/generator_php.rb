@@ -198,7 +198,8 @@ EOF
       t = @types[f[1]]
       @f.print "    if (zend_hash_find(ht, \"#{n}\", #{n.length + 1},"
       @f.puts " (void**)&tmp) != SUCCESS) {"
-      @f.puts "        zend_error(E_WARNING, \"field #{n} not found\");"
+      @f.print "        zend_error(E_WARNING, "
+      @f.puts "\"field \\\"#{n}\\\" of struct \\\"#{name}\\\" not found\");"
       @f.puts "        throw 42;"
       @f.puts "    }"
       @f.print "    out.#{n} = "
