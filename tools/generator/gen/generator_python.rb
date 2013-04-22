@@ -177,15 +177,19 @@ EOF
       @f.puts ");"
       i += 1
     end
-    @f.puts "  PyObject* name = PyString_FromString(\"#{name}\");"
-    @f.puts "  PyObject* cstr = PyObject_GetAttr(py_module, name);"
-    @f.puts "  Py_DECREF(name);"
-    @f.puts "  if (cstr == NULL) throw 42;"
-    @f.puts "  PyObject* ret = PyObject_CallObject(cstr, tuple);"
-    @f.puts "  Py_DECREF(cstr);"
-    @f.puts "  Py_DECREF(tuple);"
-    @f.puts "  if (ret == NULL) throw 42;"
-    @f.puts "  return ret;"
+    if str['str_tuple']
+      @f.puts "  return tuple;"
+    else
+      @f.puts "  PyObject* name = PyString_FromString(\"#{name}\");"
+      @f.puts "  PyObject* cstr = PyObject_GetAttr(py_module, name);"
+      @f.puts "  Py_DECREF(name);"
+      @f.puts "  if (cstr == NULL) throw 42;"
+      @f.puts "  PyObject* ret = PyObject_CallObject(cstr, tuple);"
+      @f.puts "  Py_DECREF(cstr);"
+      @f.puts "  Py_DECREF(tuple);"
+      @f.puts "  if (ret == NULL) throw 42;"
+      @f.puts "  return ret;"
+    end
     @f.puts "}"
     @f.puts
 
@@ -199,8 +203,12 @@ EOF
     str['str_field'].each do |f|
       fn = f[0]
       ft = @types[f[1]]
-      @f.puts "  i = cxx2lang<PyObject*, int>(#{i});"
-      @f.puts "  i = PyObject_GetItem(in, i);"
+      if str['str_tuple']
+        @f.puts "  i = PyTuple_GetItem(in, #{i});"
+      else
+        @f.puts "  i = cxx2lang<PyObject*, int>(#{i});"
+        @f.puts "  i = PyObject_GetItem(in, i);"
+      end
       @f.puts "  if (i == NULL) throw 42;"
       @f.print "  out.#{fn} = "
       if ft.is_array?
@@ -209,7 +217,9 @@ EOF
         @f.print "lang2cxx<PyObject*, #{ft.name}>("
       end
       @f.print "i);\n"
-      @f.puts "  Py_DECREF(i);"
+      if not str['str_tuple']
+        @f.puts "  Py_DECREF(i);"
+      end
       i += 1
     end
     @f.puts "  return out;"
@@ -483,11 +493,13 @@ from collections import namedtuple
 
 EOF
     for_each_struct do |x|
-      @f.print x['str_name'], ' = namedtuple("', x['str_name'], '",', "\n"
-      x['str_field'].each do |f|
-        @f.puts "    '#{f[0]} ' # <- #{f[2]}"
+      if not x['str_tuple']
+        @f.print x['str_name'], ' = namedtuple("', x['str_name'], '",', "\n"
+        x['str_field'].each do |f|
+          @f.puts "    '#{f[0]} ' # <- #{f[2]}"
+        end
+        @f.puts ")", ""
       end
-      @f.puts ")", ""
     end
   end
 
