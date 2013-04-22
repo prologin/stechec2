@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- encoding: utf-8 -*-
 
 import argparse
@@ -8,7 +8,9 @@ import os.path
 import subprocess
 import sys
 import yaml
+import signal
 
+poll = []
 
 parser = argparse.ArgumentParser(
     description='Run stechec processes for a match',
@@ -47,16 +49,12 @@ parser.add_argument(
 def version():
     print('''stechec2-run.py
 
-Copyright © 2012, Prologin.
+Copyright © 2013, Prologin.
 This is free software; see the source for copying conditions. There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-Written by Antoine Pietri.''')
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.''')
 
 
 def stechec2_run(args, options):
-    poll = []
-
     popt = {'stderr': sys.stdin, 'stdout': sys.stdout}
     server_opt = ['stechec2-server']
     client_opt = ['stechec2-client']
@@ -113,6 +111,13 @@ def stechec2_run(args, options):
     for p in poll:
         p.wait()
 
+
+def kill_handler(signal, frame):
+    for p in poll:
+        p.kill()
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, kill_handler)
 
 if __name__ == '__main__':
     args = parser.parse_args()

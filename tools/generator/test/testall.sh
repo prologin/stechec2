@@ -29,8 +29,8 @@ runtest() {
     cd ..
 }
 
-runtest php prologin.php
 runtest c prologin.c
+runtest php prologin.php
 runtest cs prologin.cs
 runtest java Prologin.java
 runtest caml prologin.ml
