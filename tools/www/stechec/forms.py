@@ -4,7 +4,6 @@ from concours.stechec import models
 from django import forms
 from django.conf import settings
 from django.forms import widgets
-from django.utils.encoding import force_unicode
 from django.utils.html import escape, conditional_escape
 from itertools import chain, groupby
 
@@ -23,38 +22,38 @@ class ChampionField(forms.Field):
                 status='ready'
             )
         except ValueError:
-            raise forms.ValidationError(u"Numéro de champion invalide.")
+            raise forms.ValidationError("Numéro de champion invalide.")
         except models.Champion.DoesNotExist:
-            raise forms.ValidationError(u"Champion inexistant")
+            raise forms.ValidationError("Champion inexistant")
 
 class MapSelect(widgets.Select):
     def render_options(self, choices, selected_choices):
         def render_option(map):
-            title = force_unicode(map.name)
+            title = map.name
             official = map.official
-            attrs = (force_unicode(map.id) in selected_choices) and u' selected="selected"' or '' 
+            attrs = (map.id in selected_choices) and ' selected="selected"' or '' 
             if official:
-                attrs += u' class="award"'
+                attrs += ' class="award"'
 
-            return u'<option value="%d"%s>%s</option>' % (
+            return '<option value="%d"%s>%s</option>' % (
                 map.id, attrs,
                 conditional_escape(title)
             )
-        selected_choices = set(force_unicode(v) for v in selected_choices)
+        selected_choices = set(v for v in selected_choices)
         output = []
         for author, maps in chain(self.choices, choices):
-            output.append(u'<optgroup label="%s">' % escape(force_unicode(author)))
+            output.append('<optgroup label="%s">' % escape(author))
             for map_id, map in maps:
                 output.append(render_option(map))
-            output.append(u'</optgroup>')
-        return u'\n'.join(output)
+            output.append('</optgroup>')
+        return '\n'.join(output)
 
 class MatchCreationForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(MatchCreationForm, self).__init__(*args, **kwargs)
 
         self.champions = []
-        for i in xrange(1, settings.STECHEC_NPLAYERS + 1):
+        for i in range(1, settings.STECHEC_NPLAYERS + 1):
             f = ChampionField(label="Champion %d" % i)
             self.fields['champion_%d' % i] = f
             self.champions.append(f)

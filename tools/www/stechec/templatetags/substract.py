@@ -7,4 +7,4 @@ def substract(value, arg):
         value = int(value)
     except ValueError:
         return value
-    return unicode(value - arg)
+    return str(value - arg)

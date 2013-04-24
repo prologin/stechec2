@@ -7,7 +7,7 @@ from django.db import models
 
 import os.path
 import re
-import xmlrpclib
+import xmlrpc.client
 
 stripper_re = re.compile(r'\033\[.*?m')
 def strip_ansi_codes(t):
@@ -37,8 +37,8 @@ class Map(models.Model):
         return reverse("map-detail", kwargs={"pk": self.id})
 
     def __unicode__(self):
-        return u"%s, de %s%s" % (self.name, self.author,
-                                 u" (officielle)" if self.official else u"")
+        return "%s, de %s%s" % (self.name, self.author,
+                                 " (officielle)" if self.official else "")
 
     class Meta:
         ordering = ["-official", "-ts"]
@@ -72,7 +72,7 @@ class Champion(models.Model):
         this_dir = self.directory
         try:
             return open(os.path.join(this_dir, "compilation.log")).read().decode('iso-8859-15')
-        except Exception, e:
+        except Exception as e:
             return str(e)
 
     def get_absolute_url(self):
@@ -82,7 +82,7 @@ class Champion(models.Model):
         return reverse('champion-delete', kwargs={'pk': self.id})
 
     def __unicode__(self):
-        return u"%s, de %s" % (self.name, self.author)
+        return "%s, de %s" % (self.name, self.author)
 
     class Meta:
         ordering = ['-ts']
@@ -98,7 +98,7 @@ class Tournament(models.Model):
                                      through="TournamentMap")
 
     def __unicode__(self):
-        return u"%s, %s" % (self.name, self.ts)
+        return "%s, %s" % (self.name, self.ts)
 
     class Meta:
         ordering = ['-ts']
@@ -111,7 +111,7 @@ class TournamentPlayer(models.Model):
     score = models.IntegerField("score", default=0)
 
     def __unicode__(self):
-        return u"%s pour tournoi %s" % (self.champion, self.tournament)
+        return "%s pour tournoi %s" % (self.champion, self.tournament)
 
     class Meta:
         ordering = ["-tournament", "-score"]
@@ -123,7 +123,7 @@ class TournamentMap(models.Model):
     tournament = models.ForeignKey(Tournament, verbose_name="tournoi")
 
     def __unicode__(self):
-        return u"%s pour tournoi %s" % (self.map, self.tournament)
+        return "%s pour tournoi %s" % (self.map, self.tournament)
 
     class Meta:
         ordering = ["-tournament"]
@@ -162,7 +162,7 @@ class Match(models.Model):
         try:
             t = open(log_path).read().decode('iso-8859-15')
             return strip_ansi_codes(t)
-        except Exception, e:
+        except Exception as e:
             return str(e)
 
     @property
@@ -182,7 +182,7 @@ class Match(models.Model):
 
     @options_dict.setter
     def options_dict(self, value):
-        self.options = '\n'.join('%s=%s' % t for t in value.iteritems())
+        self.options = '\n'.join('%s=%s' % t for t in value.items())
 
     @property
     def map(self):
@@ -202,7 +202,7 @@ class Match(models.Model):
         return reverse('match-detail', kwargs={'pk': self.id})
 
     def __unicode__(self):
-        return u"%s (par %s)" % (self.ts, self.author)
+        return "%s (par %s)" % (self.ts, self.author)
 
     class Meta:
         ordering = ["-ts"]
@@ -220,11 +220,11 @@ class MatchPlayer(models.Model):
         try:
             t = open(os.path.join(self.match.directory, filename)).read().decode('iso-8859-15')
             return strip_ansi_codes(t)
-        except Exception, e:
+        except Exception as e:
             return str(e)
 
     def __unicode__(self):
-        return u"%s pour match %s" % (self.champion, self.match)
+        return "%s pour match %s" % (self.champion, self.match)
 
     class Meta:
         ordering = ["-match"]
@@ -232,5 +232,5 @@ class MatchPlayer(models.Model):
         verbose_name_plural = "participants à un match"
 
 def master_status():
-    rpc = xmlrpclib.ServerProxy(settings.STECHEC_MASTER)
+    rpc = xmlrpc.client.ServerProxy(settings.STECHEC_MASTER)
     return rpc.status()

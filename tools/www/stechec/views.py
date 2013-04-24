@@ -147,7 +147,7 @@ def new_match(request):
             match.map = form.cleaned_data['map'].path
             match.save()
 
-            for i in xrange(1, settings.STECHEC_NPLAYERS + 1):
+            for i in range(1, settings.STECHEC_NPLAYERS + 1):
                 champ = form.cleaned_data['champion_%d' % i]
                 player = models.MatchPlayer(
                     champion=champ,

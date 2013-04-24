@@ -26,7 +26,7 @@
 
     {% if match.is_done %}
     <dt>Replay</dt>
-    <dd><a href="{% url match-dump match.id %}">Télécharger</a></dd>
+    <dd><a href="{% url "match-dump" match.id %}">Télécharger</a></dd>
     {% endif %}
 </dl>
 
