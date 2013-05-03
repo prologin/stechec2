@@ -167,8 +167,8 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
     nb_spectator = 1 if dumper else 0
     if nb_spectator:
         cmd = [paths.stechec_client,
-               "-client_name", "dumper",
-               "-rules_lib", paths.libdir + "/lib" + contest + ".so",
+               "-name", "dumper",
+               "-rules", paths.libdir + "/lib" + contest + ".so",
                "-champion", dumper,
                "-req_addr", "tcp://localhost:%d" % rep_port,
                "-sub_addr", "tcp://localhost:%d" % pub_port,
@@ -178,7 +178,7 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
                "-verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server,
-                "-rules_lib", paths.libdir + "/lib" + contest + ".so",
+                "-rules", paths.libdir + "/lib" + contest + ".so",
                 "-rep_addr", "tcp://*:%d" % rep_port,
                 "-pub_addr", "tcp://*:%d" % pub_port,
                 "-nb_clients", "7",
