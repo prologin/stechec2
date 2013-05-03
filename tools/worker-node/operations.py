@@ -29,7 +29,6 @@ import os
 import os.path
 import sys
 import tempfile
-import signal
 
 def communicate(cmdline, data=''):
     """
@@ -167,22 +166,22 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
     nb_spectator = 1 if dumper else 0
     if nb_spectator:
         cmd = [paths.stechec_client,
-               "-name", "dumper",
-               "-rules", paths.libdir + "/lib" + contest + ".so",
-               "-champion", dumper,
-               "-req_addr", "tcp://localhost:%d" % rep_port,
-               "-sub_addr", "tcp://localhost:%d" % pub_port,
-               "-memory", "250000",
-               "-time", "3000",
-               "-spectator",
-               "-verbose", "1"]
+               "--name", "dumper",
+               "--rules", paths.libdir + "/lib" + contest + ".so",
+               "--champion", dumper,
+               "--req_addr", "tcp://localhost:%d" % rep_port,
+               "--sub_addr", "tcp://localhost:%d" % pub_port,
+               "--memory", "250000",
+               "--time", "3000",
+               "--spectator",
+               "--verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server,
-                "-rules", paths.libdir + "/lib" + contest + ".so",
-                "-rep_addr", "tcp://*:%d" % rep_port,
-                "-pub_addr", "tcp://*:%d" % pub_port,
-                "-nb_clients", "7",
-                "-verbose", "1"]
+                "--rules", paths.libdir + "/lib" + contest + ".so",
+                "--rep_addr", "tcp://*:%d" % rep_port,
+                "--pub_addr", "tcp://*:%d" % pub_port,
+                "--nb_clients", "7",
+                "--verbose", "1"]
     gevent.sleep(0.25) # let it start
     gevent.spawn(spawn_server, cmd, path, match_id, server_done)
 
