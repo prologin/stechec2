@@ -22,6 +22,10 @@ public:
     GameState* get_old_version() const { return old_version_; }
     void set_old_version(GameState* st) { old_version_ = st; }
 
+    // Clear the old version of the state.
+    // It should be used to avoid keeping useless old verson of the state.
+    void clear_old_version();
+
     // Checks if the state has something to cancel.
     bool can_cancel() const { return old_version_ != 0; }
 

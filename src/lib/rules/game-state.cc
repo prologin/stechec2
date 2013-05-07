@@ -7,4 +7,10 @@ GameState::~GameState()
     delete old_version_;
 }
 
+void GameState::clear_old_version()
+{
+    delete old_version_;
+    old_version_ = 0;
+}
+
 } // namespace rules
