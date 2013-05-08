@@ -30,7 +30,7 @@ void Actions::handle_buffer(utils::Buffer& buf)
 
             // And finally unserialize
             action->handle_buffer(buf);
-            actions_.push_front(action);
+            actions_.push_back(action);
         }
     }
 }
