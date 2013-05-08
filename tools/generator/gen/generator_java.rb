@@ -163,10 +163,11 @@ EOF
 struct ProloginJavaRunTime {
   ProloginJavaRunTime();
   ~ProloginJavaRunTime();
-  JNIEnv* env();
+  bool function_enter();
+  void function_exit(bool attached);
 
   JavaVM* jvm;
-  JNIEnv* env_;
+  JNIEnv* env;
   jobject prologin;
 };
 
@@ -220,8 +221,8 @@ template <>
 template <>
 jarray cxx2lang_array<#{type}, #{jnitype}>(std::vector<#{type}> in)
 {
-  #{arraytype} out = jrt.env()->New#{type.capitalize}Array((jsize)in.size());
-  jrt.env()->Set#{type.capitalize}ArrayRegion(out, (jsize)0, (jsize)in.size(), (const #{jnitype}*)in.data());
+  #{arraytype} out = jrt.env->New#{type.capitalize}Array((jsize)in.size());
+  jrt.env->Set#{type.capitalize}ArrayRegion(out, (jsize)0, (jsize)in.size(), (const #{jnitype}*)in.data());
   return (jarray)out;
 }
 
@@ -229,10 +230,10 @@ template <>
 std::vector<#{type}> lang2cxx_array<#{jnitype}, #{type}>(jobject in)
 {
   #{arraytype} array = (#{arraytype})in;
-  jsize size = jrt.env()->GetArrayLength(array);
-  #{jnitype}* datas = jrt.env()->Get#{type.capitalize}ArrayElements(array, NULL);
+  jsize size = jrt.env->GetArrayLength(array);
+  #{jnitype}* datas = jrt.env->Get#{type.capitalize}ArrayElements(array, NULL);
   std::vector<#{type}> out(datas, datas + size);
-  jrt.env()->Release#{type.capitalize}ArrayElements(array, datas, JNI_ABORT);
+  jrt.env->Release#{type.capitalize}ArrayElements(array, datas, JNI_ABORT);
   return out;
 }
 
@@ -245,18 +246,18 @@ EOF
 template <>
 jstring cxx2lang<std::string, jstring>(std::string in)
 {
-  return jrt.env()->NewStringUTF(in.data());
+  return jrt.env->NewStringUTF(in.data());
 }
 
 template <>
 std::string lang2cxx<jstring, std::string>(jstring in)
 {
   jboolean is_copy;
-  const jchar* datas = jrt.env()->GetStringChars(in, &is_copy);
-  jsize size = jrt.env()->GetStringLength(in);
+  const jchar* datas = jrt.env->GetStringChars(in, &is_copy);
+  jsize size = jrt.env->GetStringLength(in);
   std::string out((const char*)datas, (size_t)size);
   if (is_copy)
-    jrt.env()->ReleaseStringChars(in, datas);
+    jrt.env->ReleaseStringChars(in, datas);
   return out;
 }
 
@@ -268,9 +269,9 @@ EOF
 template <typename Cxx, typename Lang>
 jarray cxx2lang_array(std::vector<Cxx> in)
 {
-  jobjectArray out = jrt.env()->NewObjectArray((jsize)in.size(), Lang::Class(), NULL);
+  jobjectArray out = jrt.env->NewObjectArray((jsize)in.size(), Lang::Class(), NULL);
   for (size_t i = 0; i < in.size(); i++)
-    jrt.env()->SetObjectArrayElement(out, (jsize)i, cxx2lang<Cxx, jobject>(in[i]));
+    jrt.env->SetObjectArrayElement(out, (jsize)i, cxx2lang<Cxx, jobject>(in[i]));
   return out;
 }
 
@@ -278,10 +279,10 @@ template <typename Lang, typename Cxx>
 std::vector<Cxx> lang2cxx_array(jobject in)
 {
   jobjectArray array = (jobjectArray)in;
-  size_t size = (size_t)jrt.env()->GetArrayLength(array);
+  size_t size = (size_t)jrt.env->GetArrayLength(array);
   std::vector<Cxx> out;
   for (size_t i = 0; i < size; i++)
-    out.push_back(lang2cxx<jobject, Cxx>(jrt.env()->GetObjectArrayElement(array, (jsize)i)));
+    out.push_back(lang2cxx<jobject, Cxx>(jrt.env->GetObjectArrayElement(array, (jsize)i)));
   return out;
 }
 
@@ -296,16 +297,16 @@ EOF
 template<>
 #{name} lang2cxx<jobject, #{name}>(jobject in)
 {
-  jmethodID ordinal = jrt.env()->GetMethodID(#{jname}::Class(), "ordinal", "()I");
-  return #{name}(lang2cxx<jint, int>(jrt.env()->CallIntMethod(in, ordinal)));
+  jmethodID ordinal = jrt.env->GetMethodID(#{jname}::Class(), "ordinal", "()I");
+  return #{name}(lang2cxx<jint, int>(jrt.env->CallIntMethod(in, ordinal)));
 }
 
 template<>
 jobject cxx2lang<#{name}, jobject>(#{name} in)
 {
-  jmethodID method = jrt.env()->GetStaticMethodID(#{jname}::Class(), "values", "()[L#{jname};");
-  jobjectArray values = (jobjectArray)jrt.env()->CallStaticObjectMethod(#{jname}::Class(), method);
-  return jrt.env()->GetObjectArrayElement(values, (jsize)in);
+  jmethodID method = jrt.env->GetStaticMethodID(#{jname}::Class(), "values", "()[L#{jname};");
+  jobjectArray values = (jobjectArray)jrt.env->CallStaticObjectMethod(#{jname}::Class(), method);
+  return jrt.env->GetObjectArrayElement(values, (jsize)in);
 }
 
 EOF
@@ -321,17 +322,17 @@ EOF
       type = @types[f[1]]
       javatype = get_java_type(type)
       signature = get_signature(type)
-      @f.puts "  out.#{field} = #{get_lang2cxx(type)}(jrt.env()->Get#{javatype}Field(in, jrt.env()->GetFieldID(#{jname}::Class(), \"#{field}\", \"#{signature}\")));"
+      @f.puts "  out.#{field} = #{get_lang2cxx(type)}(jrt.env->Get#{javatype}Field(in, jrt.env->GetFieldID(#{jname}::Class(), \"#{field}\", \"#{signature}\")));"
     end
     @f.puts '  return out;', '}', ''
     @f.puts "template <>", "jobject cxx2lang<#{name}, jobject>(#{name} in)", "{"
-    @f.puts "  jobject out = jrt.env()->NewObject(#{jname}::Class(), jrt.env()->GetMethodID(#{jname}::Class(), \"<init>\", \"()V\"));"
+    @f.puts "  jobject out = jrt.env->NewObject(#{jname}::Class(), jrt.env->GetMethodID(#{jname}::Class(), \"<init>\", \"()V\"));"
     fields.each do |f|
       field = f[0]
       type = @types[f[1]]
       javatype = get_java_type(type)
       signature = get_signature(type)
-      @f.puts "  jrt.env()->Set#{javatype}Field(out, jrt.env()->GetFieldID(#{jname}::Class(), \"#{field}\", \"#{signature}\"), #{get_cxx2lang(type)}(in.#{field}));"
+      @f.puts "  jrt.env->Set#{javatype}Field(out, jrt.env->GetFieldID(#{jname}::Class(), \"#{field}\", \"#{signature}\"), #{get_cxx2lang(type)}(in.#{field}));"
     end
     @f.puts '  return out;', '}', ''
   end
@@ -349,32 +350,34 @@ EOF
   # Assume jrt.prologin AND Prologin::class
   def build_user_function(fn)
     @f.puts cxx_proto(fn, '', 'extern "C"'), "{"
-    @f.puts "  jmethodID method = jrt.env()->GetMethodID(Prologin::Class(), \"#{fn.name}\", \"#{get_fn_signature(fn)}\");"
+    @f.puts "  bool attached = jrt.function_enter();"
+    @f.puts "  jmethodID method = jrt.env->GetMethodID(Prologin::Class(), \"#{fn.name}\", \"#{get_fn_signature(fn)}\");"
     args = fn.args.map { |arg| get_lang2cxx(arg.type) + "(#{arg.name})"}.join(", ")
-    call = "jrt.env()->Call#{get_java_type(fn.ret)}Method(jrt.prologin, method" + args + ")"
+    call = "jrt.env->Call#{get_java_type(fn.ret)}Method(jrt.prologin, method" + args + ")"
     call = "#{get_cxx_type(fn.ret)} out = #{get_lang2cxx(fn.ret)}(" + call + ")" if not fn.ret.is_nil?
     @f.puts <<-EOF
   #{call};
-  if (jrt.env()->ExceptionOccurred())
+  if (jrt.env->ExceptionOccurred())
   {
-    jrt.env()->ExceptionDescribe();
+    jrt.env->ExceptionDescribe();
     exit(1);
   }
 EOF
-  @f.puts "  return out;" if not fn.ret.is_nil?
-  @f.puts "}", ""
+    @f.puts "  jrt.function_exit(attached);"
+    @f.puts "  return out;" if not fn.ret.is_nil?
+    @f.puts "}", ""
   end
 
   def build_vm_init
     # Initialize the interface class (used to translate to Java type)
-    @f.puts "jclass Prologin::Class()", "{", "  return jrt.env()->FindClass(\"Prologin\");", "}", ""
+    @f.puts "jclass Prologin::Class()", "{", "  return jrt.env->FindClass(\"Prologin\");", "}", ""
     for_each_enum(false) do |e|
       name = conv_java_type(e['enum_name'])
-      @f.puts "jclass #{name}::Class()", "{", "  return jrt.env()->FindClass(\"#{name}\");", "}", ""
+      @f.puts "jclass #{name}::Class()", "{", "  return jrt.env->FindClass(\"#{name}\");", "}", ""
     end
     for_each_struct(false) do |s|
       name = conv_java_type(s['str_name'])
-      @f.puts "jclass #{name}::Class()", "{", "  return jrt.env()->FindClass(\"#{name}\");", "}", ""
+      @f.puts "jclass #{name}::Class()", "{", "  return jrt.env->FindClass(\"#{name}\");", "}", ""
     end
 
     # Bound native methods to the Java interface
@@ -406,9 +409,9 @@ ProloginJavaRunTime::ProloginJavaRunTime()
   vm_args.nOptions = 2;
   vm_args.options = options;
   vm_args.ignoreUnrecognized = false;
-  JNI_CreateJavaVM(&jvm, (void**)&env_, &vm_args);
-  prologin = env_->NewObject(Prologin::Class(), env_->GetMethodID(Prologin::Class(), "<init>", "()V"));
-  _register_native_methods(env_);
+  JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+  prologin = env->NewObject(Prologin::Class(), env->GetMethodID(Prologin::Class(), "<init>", "()V"));
+  _register_native_methods(env);
 }
 
 ProloginJavaRunTime::~ProloginJavaRunTime()
@@ -416,11 +419,18 @@ ProloginJavaRunTime::~ProloginJavaRunTime()
   jvm->DestroyJavaVM();
 }
 
-JNIEnv* ProloginJavaRunTime::env()
+bool ProloginJavaRunTime::function_enter()
 {
-  if (jvm->GetEnv((void**)&env_, JNI_VERSION_1_6) != JNI_OK)
-   jvm->AttachCurrentThread((void**)&env_, NULL);
-  return env_;
+  if (jvm->GetEnv((void**)&env, JNI_VERSION_1_6) == JNI_OK)
+    return false;
+  jvm->AttachCurrentThread((void**)&env, NULL);
+  return true;
+}
+
+void ProloginJavaRunTime::function_exit(bool attached)
+{
+  if (attached)
+    jvm->DetachCurrentThread();
 }
 
 EOF
