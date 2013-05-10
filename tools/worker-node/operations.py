@@ -30,7 +30,7 @@ import os.path
 import sys
 import tempfile
 
-def communicate(cmdline, new_env, data=''):
+def communicate(cmdline, new_env=None, data=''):
     """
     Asynchronously communicate with an external process, sending data on its
     stdin and receiving data from its stdout and stderr streams.
