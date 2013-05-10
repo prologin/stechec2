@@ -107,7 +107,7 @@ def compile_champion(config, contest, user, champ_id):
     dir_path = champion_path(config, contest, user, champ_id)
     cmd = [paths.compile_script, config['contest']['directory'], dir_path]
     retcode, stdout = communicate(cmd)
-    return retcode == 0
+    return retcode == 0 and os.path.exists(os.path.join(dir_path, 'champion.so'))
 
 def spawn_server(cmd, path, match_id, callback):
     retcode, stdout = communicate(cmd)
