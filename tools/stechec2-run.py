@@ -61,7 +61,7 @@ def stechec2_run(args, options):
     client_opt = ['stechec2-client']
 
     # Used by both client and server
-    for i in ['rules', 'verbose', 'map']:
+    for i in ['rules', 'verbose', 'map', 'time', 'memory']:
         if i in options:
             server_opt += ['--' + i, str(options[i])]
             client_opt += ['--' + i, str(options[i])]
