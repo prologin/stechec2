@@ -144,6 +144,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
+            /* XXX: If player has too many timeout: drop him */
             msgr->push_id(players_->players[i]->id);
             if (!msgr->poll(timeout_))
                 continue;
@@ -344,26 +345,32 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
-            DEBUG("Turn for player %d", players_->players[i]->id);
-            msgr->push_id(players_->players[i]->id);
-            Actions* actions = get_actions();
-            actions->clear();
-            if (!msgr->poll(timeout_))
-                DEBUG("Timeout reached, never mind");
-            else
+            if (players_->players[i]->nb_timeout < 2)
             {
-                DEBUG("Getting actions...");
-                msgr->recv_actions(actions);
-                DEBUG("Got %u actions", actions->size());
-                DEBUG("Acknowledging...");
-                msgr->ack();
+                DEBUG("Turn for player %d", players_->players[i]->id);
+                msgr->push_id(players_->players[i]->id);
+                Actions* actions = get_actions();
+                actions->clear();
+                if (!msgr->poll(timeout_))
+                {
+                    players_->players[i]->nb_timeout++;
+                    DEBUG("Timeout reached, never mind: %d",players_->players[i]->nb_timeout);
+                }
+                else
+                {
+                    DEBUG("Getting actions...");
+                    msgr->recv_actions(actions);
+                    DEBUG("Got %u actions", actions->size());
+                    DEBUG("Acknowledging...");
+                    msgr->ack();
 
-                for (auto action: actions->actions())
-                    apply_action(action);
+                    for (auto action: actions->actions())
+                        apply_action(action);
+                }
+
+                DEBUG("Alright, publish actions");
+                msgr->push_actions(*actions);
             }
-
-            DEBUG("Alright, publish actions");
-            msgr->push_actions(*actions);
 
             end_of_player_turn(players_->players[i]->id);
 

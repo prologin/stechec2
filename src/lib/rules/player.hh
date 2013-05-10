@@ -15,6 +15,7 @@ struct Player
         : id(id_),
           type(type_),
           score(0),
+          nb_timeout(0),
           name("anonymous")
     {}
 
@@ -23,12 +24,14 @@ struct Player
         buf.handle(id);
         buf.handle(type);
         buf.handle(score);
+        /* We do not need to serialize nb_timeout. Only for the server. */
         buf.handle(name);
     }
 
     uint32_t id;
     uint32_t type;
     int32_t score;
+    uint32_t nb_timeout;
     std::string name;
 };
 
