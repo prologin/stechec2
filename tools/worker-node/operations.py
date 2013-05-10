@@ -162,11 +162,18 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
     except OSError:
         pass
 
+    opts_dict = {}
+    for line in opts.split('\n'):
+        if '=' not in line:
+            continue
+        name, value = line.split('=', 1)
+        opts_dict[name.strip()] = value.strip()
+
     dumper = config['contest']['dumper']
     nb_spectator = 1 if dumper else 0
     if nb_spectator:
         cmd = [paths.stechec_client, 
-               "--map", opts['map'],
+               "--map", opts_dict['map'],
                "--name", "dumper",
                "--rules", paths.libdir + "/lib" + contest + ".so",
                "--champion", dumper,
@@ -178,7 +185,7 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
                "--verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
     cmd = [paths.stechec_server,
-                "--map", opts['map'],
+                "--map", opts_dict['map'],
                 "--rules", paths.libdir + "/lib" + contest + ".so",
                 "--rep_addr", "tcp://*:%d" % rep_port,
                 "--pub_addr", "tcp://*:%d" % pub_port,
@@ -196,14 +203,22 @@ def spawn_client(cmd, path, match_id, champ_id, tid, callback):
 def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id, tid, opts, cb):
     dir_path = champion_path(config, contest, user, champ_id)
     mp = match_path(config, contest, match_id)
+
+    opts_dict = {}
+    for line in opts.split('\n'):
+        if '=' not in line:
+            continue
+        name, value = line.split('=', 1)
+        opts_dict[name.strip()] = value.strip()
+
     cmd = [paths.stechec_client,
-                "--map", opts['map'],
-                "-client_name", str(tid),
-                "-rules_lib", paths.libdir + "/lib" + contest + ".so",
-                "-champion", dir_path + "/champion.so",
-                "-req_addr", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
-                "-sub_addr", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
-                "-memory", "250000",
-                "-time", "1500"
+                "--map", opts_dict['map'],
+                "--name", str(tid),
+                "--rules", paths.libdir + "/lib" + contest + ".so",
+                "--champion", dir_path + "/champion.so",
+                "--req_addr", "tcp://{ip}:{port}".format(ip=ip, port=req_port),
+                "--sub_addr", "tcp://{ip}:{port}".format(ip=ip, port=sub_port),
+                "--memory", "250000",
+                "--time", "1500"
           ]
     gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
