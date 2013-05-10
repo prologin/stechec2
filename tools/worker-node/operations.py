@@ -30,14 +30,14 @@ import os.path
 import sys
 import tempfile
 
-def communicate(cmdline, data=''):
+def communicate(cmdline, new_env, data=''):
     """
     Asynchronously communicate with an external process, sending data on its
     stdin and receiving data from its stdout and stderr streams.
 
     Returns (retcode, stdout).
     """
-    p = Popen(cmdline, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
+    p = Popen(cmdline, stdin=PIPE, stdout=PIPE, stderr=STDOUT, env=new_env)
     fcntl.fcntl(p.stdin, fcntl.F_SETFL, os.O_NONBLOCK)
     fcntl.fcntl(p.stdout, fcntl.F_SETFL, os.O_NONBLOCK)
 
@@ -196,8 +196,8 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
                "--verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
 
-def spawn_client(cmd, path, match_id, champ_id, tid, callback):
-    retcode, stdout = communicate(cmd)
+def spawn_client(cmd, env, path, match_id, champ_id, tid, callback):
+    retcode, stdout = communicate(cmd, env)
     log_path = os.path.join(path, "log-champ-%d-%d.log" % (tid, champ_id))
     open(log_path, "w").write(stdout)
     callback(retcode, stdout, match_id, champ_id, tid)
@@ -213,6 +213,9 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
         name, value = line.split('=', 1)
         opts_dict[name.strip()] = value.strip()
 
+    env = os.environ.copy()
+    env['CHAMPION_PATH'] = dir_path + '/'
+
     cmd = [paths.stechec_client,
                 "--map", opts_dict['map'],
                 "--name", str(tid),
@@ -223,4 +226,4 @@ def run_client(config, ip, req_port, sub_port, contest, match_id, user, champ_id
                 "--memory", "250000",
                 "--time", "1500"
           ]
-    gevent.spawn(spawn_client, cmd, mp, match_id, champ_id, tid, cb)
+    gevent.spawn(spawn_client, cmd, env, mp, match_id, champ_id, tid, cb)
