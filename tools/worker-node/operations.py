@@ -170,6 +170,17 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
         opts_dict[name.strip()] = value.strip()
 
     dumper = config['contest']['dumper']
+    cmd = [paths.stechec_server,
+                "--map", opts_dict['map'],
+                "--rules", paths.libdir + "/lib" + contest + ".so",
+                "--rep_addr", "tcp://*:%d" % rep_port,
+                "--pub_addr", "tcp://*:%d" % pub_port,
+                "--nb_clients", "3",
+                "--verbose", "1"]
+    gevent.spawn(spawn_server, cmd, path, match_id, server_done)
+    gevent.sleep(0.5) # let it start
+    # XXX: for some reasons clients now have to be run after the server
+    # otherwise they misbehave. Temporary fix.
     nb_spectator = 1 if dumper else 0
     if nb_spectator:
         cmd = [paths.stechec_client, 
@@ -184,15 +195,6 @@ def run_server(config, server_done, rep_port, pub_port, contest, match_id, opts)
                "--spectator",
                "--verbose", "1"]
         gevent.spawn(spawn_dumper, cmd, path)
-    cmd = [paths.stechec_server,
-                "--map", opts_dict['map'],
-                "--rules", paths.libdir + "/lib" + contest + ".so",
-                "--rep_addr", "tcp://*:%d" % rep_port,
-                "--pub_addr", "tcp://*:%d" % pub_port,
-                "--nb_clients", "3",
-                "--verbose", "1"]
-    gevent.sleep(0.25) # let it start
-    gevent.spawn(spawn_server, cmd, path, match_id, server_done)
 
 def spawn_client(cmd, path, match_id, champ_id, tid, callback):
     retcode, stdout = communicate(cmd)
