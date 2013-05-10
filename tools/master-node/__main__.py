@@ -220,7 +220,14 @@ class MasterNode(object):
         for r in cur:
             logging.info('request match id %(match_id)d launch' % r)
             mid = r['match_id']
-            opts = r['match_options']
+
+            opts = {}
+            for line in r['match_options'].split('\n'):
+                if '=' not in line:
+                    continue
+                name, value = line.split('=', 1)
+                opts[name.strip()] = value.strip()
+
             players = zip(r['champion_ids'], r['match_player_ids'],
                           r['user_names'])
             to_set_pending.append({
