@@ -7,6 +7,7 @@ import os
 import os.path
 import subprocess
 import sys
+import time
 import yaml
 import signal
 
@@ -86,6 +87,8 @@ def stechec2_run(args, options):
 
     # Start the server
     start_proc('server', server_opt, popt)
+    # Let it start XXX: UGLY HACK. TO FIX
+    time.sleep(1)
 
     def run_client(client, name, is_spectator):
         opts = client_opt + ['--champion', client, '--name', name]
