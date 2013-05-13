@@ -41,25 +41,24 @@ def configure(conf):
     # Warning flags
     conf.check_cxx(cxxflags = '-Wall')
     conf.check_cxx(cxxflags = '-Wextra')
-    #conf.check_cxx(cxxflags = '-pedantic')
 
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', #'-pedantic',
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra',
                                        '-Wno-variadic-macros'])
 
     # Check for C++0x
-    conf.check_cxx(cxxflags = '-std=c++0x')
-    conf.check_cxx(cxxflags = '-std=c++0x', header_name = "cstdint")
-    conf.check_cxx(cxxflags = '-std=c++0x', msg = 'Checking for std::shared_ptr',
+    conf.check_cxx(cxxflags = '-std=c++11')
+    conf.check_cxx(cxxflags = '-std=c++11', header_name = "cstdint")
+    conf.check_cxx(cxxflags = '-std=c++11', msg = 'Checking for std::shared_ptr',
                    fragment = '''
                    #include <memory>
                    int main() { std::shared_ptr<int> p; }
                    ''')
-    conf.check_cxx(cxxflags = '-std=c++0x', msg = 'Checking for std::array',
+    conf.check_cxx(cxxflags = '-std=c++11', msg = 'Checking for std::array',
                    fragment = '''
                    #include <array>
                    int main() { std::array<int, 4> a; }
                    ''')
-    conf.env.append_value('CXXFLAGS', '-std=c++0x')
+    conf.env.append_value('CXXFLAGS', '-std=c++11')
 
     # Debug / Release
     if conf.options.debug:
@@ -98,30 +97,38 @@ def configure(conf):
     conf.recurse('tools')
 
 def build(bld):
-    build_libs(bld)
+    build_lib(bld)
     build_client(bld)
     build_server(bld)
 
     bld.recurse('games')
     bld.recurse('tools')
 
-def build_libs(bld):
-    build_net(bld)
-    build_rules(bld)
-    build_utils(bld)
-
-def build_net(bld):
+def build_lib(bld):
     bld.shlib(
         source = '''
+            src/lib/utils/dll.cc
+            src/lib/utils/log.cc
+
             src/lib/net/socket.cc
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
             src/lib/net/signal.cc
+
+            src/lib/rules/action.cc
+            src/lib/rules/actions.cc
+            src/lib/rules/game-state.cc
+            src/lib/rules/messenger.cc
+            src/lib/rules/client-messenger.cc
+            src/lib/rules/server-messenger.cc
+            src/lib/rules/rules.cc
         ''',
-        defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="network"'],
-        target = 'stechec2-net',
-        use = ['ZeroMQ', 'stechec2-utils'],
+        defines = ['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="lib"'],
+        includes = 'src/lib',
+        target = 'stechec2',
+        use = ['ZeroMQ', 'rt', 'gflags'],
+        lib = ['dl'],
         export_includes = 'src/lib'
     )
 
@@ -133,19 +140,6 @@ def build_net(bld):
             use = ['stechec2-net']
         )
 
-def build_utils(bld):
-    bld.shlib(
-        source = '''
-            src/lib/utils/dll.cc
-            src/lib/utils/log.cc
-        ''',
-        defines = ['MODULE_COLOR=ANSI_COL_GREEN', 'MODULE_NAME="utils"'],
-        target = 'stechec2-utils',
-        use = ['rt', 'gflags'],
-        lib = ['dl'],
-        export_includes = 'src/lib'
-    )
-
     for test in ['buffer', 'sandbox']:
         bld.program(
             features = 'gtest',
@@ -153,23 +147,6 @@ def build_utils(bld):
             target = 'utils-test-%s' % test,
             use = ['stechec2-utils']
         )
-
-def build_rules(bld):
-    bld.shlib(
-        source = '''
-            src/lib/rules/action.cc
-            src/lib/rules/actions.cc
-            src/lib/rules/game-state.cc
-            src/lib/rules/messenger.cc
-            src/lib/rules/client-messenger.cc
-            src/lib/rules/server-messenger.cc
-            src/lib/rules/rules.cc
-        ''',
-        defines = ['MODULE_COLOR=ANSI_COL_BLUE', 'MODULE_NAME="rules"'],
-        target = 'stechec2-rules',
-        use = ['stechec2-utils', 'stechec2-net'],
-        export_includes = 'src/lib'
-    )
 
     for test in ['action', 'state']:
         bld.program(
@@ -188,7 +165,7 @@ def build_client(bld):
         target = 'stechec2-client',
         defines = ['MODULE_COLOR=ANSI_COL_YELLOW', 'MODULE_NAME="client"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags']
+        use = ['stechec2', 'gflags']
     )
 
 def build_server(bld):
@@ -200,5 +177,5 @@ def build_server(bld):
         target = 'stechec2-server',
         defines = ['MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
             'MODULE_VERSION="%s"' % VERSION],
-        use = ['stechec2-utils', 'stechec2-net', 'stechec2-rules', 'gflags']
+        use = ['stechec2', 'gflags']
     )
