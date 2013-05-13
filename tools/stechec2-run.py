@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
 import argparse
@@ -42,7 +42,7 @@ parser.add_argument(
     ' (champions first, spectators last)'
 )
 parser.add_argument(
-    'config-file', metavar='F',
+    'config-file', metavar='config-file',
     help='use F as a configuration file for the match'
 )
 
@@ -78,11 +78,11 @@ def stechec2_run(args, options):
         p = next(next_process)
         cmd_line = ' '.join(opts)
         if p in args.inhibit:
-            print '>>> Not starting {}[P={}]:'.format(name, p)
-            print '    {}'.format(cmd_line)
+            print('>>> Not starting {}[P={}]:'.format(name, p))
+            print('    {}'.format(cmd_line))
         else:
-            print '>>> Starting {}[P={}]:'.format(name, p)
-            print '    {}'.format(cmd_line)
+            print('>>> Starting {}[P={}]:'.format(name, p))
+            print('    {}'.format(cmd_line))
             poll.append(subprocess.Popen(opts, **popt))
 
     # Start the server
