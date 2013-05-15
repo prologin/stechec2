@@ -29,7 +29,7 @@ Requirements
 Installation
 ------------
 
-Let's suppose you want to install stechec2 with the prologin2013 game, and then
+Let's assume you want to install stechec2 with the prologin2013 game, and then
 use it as a player.
 
 Clone the stechec2 repository::
@@ -54,8 +54,8 @@ Then build and install it::
 Generate the player environment
 ---------------------------------
 
-To generate the player environment (different folders for each player
-languages), you can use the `generator` script installed by stechec2::
+To generate the player environment (different folders for each supported
+languages), you can use the ``generator`` script installed by stechec2::
 
   generator player /usr/share/stechec2/prologin2013/prologin2013.yml home_env/
 
@@ -79,8 +79,8 @@ Launch a match
 
 Launch a stechec2 server and as many stechec2 client as there are players is
 very painful and can be avoided easily. There is a wrapper called
-``stechec2-run`` which launch everything you need in separate child processes,
-and only need a tiny YAML configuration file to run.
+``stechec2-run`` which runs everything you need in separate child processes,
+and only needs a tiny YAML configuration file to work.
 
 A simple config.yml could be::
 
@@ -102,7 +102,7 @@ Add spectators
 --------------
 
 Spectators are players that don't take part of the game, but can watch its
-different states during the match (to display it, or to log it, for instance).
+different states during the match (to display it or to log it, for instance).
 
 Make sure to compile the spectators first::
 
