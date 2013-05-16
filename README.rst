@@ -37,13 +37,14 @@ Clone the stechec2 repository::
   git clone https://bitbucket.org/prologin/stechec2.git
   cd stechec2
 
-Then put every game you want to install in games/::
+Then put every game you want to install in ``games/``::
 
   git clone https://bitbucket.org/prologin/prologin2012.git games/
   git clone https://bitbucket.org/prologin/prologin2013.git games/
 
-A simple test game, "tictactoe", is already installed in games/. You can now
-configure the project using waf::
+A simple test game, ``tictactoe``, is already installed in ``games/``.
+
+You can now configure the project using waf::
 
   python2 waf.py configure --with-games=prologin2013,tictactoe --prefix=/usr
 
@@ -82,7 +83,7 @@ very painful and can be avoided easily. There is a wrapper called
 ``stechec2-run`` which runs everything you need in separate child processes,
 and only needs a tiny YAML configuration file to work.
 
-A simple config.yml could be::
+A simple ``config.yml`` could be::
 
   rules: /usr/lib/libprologin2013.so
   map: ./simple.map
@@ -111,7 +112,7 @@ Make sure to compile the spectators first::
   cd /path/to/prologin2013/dumper
   make
 
-Then you just have to add those lines to the config.yml::
+Then you just have to add those lines to the ``config.yml``::
 
   spectators:
    - /path/to/prologin2013/gui/gui.so
