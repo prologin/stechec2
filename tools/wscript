@@ -12,6 +12,5 @@ def build(bld):
     bld.recurse('generator')
     bld.recurse('worker-node')
     bld.recurse('master-node')
-    bld.recurse('www')
     bld.install_files('${PREFIX}/bin', \
         ['stechec2-run'], chmod=Utils.O755)
