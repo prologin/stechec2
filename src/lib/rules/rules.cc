@@ -144,10 +144,14 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
-            /* XXX: If player has too many timeout: drop him */
+            if (players_->players[i]->nb_timeout > 1)
+              continue;
             msgr->push_id(players_->players[i]->id);
             if (!msgr->poll(timeout_))
+            {
+                players_->players[i]->nb_timeout++;
                 continue;
+            }
             Actions* actions = get_actions();
             msgr->recv_actions(actions);
             msgr->ack();
@@ -165,6 +169,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         for (auto action: actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
+        actions->clear();
         end_of_turn();
         if (!is_finished())
             start_of_turn();
