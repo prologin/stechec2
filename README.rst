@@ -25,6 +25,7 @@ Requirements
 * google-gflags
 * googletest
 * ruby (only for the generators)
+* python-yaml
 
 Installation
 ------------
