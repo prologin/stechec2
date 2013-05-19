@@ -40,8 +40,8 @@ Clone the stechec2 repository::
 
 Then put every game you want to install in ``games/``::
 
-  git clone https://bitbucket.org/prologin/prologin2012.git games/
-  git clone https://bitbucket.org/prologin/prologin2013.git games/
+  git clone https://bitbucket.org/prologin/prologin2012.git games/prologin2012
+  git clone https://bitbucket.org/prologin/prologin2013.git games/prologin2013
 
 A simple test game, ``tictactoe``, is already installed in ``games/``.
 
