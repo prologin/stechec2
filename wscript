@@ -2,7 +2,6 @@
 
 import os.path
 import sys
-import types
 
 build_tools = os.path.join('.', 'tools', 'waf')
 sys.path.append(build_tools)
@@ -137,7 +136,7 @@ def build_lib(bld):
             features = 'gtest',
             source = 'src/lib/net/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['stechec2-net']
+            use = ['stechec2']
         )
 
     for test in ['buffer', 'sandbox']:
@@ -145,7 +144,7 @@ def build_lib(bld):
             features = 'gtest',
             source = 'src/lib/utils/tests/test-%s.cc' % test,
             target = 'utils-test-%s' % test,
-            use = ['stechec2-utils']
+            use = ['stechec2']
         )
 
     for test in ['action', 'state']:
@@ -153,7 +152,7 @@ def build_lib(bld):
             features = 'gtest',
             source = 'src/lib/rules/tests/test-%s.cc' % test,
             target = 'rules-test-%s' % test,
-            use = ['stechec2-rules']
+            use = ['stechec2']
         )
 
 def build_client(bld):
