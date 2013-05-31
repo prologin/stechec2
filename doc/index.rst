@@ -6,6 +6,6 @@ Pages:
 .. toctree::
    :maxdepth: 1
 
-   server-install
    faq
    how-to
+   rules
