@@ -279,6 +279,41 @@ PATH::
 You don't have to modify ``constant.hh``, ``entry.hh`` and ``interface.hh``.
 They are generated files that shouldn't be manually edited.
 
+The wscript
+===========
+
+Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
+``wscript`` file in the root folder of our game, containing this ::
+
+  #! /usr/bin/env python2
+
+  def options(opt):
+      pass
+
+  def configure(cfg):
+      pass
+
+  def build(bld):
+      bld.shlib(
+          source = '''
+              src/rules.cc
+              src/entry.cc
+              src/interface.cc
+              src/api.cc
+          ''',
+          defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
+          target = 'connect4',
+          use = ['stechec2'],
+      )
+
+      bld.install_files('${PREFIX}/share/stechec2/connect4', [
+          'connect4.yml',
+      ])
+
+You can add source files to the ``source`` string. You don't need to change the
+rest for now.
+
+
 The rules
 =========
 
