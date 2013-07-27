@@ -20,7 +20,7 @@ Think about The Game
 We must define first *exactly* the rules of our game: how it works, who plays
 first, how many players a play can handle, who wins…
 The rules of the Connect Four are very simple : two players, a turn by turn
-game, only one action (drop a jeton somewhere).
+game, only one action (drop a disk somewhere).
 
 We can begin to describe the rules in the .yml::
 
@@ -215,13 +215,13 @@ functions are usually separated in three kinds:
 So, here are the observers we'll implement:
 
 * ``my_player``: returns the ID of the current player
-* ``get_board``: returns the board (a 2D int matrix corresponding to the jetons
-  and their owners (-1 for "free", the id of the player else).
+* ``get_column``: returns the column (a int array corresponding to the disks
+  of a column and their owners (-1 for "free", the id of the player else).
 * ``cell``: returns the owner of the specified cell (-1 for "free").
 
 The actions:
 
-* ``drop``: drop a jeton at the specified column.
+* ``drop``: drop a disk at the specified column.
 
 The modifiers:
 
@@ -236,10 +236,11 @@ Add this at the end::
       fct_ret_type: int
       fct_arg: []
     -
-      fct_name: get_board
-      fct_summary: Return the Connect4 board
-      fct_ret_type: int array array
-      fct_arg: []
+      fct_name: get_column
+      fct_summary: Return the column
+      fct_ret_type: int array
+      fct_arg:
+        - [number, int, number of the column]
     -
       fct_name: cell
       fct_summary: Return the player of a cell (-1 for "free")
@@ -248,10 +249,10 @@ Add this at the end::
         - [pos, position, position of the cell]
     -
       fct_name: drop
-      fct_summary: Drop a jeton at the given position
+      fct_summary: Drop a disk at the given position
       fct_ret_type: error
       fct_arg:
-        - [column, int, column where to drop a jeton]
+        - [column, int, column where to drop a disk]
     -
       fct_name: cancel
       fct_summary: Cancel the last played action
@@ -348,4 +349,119 @@ In ``rules.cc``:
       : TurnBasedRules(opt)
 
 If you're interested in how the generic loops work behind the scene, you can
-take a look at ``stechec2/src/lib/rules/rules.hh``
+take a look at ``stechec2/src/lib/rules/rules.hh``.
+
+We we'll come back to this code later, but for now if we want it to compile, we
+should first add this::
+
+    #include <rules/actions.hh> // At the top of the file
+
+and::
+
+    virtual rules::Actions* get_actions() { return NULL; }
+    virtual void apply_action(const rules::IAction_sptr&) {}
+    virtual bool is_finished() { return true; }
+
+This is of course just a temporary fix to allow us to compile the code.
+
+
+The game-state
+--------------
+
+We need to have a gamestate class which will contain the state of the game, and
+which we can interact with (the methods of this class will change the state of
+the game.) The majority of this part will be left as an exercise for the
+reader.
+
+The GameState will be located in ``game.cc`` and ``game.hh``. Don't forget to
+add those files to the ``wscript``.
+
+The GameState should inherit from rules::GameState (``#include
+<rules/game-state.hh>``), have a copy constructor and a destructor, and
+override a ``copy()`` method. You'll also have ``get_current_turn`` and
+``increment_turn`` which will do the needful with an internal counter, a
+``get_board`` method which will return the 2D board, a ``drop`` to drop a
+disk somewhere (returns true if the disk has been successfuly dropped), and
+finally, a ``winner`` method which will return the winner if there's one, -1
+else.
+
+Here's a template of the functions you'll need to implement::
+
+    GameState(rules::Players_sptr players);
+    GameState(const GameState& st);
+    ~GameState();
+    virtual rules::GameState* copy() const;
+
+    int get_current_turn() const;
+    void increment_turn();
+    std::array<std::array<int, NB_COLS>, NB_ROWS> get_board() const;
+    bool drop(int column, int player);
+    int winner() const;  // This one is a bit interesting :)
+
+…
+Are you done yet ?
+Cool, now it's time for testing !
+
+Testing
+-------
+
+Making unit test bit by bit as your rules are becoming more and more complex is
+really important: you don't want to test all the possible cases with custom
+champions.
+
+Let's create a ``src/tests`` folder, where we'll put all our test files. The
+tests use googletest, you can find a reference documentation
+[here](http://code.google.com/p/googletest/).
+
+Here, we're going to create a ``test-gamestate.cc`` to test that the functions
+we just created are working well.
+
+Here's a template for ``test-game.cc``::
+
+    #include <gtest/gtest.h>
+    #include "../game.hh"
+
+    class GameStateTest : public ::testing::Test
+    {
+        protected:
+            virtual void SetUp()
+            {
+                // Some code that will be executed before each test
+
+                // Create an array of two players
+                rules::Players_sptr players(new rules::Players {
+                        std::vector<rules::Player_sptr> {
+                            rules::Player_sptr(new rules::Player(0, 0)),
+                            rules::Player_sptr(new rules::Player(1, 0)),
+                        }
+                    }
+                );
+
+                gamestate_ = new GameState(players);
+            }
+
+            GameState* gamestate_;
+    };
+
+    TEST_F(GameStateTest, TestName)
+    {
+        // Test content
+    }
+
+You can then create as many tests as you want, for instance::
+
+    TEST_F(GameStateTest, CheckDropOverflow)
+    {
+        for (int i = 0; i < 6; i++)
+            gamestate_->drop(0, 0);
+        ASSERT_EQ(gamestate_->drop(0, 0), false);
+    }
+
+Create the following tests:
+
+* *CheckDropOverflow*: checks that ``drop`` returns ``false`` when the column
+  is full
+
+* **CheckDrop**: checks that the board obtained by dropping disks is valid
+
+* **CheckWinner**: checks that you winner() function works correctly
