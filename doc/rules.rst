@@ -381,9 +381,9 @@ The GameState should inherit from rules::GameState (``#include
 override a ``copy()`` method. You'll also have ``get_current_turn`` and
 ``increment_turn`` which will do the needful with an internal counter, a
 ``get_board`` method which will return the 2D board, a ``drop`` to drop a
-disk somewhere (returns true if the disk has been successfuly dropped), and
-finally, a ``winner`` method which will return the winner if there's one, -1
-else.
+disk somewhere (returns true if the disk has been successfuly dropped), a
+``is_full`` to check if one can play in a specific column, and finally, a
+``winner`` method which will return the winner if there's one, -1 else.
 
 Here's a template of the functions you'll need to implement::
 
@@ -392,15 +392,14 @@ Here's a template of the functions you'll need to implement::
     ~GameState();
     virtual rules::GameState* copy() const;
 
-    int get_current_turn() const;
     void increment_turn();
-    std::array<std::array<int, NB_COLS>, NB_ROWS> get_board() const;
-    bool drop(int column, int player);
-    int winner() const;  // This one is a bit interesting :)
 
-…
-Are you done yet ?
-Cool, now it's time for testing !
+    int get_current_turn() const;
+    bool is_full(int column) const;
+    std::array<std::array<int, NB_COLS>, NB_ROWS> get_board() const;
+    int winner() const;
+
+    void drop(int column, int player);
 
 Testing
 -------
@@ -452,16 +451,100 @@ You can then create as many tests as you want, for instance::
 
     TEST_F(GameStateTest, CheckDropOverflow)
     {
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < NB_ROWS; i++)
+        {
+            ASSERT_EQ(gamestate_->is_full(0), false);
             gamestate_->drop(0, 0);
-        ASSERT_EQ(gamestate_->drop(0, 0), false);
+        }
+        ASSERT_EQ(gamestate_->is_full(0), true);
     }
 
 Create the following tests:
 
-* *CheckDropOverflow*: checks that ``drop`` returns ``false`` when the column
+* *CheckFull*: checks that ``is_full`` returns ``true`` when the column
   is full
 
 * **CheckDrop**: checks that the board obtained by dropping disks is valid
 
 * **CheckWinner**: checks that you winner() function works correctly
+
+To run the tests, you just have to build using the ``--check`` option::
+
+  ./waf.py build --check
+
+
+The actions
+-----------
+
+The actions are the only objects sent on the network. Let me expand on that
+part a bit. When you run a stechec2 match, you have a server and two clients.
+They load the same shared library that defines the rules of the game, and they
+create a local GameState (actually a linked list of gamestates, to allow a
+cancel() action that undoes actions). When a player wants to perform an action,
+the rules first check if the action can be made considering the current state
+of the game. If everything is okay, the stechec2 client "apply" the action to
+the gamestate and send the action over the network. The server then receives
+the action, and check if it can be made too. If not, there's a big
+synchronisation problem (or possibly an attack), so the server disconnects the
+client. Else, the server applies the action locally to his gamestate and
+broadcast the action to the other players (so that they can do the same with
+their gamestates).
+
+An action must define five functions that will be used by the rules:
+
+* **check(gamestate)**: checks that the action can be applied on the gamestate ;
+* **apply_on(gamestate)**: applies the action to the given gamestate ;
+* **handle_buffer(buffer)**: used to serialize the action object to a buffer ;
+* **id()**: returns the ID of the action (usually an element of an enum) ;
+* **player_id()**: returns the ID of the player that sent the action ;
+
+For now we just have one action, so we can just put that in a new file called
+``actions.hh``::
+
+    enum action_id {
+        ID_ACTION_DROP,
+    }
+
+Now here's a template of the ``drop`` action class you're going to implement::
+
+    # include <rules/action.hh>
+
+    # include "constant.hh"
+    # include "game.hh"
+    # include "actions.hh"
+
+    class ActionDrop : public rules::Action<GameState>
+    {
+        public:
+            ActionDrop(int player /* ... */);
+
+            ActionDrop();
+
+            virtual int check(const GameState*) const;
+            virtual void handle_buffer(utils::Buffer&);
+
+            uint32_t player_id() const { return player_; }
+            uint32_t id() const { return ID_ACTION_DROP; }
+
+        protected:
+            virtual void apply_on(GameState*) const;
+
+        protected:
+            int player_;
+            int id_;
+            /* ... */
+    };
+
+
+Note that:
+
+* **check** should return an element of the error enumeration we've defined in
+  the rules (see ``constant.hh``).
+
+* **handle_buffer** only has to "bufferize" each attribute of the object. For
+  that, use the ``buf.handle()`` function like this::
+
+    buf.handle(player_);
+    buf.handle(id_);
+    buf.handle(/* Any kind of simple type */);
+    buf.handle_array(/* Array */);
