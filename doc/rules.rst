@@ -22,7 +22,9 @@ first, how many players a play can handle, who wins…
 The rules of the Connect Four are very simple : two players, a turn by turn
 game, only one action (drop a disk somewhere).
 
-We can begin to describe the rules in the .yml::
+We can begin to describe the rules in the .yml:
+
+.. code-block:: bash
 
   $ mkdir connect4
   $ cd connect4
@@ -30,6 +32,8 @@ We can begin to describe the rules in the .yml::
 
 Write the YAML
 ==============
+
+.. highlight:: yaml
 
 First, we must write some config boilerplate at the top of the file::
 
@@ -268,7 +272,9 @@ Stechec2 provides a script to generate a skeleton of the rules. It really saves
 a lot of time, so don't skip this part !
 
 If you have properly installed stechec2, you should have the generator in your
-PATH::
+PATH:
+
+.. code-block:: bash
 
   $ generator -h   # Display a lot of useful help
   $ generator rules ./connect4.yml gen
@@ -284,7 +290,9 @@ The wscript
 ===========
 
 Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
-``wscript`` file in the root folder of our game, containing this ::
+``wscript`` file in the root folder of our game, containing this:
+
+.. code-block:: python
 
   #! /usr/bin/env python2
 
@@ -317,6 +325,8 @@ rest for now.
 
 The rules
 =========
+
+.. highlight:: cpp
 
 The loops
 ---------
@@ -468,7 +478,9 @@ Create the following tests:
 
 * **CheckWinner**: checks that you winner() function works correctly
 
-To run the tests, you just have to build using the ``--check`` option::
+To run the tests, you just have to build using the ``--check`` option:
+
+.. code-block:: bash
 
   ./waf.py build --check
 
