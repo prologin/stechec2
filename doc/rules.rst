@@ -505,7 +505,8 @@ For now we just have one action, so we can just put that in a new file called
         ID_ACTION_DROP,
     }
 
-Now here's a template of the ``drop`` action class you're going to implement::
+Now here's a template of the ``drop`` action class you're going to implement in
+``action-drop.{cc,hh}``::
 
     # include <rules/action.hh>
 
@@ -518,6 +519,7 @@ Now here's a template of the ``drop`` action class you're going to implement::
         public:
             ActionDrop(int player /* ... */);
 
+            /* Necessary later, init attributes to random values */
             ActionDrop();
 
             virtual int check(const GameState*) const;
@@ -531,7 +533,6 @@ Now here's a template of the ``drop`` action class you're going to implement::
 
         protected:
             int player_;
-            int id_;
             /* ... */
     };
 
@@ -539,7 +540,7 @@ Now here's a template of the ``drop`` action class you're going to implement::
 Note that:
 
 * **check** should return an element of the error enumeration we've defined in
-  the rules (see ``constant.hh``).
+  the rules (see ``constant.hh``) : { OK, OUT_OF_BOUNDS, FULL, ALREADY_PLAYED }
 
 * **handle_buffer** only has to "bufferize" each attribute of the object. For
   that, use the ``buf.handle()`` function like this::
@@ -548,3 +549,76 @@ Note that:
     buf.handle(id_);
     buf.handle(/* Any kind of simple type */);
     buf.handle_array(/* Array */);
+
+The API
+-------
+
+In the bunch of files you've previously generated, there is a file called
+``api.cc`` that will describe what happens when the player calls a function
+during the game. These functions are directly "translated" in the language from
+which they are calling them, so you just have to implement the behaviour as if
+everyone played in C++.
+
+The observers are a realy easy part, you just have to return some values from
+the GameState and the rules::Player objects. For instance with my_player::
+
+    int Api::my_player()
+    {
+        return player_->id;
+    }
+
+Implement all the other observers : ``get_column`` and ``get_cell``. You'll
+have to replace ``rules::GameState`` to ``GameState`` (the one defined in
+``game.cc``) in ``api.hh`` in order to be able to call our gamestate-specific
+functions.
+
+The ``cancel`` function is already implemented in stechec2. To call it you just
+have to do this::
+
+    bool Api::cancel()
+    {
+        if (!game_state_->can_cancel())
+            return false;
+
+        game_state_ = rules::cancel(game_state_);
+
+        return true;
+    }
+
+Internally, there's a linked list of gamestates. The ``rules::cancel`` function
+simply removes the current gamestate and returns the last.
+
+The actions are more difficult to implement. The simplest solution is this one
+: during each turn, you keep a ``rules::Actions`` object in your ``Api``
+object, and each time a player executes an action, it will be locally applied
+to the gamestate, and then send to the server at the end of the turn.
+
+So let's add a ``rules::Actions`` attribute to our class, and a getter that
+returns a reference to this object.
+
+We also have to add a getter and a setter for the game_state : we can't just
+replace it, it would prevent to use cancel(), so we have to use the
+rules::GameState API::
+
+    GameState* game_state() { return game_state_; }
+    void game_state_set(rules::GameState* gs)
+        { game_state_ = dynamic_cast<GameState*>(gs); }
+
+Now we can implement ``Api::drop``. We first have to instanciate a
+``rules::IAction_sptr`` using our action constructor. Then we retrieves the
+result of ``check`` and cast it into an ``error`` (since ``check`` returns an
+int). If the result is ``OK``, we apply the action locally and add it to the
+Actions object and return ``OK``, else, we return the error::
+
+    error Api::drop(int column)
+    {
+        rules::IAction_sptr action(new ActionDrop(column, player_->id));
+
+        error err;
+        if ((err = static_cast<error>(action->check(game_state_))) != OK)
+            return err;
+        actions_.add(action);
+        game_state_set(action->apply(game_state()));
+        return OK;
+    }
+
