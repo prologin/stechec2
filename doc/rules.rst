@@ -622,3 +622,98 @@ Actions object and return ``OK``, else, we return the error::
         return OK;
     }
 
+
+The rules object
+----------------
+
+Let's typedef the function that will be called by the player as void*()'s in
+our rules.hh::
+
+    typedef void (*f_champion_init_game)();
+    typedef void (*f_champion_play_turn)();
+    typedef void (*f_champion_end_game)();
+
+
+Then add these attributes to the Rules class::
+
+    protected:
+        f_champion_init_game champion_init_game;
+        f_champion_play_turn champion_play_turn;
+        f_champion_end_game champion_end_game;
+
+    private:
+        utils::DLL* champion_;
+        Api* api_;
+        utils::Sandbox sandbox_;
+
+
+In the ``Rules`` constructor, we have to initialize a few objects, register
+some actions and retrieve the champion library::
+
+    Rules::Rules(const rules::Options opt)
+        : TurnBasedRules(opt)
+    {
+        if (!opt.champion_lib.empty())
+            champion_dll_ = new utils::DLL(opt.champion_lib);
+        else
+            champion_dll_ = nullptr;
+
+        // Init the gamestate
+        GameState* game_state = new GameState(opt.players);
+
+        // Init the API
+        api_ = new Api(game_state, opt.player);
+
+        // If we are a client, retrieves the functions from the champion
+        // library
+        if (!opt.champion_lib.empty())
+        {
+            champion_dll_ = new utils::DLL(opt.champion_lib);
+            champion_init_game =
+                champion_dll_->get<f_champion_init_game>("init_game");
+            champion_play_turn =
+                champion_dll_->get<f_champion_play_turn>("play_turn");
+            champion_end_game =
+                champion_dll_->get<f_champion_end_game>("end_game");
+        }
+
+        // Register the actions
+        api_->actions()->register_action(ID_ACTION_DROP,
+                []() -> rules::IAction* { return new ActionDrop(); });
+
+    }
+
+    Rules::~Rules()
+    {
+        delete champion_dll_;
+        delete api_;
+    }
+
+Then we can overload the functions defined in ``<rules/rules.hh>`` to satisfy
+our needs. For instance, we want to overload ``at_client_start``,
+``player_turn`` and ``at_client_end`` to execute the init_game and end_game
+client functions. To do so, we'll use the sandbox object::
+
+    void Rules::at_client_start()
+    {
+        sandbox_.execute(champion_partie_init);
+    }
+
+We also have to implement ``get_actions``, ``apply_action`` and ``is_finished``
+as previously defined in ``rules.hh``::
+
+    rules::Actions* Rules::get_actions()
+    {
+        return api_->actions();
+    }
+
+    void Rules::apply_action(const rules::IAction_sptr& action)
+    {
+        api_->game_state_set(action->apply(api_->game_state()));
+    }
+
+At the end of each turn, we have to check if someone has won, by overloading
+``end_of_player_turn``, and doing the needful. Then, you can implement
+``is_finished``.
+
+And that's it !
