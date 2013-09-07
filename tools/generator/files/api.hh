@@ -24,18 +24,17 @@
 */
 class Api
 {
+    public:
+        Api(rules::GameState* game_state, rules::Player_sptr player);
+        virtual ~Api() { }
 
-public:
-    Api(rules::GameState* game_state, rules::Player* player);
-    virtual ~Api() { }
+    private:
+        rules::GameState* game_state_;
+        rules::Player_sptr player_;
 
-private:
-    rules::GameState* game_state_;
-    rules::Player* player_;
+    public:
 
-public:
-
-    // @@GEN_HERE@@
+        // @@GEN_HERE@@
 };
 
 
