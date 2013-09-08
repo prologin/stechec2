@@ -30,6 +30,14 @@ class PythonCxxFileGenerator < CxxProto
 # include <vector>
 # include <string>
 
+# if PY_MAJOR_VERSION >= 3
+#  define IS_PY3K
+#  define PyInt_FromLong PyLong_FromLong
+#  define PyInt_AsLong PyLong_AsLong
+#  define PyString_FromString PyUnicode_FromString
+#  define PyString_AS_STRING PyUnicode_AsUTF8
+# endif
+
     EOF
 
     build_enums
@@ -315,10 +323,28 @@ static PyMethodDef api_callback[] = {
   {NULL, NULL, 0, NULL}
 };
 
+# ifdef IS_PY3K
+PyMODINIT_FUNC PyInit__api()
+{
+  static struct PyModuleDef apimoduledef = {
+      PyModuleDef_HEAD_INIT,
+      "_api",
+      "API module",
+      -1,
+      api_callback,
+      NULL,
+      NULL,
+      NULL,
+      NULL,
+  };
+  return PyModule_Create(&apimoduledef);
+}
+# else
 static void _initapi()
 {
   c_module = Py_InitModule("_api", api_callback);
 }
+# endif
 
 /*
 ** Inititialize python, register API functions,
@@ -335,10 +361,19 @@ static void _init_python()
 
   setenv("PYTHONPATH", champion_path, 1);
 
+# ifdef IS_PY3K
+  static wchar_t program_name[] = L"stechec";
+  Py_SetProgramName(program_name);
+
+  PyImport_AppendInittab("_api", PyInit__api);
+  Py_Initialize();
+# else
   static char program_name[] = "stechec";
   Py_SetProgramName(program_name);
+
   Py_Initialize();
   _initapi();
+# endif
 
   name = PyString_FromString("#{$conf['conf']['player_filename']}");
   champ_module = PyImport_Import(name);
