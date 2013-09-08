@@ -10,7 +10,7 @@
 # Copyright (C) 2005, 2006 Prologin
 #
 
-class PythonMakefile
+class Python2Makefile
   def build_metaserver(path)
     target = $conf['conf']['player_lib']
     f = File.open(path + "Makefile-python2", 'w')
