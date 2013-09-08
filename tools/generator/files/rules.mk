@@ -65,6 +65,7 @@ LD		= $(CROSS)ld
 OCAML_LIBS    = -L`ocamlc -where` -Wl,-R`ocamlc -where` -lcamlrun_shared -lcurses -lm
 OCAML_CFLAGS  = -O2 -I`ocamlc -where`
 
+LANG_FILE     = _lang
 
 # ==============================================================================
 # build commands
@@ -143,7 +144,7 @@ cmd_ld_shared	= $(CXX) $(filter %.o %.a,$^) $(ld_flags) -shared -o $@ $(_LDLIBS)
 
 cmd_clean	= $(RM) $(_cleanfiles)
 cmd_distclean	= $(RM) $(_dcleanfiles)
-cmd_tar		= tar czf champion.tgz $(_dist)
+cmd_tar		= tar czf champion.tgz $(_dist) $(LANG_FILE)
 
 lib_TARGETS	:= $(lib_TARGETS)
 
@@ -214,6 +215,8 @@ list-run-reqs:
 	$(call cmd,ocaml)
 
 tar:
+	@echo $(shell basename $(CURDIR)) > $(LANG_FILE)
 	$(call cmd,tar)
+	@rm $(LANG_FILE)
 
 -include $(_deps)
