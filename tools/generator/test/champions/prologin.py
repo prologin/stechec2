@@ -18,10 +18,10 @@ def test():
     send_me_true(True)
     assert returns_42() == 42
     assert returns_true() == True
-    assert returns_range(1, 100) == range(1, 100)
-    assert returns_range(1, 10000) == range(1, 10000)
+    assert returns_range(1, 100) == list(range(1, 100))
+    assert returns_range(1, 10000) == list(range(1, 10000))
     assert returns_sorted([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
-    assert returns_sorted(range(10000)) == range(10000)
+    assert returns_sorted(list(range(10000))) == list(range(10000))
     send_me_42s(struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
