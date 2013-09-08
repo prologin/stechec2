@@ -53,7 +53,7 @@ require 'fileutils'
 require 'pathname'
 require 'conf'
 
-$languages = %w[c cs cxx caml java python php]
+$languages = %w[c cs cxx caml java python2 python php]
 
 def make_player
   $languages.each do |x|
@@ -78,6 +78,7 @@ def make_player
 #  RubyFileGenerator.new.build
 #  LuaFileGenerator.new.build
   PythonFileGenerator.new.build
+  Python2FileGenerator.new.build
   PhpFileGenerator.new.build
 #  JsFileGenerator.new.build
 end
@@ -135,6 +136,7 @@ def make_server
   # HaskellMakefile.new.build_metaserver(install_path)
   # LuaMakefile.new.build_metaserver(install_path)
   PythonMakefile.new.build_metaserver(install_path)
+  Python2Makefile.new.build_metaserver(install_path)
   PhpMakefile.new.build_metaserver(install_path)
   # PrologMakefile.new.build_metaserver(install_path)
   # RubyMakefile.new.build_metaserver(install_path) TODO

@@ -13,7 +13,7 @@
 class PythonMakefile
   def build_metaserver(path)
     target = $conf['conf']['player_lib']
-    f = File.open(path + "Makefile-python", 'w')
+    f = File.open(path + "Makefile-python2", 'w')
     f.print <<-EOF
 # -*- Makefile -*-
 
@@ -26,8 +26,9 @@ lib_TARGETS = #{target}
 #{target}-dists += interface.hh
 #{target}-srcs = interface.cc
 
-#{target}-cxxflags = -O2 -fPIC $(shell python3-config --includes)
-#{target}-ldflags = -s $(shell python3-config --ldflags)
+pc = $(shell for p in python2-config python-config; do if which $$p &>/dev/null; then echo $$p; fi done | head -n 1)
+#{target}-cxxflags = -O2 -fPIC $(shell $(pc) --includes)
+#{target}-ldflags = -s $(shell $(pc) --ldflags)
 
 V=1
 include $(MFPATH)/rules.mk

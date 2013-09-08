@@ -11,16 +11,16 @@
 #
 
 # C++ generator, for python-interface
-class PythonCxxFileGenerator < CxxProto
+class Python2CxxFileGenerator < CxxProto
   def initialize
     super
-    @lang = "C++ (for python interface)"
+    @lang = "C++ (for python2 interface)"
   end
 
 
   def generate_header()
     @f = File.open(@path + @header_file, 'w')
-    print_banner "generator_python.rb"
+    print_banner "generator_python2.rb"
 
     @f.puts <<-EOF
 #ifndef INTERFACE_HH_
@@ -55,14 +55,14 @@ Lang cxx2lang(Cxx in)
 template <>
 PyObject* cxx2lang<PyObject*, int>(int in)
 {
-  return PyLong_FromLong(in);
+  return PyInt_FromLong(in);
 }
 
 
 template <>
 PyObject* cxx2lang<PyObject*, std::string>(std::string in)
 {
-return PyUnicode_FromString (in.c_str());
+return PyString_FromString (in.c_str());
 }
 
 
@@ -93,7 +93,7 @@ Cxx lang2cxx(Lang in)
 template <>
 int lang2cxx<PyObject*, int>(PyObject* in)
 {
-  long out = PyLong_AsLong(in);
+  long out = PyInt_AsLong(in);
   if (out == -1)
     if (PyErr_Occurred())
     {
@@ -112,7 +112,7 @@ bool lang2cxx<PyObject*, bool>(PyObject* in)
 template <>
 std::string lang2cxx<PyObject*, std::string>(PyObject* in)
 {
-  char * out = PyUnicode_AsUTF8(in);
+  char * out = PyString_AS_STRING(in);
   if (PyErr_Occurred())
     {
       throw 42;
@@ -180,7 +180,7 @@ EOF
     if str['str_tuple']
       @f.puts "  return tuple;"
     else
-      @f.puts "  PyObject* name = PyUnicode_FromString(\"#{name}\");"
+      @f.puts "  PyObject* name = PyString_FromString(\"#{name}\");"
       @f.puts "  PyObject* cstr = PyObject_GetAttr(py_module, name);"
       @f.puts "  Py_DECREF(name);"
       @f.puts "  if (cstr == NULL) throw 42;"
@@ -281,7 +281,7 @@ EOF
 
   def generate_source()
     @f = File.open(@path + @source_file, 'w')
-    print_banner "generator_python.rb"
+    print_banner "generator_python2.rb"
     
     @f.puts <<-EOF
 #include "interface.hh"
@@ -315,20 +315,9 @@ static PyMethodDef api_callback[] = {
   {NULL, NULL, 0, NULL}
 };
 
-PyMODINIT_FUNC PyInit__api()
+static void _initapi()
 {
-  static struct PyModuleDef apimoduledef = {
-      PyModuleDef_HEAD_INIT,
-      "_api",
-      "API module",
-      -1,
-      api_callback,
-      NULL,
-      NULL,
-      NULL,
-      NULL,
-  };
-  return PyModule_Create(&apimoduledef);
+  c_module = Py_InitModule("_api", api_callback);
 }
 
 /*
@@ -346,13 +335,13 @@ static void _init_python()
 
   setenv("PYTHONPATH", champion_path, 1);
 
-  static wchar_t program_name[] = L"stechec";
+  static char program_name[] = "stechec";
   Py_SetProgramName(program_name);
 
-  PyImport_AppendInittab("_api", PyInit__api);
   Py_Initialize();
+  _initapi();
 
-  name = PyUnicode_FromString("#{$conf['conf']['player_filename']}");
+  name = PyString_FromString("#{$conf['conf']['player_filename']}");
   champ_module = PyImport_Import(name);
   Py_DECREF(name);
   if (champ_module == NULL)
@@ -362,7 +351,7 @@ static void _init_python()
       abort();
     }
 
-  name = PyUnicode_FromString("api");
+  name = PyString_FromString("api");
   py_module = PyImport_Import(name);
   Py_DECREF(name);
   if (py_module == NULL)
@@ -433,7 +422,7 @@ static PyObject* _call_python_function(const char* name)
   end
 
   def build
-    @path = Pathname.new($install_path) + "python"
+    @path = Pathname.new($install_path) + "python2"
     @header_file = 'interface.hh'
     @source_file = 'interface.cc'
 
@@ -443,10 +432,10 @@ static PyObject* _call_python_function(const char* name)
 
 end
 
-class PythonFileGenerator < FileGenerator
+class Python2FileGenerator < FileGenerator
   def initialize
     super
-    @lang = "python"
+    @lang = "python2"
   end
 
   def print_constant(type, name, val)
@@ -478,8 +467,9 @@ lib_TARGETS = #{target}
 #{target}-dists += api.py interface.hh
 #{target}-srcs = interface.cc
 
-#{target}-cxxflags = -fPIC $(shell python3-config --includes)
-#{target}-ldflags = -s $(shell python3-config --ldflags)
+pc = $(shell which python2-config >/dev/null 2>&1 && echo python2-config || echo python-config)
+#{target}-cxxflags = -fPIC $(shell $(pc) --includes)
+#{target}-ldflags = -s $(shell $(pc) --ldflags)
 
 include ../includes/rules.mk
     EOF
@@ -515,20 +505,20 @@ EOF
   end
 
   def build()
-    @path = Pathname.new($install_path) + "python"
+    @path = Pathname.new($install_path) + "python2"
     @source_file = $conf['conf']['player_filename'] + '.py'
 
     ######################################
     ##  interface.hh file generating    ##
     ######################################
-    PythonCxxFileGenerator.new.build
+    Python2CxxFileGenerator.new.build
 
     ######################################
     ##  prologin.py file generating     ##
     ######################################
     @f = File.new(@path + @source_file, 'w')
-    @f.puts "# -*- coding: utf-8 -*-"
-    print_banner "generator_python.rb"
+    @f.puts "# -*- coding: iso-8859-1 -*-"
+    print_banner "generator_python2.rb"
     @f.puts "from api import *", ""
     @f.puts "try:"
     @f.puts "    import psyco"
@@ -543,7 +533,7 @@ EOF
     @f.close
 
     @f = File.new(@path + "api.py", 'w')
-    @f.puts "# -*- coding: iso-8859-1 -*-"
+    @f.puts "# -*- coding: utf-8 -*-"
     @f.puts "from _api import *", ""
     build_constants
     build_enums
