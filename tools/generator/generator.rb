@@ -160,8 +160,6 @@ $install_path = ARGV[2]
 if $conf["conf"] == nil then
   $conf["conf"] = Hash.new
   $conf["conf"]["package_name"] = $conf["name"]
-  $conf["conf"]["client_rule_lib"] = $conf["name"]
-  $conf["conf"]["server_rule_lib"] = $conf["name"]
   $conf["conf"]["player_lib"] = "champion"
   $conf["conf"]["player_filename"] = "prologin"
 end

@@ -21,7 +21,6 @@ require "gen/generator_c.rb"
 
 # cree le repertoire et detare la tarball dedans
 package_name = $conf['conf']['package_name']
-librule_name = $conf['conf']['rule_lib']
 install_path = Pathname.new($install_path) + package_name + "rules"
 install_path.mkpath
 
@@ -54,7 +53,6 @@ class CxxFileGenerator < CxxProto
     replaces['!!provider!!'] = 'Prologin' # FIXME
     replaces['!!year!!'] = Date.today.year.to_s
     replaces['!!package_name!!'] = $conf['conf']['package_name']
-    replaces['!!rule_lib!!'] = $conf['conf']['server_rule_lib']
     replaces.each do |key, value|
       line = line.sub(key, value)
     end
