@@ -15,3 +15,4 @@ tools/generator/test/python
 tools/generator/test/README
 games/*
 !games/tictactoe
+.syntastic_cpp_config
