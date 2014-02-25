@@ -37,12 +37,8 @@ Write the YAML
 
 First, we must write some config boilerplate at the top of the file::
 
-  conf:
-      package_name: connect4     # The name of the game
-      player_lib: champion       # The .so containing the code of the player
-      player_filename: main      # The main file where the user should code
-      server_rule_lib: connect4  # The .so containing the rules (server)
-      client_rule_lib: connect4  # The .so containing the rules (client)
+  name: connect4  # The name of the game
+
   constant:
     # Place your constants here
   enum:
