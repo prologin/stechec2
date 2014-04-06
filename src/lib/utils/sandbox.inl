@@ -2,9 +2,14 @@
 #include "sandbox.hh"
 
 #include <ctime>
+#include <cerrno>
 #include <pthread.h>
 #include <string>
 #include <tuple>
+
+#ifdef __FreeBSD__
+#include <pthread_np.h>
+#endif
 
 // Implementation of the sandbox. Lots of tricky C++ to get a nice user API,
 // but most of it could be removed when C++11 compilers become better.

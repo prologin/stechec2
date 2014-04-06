@@ -2,6 +2,7 @@
 
 import os.path
 import sys
+import platform
 
 build_tools = os.path.join('.', 'tools', 'waf')
 sys.path.append(build_tools)
@@ -127,7 +128,7 @@ def build_lib(bld):
         includes = 'src/lib',
         target = 'stechec2',
         use = ['ZeroMQ', 'rt', 'gflags'],
-        lib = ['dl'],
+        lib = ([] if platform.system()=='FreeBSD' else ['dl']),
         export_includes = 'src/lib'
     )
 

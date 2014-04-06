@@ -4,6 +4,7 @@
 // Implementation of a logger based on the one in the first version of Stechec.
 
 # include <gflags/gflags.h>
+# include <stdlib.h>
 # include <iostream>
 # include <ostream>
 
