@@ -4,6 +4,8 @@ SUCCESS=
 ERROR=
 NOBUILD=
 
+NB_TESTS=${1:-10000}
+
 runtest() {
     lang=$1
     champion_file=$2
@@ -21,7 +23,7 @@ runtest() {
     fi
     g++ -std=c++11 -o runner ../runner.cc ./champion.so
     echo "Running test"
-    if ! ./runner; then
+    if ! ./runner $NB_TESTS; then
         ERROR="$ERROR $lang"
     else
         SUCCESS="$SUCCESS $lang"
@@ -36,6 +38,7 @@ runtest java Prologin.java
 runtest caml prologin.ml
 runtest cxx prologin.cc
 runtest python prologin.py
+runtest python2 prologin.py
 
 echo
 echo "---> RESULTS:"

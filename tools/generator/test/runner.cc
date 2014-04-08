@@ -1,6 +1,7 @@
 #include "cxx/prologin.hh"
 #include <algorithm>
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 
@@ -241,8 +242,11 @@ extern "C" void api_afficher_struct_with_array(struct_with_array v)
   std::cerr << v << std::endl;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    for (int i = 0; i < 10000; ++i)
+    int count = 10000;
+    if (argc > 1)
+        count = std::strtol(argv[1], NULL, 0);
+    for (int i = 0; i < count; ++i)
         test();
 }
