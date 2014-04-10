@@ -18,6 +18,8 @@ def test():
     send_me_true(True)
     assert returns_42() == 42
     assert returns_true() == True
+    assert returns_val1() == test_enum.VAL1
+    assert returns_val1() != test_enum.VAL2
     assert returns_range(1, 100) == list(range(1, 100))
     assert returns_range(1, 10000) == list(range(1, 10000))
     assert returns_sorted([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
@@ -27,7 +29,7 @@ def test():
         field_int_arr=[42] * 42,
         field_str_arr=[simple_struct(42, True)] * 42))
 
-    send_me_test_enum(VAL1, VAL2)
+    send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
     l = send_me_struct_array([struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,

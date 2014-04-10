@@ -33,6 +33,11 @@ bool api_returns_true()
     return true;
 }
 
+test_enum api_returns_val1()
+{
+    return VAL1;
+}
+
 std::vector<int> api_returns_range(int m, int n)
 {
     std::vector<int> v(n - m);

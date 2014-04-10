@@ -65,6 +65,11 @@ function:
     fct_ret_type: bool
     fct_arg: []
   -
+    fct_name: returns_val1
+    fct_summary: Returns VAL1
+    fct_ret_type: test_enum
+    fct_arg: []
+  -
     fct_name: returns_range
     fct_summary: Returns a range of integer [m;n[
     fct_ret_type: int array

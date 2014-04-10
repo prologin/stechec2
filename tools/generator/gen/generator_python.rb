@@ -146,7 +146,15 @@ EOF
 template <>
 PyObject* cxx2lang<PyObject*, #{name}>(#{name} in)
 {
-  return cxx2lang<PyObject*, int>((int)in);
+  PyObject* name = PyUnicode_FromString(\"#{name}\");
+  PyObject* enm = PyObject_GetAttr(py_module, name);
+  if (enm == NULL) throw 42;
+  PyObject* arglist = Py_BuildValue("(i)", (int) in);
+  PyObject* ret = PyObject_CallObject(enm, arglist);
+  Py_DECREF(name);
+  Py_DECREF(arglist);
+  Py_DECREF(enm);
+  return ret;
 }
 
 template <>
@@ -282,7 +290,7 @@ EOF
   def generate_source()
     @f = File.open(@path + @source_file, 'w')
     print_banner "generator_python.rb"
-    
+
     @f.puts <<-EOF
 #include "interface.hh"
 
@@ -293,7 +301,7 @@ static PyObject* champ_module;
 static void _init_python();
 
     EOF
-      
+
     build_common_wrappers
     for_each_enum { |e| build_enum_wrappers e }
     for_each_struct { |s| build_struct_wrappers s }
@@ -331,13 +339,31 @@ PyMODINIT_FUNC PyInit__api()
   return PyModule_Create(&apimoduledef);
 }
 
+
+/*
+** Load a Python module
+*/
+
+static PyObject* _import_module(const char* m)
+{
+  PyObject* name = PyUnicode_FromString(m);
+  PyObject* module = PyImport_Import(name);
+  Py_DECREF(name);
+  if (module == NULL)
+    if (PyErr_Occurred())
+    {
+      PyErr_Print();
+      abort();
+    }
+  return module;
+}
+
 /*
 ** Inititialize python, register API functions,
 ** and load .py file
 */
 static void _init_python()
 {
-  PyObject* name;
   const char* champion_path;
 
   champion_path = getenv("CHAMPION_PATH");
@@ -352,25 +378,8 @@ static void _init_python()
   PyImport_AppendInittab("_api", PyInit__api);
   Py_Initialize();
 
-  name = PyUnicode_FromString("#{$conf['conf']['player_filename']}");
-  champ_module = PyImport_Import(name);
-  Py_DECREF(name);
-  if (champ_module == NULL)
-    if (PyErr_Occurred())
-    {
-      PyErr_Print();
-      abort();
-    }
-
-  name = PyUnicode_FromString("api");
-  py_module = PyImport_Import(name);
-  Py_DECREF(name);
-  if (py_module == NULL)
-    if (PyErr_Occurred())
-    {
-      PyErr_Print();
-      abort();
-    }
+  champ_module = _import_module("#{$conf['conf']['player_filename']}");
+  py_module = _import_module("api");
 }
 
 /*
@@ -487,14 +496,21 @@ include ../includes/rules.mk
   end
 
   def build_enums
+    @f.print <<-EOF
+
+from enum import IntEnum
+
+EOF
     for_each_enum do |enum|
-      @f.puts "("
+      i = 0
+      @f.print "class ", enum['enum_name'], "(IntEnum):\n"
       enum['enum_field'].each do |f|
         name = f[0].upcase
-        @f.print "    ", name, ", "
-        @f.print "# <- ", f[1], "\n"
+        @f.print "    ", name, " = ", i.to_s
+        @f.print "  # <- ", f[1], "\n"
+        i += 1
       end
-      @f.print ") = range(", enum['enum_field'].length, ")\n\n"
+      @f.print "\n"
     end
   end
 
