@@ -12,6 +12,7 @@ tools/generator/test/includes
 tools/generator/test/java
 tools/generator/test/php
 tools/generator/test/python
+tools/generator/test/python2
 tools/generator/test/README
 games/*
 !games/tictactoe
