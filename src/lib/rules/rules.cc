@@ -73,7 +73,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
             if (!is_finished())
                 start_of_turn();
             else
-                break; // Avoid to call is_finished() twice
+                break; // Avoid calling is_finished() twice
         }
     }
 
@@ -130,7 +130,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             if (!is_finished())
                 start_of_turn();
             else
-                break; // Avoid to call is_finished() twice
+                break; // Avoid calling is_finished() twice
         }
     }
 
@@ -178,7 +178,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         if (!is_finished())
             start_of_turn();
         else
-            break; // Avoid to call is_finished() twice
+            break; // Avoid calling is_finished() twice
     }
 
     at_end();
@@ -254,7 +254,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
             if (!is_finished())
                 start_of_turn();
             else
-                break; // Avoid to call is_finished() twice
+                break; // Avoid calling is_finished() twice
         }
     }
 
@@ -409,7 +409,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         if (!is_finished())
             start_of_turn();
         else
-            break; // Avoid to call is_finished() twice
+            break; // Avoid calling is_finished() twice
     }
 
     at_end();
