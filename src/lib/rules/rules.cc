@@ -140,6 +140,8 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
+    msgr->push_id(players_->players[players_->players.size() - 1]->id);
+
     at_start();
     at_server_start();
 
