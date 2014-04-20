@@ -148,7 +148,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
-            if (players_->players[i]->nb_timeout > 1)
+            if (players_->players[i]->nb_timeout > max_consecutive_timeout)
               continue;
             msgr->push_id(players_->players[i]->id);
             if (!msgr->poll(timeout_))
@@ -165,6 +165,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         {
             msgr->push_id(spectators_->players[i]->id);
             Actions* actions = get_actions();
+            actions->clear();
             msgr->recv_actions(actions);
             msgr->ack();
         }
@@ -358,7 +359,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
-            if (players_->players[i]->nb_timeout < 2)
+            if (players_->players[i]->nb_timeout < max_consecutive_timeout)
             {
                 DEBUG("Turn for player %d", players_->players[i]->id);
                 msgr->push_id(players_->players[i]->id);

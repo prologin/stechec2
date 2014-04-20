@@ -12,6 +12,8 @@
 
 namespace rules {
 
+const int max_consecutive_timeout = 2;
+
 // Interface of the rules
 class Rules
 {
