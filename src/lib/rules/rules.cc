@@ -146,6 +146,9 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     start_of_turn();
     while (!is_finished())
     {
+        Actions* actions = get_actions();
+        actions->clear();
+
         for (unsigned int i = 0; i < players_->players.size(); i++)
         {
             if (players_->players[i]->nb_timeout > max_consecutive_timeout)
@@ -154,12 +157,17 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             if (!msgr->poll(timeout_))
             {
                 players_->players[i]->nb_timeout++;
+                DEBUG("Timeout reached, never mind: %d",
+                      players_->players[i]->nb_timeout);
                 continue;
             }
-            Actions* actions = get_actions();
             msgr->recv_actions(actions);
             msgr->ack();
         }
+
+        for (auto action: actions->actions())
+            apply_action(action);
+        msgr->push_actions(*actions);
 
         for (unsigned int i = 0; i < spectators_->players.size(); i++)
         {
@@ -170,11 +178,6 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             msgr->ack();
         }
 
-        Actions* actions = get_actions();
-        for (auto action: actions->actions())
-            apply_action(action);
-        msgr->push_actions(*actions);
-        actions->clear();
         end_of_turn();
         if (!is_finished())
             start_of_turn();
@@ -368,7 +371,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 if (!msgr->poll(timeout_))
                 {
                     players_->players[i]->nb_timeout++;
-                    DEBUG("Timeout reached, never mind: %d",players_->players[i]->nb_timeout);
+                    DEBUG("Timeout reached, never mind: %d", players_->players[i]->nb_timeout);
                 }
                 else
                 {
