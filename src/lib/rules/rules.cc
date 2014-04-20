@@ -72,6 +72,8 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
+            else
+                break; // Avoid to call is_finished() twice
         }
     }
 
@@ -127,6 +129,8 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
+            else
+                break; // Avoid to call is_finished() twice
         }
     }
 
@@ -173,6 +177,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         end_of_turn();
         if (!is_finished())
             start_of_turn();
+        else
+            break; // Avoid to call is_finished() twice
     }
 
     at_end();
@@ -247,6 +253,8 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
+            else
+                break; // Avoid to call is_finished() twice
         }
     }
 
@@ -266,7 +274,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     start_of_turn();
     /* `last_turn` allows us to inspect the final state of the game, when no
      * other player can play anymore. */
-    while (!is_finished() || last_turn)
+    while (last_turn || !is_finished())
     {
 
         uint32_t playing_id;
@@ -400,6 +408,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         DEBUG("End of turn!");
         if (!is_finished())
             start_of_turn();
+        else
+            break; // Avoid to call is_finished() twice
     }
 
     at_end();
