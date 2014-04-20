@@ -37,9 +37,6 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
     {
         uint32_t playing_id;
 
-        Actions* actions = get_actions();
-        actions->clear();
-
         DEBUG("Waiting for a turn...");
         /* Other players turns */
         if (msgr->wait_for_turn(opt_.player->id, &playing_id))
@@ -51,17 +48,13 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
             }
 
             DEBUG("Turn for player %d (not me)", playing_id);
-
-            /* Get actions of other players */
-            DEBUG("Getting actions...");
-            msgr->pull_actions(actions);
-            DEBUG("Got %u actions", actions->size());
-
         }
         else /* Current player turn */
         {
             DEBUG("Turn for player %d (me!!!)", playing_id);
             player_turn();
+
+            Actions* actions = get_actions();
 
             /* We only want to send back the actions from the current player */
             Actions player_actions;
@@ -77,9 +70,16 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
         /* End of each turn */
         if (last_player_id == playing_id)
         {
+            Actions* actions = get_actions();
+            actions->clear();
+
+            /* Get actions of other players */
+            DEBUG("Getting actions...");
+            msgr->pull_actions(actions);
+            DEBUG("Got %u actions", actions->size());
+
             /* Apply actions onto the gamestate */
             /* We should already have applied our actions */
-            Actions* actions = get_actions();
             for (auto action : actions->actions())
                 if (action->player_id() != opt_.player->id)
                     apply_action(action);
