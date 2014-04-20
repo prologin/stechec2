@@ -42,6 +42,11 @@ parser.add_argument(
     ' (champions first, spectators last)'
 )
 parser.add_argument(
+    '-g', '--gdb', metavar='P', type=int, action='append', default=[],
+    help='Debug process number P with gdb (0 = server, 1=first client, ...'
+    ' (champions first, spectators last)'
+)
+parser.add_argument(
     'config-file', metavar='config-file',
     help='use F as a configuration file for the match'
 )
@@ -76,6 +81,8 @@ def stechec2_run(args, options):
 
     def start_proc(name, opts, popt):
         p = next(next_process)
+        if p in args.gdb:
+            opts = ['gdb', '--args'] + opts
         cmd_line = ' '.join(opts)
         if p in args.inhibit:
             print('>>> Not starting {}[P={}]:'.format(name, p))
