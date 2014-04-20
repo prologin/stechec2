@@ -5,12 +5,6 @@
 
 from api import *
 
-try:
-    import psyco
-    psyco.full()
-except:
-    pass
-
 # Called 10K times to test if things work well.
 def test():
     send_me_42(42)
