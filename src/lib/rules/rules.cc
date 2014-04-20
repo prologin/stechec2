@@ -69,7 +69,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
                 if (action->player_id() == opt_.player->id)
                     player_actions.add(action);
 
-            DEBUG("Sending %u actions...", player_actions->size());
+            DEBUG("Sending %u actions...", player_actions.size());
             msgr->send_actions(player_actions);
             msgr->wait_for_ack();
         }
