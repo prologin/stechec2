@@ -26,37 +26,50 @@ SynchronousRules::SynchronousRules(const Options opt)
 
 void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
 {
-    at_start();
-    at_client_start();
-
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
+
+    at_start();
+    at_client_start();
 
     start_of_turn();
     while (!is_finished())
     {
         uint32_t playing_id;
 
+        Actions* actions = get_actions();
+        actions->clear();
+
+        DEBUG("Waiting for a turn...");
         /* Other players turns */
         if (msgr->wait_for_turn(opt_.player->id, &playing_id))
         {
             if (is_spectator(playing_id))
+            {
+                DEBUG("Turn for spectator %d, never mind...", playing_id);
                 continue;
+            }
+
+            DEBUG("Turn for player %d (not me)", playing_id);
 
             /* Get actions of other players */
-            Actions* actions = get_actions();
+            DEBUG("Getting actions...");
             msgr->pull_actions(actions);
+            DEBUG("Got %u actions", actions->size());
 
         }
         else /* Current player turn */
         {
+            DEBUG("Turn for player %d (me!!!)", playing_id);
             player_turn();
-            Actions* actions = get_actions();
+
             /* We only want to send back the actions from the current player */
             Actions player_actions;
             for (auto action: actions->actions())
                 if (action->player_id() == opt_.player->id)
                     player_actions.add(action);
+
+            DEBUG("Sending %u actions...", player_actions->size());
             msgr->send_actions(player_actions);
             msgr->wait_for_ack();
         }
@@ -65,10 +78,13 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
         if (last_player_id == playing_id)
         {
             /* Apply actions onto the gamestate */
+            /* We should already have applied our actions */
             Actions* actions = get_actions();
             for (auto action : actions->actions())
-                apply_action(action);
-            actions->clear();
+                if (action->player_id() != opt_.player->id)
+                    apply_action(action);
+
+            DEBUG("End of turn!");
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
