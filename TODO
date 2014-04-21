@@ -1,5 +1,3 @@
 * CLEAN THE CODE
 * write a doc
 * Better handling of timeouts (client should tell server if they SEGV or INT)
-* Fix C# and PHP generator
-* Move Java generator to using JNI instead of GCJ
