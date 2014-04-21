@@ -52,9 +52,11 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
         else /* Current player turn */
         {
             DEBUG("Turn for player %d (me!!!)", playing_id);
-            player_turn();
 
             Actions* actions = get_actions();
+            actions->clear();
+
+            player_turn();
 
             /* We only want to send back the actions from the current player */
             Actions player_actions;
@@ -179,7 +181,9 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
                       players_->players[i]->nb_timeout);
                 continue;
             }
+            DEBUG("Server receives actions from player %d...", i);
             msgr->recv_actions(actions);
+            DEBUG("%d actions received so far", actions->size(), i);
             msgr->ack();
         }
 
