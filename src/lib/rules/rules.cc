@@ -19,6 +19,10 @@ bool Rules::is_spectator(uint32_t id)
     return false;
 }
 
+ /*-----------------.
+ | SynchronousRules |
+ `-----------------*/
+
 SynchronousRules::SynchronousRules(const Options opt)
     : Rules(opt)
 {
@@ -38,18 +42,9 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
         uint32_t playing_id;
 
         DEBUG("Waiting for a turn...");
-        /* Other players turns */
-        if (msgr->wait_for_turn(opt_.player->id, &playing_id))
-        {
-            if (is_spectator(playing_id))
-            {
-                DEBUG("Turn for spectator %d, never mind...", playing_id);
-                continue;
-            }
 
-            DEBUG("Turn for player %d (not me)", playing_id);
-        }
-        else /* Current player turn */
+        /* Current player turn */
+        if (!msgr->wait_for_turn(opt_.player->id, &playing_id))
         {
             DEBUG("Turn for player %d (me!!!)", playing_id);
 
@@ -112,26 +107,19 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     {
         uint32_t playing_id;
 
-        /* Other players turns */
-        if (msgr->wait_for_turn(opt_.player->id, &playing_id))
+        /* Current players turn */
+        if (!msgr->wait_for_turn(opt_.player->id, &playing_id))
         {
-            if (is_spectator(playing_id))
-                continue;
-
-            /* Get actions of other players */
             Actions* actions = get_actions();
-            msgr->pull_actions(actions);
-
-        }
-        else /* Current player turn */
-        {
+            actions->clear();
             spectator_turn();
-            Actions* actions = get_actions();
+
             /* We only want to send back the actions from the current player */
             Actions player_actions;
             for (auto action: actions->actions())
                 if (action->player_id() == opt_.player->id)
                     player_actions.add(action);
+
             msgr->send_actions(player_actions);
             msgr->wait_for_ack();
         }
@@ -141,9 +129,12 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
         {
             /* Apply actions onto the gamestate */
             Actions* actions = get_actions();
+            actions->clear();
+            msgr->pull_actions(actions);
             for (auto action : actions->actions())
                 apply_action(action);
             actions->clear();
+
             end_of_turn();
             if (!is_finished())
                 start_of_turn();
@@ -169,23 +160,9 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         Actions* actions = get_actions();
         actions->clear();
 
-        for (unsigned int i = 0; i < players_->players.size(); i++)
-        {
-            if (players_->players[i]->nb_timeout > max_consecutive_timeout)
-              continue;
-            msgr->push_id(players_->players[i]->id);
-            if (!msgr->poll(timeout_))
-            {
-                players_->players[i]->nb_timeout++;
-                DEBUG("Timeout reached, never mind: %d",
-                      players_->players[i]->nb_timeout);
-                continue;
-            }
-            DEBUG("Server receives actions from player %d...", i);
-            msgr->recv_actions(actions);
-            DEBUG("%d actions received so far", actions->size(), i);
-            msgr->ack();
-        }
+        msgr->poll(timeout_);
+        msgr->recv_actions(actions);
+        msgr->ack();
 
         for (auto action: actions->actions())
             apply_action(action);
@@ -198,6 +175,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             actions->clear();
             msgr->recv_actions(actions);
             msgr->ack();
+            actions->clear();
         }
 
         end_of_turn();
@@ -210,6 +188,11 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_end();
     at_server_end();
 }
+
+
+ /*---------------.
+ | TurnBasedRules |
+ `---------------*/
 
 TurnBasedRules::TurnBasedRules(const Options opt)
     : Rules(opt)
