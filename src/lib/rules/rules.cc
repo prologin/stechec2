@@ -110,18 +110,16 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
         /* Current players turn */
         if (!msgr->wait_for_turn(opt_.player->id, &playing_id))
         {
+            DEBUG("Spectator turn (me!)");
             Actions* actions = get_actions();
             actions->clear();
             spectator_turn();
+            DEBUG("Finished spectator turn, sending %d actions.",
+                    actions->size());
 
-            /* We only want to send back the actions from the current player */
-            Actions player_actions;
-            for (auto action: actions->actions())
-                if (action->player_id() == opt_.player->id)
-                    player_actions.add(action);
-
-            msgr->send_actions(player_actions);
+            msgr->send_actions(*actions);
             msgr->wait_for_ack();
+            DEBUG("End of spectator turn");
         }
 
         /* End of each turn */
@@ -160,9 +158,23 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         Actions* actions = get_actions();
         actions->clear();
 
-        msgr->poll(timeout_);
-        msgr->recv_actions(actions);
-        msgr->ack();
+        for (unsigned int i = 0; i < players_->players.size(); i++)
+        {
+            if (players_->players[i]->nb_timeout > max_consecutive_timeout)
+              continue;
+            msgr->push_id(players_->players[i]->id);
+            if (!msgr->poll(timeout_))
+            {
+                players_->players[i]->nb_timeout++;
+                DEBUG("Timeout reached, never mind: %d",
+                      players_->players[i]->nb_timeout);
+                continue;
+            }
+            DEBUG("Server receives actions from player %d...", i);
+            msgr->recv_actions(actions);
+            DEBUG("%d actions received so far", actions->size(), i);
+            msgr->ack();
+        }
 
         for (auto action: actions->actions())
             apply_action(action);
