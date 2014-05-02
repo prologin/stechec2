@@ -70,6 +70,20 @@ languages), you can use the ``generator`` script installed by stechec2::
 
   generator player /usr/share/stechec2/tictactoe/tictactoe.yml home_env/
 
+Install languages dependencies
+------------------------------
+
+Requirements:
+
+- php
+- php-embed
+- ocaml
+- mono
+
+Archlinux:
+
+  pacman -S php php-embed ocaml mono
+
 Create your AI
 --------------
 
