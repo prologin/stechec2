@@ -19,6 +19,7 @@ Requirements
 ------------
 
 * gcc >= 4.7
+* python
 * python2
 * zeromq
 * zeromq C++ wrapper
@@ -75,14 +76,16 @@ Install languages dependencies
 
 Requirements:
 
-- php
+- php (warning: you may need to add ``open_basedir=/`` to your
+  ``/etc/php/php.ini``)
 - php-embed
 - ocaml
 - mono
+- jdk-java
 
 Archlinux:
 
-  pacman -S php php-embed ocaml mono
+  pacman -S php php-embed ocaml mono jdk7-openjdk
 
 Create your AI
 --------------
