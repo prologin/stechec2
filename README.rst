@@ -27,6 +27,14 @@ Requirements
 * ruby (only for the generators)
 * python-yaml
 
+Archlinux:
+
+  pacman -S gcc python2 zeromq gtest ruby python-yaml
+
+AUR:
+
+  pacaur google-gflags
+
 Installation
 ------------
 
@@ -42,12 +50,13 @@ Then put every game you want to install in ``games/``::
 
   git clone https://bitbucket.org/prologin/prologin2012.git games/prologin2012
   git clone https://bitbucket.org/prologin/prologin2013.git games/prologin2013
+  git clone https://bitbucket.org/prologin/prologin2014.git games/prologin2014
 
 A simple test game, ``tictactoe``, is already installed in ``games/``.
 
 You can now configure the project using waf::
 
-  python2 waf.py configure --with-games=prologin2013,tictactoe --prefix=/usr
+  python2 waf.py configure --with-games=tictactoe --prefix=/usr
 
 Then build and install it::
 
@@ -59,7 +68,7 @@ Generate the player environment
 To generate the player environment (different folders for each supported
 languages), you can use the ``generator`` script installed by stechec2::
 
-  generator player /usr/share/stechec2/prologin2013/prologin2013.yml home_env/
+  generator player /usr/share/stechec2/tictactoe/tictactoe.yml home_env/
 
 Create your AI
 --------------
@@ -86,7 +95,7 @@ and only needs a tiny YAML configuration file to work.
 
 A simple ``config.yml`` could be::
 
-  rules: /usr/lib/libprologin2013.so
+  rules: /usr/lib/libtictactoe.so
   map: ./simple.map
   verbose: 3
   clients:
@@ -108,14 +117,14 @@ different states during the match (to display it or to log it, for instance).
 
 Make sure to compile the spectators first::
 
-  cd /path/to/prologin2013/gui
+  cd /path/to/prologin2014/gui
   make
-  cd /path/to/prologin2013/dumper
+  cd /path/to/prologin2014/dumper
   make
 
 Then you just have to add those lines to the ``config.yml``::
 
   spectators:
-   - /path/to/prologin2013/gui/gui.so
-   - /path/to/prologin2013/dumper/dumper.so
+   - /path/to/prologin2014/gui/gui.so
+   - /path/to/prologin2014/dumper/dumper.so
 
