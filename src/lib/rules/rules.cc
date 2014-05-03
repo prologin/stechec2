@@ -102,8 +102,10 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
+    bool last_turn = false;
+
     start_of_turn();
-    while (!is_finished())
+    while (last_turn || !is_finished())
     {
         uint32_t playing_id;
 
@@ -122,6 +124,9 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             DEBUG("End of spectator turn");
         }
 
+        if (last_turn)
+            break;
+
         /* End of each turn */
         if (last_player_id == playing_id)
         {
@@ -134,10 +139,11 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             actions->clear();
 
             end_of_turn();
+
             if (!is_finished())
                 start_of_turn();
             else
-                break; // Avoid calling is_finished() twice
+                last_turn = true;
         }
     }
 
