@@ -22,10 +22,10 @@ public:
 class ClientMessenger : public Messenger
 {
 public:
-    ClientMessenger(net::ClientSocket_sptr sckt);
+    ClientMessenger(net::ClientSocket_sptr sckt, uint32_t client_id);
 
-    virtual void send(const utils::Buffer&, uint32_t = 0);
-    void send_actions(Actions&, uint32_t = 0);
+    virtual void send(const utils::Buffer&);
+    void send_actions(Actions&);
 
     virtual utils::Buffer* recv();
 
@@ -42,6 +42,7 @@ public:
 
 private:
     net::ClientSocket_sptr sckt_;
+    uint32_t client_id_;
 };
 
 typedef std::shared_ptr<ClientMessenger> ClientMessenger_sptr;

@@ -42,7 +42,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
         actions->clear();
 
         player_turn();
-        msgr->send_actions(*actions, opt_.player->id);
+        msgr->send_actions(*actions);
         msgr->wait_for_ack();
         actions->clear();
 
@@ -73,8 +73,9 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
         start_of_turn();
         Actions* actions = get_actions();
         actions->clear();
+
         spectator_turn();
-        msgr->send_actions(*actions, opt_.player->id);
+        msgr->send_actions(*actions);
         msgr->wait_for_ack();
         actions->clear();
 

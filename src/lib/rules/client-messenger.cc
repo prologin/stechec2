@@ -6,15 +6,16 @@
 
 namespace rules {
 
-ClientMessenger::ClientMessenger(net::ClientSocket_sptr sckt)
-    : sckt_(sckt)
+ClientMessenger::ClientMessenger(net::ClientSocket_sptr sckt, uint32_t client_id)
+    : sckt_(sckt),
+      client_id_(client_id)
 {
 }
 
-void ClientMessenger::send(const utils::Buffer& buf, uint32_t id)
+void ClientMessenger::send(const utils::Buffer& buf)
 {
     utils::Buffer out_buf;
-    net::Message msg(net::MSG_RULES, id);
+    net::Message msg(net::MSG_RULES, client_id_);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;
@@ -22,11 +23,11 @@ void ClientMessenger::send(const utils::Buffer& buf, uint32_t id)
     sckt_->send(out_buf);
 }
 
-void ClientMessenger::send_actions(Actions& actions, uint32_t id)
+void ClientMessenger::send_actions(Actions& actions)
 {
     utils::Buffer buf;
     actions.handle_buffer(buf);
-    send(buf, id);
+    send(buf);
 }
 
 utils::Buffer* ClientMessenger::recv()

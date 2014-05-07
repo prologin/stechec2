@@ -46,7 +46,8 @@ void Client::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    msgr_ = rules::ClientMessenger_sptr(new rules::ClientMessenger(sckt_));
+    msgr_ = rules::ClientMessenger_sptr(
+            new rules::ClientMessenger(sckt_, player_->id));
 
     // Set the rules options
     rules::Options rules_opt;

@@ -13,7 +13,7 @@ class Messenger
 public:
     virtual ~Messenger();
 
-    virtual void send(const utils::Buffer&, uint32_t = 0) = 0;
+    virtual void send(const utils::Buffer&) = 0;
     virtual utils::Buffer* recv() = 0;
 };
 
