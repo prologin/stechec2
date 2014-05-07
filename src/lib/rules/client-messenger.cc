@@ -11,10 +11,10 @@ ClientMessenger::ClientMessenger(net::ClientSocket_sptr sckt)
 {
 }
 
-void ClientMessenger::send(const utils::Buffer& buf)
+void ClientMessenger::send(const utils::Buffer& buf, uint32_t id)
 {
     utils::Buffer out_buf;
-    net::Message msg(net::MSG_RULES);
+    net::Message msg(net::MSG_RULES, id);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;
@@ -22,11 +22,11 @@ void ClientMessenger::send(const utils::Buffer& buf)
     sckt_->send(out_buf);
 }
 
-void ClientMessenger::send_actions(Actions& actions)
+void ClientMessenger::send_actions(Actions& actions, uint32_t id)
 {
     utils::Buffer buf;
     actions.handle_buffer(buf);
-    send(buf);
+    send(buf, id);
 }
 
 utils::Buffer* ClientMessenger::recv()

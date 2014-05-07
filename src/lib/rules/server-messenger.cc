@@ -10,10 +10,10 @@ ServerMessenger::ServerMessenger(net::ServerSocket_sptr sckt)
 {
 }
 
-void ServerMessenger::send(const utils::Buffer& buf)
+void ServerMessenger::send(const utils::Buffer& buf, uint32_t id)
 {
     utils::Buffer out_buf;
-    net::Message msg(net::MSG_RULES);
+    net::Message msg(net::MSG_RULES, id);
 
     msg.handle_buffer(out_buf);
     out_buf += buf;

@@ -1,3 +1,5 @@
+#include <unordered_set>
+
 #include "rules.hh"
 
 namespace rules {
@@ -30,64 +32,29 @@ SynchronousRules::SynchronousRules(const Options opt)
 
 void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
 {
-    uint32_t last_player_id;
-    msgr->pull_id(&last_player_id);
-
     at_start();
     at_client_start();
 
-    start_of_turn();
     while (!is_finished())
     {
-        uint32_t playing_id;
+        start_of_turn();
+        Actions* actions = get_actions();
+        actions->clear();
 
-        DEBUG("Waiting for a turn...");
+        player_turn();
+        msgr->send_actions(*actions, opt_.player->id);
+        msgr->wait_for_ack();
+        actions->clear();
 
-        /* Current player turn */
-        if (!msgr->wait_for_turn(opt_.player->id, &playing_id))
-        {
-            DEBUG("Turn for player %d (me!!!)", playing_id);
+        msgr->pull_actions(actions);
 
-            Actions* actions = get_actions();
-            actions->clear();
+        /* Apply actions onto the gamestate */
+        /* We should already have applied our actions */
+        for (auto action : actions->actions())
+            if (action->player_id() != opt_.player->id)
+                apply_action(action);
 
-            player_turn();
-
-            /* We only want to send back the actions from the current player */
-            Actions player_actions;
-            for (auto action: actions->actions())
-                if (action->player_id() == opt_.player->id)
-                    player_actions.add(action);
-
-            DEBUG("Sending %u actions...", player_actions.size());
-            msgr->send_actions(player_actions);
-            msgr->wait_for_ack();
-        }
-
-        /* End of each turn */
-        if (last_player_id == playing_id)
-        {
-            Actions* actions = get_actions();
-            actions->clear();
-
-            /* Get actions of other players */
-            DEBUG("Getting actions...");
-            msgr->pull_actions(actions);
-            DEBUG("Got %u actions", actions->size());
-
-            /* Apply actions onto the gamestate */
-            /* We should already have applied our actions */
-            for (auto action : actions->actions())
-                if (action->player_id() != opt_.player->id)
-                    apply_action(action);
-
-            DEBUG("End of turn!");
-            end_of_turn();
-            if (!is_finished())
-                start_of_turn();
-            else
-                break; // Avoid calling is_finished() twice
-        }
+        end_of_turn();
     }
 
     at_end();
@@ -99,52 +66,27 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     at_start();
     at_spectator_start();
 
-    uint32_t last_player_id;
-    msgr->pull_id(&last_player_id);
-
     bool last_turn = false;
 
-    start_of_turn();
     while (last_turn || !is_finished())
     {
-        uint32_t playing_id;
-
-        /* Current players turn */
-        if (!msgr->wait_for_turn(opt_.player->id, &playing_id))
-        {
-            DEBUG("Spectator turn (me!)");
-            Actions* actions = get_actions();
-            actions->clear();
-            spectator_turn();
-            DEBUG("Finished spectator turn, sending %d actions.",
-                    actions->size());
-
-            msgr->send_actions(*actions);
-            msgr->wait_for_ack();
-            DEBUG("End of spectator turn");
-        }
+        start_of_turn();
+        Actions* actions = get_actions();
+        actions->clear();
+        spectator_turn();
+        msgr->send_actions(*actions, opt_.player->id);
+        msgr->wait_for_ack();
+        actions->clear();
 
         if (last_turn)
             break;
 
-        /* End of each turn */
-        if (last_player_id == playing_id)
-        {
-            /* Apply actions onto the gamestate */
-            Actions* actions = get_actions();
-            actions->clear();
-            msgr->pull_actions(actions);
-            for (auto action : actions->actions())
-                apply_action(action);
-            actions->clear();
+        msgr->pull_actions(actions);
+        for (auto action : actions->actions())
+            apply_action(action);
+        actions->clear();
 
-            end_of_turn();
-
-            if (!is_finished())
-                start_of_turn();
-            else
-                last_turn = true;
-        }
+        end_of_turn();
     }
 
     at_end();
@@ -153,54 +95,50 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
-    msgr->push_id(players_->players[players_->players.size() - 1]->id);
-
     at_start();
     at_server_start();
 
-    start_of_turn();
+    std::unordered_set<int> spectators_ids;
+    for (auto s : spectators_->players)
+    {
+        DEBUG("Registered %d as a spectator", s->id);
+        spectators_ids.insert(s->id);
+    }
+
+    unsigned int size = players_->players.size() + spectators_->players.size();
+
     while (!is_finished())
     {
+        unsigned int spectators_count = spectators_->players.size();
+        start_of_turn();
+
         Actions* actions = get_actions();
         actions->clear();
 
-        for (unsigned int i = 0; i < players_->players.size(); i++)
+        for (unsigned int i = 0; i < size; ++i)
         {
-            if (players_->players[i]->nb_timeout > max_consecutive_timeout)
-              continue;
-            msgr->push_id(players_->players[i]->id);
             if (!msgr->poll(timeout_))
-            {
-                players_->players[i]->nb_timeout++;
-                DEBUG("Timeout reached, never mind: %d",
-                      players_->players[i]->nb_timeout);
-                continue;
-            }
-            DEBUG("Server receives actions from player %d...", i);
+                break;
+
             msgr->recv_actions(actions);
-            DEBUG("%d actions received so far", actions->size(), i);
             msgr->ack();
+
+            unsigned player_id = msgr->last_client_id();
+            if (spectators_ids.find(player_id) != spectators_ids.end())
+                spectators_count--;
+        }
+        while (spectators_count > 0)
+        {
+            msgr->recv_actions(actions);
+            msgr->ack();
+            spectators_count--;
         }
 
         for (auto action: actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
 
-        for (unsigned int i = 0; i < spectators_->players.size(); i++)
-        {
-            msgr->push_id(spectators_->players[i]->id);
-            Actions* actions = get_actions();
-            actions->clear();
-            msgr->recv_actions(actions);
-            msgr->ack();
-            actions->clear();
-        }
-
         end_of_turn();
-        if (!is_finished())
-            start_of_turn();
-        else
-            break; // Avoid calling is_finished() twice
     }
 
     at_end();

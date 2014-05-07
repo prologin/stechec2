@@ -24,8 +24,8 @@ class ClientMessenger : public Messenger
 public:
     ClientMessenger(net::ClientSocket_sptr sckt);
 
-    virtual void send(const utils::Buffer&);
-    void send_actions(Actions&);
+    virtual void send(const utils::Buffer&, uint32_t = 0);
+    void send_actions(Actions&, uint32_t = 0);
 
     virtual utils::Buffer* recv();
 

@@ -23,7 +23,7 @@ class ServerMessenger : public Messenger
 public:
     ServerMessenger(net::ServerSocket_sptr sckt);
 
-    virtual void send(const utils::Buffer&);
+    virtual void send(const utils::Buffer&, uint32_t = 0);
 
     virtual utils::Buffer* recv();
     void recv_actions(Actions* actions);
