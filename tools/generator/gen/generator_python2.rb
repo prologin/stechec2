@@ -326,6 +326,9 @@ static void _initapi()
 */
 static void _init_python()
 {
+  static char empty_string[] = "";
+  static char *argv[] = { (char *) &empty_string, NULL };
+
   PyObject* name;
   const char* champion_path;
 
@@ -339,6 +342,7 @@ static void _init_python()
   Py_SetProgramName(program_name);
 
   Py_Initialize();
+  PySys_SetArgvEx(1, argv, 0);
   _initapi();
 
   name = PyString_FromString("#{$conf['conf']['player_filename']}");

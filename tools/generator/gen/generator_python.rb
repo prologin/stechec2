@@ -364,6 +364,9 @@ static PyObject* _import_module(const char* m)
 */
 static void _init_python()
 {
+  static wchar_t empty_string[] = L"";
+  static wchar_t *argv[] = { (wchar_t *) &empty_string, NULL };
+
   const char* champion_path;
 
   champion_path = getenv("CHAMPION_PATH");
@@ -377,6 +380,7 @@ static void _init_python()
 
   PyImport_AppendInittab("_api", PyInit__api);
   Py_Initialize();
+  PySys_SetArgvEx(1, argv, 0);
 
   champ_module = _import_module("#{$conf['conf']['player_filename']}");
   py_module = _import_module("api");
