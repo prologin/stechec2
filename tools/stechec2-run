@@ -5,6 +5,7 @@ import argparse
 import itertools
 import os
 import os.path
+import shlex
 import subprocess
 import sys
 import time
@@ -47,6 +48,14 @@ parser.add_argument(
     ' (champions first, spectators last)'
 )
 parser.add_argument(
+    '--valgrind', metavar='P', type=int, action='append', default=[],
+    help='Track process number P with Valgrind (usage is the same as for --gdb'
+)
+parser.add_argument(
+    '--valgrind-opts', default='',
+    help='Options to pass to valgrind'
+)
+parser.add_argument(
     'config-file', metavar='config-file',
     help='use F as a configuration file for the match'
 )
@@ -83,6 +92,8 @@ def stechec2_run(args, options):
         p = next(next_process)
         if p in args.gdb:
             opts = ['gdb', '--args'] + opts
+        elif p in args.valgrind:
+            opts = ['valgrind'] + shlex.split(args.valgrind_opts) + opts
         cmd_line = ' '.join(opts)
         if p in args.inhibit:
             print('>>> Not starting {}[P={}]:'.format(name, p))
