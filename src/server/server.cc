@@ -10,7 +10,7 @@ DEFINE_string(rep_addr, "tcp://0.0.0.0:42124",
               "Set reply address binding (ZeroMQ)");
 DEFINE_string(pub_addr, "tcp://0.0.0.0:42125",
               "Set publishing address binding (ZeroMQ)");
-DEFINE_int32(turn_timeout, 10000, "Timeout for a player turn (in ms)");
+DEFINE_int32(time, 10000, "Timeout for a player turn (in ms)");
 DEFINE_int32(nb_clients, 2, "Number of players to expect");
 DEFINE_string(map, "default.map", "Map file");
 DEFINE_string(rules, "rules.so", "Rules library");
@@ -45,7 +45,7 @@ void Server::run()
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
-    rules_opt.time = FLAGS_turn_timeout;
+    rules_opt.time = FLAGS_time;
     rules_opt.map_file = FLAGS_map;
     rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
