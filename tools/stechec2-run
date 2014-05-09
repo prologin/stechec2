@@ -37,24 +37,25 @@ parser.add_argument(
     '-v', '--version', action='store_true',
     help='Display version information'
 )
+
+# Selection of the processes to spawn
 parser.add_argument(
     '-n', '--inhibit', metavar='P', type=int, action='append', default=[],
-    help='Do not start process number P (0 = server, 1=first client, ...'
+    help='Do not start process number P (0 = server, 1 = first client, ...'
     ' (champions first, spectators last)'
 )
+
+# Debugging options
 parser.add_argument(
-    '-g', '--gdb', metavar='P', type=int, action='append', default=[],
-    help='Debug process number P with gdb (0 = server, 1=first client, ...'
-    ' (champions first, spectators last)'
+    '-d', '--debug', metavar='P', type=int, action='append', default=[],
+    help='Debug process number P (same numbering scheme as for -n)'
 )
 parser.add_argument(
-    '--valgrind', metavar='P', type=int, action='append', default=[],
-    help='Track process number P with Valgrind (usage is the same as for --gdb'
+    '--debug-cmd', default='gdb',
+    help='Command to use to debug. Default to gdb.'
+         ' For instance: "valgrind --leak-check=full"'
 )
-parser.add_argument(
-    '--valgrind-opts', default='',
-    help='Options to pass to valgrind'
-)
+
 parser.add_argument(
     'config-file', metavar='config-file',
     help='use F as a configuration file for the match'
@@ -90,10 +91,8 @@ def stechec2_run(args, options):
 
     def start_proc(name, opts, popt):
         p = next(next_process)
-        if p in args.gdb:
-            opts = ['gdb', '--args'] + opts
-        elif p in args.valgrind:
-            opts = ['valgrind'] + shlex.split(args.valgrind_opts) + opts
+        if p in args.debug:
+            opts = shlex.split(args.debug_cmd) + opts
         cmd_line = ' '.join(opts)
         if p in args.inhibit:
             print('>>> Not starting {}[P={}]:'.format(name, p))
