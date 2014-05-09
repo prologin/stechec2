@@ -196,7 +196,7 @@ distclean: clean
 	done
 
 list-run-reqs:
-	@echo "$(_run_reqs)"
+	@echo '$(_run_reqs)'
 
 %.o: %.c
 	$(call cmd,cc)
