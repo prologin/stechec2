@@ -20,7 +20,8 @@ void ClientMessenger::send(const utils::Buffer& buf)
     msg.handle_buffer(out_buf);
     out_buf += buf;
 
-    sckt_->send(out_buf);
+    if (!sckt_->send(out_buf))
+        FATAL("Unable to send message to server");
 }
 
 void ClientMessenger::send_actions(Actions& actions)
@@ -33,6 +34,8 @@ void ClientMessenger::send_actions(Actions& actions)
 utils::Buffer* ClientMessenger::recv()
 {
     utils::Buffer* buf = sckt_->recv();
+    if (!buf)
+        FATAL("Unable to receive message from server");
 
     net::Message msg;
     msg.handle_buffer(*buf);
@@ -71,12 +74,15 @@ void ClientMessenger::ack()
 
     msg.handle_buffer(buf);
 
-    sckt_->send(buf);
+    if (!sckt_->send(buf))
+        FATAL("Unable to send ack to server");
 }
 
 void ClientMessenger::wait_for_ack()
 {
     utils::Buffer* buf = sckt_->recv();
+    if (!buf)
+        FATAL("Unable to receive ack from server");
 
     net::Message msg;
     msg.handle_buffer(*buf);

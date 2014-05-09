@@ -36,6 +36,8 @@ void ClientSocket::init()
     {
         FATAL("REQ: %s: %s", reqrep_addr_.c_str(), e.what());
     }
+
+    shared_init();
 }
 
 void ClientSocket::close()

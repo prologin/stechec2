@@ -18,7 +18,8 @@ void ServerMessenger::send(const utils::Buffer& buf)
     msg.handle_buffer(out_buf);
     out_buf += buf;
 
-    sckt_->send(out_buf);
+    if (!sckt_->send(out_buf))
+        FATAL("Unable to send data to client");
 }
 
 void ServerMessenger::push(const utils::Buffer& buf)
@@ -54,6 +55,8 @@ void ServerMessenger::push_id(uint32_t id)
 utils::Buffer* ServerMessenger::recv()
 {
     utils::Buffer* buf = sckt_->recv();
+    if (!buf)
+        FATAL("Unable to receive data from client");
 
     net::Message msg;
     msg.handle_buffer(*buf);
@@ -80,12 +83,15 @@ void ServerMessenger::ack()
 
     msg.handle_buffer(buf);
 
-    sckt_->send(buf);
+    if (!sckt_->send(buf))
+        FATAL("Unable to send ack to client");
 }
 
 void ServerMessenger::wait_for_ack()
 {
     utils::Buffer* buf = sckt_->recv();
+    if (!buf)
+        FATAL("Unable to receive ack from client");
 
     net::Message msg;
     msg.handle_buffer(*buf);

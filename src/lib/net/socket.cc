@@ -5,6 +5,8 @@
 #include <utils/log.hh>
 #include <net/message.hh>
 
+DEFINE_int32(socket_timeout, -1, "Timeout value to use for all sock ops.");
+
 namespace net {
 
 Socket::Socket(const std::string& pubsub_addr,
@@ -14,6 +16,16 @@ Socket::Socket(const std::string& pubsub_addr,
       reqrep_addr_(reqrep_addr),
       ctx_(io_thread)
 {
+}
+
+void Socket::shared_init()
+{
+    int timeout = FLAGS_socket_timeout;
+    if (timeout != -1)
+    {
+        pubsub_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof (timeout));
+        reqrep_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof (timeout));
+    }
 }
 
 bool Socket::send(const utils::Buffer& msg, int flags)

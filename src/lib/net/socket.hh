@@ -23,7 +23,7 @@ public:
            const std::string& reqrep_addr,
            int io_thread);
 
-    virtual void init() = 0;
+    virtual void init() { shared_init(); }
     virtual bool send(const utils::Buffer& msg, int flags = 0);
     virtual utils::Buffer* recv(int flags = 0);
     virtual bool poll(long timeout);
@@ -36,6 +36,9 @@ protected:
     utils::Buffer* recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
 
 protected:
+    // Must be called by subclasses after custom initialization.
+    void shared_init();
+
     std::string pubsub_addr_;
     std::string reqrep_addr_;
 
