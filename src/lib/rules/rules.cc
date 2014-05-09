@@ -145,8 +145,6 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
                 players_timeouting.erase(player_id);
         }
 
-        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 1111111111");
-
         // Increase timeout count for players that did not answer in time
         for (auto player_id : players_timeouting)
         {
@@ -169,8 +167,6 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             }
         }
 
-        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 22222222");
-
         // No timeout for spectators
         while (spectators_count > 0)
         {
@@ -178,8 +174,6 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             msgr->ack();
             spectators_count--;
         }
-
-        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 333333333");
 
         for (auto action: actions->actions())
             apply_action(action);
