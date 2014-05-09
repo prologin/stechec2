@@ -1,6 +1,7 @@
-#include <unordered_set>
-
 #include "rules.hh"
+
+#include <unordered_set>
+#include <set>
 
 namespace rules {
 
@@ -99,14 +100,19 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start();
 
-    std::unordered_set<int> spectators_ids;
-    for (auto s : spectators_->players)
-    {
-        DEBUG("Registered %d as a spectator", s->id);
-        spectators_ids.insert(s->id);
-    }
+    std::unordered_set<uint32_t> spectators_ids;
+    for (auto spectator : spectators_->players)
+        spectators_ids.insert(spectator->id);
 
-    unsigned int size = players_->players.size() + spectators_->players.size();
+    std::unordered_set<uint32_t> players_ids;
+    for (auto player : players_->players)
+        players_ids.insert(player->id);
+    for (auto spectator : spectators_->players)
+        players_ids.insert(spectator->id);
+
+    std::set<uint32_t> players_timeouting;
+    unsigned int players_count = players_->players.size() +
+        spectators_->players.size();
 
     while (!is_finished())
     {
@@ -116,24 +122,64 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         Actions* actions = get_actions();
         actions->clear();
 
-        for (unsigned int i = 0; i < size; ++i)
+        players_timeouting.clear();
+        for (auto player : players_->players)
+            players_timeouting.insert(player->id);
+
+        for (unsigned int i = 0; i < players_count; ++i)
         {
             if (!msgr->poll(timeout_))
                 break;
 
-            msgr->recv_actions(actions);
-            msgr->ack();
+            // Ignore revived players
+            do
+            {
+                msgr->recv_actions(actions);
+                msgr->ack();
+            } while (players_ids.find(msgr->last_client_id()) == players_ids.end());
 
             unsigned player_id = msgr->last_client_id();
             if (spectators_ids.find(player_id) != spectators_ids.end())
                 spectators_count--;
+            else
+                players_timeouting.erase(player_id);
         }
+
+        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 1111111111");
+
+        // Increase timeout count for players that did not answer in time
+        for (auto player_id : players_timeouting)
+        {
+            uint32_t player_id_timeouting = 0;
+            for (uint32_t i = 0; i < players_->players.size(); ++i)
+            {
+                if (player_id == players_->players[i]->id)
+                {
+                    player_id_timeouting = i;
+                    break;
+                }
+            }
+
+            players_->players[player_id_timeouting]->nb_timeout++;
+
+            if (players_->players[player_id_timeouting]->nb_timeout == 3)
+            {
+                players_ids.erase(player_id);
+                players_count--;
+            }
+        }
+
+        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 22222222");
+
+        // No timeout for spectators
         while (spectators_count > 0)
         {
             msgr->recv_actions(actions);
             msgr->ack();
             spectators_count--;
         }
+
+        DEBUG("LOLOLOLOLOLOLOLOLOLOL - 333333333");
 
         for (auto action: actions->actions())
             apply_action(action);
