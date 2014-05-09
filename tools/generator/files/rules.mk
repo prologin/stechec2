@@ -106,7 +106,15 @@ $(1)-prologin.dll: $$(src)
 endef
 
 define get_jclass
-  _targets := $$(_targets) $$(wildcard *.class)
+  src := $$(wildcard *.class)
+  # Before the compilation, targets don't exist yet, so use the list of source
+  # files instead. We will get an incomplete list of targets, but these will be
+  # enough for compiling purposes.
+  ifeq ($$(src),)
+	src := $$(filter %.java,$$($(1)-srcs))
+	src := $$(src:.java=.class)
+  endif
+  _targets := $$(_targets) $$(src)
 endef
 
 define build_lib
