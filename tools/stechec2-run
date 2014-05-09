@@ -44,6 +44,10 @@ parser.add_argument(
     help='Do not start process number P (0 = server, 1 = first client, ...'
     ' (champions first, spectators last)'
 )
+parser.add_argument(
+    '-p', '--process', metavar='P', type=int, action='append', default=[],
+    help='Start process number P only (same numbering scheme as for -n'
+)
 
 # Debugging options
 parser.add_argument(
@@ -75,6 +79,10 @@ def stechec2_run(args, options):
     server_opt = ['stechec2-server']
     client_opt = ['stechec2-client']
 
+    if args.inhibit and args.process:
+        print('You cannot use both --inhibit and --process', file=sys.stderr)
+        sys.exit(2)
+
     # Used by both client and server
     for i in ['rules', 'verbose', 'map', 'time', 'memory']:
         if i in options:
@@ -89,18 +97,26 @@ def stechec2_run(args, options):
 
     next_process = iter(itertools.count())
 
+    def to_start(process_id):
+        if args.process:
+            return process_id in args.process
+        elif args.inhibit:
+            return process_id in args.inhibit
+        else:
+            return True
+
     def start_proc(name, opts, popt):
         p = next(next_process)
         if p in args.debug:
             opts = shlex.split(args.debug_cmd) + opts
         cmd_line = ' '.join(opts)
-        if p in args.inhibit:
-            print('>>> Not starting {}[P={}]:'.format(name, p))
-            print('    {}'.format(cmd_line))
-        else:
+        if to_start(p):
             print('>>> Starting {}[P={}]:'.format(name, p))
             print('    {}'.format(cmd_line))
             poll.append(subprocess.Popen(opts, **popt))
+        else:
+            print('>>> Not starting {}[P={}]:'.format(name, p))
+            print('    {}'.format(cmd_line))
 
     # Start the server
     start_proc('server', server_opt, popt)
