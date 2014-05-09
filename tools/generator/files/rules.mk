@@ -106,10 +106,7 @@ $(1)-prologin.dll: $$(src)
 endef
 
 define get_jclass
-  src := $$(filter %.java,$$($(1)-srcs))
-  ifneq ($$(src),)
-    _targets := $$(_targets) $$(src:.java=.class)
-  endif
+  _targets := $$(_targets) $$(wildcard *.class)
 endef
 
 define build_lib
