@@ -55,8 +55,8 @@ parser.add_argument(
     help='Debug process number P (same numbering scheme as for -n)'
 )
 parser.add_argument(
-    '--debug-cmd', default='gdb',
-    help='Command to use to debug. Default to gdb.'
+    '--debug-cmd', default='gdb --args',
+    help='Command to use to debug. Default to "gdb --args".'
          ' For instance: "valgrind --leak-check=full"'
 )
 
