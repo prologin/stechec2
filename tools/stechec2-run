@@ -101,7 +101,7 @@ def stechec2_run(args, options):
         if args.process:
             return process_id in args.process
         elif args.inhibit:
-            return process_id in args.inhibit
+            return process_id not in args.inhibit
         else:
             return True
 
