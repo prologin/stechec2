@@ -13,7 +13,7 @@ public:
     MyGameState() : GameState(), x(0) {}
     MyGameState(const MyGameState& mgs) : GameState(), x(mgs.x) {}
 
-    virtual GameState* copy() const { return new MyGameState(*this); }
+    virtual GameState* copy() const override { return new MyGameState(*this); }
 
     int x;
 };
@@ -23,7 +23,7 @@ class MyIncrAction : public Action<MyGameState>
 public:
     virtual ~MyIncrAction() {}
 
-    virtual int check(const MyGameState* st) const
+    virtual int check(const MyGameState* st) const override
     {
         if (st->x >= 3)
             return 1;
@@ -31,22 +31,22 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&)
+    virtual void handle_buffer(utils::Buffer&) override
     {
     }
 
-    virtual uint32_t player_id() const
+    virtual uint32_t player_id() const override
     {
         return 0;
     }
 
-    virtual uint32_t id() const
+    virtual uint32_t id() const override
     {
         return 0;
     }
 
 private:
-    virtual void apply_on(MyGameState* st) const
+    virtual void apply_on(MyGameState* st) const override
     {
         st->x += 1;
     }
@@ -57,7 +57,7 @@ class MyDecrAction : public Action<MyGameState>
 public:
     virtual ~MyDecrAction() {}
 
-    virtual int check(const MyGameState* st) const
+    virtual int check(const MyGameState* st) const override
     {
         if (st->x <= 0)
             return 1;
@@ -65,22 +65,22 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&)
+    virtual void handle_buffer(utils::Buffer&) override
     {
     }
 
-    virtual uint32_t player_id() const
+    virtual uint32_t player_id() const override
     {
         return 0;
     }
 
-    virtual uint32_t id() const
+    virtual uint32_t id() const override
     {
         return 0;
     }
 
 private:
-    virtual void apply_on(MyGameState* st) const
+    virtual void apply_on(MyGameState* st) const override
     {
         st->x -= 1;
     }
@@ -88,11 +88,11 @@ private:
 
 TEST(RulesAction, CheckApply)
 {
-    MyGameState* mgs = new MyGameState();
+    auto mgs = new MyGameState();
     EXPECT_EQ(0, mgs->x);
 
-    MyIncrAction* incr = new MyIncrAction();
-    MyDecrAction* decr = new MyDecrAction();
+    auto incr = new MyIncrAction();
+    auto decr = new MyDecrAction();
 
     mgs = incr->apply(mgs);
     EXPECT_EQ(1, mgs->x);
@@ -110,10 +110,10 @@ TEST(RulesAction, CheckApply)
 
 TEST(RulesAction, CheckError)
 {
-    MyGameState* mgs = new MyGameState();
+    auto mgs = new MyGameState();
 
-    MyIncrAction* incr = new MyIncrAction();
-    MyDecrAction* decr = new MyDecrAction();
+    auto incr = new MyIncrAction();
+    auto decr = new MyDecrAction();
 
     EXPECT_NE(0, decr->check(mgs));
 
@@ -129,10 +129,10 @@ TEST(RulesAction, CheckError)
 
 TEST(RulesAction, CheckCancel)
 {
-    MyGameState* mgs = new MyGameState();
+    auto mgs = new MyGameState();
 
-    MyIncrAction* incr = new MyIncrAction();
-    MyDecrAction* decr = new MyDecrAction();
+    auto incr = new MyIncrAction();
+    auto decr = new MyDecrAction();
 
     EXPECT_EQ(0, mgs->x);
     mgs = incr->apply(mgs);

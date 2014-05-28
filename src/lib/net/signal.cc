@@ -88,7 +88,7 @@ void handle_signals(signal_type stype, const std::string& addr, int nbr)
 
     act.sa_flags = 0;
 
-    if (sigaction(SIGINT, &act, NULL) == -1)
+    if (sigaction(SIGINT, &act, nullptr) == -1)
         WARN("Could not place signal handler");
 }
 

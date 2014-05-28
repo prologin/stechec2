@@ -6,17 +6,17 @@ using namespace rules;
 
 class MockGameState : public GameState
 {
-    virtual GameState* copy() const { return new MockGameState(); }
+    virtual GameState* copy() const override { return new MockGameState(); }
 };
 
 // Check get_old_version / set_old_version
 TEST(GameState, OldVersion)
 {
-    MockGameState* s1 = new MockGameState();
-    MockGameState* s2 = new MockGameState();
+    auto s1 = new MockGameState();
+    auto s2 = new MockGameState();
 
     // Check if the old version is correctly initialized to NULL
-    EXPECT_EQ(0, s1->get_old_version());
+    EXPECT_EQ(nullptr, s1->get_old_version());
 
     // Check if set_old_version works
     s1->set_old_version(s2);
@@ -41,8 +41,8 @@ TEST(GameState, ChainDelete)
     bool s1_deleted = false;
     bool s2_deleted = false;
 
-    ChainDeleteGameState* s1 = new ChainDeleteGameState(&s1_deleted);
-    ChainDeleteGameState* s2 = new ChainDeleteGameState(&s2_deleted);
+    auto s1 = new ChainDeleteGameState(&s1_deleted);
+    auto s2 = new ChainDeleteGameState(&s2_deleted);
 
     s1->set_old_version(s2);
     delete s1;

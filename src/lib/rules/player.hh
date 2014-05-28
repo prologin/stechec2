@@ -43,8 +43,8 @@ struct Players
     {
         if (buf.serialize())
         {
-            for (unsigned i = 0; i < players.size(); ++i)
-                players[i]->handle_buffer(buf);
+            for (auto& p : players)
+                p->handle_buffer(buf);
         }
         else
         {

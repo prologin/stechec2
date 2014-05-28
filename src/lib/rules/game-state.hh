@@ -10,7 +10,7 @@ class GameState
 {
 public:
     // Default constructor: no older version.
-    GameState() : old_version_(0) {}
+    GameState() : old_version_(nullptr) {}
 
     virtual ~GameState();
 
@@ -27,7 +27,7 @@ public:
     void clear_old_version();
 
     // Checks if the state has something to cancel.
-    bool can_cancel() const { return old_version_ != 0; }
+    bool can_cancel() const { return old_version_ != nullptr; }
 
 protected:
     // Copy constructor. Should not be called directly, use the "copy" virtual
@@ -40,7 +40,7 @@ protected:
     //
     // Most of the time, copying is done in order to use the copy as the new
     // version, so the old version is overwritten anyway. See Action::apply.
-    GameState(const GameState&) : old_version_(0) {}
+    GameState(const GameState&) : old_version_(nullptr) {}
 
     // The older version of this state.
     // Basically, each state is linked to its older version so that an action

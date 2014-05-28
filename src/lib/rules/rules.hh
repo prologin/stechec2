@@ -77,9 +77,9 @@ class SynchronousRules : public Rules
 public:
     explicit SynchronousRules(const Options opt);
 
-    virtual void client_loop(ClientMessenger_sptr msgr) final;
-    virtual void spectator_loop(ClientMessenger_sptr msgr) final;
-    virtual void server_loop(ServerMessenger_sptr msgr) final;
+    virtual void client_loop(ClientMessenger_sptr msgr) final override;
+    virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
+    virtual void server_loop(ServerMessenger_sptr msgr) final override;
 };
 
 class TurnBasedRules : public Rules
@@ -90,9 +90,9 @@ public:
     // Called each time a player has finished its turn
     virtual void end_of_player_turn(uint32_t) {}
 
-    virtual void client_loop(ClientMessenger_sptr msgr) final;
-    virtual void spectator_loop(ClientMessenger_sptr msgr) final;
-    virtual void server_loop(ServerMessenger_sptr msgr) final;
+    virtual void client_loop(ClientMessenger_sptr msgr) final override;
+    virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
+    virtual void server_loop(ServerMessenger_sptr msgr) final override;
 };
 
 } // namespace rules

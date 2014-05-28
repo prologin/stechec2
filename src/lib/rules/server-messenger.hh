@@ -23,9 +23,9 @@ class ServerMessenger : public Messenger
 public:
     ServerMessenger(net::ServerSocket_sptr sckt);
 
-    virtual void send(const utils::Buffer&);
+    virtual void send(const utils::Buffer&) override;
 
-    virtual utils::Buffer* recv();
+    virtual utils::Buffer* recv() override;
     void recv_actions(Actions* actions);
 
     bool poll(long timeout);

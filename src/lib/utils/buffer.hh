@@ -11,6 +11,7 @@
 # include <string>
 # include <vector>
 # include <list>
+#include <utility>
 
 namespace utils {
 
@@ -30,8 +31,8 @@ public:
     Buffer() : serialize_(true) {}
 
     // If a buffer is provided, it's unserialization
-    Buffer(const std::vector<uint8_t>& data)
-        : data_(data), idx_(0), serialize_(false) {}
+    Buffer(std::vector<uint8_t>  data)
+        : data_(std::move(data)), idx_(0), serialize_(false) {}
 
     // Allow access to the serialized data
     const uint8_t* data() const { return &data_[0]; }

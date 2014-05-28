@@ -395,10 +395,10 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
-            for (unsigned int i = 0; i < spectators_->players.size(); i++)
+            for (auto& s : spectators_->players)
             {
-                DEBUG("Turn for spectator %d", spectators_->players[i]->id);
-                msgr->push_id(spectators_->players[i]->id);
+                DEBUG("Turn for spectator %d", s->id);
+                msgr->push_id(s->id);
                 Actions* actions = get_actions();
                 actions->clear();
                 DEBUG("Receiving its only Ack action...");
@@ -406,7 +406,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 DEBUG("Acknowledging...");
                 msgr->ack();
 
-                end_of_player_turn(spectators_->players[i]->id);
+                end_of_player_turn(s->id);
             }
         }
 

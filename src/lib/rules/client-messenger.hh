@@ -24,10 +24,10 @@ class ClientMessenger : public Messenger
 public:
     ClientMessenger(net::ClientSocket_sptr sckt, uint32_t client_id);
 
-    virtual void send(const utils::Buffer&);
+    virtual void send(const utils::Buffer&) override;
     void send_actions(Actions&);
 
-    virtual utils::Buffer* recv();
+    virtual utils::Buffer* recv() override;
 
     utils::Buffer* pull();
     void pull_actions(Actions*);
