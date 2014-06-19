@@ -540,14 +540,14 @@ EOF
     @api_file = 'api.cs'
 
     ######################################
-    ##  interface.hh file generating    ##
+    ##  interface.hh file generation    ##
     ######################################
     CSharpCxxFileGenerator.new.build
 
     generate_api
 
     ######################################
-    ##  prologin.cs file generating     ##
+    ##  prologin.cs file generation     ##
     ######################################
     @f = File.new(@path + @source_file, 'w')
     print_banner "generator_cs.rb"

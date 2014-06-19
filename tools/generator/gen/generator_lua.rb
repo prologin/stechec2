@@ -213,12 +213,12 @@ include ../includes/makelua
     @source_file = $conf['conf']['player_filename'] + '.lua'
 
     ######################################
-    ##  interface.hh file generating    ##
+    ##  interface.hh file generation    ##
     ######################################
     LuaCxxFileGenerator.new.build	
     
     ######################################
-    ##  prologin.lua file generating    ##
+    ##  prologin.lua file generation    ##
     ######################################
     @f = File.new(@path + @source_file, 'w')
     print_banner "generator_lua.rb"

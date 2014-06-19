@@ -494,7 +494,7 @@ class JavaFileGenerator < JavaProto
     JavaCxxFileGenerator.new.build
 
     ######################################
-    ##  Interface.java file generating  ##
+    ##  Interface.java file generation  ##
     ######################################
     @f = File.new(@path + (@java_interface + '.java'), 'w')
     print_banner "generator_java.rb"
@@ -533,7 +533,7 @@ class JavaFileGenerator < JavaProto
     @f.close
 
     #####################################
-    ##  Prologin.java file generating  ##
+    ##  Prologin.java file generation  ##
     #####################################
     @f = File.new(@path + (@java_file + '.java'), 'w')
     print_banner "generator_java.rb"

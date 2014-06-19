@@ -513,12 +513,12 @@ EOF
     @source_file = $conf['conf']['player_filename'] + '.py'
 
     ######################################
-    ##  interface.hh file generating    ##
+    ##  interface.hh file generation    ##
     ######################################
     Python2CxxFileGenerator.new.build
 
     ######################################
-    ##  prologin.py file generating     ##
+    ##  prologin.py file generation     ##
     ######################################
     @f = File.new(@path + @source_file, 'w')
     @f.puts "# -*- coding: iso-8859-1 -*-"
