@@ -52,17 +52,22 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         l[i].field_int = 42;
-        simple_struct lss[42];
-        int lsr[42];
+        l[i].field_int_arr.length = 42;
+        l[i].field_str_arr.length = 42;
+        l[i].field_int_arr.datas = malloc(42 * sizeof (int));
+        l[i].field_str_arr.datas = malloc(42 * sizeof (simple_struct));
         for (int j = 0; j < 42; ++j)
         {
-            lsr[j] = 42;
-            lss[j] = (simple_struct){ 42, true };
+            l[i].field_int_arr.datas[j] = 42;
+            l[i].field_str_arr.datas[j] = (simple_struct){ 42, true };
         }
-        l[i].field_int_arr = (int_array){lsr, 42};
-        l[i].field_str_arr = (simple_struct_array){lss, 42};
     }
     struct_with_array_array ll = send_me_struct_array((struct_with_array_array){l, 42});
+    for (int i = 0; i < 42; ++i)
+    {
+        free(l[i].field_int_arr.datas);
+        free(l[i].field_str_arr.datas);
+    }
     assert(ll.length == 42);
     for (int i = 0; i < 42; ++i)
     {
