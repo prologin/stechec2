@@ -22,16 +22,19 @@ void test()
     int_array r = returns_range(1, 100);
     for (int i = 1; i < 100; ++i)
         assert(r.datas[i - 1] == i);
+    free(r.datas);
 
     r = returns_range(1, 10000);
     for (int i = 1; i < 10000; ++i)
         assert(r.datas[i - 1] == i);
+    free(r.datas);
 
     int vr[] = {1, 3, 2, 4, 5, 7, 6};
     int_array v = (int_array){vr, 7};
     v = returns_sorted(v);
     for (int i = 0; i < 7; ++i)
         assert(v.datas[i] == i + 1);
+    free(v.datas);
 
     struct_with_array s;
     s.field_int = 42;
@@ -81,5 +84,11 @@ void test()
             assert(ll.datas[i].field_str_arr.datas[j].field_bool == true);
         }
     }
+    for (int i = 0; i < 42; ++i)
+    {
+        free(ll.datas[i].field_int_arr.datas);
+        free(ll.datas[i].field_str_arr.datas);
+    }
+    free(ll.datas);
 }
 
