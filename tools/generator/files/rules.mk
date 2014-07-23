@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 #
-# Common Makefile for C, C++, Ocaml and Java.
+# Common Makefile for C, C++, Ocaml, Haskell and Java.
 #
 # Copyright (C) 2007 Freebox S.A.
 # Copyright (C) 2007 Prologin.
@@ -22,16 +22,18 @@ else
 endif
 
 ifndef NOCOLORS
-  quiet_cmd_cc		= [1;32mcc   $< -> $@[0m
-  quiet_cmd_cxx		= [1;32mcxx  $< -> $@[0m
-  quiet_cmd_gmcs	= [1;34mcs   $^ -> $@[0m
-  quiet_cmd_java	= [1;34mjava $< -> $@[0m
-  quiet_cmd_ocaml	= [1;33mcaml $< -> $@[0m
-  quiet_cmd_ocamlo	= [1;33mcaml $< -> $@[0m
+  quiet_cmd_cc			= [1;32mcc   $< -> $@[0m
+  quiet_cmd_cxx			= [1;32mcxx  $< -> $@[0m
+  quiet_cmd_gmcs		= [1;34mcs   $^ -> $@[0m
+  quiet_cmd_java		= [1;34mjava $< -> $@[0m
+  quiet_cmd_ocaml		= [1;33mcaml $< -> $@[0m
+  quiet_cmd_ocamlo		= [1;33mcaml $< -> $@[0m
+  quiet_cmd_hsc2hs		= [1;32mhsc2hs   $< -> $@[0m
+  quiet_cmd_ghc			= [1;33mghc   $^ -> $@[0m
   quiet_cmd_ld_shared	= [1;36mlib  $@[0m
-  quiet_cmd_clean	= [1;35mclean[0m
+  quiet_cmd_clean		= [1;35mclean[0m
   quiet_cmd_distclean	= [1;35mdistclean[0m
-  quiet_cmd_tar		= [1;35mtar  champion.tgz[0m
+  quiet_cmd_tar			= [1;35mtar  champion.tgz[0m
 else
   quiet_cmd_cc		= CC      $@
   quiet_cmd_cxx		= CXX     $@
@@ -39,6 +41,8 @@ else
   quiet_cmd_java	= JAVA    $@
   quiet_cmd_ocaml	= OCAML   $@
   quiet_cmd_ocamlo	= OCAML   $@
+  quiet_cmd_hsc2hs    	= HSC2HS      $@
+  quiet_cmd_ghc    	= GHC      $@
   quiet_cmd_ld_shared	= LINK    $@
   quiet_cmd_clean	= CLEAN   objects
   quiet_cmd_distclean	= CLEAN   targets
@@ -60,12 +64,22 @@ GMCS		= MONO_SHARED_DIR=/tmp gmcs </dev/null
 CPP		= $(CROSS)cpp
 JAVAC		= javac
 OCAMLC 		= $(CROSS)ocamlc
+GHC		= $(CROSS)ghc
+HSC2HS		= $(CROSS)hsc2hs
 LD		= $(CROSS)ld
 
-OCAML_LIBS    = -L`ocamlc -where` -Wl,-R`ocamlc -where` -lcamlrun_shared -lcurses -lm
-OCAML_CFLAGS  = -O2 -I`ocamlc -where`
+OCAML_LIBS      = -L`ocamlc -where` -Wl,-R`ocamlc -where` -lcamlrun_shared -lcurses -lm
+OCAML_CFLAGS    = -O2 -I`ocamlc -where`
 
-LANG_FILE     = _lang
+HASKELL_CFLAGS	= -O2 -I`$(GHC) --print-libdir`/include -std=c++11
+
+LANG_FILE     	= _lang
+
+ifeq ($(STECHEC_LANG),haskell)
+	LINK_CMD = ghc
+else
+	LINK_CMD = ld_shared
+endif
 
 # ==============================================================================
 # build commands
@@ -91,7 +105,19 @@ define get_ocaml_objs
 
   $(1)-caml.o: override _CAMLFLAGS = $$($(1)-camlflags)
   $(1)-caml.o: $$($(1)-camlobjs:.o=.cmi) $$($(1)-camlobjs:.o=.cmo)
-	  $$(call cmd,ocamlo)
+	$$(call cmd,ocamlo)
+endef
+
+define get_haskell_objs
+  $(1)-hsc-src := $$(filter %.hsc,$$($(1)-srcs))
+  $(1)-hs-src := $$(filter %.hs,$$($(1)-srcs)) $$($(1)-hsc-src:.hsc=.hs)
+
+  ifneq ($$($(1)-hs-src),)
+    $(1)-deps := $$($(1)-hs-src)
+    $(1)-cxxflags := $$($(1)-cxxflags) $$(HASKELL_CFLAGS)
+  endif
+
+  cleanfiles := $$($(1)-hs-src:.hs=.hi) $$($(1)-hs-src:.hs=.o) $(1).so $$($(1)-hsc-src:.hsc=.hs) $$(cleanfiles)
 endef
 
 define get_csclass
@@ -111,8 +137,8 @@ define get_jclass
   # files instead. We will get an incomplete list of targets, but these will be
   # enough for compiling purposes.
   ifeq ($$(src),)
-	src := $$(filter %.java,$$($(1)-srcs))
-	src := $$(src:.java=.class)
+    src := $$(filter %.java,$$($(1)-srcs))
+    src := $$(src:.java=.class)
   endif
   _targets := $$(_targets) $$(src)
 endef
@@ -130,19 +156,21 @@ define build_lib
     $(1).so: $$($(1)-deps)
   endif
 
-  $(1).so: $$(_obj)
-	$$(call cmd,ld_shared)
+$(1).so: $$(_obj)
+	$$(call cmd,$(LINK_CMD))
 endef
 
 
-c_flags		= $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
-cxx_flags	= $(_CXXFLAGS) -MD -MP -MF $(@D)/.$(@F).d
-cpp_flags	= $(_CPPFLAGS)
-cmd_cc		= $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
-cmd_cxx		= $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
-cmd_java	= $(JAVAC) $(java_flags) $<
-cmd_ocaml	= $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
-cmd_ocamlo	= $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
+c_flags			= $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
+cxx_flags		= $(_CXXFLAGS) -MD -MP -MF $(@D)/.$(@F).d
+cpp_flags		= $(_CPPFLAGS)
+cmd_cc			= $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
+cmd_cxx			= $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
+cmd_java		= $(JAVAC) $(java_flags) $<
+cmd_ocaml		= $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
+cmd_ocamlo		= $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
+cmd_hsc2hs		= $(HSC2HS) $< -o $@
+cmd_ghc			= $(GHC) -O9 -dynamic --make -shared -fPIC -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` $(filter %.o %.a %.hs,$^) -o $@
 
 ld_flags	= $(_LDFLAGS)
 cmd_ld_shared	= $(CXX) $(filter %.o %.a,$^) $(ld_flags) -shared -o $@ $(_LDLIBS)
@@ -159,6 +187,7 @@ $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),c)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),cc)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),cpp)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_ocaml_objs,$(t))))
+$(foreach t,$(lib_TARGETS),$(eval $(call get_haskell_objs,$(t))))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_jclass,$(t))))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_csclass,$(t))))
 
@@ -207,17 +236,20 @@ list-run-reqs:
 %.o: %.cpp
 	$(call cmd,cxx)
 
-%.class : %.java
+%.class: %.java
 	$(call cmd,java)
 
-%.cmi   : %.mli
+%.cmi: %.mli
 	$(call cmd,ocaml)
 
-%.cmo   : %.ml %.mli %.cmi
+%.cmo: %.ml %.mli %.cmi
 	$(call cmd,ocaml)
 
-%.cmi %.cmo   : %.ml
+%.cmi %.cmo: %.ml
 	$(call cmd,ocaml)
+
+%.hs: %.hsc
+	$(call cmd,hsc2hs)
 
 tar:
 	@echo $(STECHEC_LANG) > $(LANG_FILE)

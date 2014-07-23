@@ -11,6 +11,7 @@ tools/generator/test/cxx
 tools/generator/test/includes
 tools/generator/test/java
 tools/generator/test/php
+tools/generator/test/haskell
 tools/generator/test/python
 tools/generator/test/python2
 tools/generator/test/README

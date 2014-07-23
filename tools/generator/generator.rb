@@ -53,7 +53,7 @@ require 'fileutils'
 require 'pathname'
 require 'conf'
 
-$languages = %w[c cs cxx caml java python2 python php]
+$languages = %w[c cs cxx caml java python2 python php haskell]
 
 def make_player
   $languages.each do |x|
@@ -74,7 +74,7 @@ def make_player
   CxxFileGenerator.new.build
   CamlFileGenerator.new.build
   JavaFileGenerator.new.build
-#  HaskellFileGenerator.new.build
+  HaskellFileGenerator.new.build
 #  RubyFileGenerator.new.build
 #  LuaFileGenerator.new.build
   PythonFileGenerator.new.build
@@ -110,12 +110,11 @@ def make_includes
 #   PhpMakefile.new.build_client(install_path)
 #   PythonMakefile.new.build_client(install_path)
 #   CSharpMakefile.new.build_client(install_path)
-#  PascalMakefile.new.build_client(install_path)
-# PrologMakefile.new.build_client(install_path)
-#  HaskellMakefile.new.build_client(install_path)
-#  RubyMakefile.new.build_client(install_path)
-#  JsMakefile.new.build_client(install_path)
-#  LuaMakefile.new.build_client(install_path)
+#   PascalMakefile.new.build_client(install_path)
+#   PrologMakefile.new.build_client(install_path)
+#   RubyMakefile.new.build_client(install_path)
+#   JsMakefile.new.build_client(install_path)
+#   LuaMakefile.new.build_client(install_path)
 end
 
 def make_server
@@ -133,7 +132,7 @@ def make_server
   JavaMakefile.new.build_metaserver(install_path)
   # PascalMakefile.new.build_metaserver(install_path)
   CamlMakefile.new.build_metaserver(install_path)
-  # HaskellMakefile.new.build_metaserver(install_path)
+  HaskellMakefile.new.build_metaserver(install_path)
   # LuaMakefile.new.build_metaserver(install_path)
   PythonMakefile.new.build_metaserver(install_path)
   Python2Makefile.new.build_metaserver(install_path)

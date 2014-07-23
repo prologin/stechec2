@@ -105,6 +105,7 @@ class Function
   attr_accessor :args
   attr_accessor :conf
   attr_accessor :dumps
+  attr_accessor :summary
 
   def initialize(types, conf, dumps = nil)
     @conf = conf
@@ -118,6 +119,7 @@ class Function
       @args = []
     end
     @dumps = dumps if dumps
+    @summary = conf['fct_summary']
   end
 end
 
@@ -249,6 +251,15 @@ to the script file : gen/" + script
       print_multiline_comment(x['cst_comment'], prestr)
       print_constant(x['cst_type'], x['cst_name'], x['cst_val'])
       @f.puts "\n"
+    end
+  end
+
+  def for_each_constant(print_comment = true, &block)
+    $conf['constant'].delete_if {|x| x['doc_extra'] }
+    $conf['constant'].each do |x|
+      print_multiline_comment(x['cst_comment']) if print_comment
+      block.call(x)
+      @f.puts() if print_comment
     end
   end
 
