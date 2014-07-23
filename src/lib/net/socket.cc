@@ -52,9 +52,18 @@ bool Socket::send_sckt(const utils::Buffer& buf,
 {
     try
     {
-        if (!sckt->send(buf.data(), buf.size(), flags))
-            throw std::runtime_error("Could not send message");
-
+        while (true)
+            try
+            {
+                if (!sckt->send(buf.data(), buf.size(), flags))
+                    throw std::runtime_error("Could not send message");
+            }
+            catch (const zmq::error_t& e)
+            {
+                if (e.num() == EINTR)
+                    continue;
+                throw;
+            }
         return true;
     }
     catch(const std::exception& e)
@@ -69,9 +78,18 @@ utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
     try
     {
         zmq::message_t zmsg;
-
-        if (!sckt->recv(&zmsg, flags))
-            throw std::runtime_error("Could not get message");
+        while (true)
+            try
+            {
+                if (!sckt->recv(&zmsg, flags))
+                    throw std::runtime_error("Could not get message");
+            }
+            catch (const zmq::error_t& e)
+            {
+                if (e.num() == EINTR)
+                    continue;
+                throw;
+            }
 
         std::vector<uint8_t> data;
         data.assign((uint8_t*)zmsg.data(), (uint8_t*)zmsg.data() + zmsg.size());
