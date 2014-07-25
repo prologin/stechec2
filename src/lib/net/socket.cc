@@ -57,6 +57,7 @@ bool Socket::send_sckt(const utils::Buffer& buf,
             {
                 if (!sckt->send(buf.data(), buf.size(), flags))
                     throw std::runtime_error("Could not send message");
+                break;
             }
             catch (const zmq::error_t& e)
             {
@@ -83,6 +84,7 @@ utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
             {
                 if (!sckt->recv(&zmsg, flags))
                     throw std::runtime_error("Could not get message");
+                break;
             }
             catch (const zmq::error_t& e)
             {
