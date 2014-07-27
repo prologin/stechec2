@@ -494,6 +494,7 @@ lib_TARGETS = #{target}
 #{target}-cxxflags = -fPIC $(shell python3-config --includes)
 #{target}-ldflags = -s $(shell python3-config --ldflags)
 
+STECHEC_LANG=python
 include ../includes/rules.mk
     EOF
     @f.close

@@ -422,6 +422,7 @@ lib_TARGETS = #{target}
 # Evite de toucher a ce qui suit
 #{target}-dists = interface.hh
 #{target}-srcs += interface.cc
+STECHEC_LANG=caml
 include ../includes/rules.mk
     EOF
     @f.close

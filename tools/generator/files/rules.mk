@@ -220,7 +220,7 @@ list-run-reqs:
 	$(call cmd,ocaml)
 
 tar:
-	@echo $(shell basename $(CURDIR)) > $(LANG_FILE)
+	@echo $(STECHEC_LANG) > $(LANG_FILE)
 	$(call cmd,tar)
 	@rm $(LANG_FILE)
 

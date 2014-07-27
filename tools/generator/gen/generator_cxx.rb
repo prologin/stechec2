@@ -77,6 +77,7 @@ lib_TARGETS = #{target}
 
 # Evite de toucher a ce qui suit
 #{target}-dists += #{@header_file}
+STECHEC_LANG=cxx
 include ../includes/rules.mk
     EOF
     @f.close

@@ -475,6 +475,7 @@ pc = $(shell which python2-config >/dev/null 2>&1 && echo python2-config || echo
 #{target}-cxxflags = -fPIC $(shell $(pc) --includes)
 #{target}-ldflags = -s $(shell $(pc) --ldflags)
 
+STECHEC_LANG=python2
 include ../includes/rules.mk
     EOF
     @f.close

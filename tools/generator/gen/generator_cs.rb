@@ -528,6 +528,7 @@ lib_TARGETS = #{target}
     $(shell pkg-config --libs glib-2.0 mono-2)
 #{target}-csflags = -target:library -nowarn:0169,0649
 
+STECHEC_LANG=cs
 include ../includes/rules.mk
 EOF
 @f.close

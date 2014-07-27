@@ -4,7 +4,6 @@
 
 public class Prologin extends Interface
 {
-  // Fonction appellée au début de la partie
   public void test()
   {
     send_me_42(42);

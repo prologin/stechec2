@@ -469,6 +469,7 @@ lib_TARGETS = #{target}
 #{target}-cxxflags = -fPIC $(shell php-config --includes) -Wno-write-strings
 #{target}-ldflags = -s $(shell php-config --libs --ldflags) -lphp5
 
+STECHEC_LANG=php
 include ../includes/rules.mk
 EOF
     @f.close

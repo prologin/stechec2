@@ -570,6 +570,7 @@ EOF
 @f.print <<-EOF
 #{target}-dists = interface.hh
 #{target}-srcs += interface.cc
+STECHEC_LANG=java
 include ../includes/rules.mk
 EOF
 @f.close
