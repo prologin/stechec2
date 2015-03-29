@@ -4,7 +4,7 @@
 
 int main(int argc, char** argv)
 {
-    google::ParseCommandLineFlags(&argc, &argv, true);
+    gflags::ParseCommandLineFlags(&argc, &argv, true);
 
     // The game is on, Mrs Hudson!
     Server server;
