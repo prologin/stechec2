@@ -33,6 +33,8 @@ files = %w{
   rules.cc
   rules.hh
   entry.cc
+  game_state.cc
+  game_state.hh
 }
 files.each do |x|
   if File.exist? 'files/' + x
@@ -93,17 +95,50 @@ class CxxFileGenerator < CxxProto
     File.unlink(filename + ".tmp")
   end
 
+  # Cette fonction utilitaire est copiée plein de fois à travers le code
+  # TODO: factoriser
+  def camel_case(str)
+    strs = str.split("_")
+    strs.each { |s| s.capitalize! }
+    strs.join
+  end
+  
   # api.cc
   def print_cxx_api
     for_each_fun do |fn|
       if not fn.dumps then
         @f.print cxx_proto(fn, "Api::")
-        @f.puts "
+        # genérer plein de boilerplate pour les actions
+        if fn.conf['fct_action'] then
+          class_name = "Action" + (camel_case fn.name)
+          arg_list = fn.args.map(&:name) + ["player_->id"]
+          err_type = fn.ret
+          unless err_type.is_enum?
+            abort("Return type of action #{fn.name} is not an enumeration.")
+          end
+          err_type_name = err_type.conf['enum_name']
+          ok_val = err_type.conf['enum_field'][0][0].upcase
+          @f.puts <<-EOF
+{
+    rules::IAction_sptr action(new #{class_name}(#{arg_list.join(", ")}));
+
+    #{err_type_name} err;
+    if ((err = static_cast<#{err_type_name}>(action->check(game_state_))) != #{ok_val})
+        return err;
+
+    actions_.add(action);
+    game_state_set(action->apply(game_state_));
+    return OK;
+}
+EOF
+        else
+          @f.puts "
 {
   // TODO
   abort();
 }
 "
+        end
       end
     end
   end
@@ -260,6 +295,8 @@ end
 def do_nothing
 end
 
+require 'gen/make_action.rb'
+
 gen = CxxFileGenerator.new
 files.each do |fn|
   gen.expand_variables(fn)
@@ -268,5 +305,8 @@ gen.fill_file_section("api.cc") { gen.print_cxx_api }
 gen.fill_file_section("api.hh") { gen.print_cxx_api_head }
 gen.fill_file_section("interface.cc") { gen.print_interface }
 gen.fill_file_section("constant.hh") { gen.print_cst }
+gen.for_each_fun(false) do |fn|
+  gen.print_action_file(fn)
+end
 
 puts "Done."

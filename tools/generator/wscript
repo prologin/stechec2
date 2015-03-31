@@ -38,6 +38,8 @@ def build(bld):
         'files/rules.cc',
         'files/rules.hh',
         'files/entry.cc',
+        'files/game_state.cc',
+        'files/game_state.hh',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [
@@ -45,6 +47,7 @@ def build(bld):
         'gen/make_tex.rb',
         'gen/make_sphinx.rb',
         'gen/make_rules.rb',
+        'gen/make_action.rb',
         'gen/makefile_prolog.rb',
         'gen/makefile_js.rb',
         'gen/makefile_ruby.rb',

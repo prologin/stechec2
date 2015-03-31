@@ -1,0 +1,103 @@
+CxxFileGenerator.class_eval do
+  
+  
+  def print_action_file(fn)
+    return nil if fn.dumps || (not fn.conf['fct_action'])
+
+    puts "Generating action file for #{fn.name}"
+    
+    ifdef_name = "ACTION_#{fn.name.upcase}_HH"
+    class_name = "Action" + (camel_case fn.name)
+    
+    arg_list = fn.args.map { |arg| [cxx_type(arg.type), arg.name] } \
+               + [["int", "player_id"]]
+
+    constr_args = arg_list.map{|t,v| "#{t} #{v}"}.join(", ")
+    constr_proto = class_name + '(' + constr_args + ')'
+
+    members = arg_list.map{|t,v| "#{t} #{v}_;"}.join("\n    ")
+    bufhandle = arg_list.map{|t,v| "buf.handle(#{v}_);"}.join("\n    ")
+    
+    init_list = arg_list.map{|t,v| "#{v}_(#{v})"}.join("\n    , ")
+    init_list_default = arg_list.map{|t,v| "#{v}_(FIXME)"}.join("\n    , ")
+    
+    File.open("action_#{fn.name}.hh", 'w') do |file|
+      file.write <<-EOF
+// FIXME License notice
+
+#ifndef #{ifdef_name}
+#define #{ifdef_name}
+
+#include <rules/action.hh>
+
+#include "game_state.hh"
+#include "constant.hh"
+
+class #{class_name} : public rules::Action<GameState>
+{
+public:
+    #{constr_proto};
+    #{class_name}();
+
+    virtual int check(const GameState* st) const;
+    virtual void handle_buffer(utils::Buffer& buf);
+    virtual void apply_on(GameState* st) const;
+
+    uint32_t player_id() const;
+    uint32_t id() const;
+
+private:
+    #{members}
+};
+
+#endif // !#{ifdef_name}
+
+EOF
+    end
+    File.open("action_#{fn.name}.cc", 'w') do |file|
+      file.write <<-EOF
+// FIXME License notice
+
+#include "action_#{fn.name}.hh"
+
+#{class_name}::#{constr_proto}
+    : #{init_list}
+{
+}
+
+#{class_name}::#{class_name}()
+    : #{init_list_default}
+{
+}
+
+int #{class_name}::check(const GameState* st) const
+{
+    // FIXME
+    return 0;
+}
+
+void #{class_name}::handle_buffer(utils::Buffer& buf)
+{
+    #{bufhandle}
+}
+
+void #{class_name}::apply_on(GameState* st) const
+{
+    // FIXME
+}
+
+uint32_t #{class_name}::player_id() const
+{
+    return player_id_;
+}
+
+uint32_t #{class_name}::id() const
+{
+    return ID_ACTION_#{fn.name.upcase};
+}
+
+EOF
+    end
+  end
+end
+
