@@ -480,6 +480,19 @@ To run the tests, you just have to build using the ``--check`` option:
 
   ./waf.py build --check
 
+You can also compute a code coverage report for your testsuite. This can help
+you finding code that is not tested at all. In order to do this, make sure you
+configured with the ``--enable-gcov`` option, then run the ``coverage``
+command:
+
+.. code-block:: bash
+
+  ./waf.py configure --with-games=... --enable-gcov
+  ./waf.py build --check
+  ./waf.py coverage
+
+You can then open ``build/gcov-report.html`` in your favorite browser.
+
 
 The actions
 -----------

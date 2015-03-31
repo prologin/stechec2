@@ -25,6 +25,7 @@ Requirements
 * zeromq C++ wrapper
 * google-gflags
 * googletest
+* gcovr (for code coverage reports)
 * ruby (only for the generators)
 * python-yaml
 
@@ -35,6 +36,7 @@ Archlinux:
 AUR:
 
   pacaur google-gflags
+  pacaur gcovr
 
 Installation
 ------------

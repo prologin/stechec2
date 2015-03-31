@@ -1,5 +1,6 @@
 #! /usr/bin/env python2
 
+import subprocess
 import os.path
 import sys
 import platform
@@ -21,6 +22,8 @@ def options(opt):
 
     opt.add_option('--enable-debug', action = 'store_true', default = False,
                    help = 'build a debug version', dest = 'debug')
+    opt.add_option('--enable-gcov', dest='gcov', action='store_true',
+                   help='Instrument build to compute code coverage')
     opt.add_option('--enable-werror', action = 'store_true', default = False,
                    help = 'interpret warnings as errors', dest = 'werror')
 
@@ -71,6 +74,14 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-ffast-math')
         conf.env.append_value('CXXFLAGS', ['-O2', '-ffast-math'])
 
+    if conf.options.gcov:
+        conf.check_cxx(cxxflags='-fprofile-arcs -ftest-coverage',
+                       linkflags='-fprofile-arcs')
+        conf.env.append_value('CXXFLAGS',
+                              ['-fprofile-arcs', '-ftest-coverage'])
+        conf.env.append_value('LINKFLAGS', ['-fprofile-arcs'])
+        conf.find_program('gcovr', var='GCOVR')
+
     # ZeroMQ and C++ binding (cppzmq)
     conf.check_cfg(package = 'libzmq', uselib_store = 'ZeroMQ',
                    atleast_version = '3.2.0', args = ['--cflags', '--libs'])
@@ -103,6 +114,15 @@ def build(bld):
 
     bld.recurse('games')
     bld.recurse('tools')
+
+def coverage(ctx):
+    # For some mysterious reason, "ctx" has no "env" attribute, here, so it's
+    # not possible to get the GCOVR environment variable.
+    subprocess.check_call(['gcovr',
+                           '-r', '..',
+                           '--html', '--html-details',
+                           '-o', 'gcov-report.html'],
+                           cwd=os.path.join(ctx.path.abspath(), out))
 
 def build_lib(bld):
     bld.shlib(
