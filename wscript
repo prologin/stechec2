@@ -116,6 +116,7 @@ def build(bld):
     bld.recurse('tools')
 
 def coverage(ctx):
+    """Compute a code coverage report (Gcov)"""
     # For some mysterious reason, "ctx" has no "env" attribute, here, so it's
     # not possible to get the GCOVR environment variable.
     subprocess.check_call(['gcovr',
