@@ -29,13 +29,12 @@ Requirements
 * ruby (only for the generators)
 * python-yaml
 
-Archlinux:
+Arch Linux:
 
-  pacman -S gcc python2 zeromq gtest ruby python-yaml
+  pacman --needed -S gcc python2 zeromq gtest ruby python-yaml gflags
 
 AUR:
 
-  pacaur google-gflags
   pacaur gcovr
 
 Installation
