@@ -40,3 +40,16 @@ the ``--enable-gcov`` option. Then build Stechec2 as usual, execute it somehow
 
 At this point, you can open the ``build/gcov-report.html`` file in your
 favorite browser and discover what parts of your code are not tested/useless!
+
+
+Address sanitizer
+-----------------
+
+GCC or LLVM's `address sanitizer
+<http://en.wikipedia.org/wiki/AddressSanitizer>`_ is as useful as Valgrind when
+programming with manual memory management (such as in C or C++) to detect
+various memory issues. Using this feature is very easy in Stechec2: just
+use the ``--enable-asan`` configure option. ASAN will output messages on
+Stechec2's standard error output if it detects any issue. Note that when this
+happens in our testsuite, the corresponding testcases fail (which is good! such
+issues must be fixed!).

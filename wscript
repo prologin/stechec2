@@ -22,6 +22,8 @@ def options(opt):
 
     opt.add_option('--enable-debug', action = 'store_true', default = False,
                    help = 'build a debug version', dest = 'debug')
+    opt.add_option('--enable-asan', dest='asan', action='store_true',
+                   help="Build with GCC's address sanitizer")
     opt.add_option('--enable-gcov', dest='gcov', action='store_true',
                    help='Instrument build to compute code coverage')
     opt.add_option('--enable-werror', action = 'store_true', default = False,
@@ -73,6 +75,12 @@ def configure(conf):
         conf.check_cxx(cxxflags = '-O2')
         conf.check_cxx(cxxflags = '-ffast-math')
         conf.env.append_value('CXXFLAGS', ['-O2', '-ffast-math'])
+
+    if conf.options.asan:
+        conf.check_cxx(cxxflags='-fsanitize=address',
+                       linkflags='-fsanitize=address')
+        conf.env.append_value('CXXFLAGS', ['-fsanitize=address'])
+        conf.env.append_value('LINKFLAGS', ['-fsanitize=address'])
 
     if conf.options.gcov:
         conf.check_cxx(cxxflags='-fprofile-arcs -ftest-coverage',
