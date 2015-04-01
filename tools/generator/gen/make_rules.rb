@@ -119,6 +119,7 @@ class CxxFileGenerator < CxxProto
           err_type_name = err_type.conf['enum_name']
           ok_val = err_type.conf['enum_field'][0][0].upcase
           @f.puts <<-EOF
+
 {
     rules::IAction_sptr action(new #{class_name}(#{arg_list.join(", ")}));
 
