@@ -107,7 +107,6 @@ class CxxFileGenerator < CxxProto
   def print_cxx_api
     for_each_fun do |fn|
       if not fn.dumps then
-        @f.print cxx_proto(fn, "Api::")
         # genérer plein de boilerplate pour les actions
         if fn.conf['fct_action'] then
           class_name = "Action" + (camel_case fn.name)
@@ -118,8 +117,9 @@ class CxxFileGenerator < CxxProto
           end
           err_type_name = err_type.conf['enum_name']
           ok_val = err_type.conf['enum_field'][0][0].upcase
-          @f.puts <<-EOF
 
+          @f.puts cxx_proto(fn, "Api::")
+          @f.puts <<-EOF
 {
     rules::IAction_sptr action(new #{class_name}(#{arg_list.join(", ")}));
 
@@ -133,6 +133,7 @@ class CxxFileGenerator < CxxProto
 }
 EOF
         else
+          @f.print cxx_proto(fn, "Api::")
           @f.puts "
 {
   // TODO

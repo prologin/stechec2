@@ -22,9 +22,11 @@ EOF
     # (which it really should)
     # so this code is less nice / more imperative than it could have been
     action_ids = []
+    includes = []
     for_each_fun(false) do |fn|
       if (not fn.dumps) && fn.conf['fct_action']
         action_ids << "ID_ACTION_#{fn.name.upcase}"
+        includes << "#include \"action_#{fn.name}.hh\""
       end
     end
     
@@ -34,6 +36,8 @@ EOF
 
 #ifndef ACTIONS_HH
 #define ACTIONS_HH
+
+#{includes.join("\n")}
 
 enum action_id {
     #{action_ids.join(",\n    ")}
@@ -62,7 +66,8 @@ EOF
     bufhandle = arg_list.map{|t,v| "buf.handle(#{v}_);"}.join("\n    ")
     
     init_list = arg_list.map{|t,v| "#{v}_(#{v})"}.join("\n    , ")
-    init_list_default = arg_list.map{|t,v| "#{v}_(FIXME)"}.join("\n    , ")
+    init_list_default = arg_list.map{|t,v|
+      "#{v}_(#{v == "player_id" ? "-1" : "FIXME"})"}.join("\n    , ")
     
     File.open("action_#{fn.name}.hh", 'w') do |file|
       file.write <<-EOF
@@ -73,7 +78,6 @@ EOF
 
 #include <rules/action.hh>
 
-#include "actions.hh"
 #include "game_state.hh"
 #include "constant.hh"
 
@@ -102,7 +106,7 @@ EOF
       file.write <<-EOF
 // FIXME License notice
 
-#include "action_#{fn.name}.hh"
+#include "actions.hh"
 
 #{class_name}::#{constr_proto}
     : #{init_list}

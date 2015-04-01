@@ -9,7 +9,9 @@
 class GameState : public rules::GameState
 {
     public:
-        GameState(Map* map, rules::Players_sptr players);
+        // FIXME
+        // additional parameters? for instance map
+        GameState(rules::Players_sptr players);
         GameState(const GameState& st);
         virtual rules::GameState* copy() const;
         ~GameState();

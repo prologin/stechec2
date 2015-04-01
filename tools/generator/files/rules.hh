@@ -7,7 +7,10 @@
 #include <rules/client-messenger.hh>
 #include <rules/server-messenger.hh>
 #include <rules/player.hh>
+#include <rules/rules.hh>
+#include <rules/actions.hh>
 
+#include "api.hh"
 
 class Rules : // FIXME inheritance
 {

@@ -16,7 +16,7 @@ Rules::Rules(const rules::Options opt)
         champion_dll_ = nullptr;
     
     // Init gamestate
-    GameState* game_state = new GameState(map, opt.players);
+    GameState* game_state = new GameState(opt.players);
 
     // Init API
     api_ = new Api(game_state, opt.player);

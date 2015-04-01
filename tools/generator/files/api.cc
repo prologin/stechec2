@@ -13,27 +13,18 @@
 #include <stdlib.h>
 
 #include "api.hh"
+#include "actions.hh"
 
 // global used in interface.cc
 Api* api;
 
-Api::Api(rules::GameState* game_state, rules::Player_sptr player)
+Api::Api(GameState* game_state, rules::Player_sptr player)
     : game_state_(game_state),
       player_(player)
 {
-  api = this;
-}
-
-const GameState* game_state() const {
-    return game_state_;
-}
-GameState* game_state() {
-    return game_state_;
-}
-
-void game_state_set(rules::GameState* gs) {
-    game_state_ = dynamic_cast<GameState*>(gs);
+    api = this;
 }
 
 
 // @@GEN_HERE@@
+
