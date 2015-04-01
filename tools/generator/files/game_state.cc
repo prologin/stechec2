@@ -1,6 +1,6 @@
 // FIXME License notice
 
-#include "game-state.hh"
+#include "game_state.hh"
 
 GameState::GameState(rules::Players_sptr players)
     : rules::GameState(),
