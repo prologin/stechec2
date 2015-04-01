@@ -14,6 +14,19 @@ command so that Stechec2 is built with debugging information. This will enable
 you to run Stechec2 under GDB or any other debugger.
 
 
+Using Clang
+-----------
+
+If you prefer Clang over GCC (for error messages, for instance), you can
+configure Stechec2 the following way (assuming you properly installed Clang++):
+
+.. code-block:: bash
+
+  CXX=clang++ ./waf.py configure --with-games=...
+
+Then build the project as usual.
+
+
 Code coverage
 -------------
 
