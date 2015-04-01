@@ -130,6 +130,7 @@ def coverage(ctx):
     subprocess.check_call(['gcovr',
                            '-r', '..',
                            '--html', '--html-details',
+                           '--exclude=.*unittest-gtest.*',
                            '-o', 'gcov-report.html'],
                            cwd=os.path.join(ctx.path.abspath(), out))
 
