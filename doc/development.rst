@@ -54,6 +54,11 @@ the ``--enable-gcov`` option. Then build Stechec2 as usual, execute it somehow
 At this point, you can open the ``build/gcov-report.html`` file in your
 favorite browser and discover what parts of your code are not tested/useless!
 
+Note that code coverage does not work very well when using another compiler
+than G++. There exists ``llvm-cov``, but our report formatter, ``gcovr``
+mysteriously crashes when attempting to use it. So please use G++ when you want
+to compute code coverage. :-)
+
 
 Address sanitizer
 -----------------
