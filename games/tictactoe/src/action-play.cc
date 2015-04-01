@@ -18,11 +18,9 @@ int ActionPlay::check(const GameState* st) const
 
     CHECK(player_ >= 0);
 
-    if (x_ < 0 || x_ > 3)
+    if (!st->is_valid_cell(x_, y_))
         return OUT_OF_BOUNDS;
-    else if (y_ < 0 || y_ > 3)
-        return OUT_OF_BOUNDS;
-    else if (st->board()[3 * y_ + x_] != -1)
+    else if (st->cell(x_, y_) != st->NO_PLAYER)
         return ALREADY_OCCUPIED;
 
     return OK;
@@ -37,5 +35,5 @@ void ActionPlay::handle_buffer(utils::Buffer& buf)
 
 void ActionPlay::apply_on(GameState* st) const
 {
-    st->board()[3 * y_ + x_] = player_;
+    st->cell(x_, y_) = player_;
 }

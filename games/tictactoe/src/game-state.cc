@@ -2,9 +2,9 @@
 
 #include <utils/log.hh>
 
-GameState::GameState() : board_({-1, -1, -1,
-                                 -1, -1, -1,
-                                 -1, -1, -1})
+GameState::GameState() : board_({NO_PLAYER, NO_PLAYER, NO_PLAYER,
+                                 NO_PLAYER, NO_PLAYER, NO_PLAYER,
+                                 NO_PLAYER, NO_PLAYER, NO_PLAYER})
 {
 }
 
