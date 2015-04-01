@@ -201,32 +201,8 @@ void Rules::spectator_loop(rules::ClientMessenger_sptr msgr)
 
 int Rules::is_finished()
 {
-    const std::vector<int> board = api_->game_state()->board();
-
-    // Lines
-    for (int i = 0; i < 9; i += 3)
-    {
-        if (board[i] != -1 &&
-                board[i] == board[i + 1] && board[i + 1] == board[i + 2])
-            return board[i];
-    }
-
-    // Columns
-    for (int i = 0; i < 3; ++i)
-    {
-        if (board[i] != -1 &&
-                board[i] == board[i + 3] && board[i + 3] == board[i + 6])
-            return board[i];
-    }
-
-    // Diagonals
-    if (board[0] != -1 && board[0] == board[4] && board[4] == board[8])
-        return board[0];
-
-    if (board[2] != -1 && board[2] == board[4] && board[4] == board[6])
-        return board[2];
-
-    return -1;
+    const GameState* st = api_->game_state();
+    return st->winner() != st->NO_PLAYER;
 }
 
 bool Rules::is_spectator(uint32_t id)
