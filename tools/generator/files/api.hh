@@ -28,6 +28,10 @@ class Api
         Api(rules::GameState* game_state, rules::Player_sptr player);
         virtual ~Api() { }
 
+        const GameState* game_state() const;
+        GameState* game_state();
+        void game_state_set(rules::GameState* gs);
+
     private:
         rules::GameState* game_state_;
         rules::Player_sptr player_;

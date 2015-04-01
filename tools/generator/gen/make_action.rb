@@ -1,8 +1,51 @@
 CxxFileGenerator.class_eval do
+
+  def fn_is_action?(fn)
+    (not fn.dumps) && fn.conf['fct_action']
+  end
   
+  def print_register_actions
+    for_each_fun(false) do |fn| 
+      if fn_is_action? fn then
+        @f.print <<-EOF
+    api_->actions()->register_action(
+        ID_ACTION_#{fn.name.upcase},
+        []() -> rules::IAction* { return new Action#{camel_case fn.name}(); }
+        );
+EOF
+      end
+    end
+  end
+  
+  def print_actions_hh
+    # I don't think for_each_fun without block returns an enumerator
+    # (which it really should)
+    # so this code is less nice / more imperative than it could have been
+    action_ids = []
+    for_each_fun(false) do |fn|
+      if (not fn.dumps) && fn.conf['fct_action']
+        action_ids << "ID_ACTION_#{fn.name.upcase}"
+      end
+    end
+    
+    File.open("actions.hh", 'w') do |file|
+      file.write <<-EOF
+// FIXME License notice
+
+#ifndef ACTIONS_HH
+#define ACTIONS_HH
+
+enum action_id {
+    #{action_ids.join(",\n    ")}
+};
+
+#endif // !ACTIONS_HH
+EOF
+    end
+  end
   
   def print_action_file(fn)
-    return nil if fn.dumps || (not fn.conf['fct_action'])
+    return nil unless fn_is_action? fn
 
     puts "Generating action file for #{fn.name}"
     
@@ -30,6 +73,7 @@ CxxFileGenerator.class_eval do
 
 #include <rules/action.hh>
 
+#include "actions.hh"
 #include "game_state.hh"
 #include "constant.hh"
 

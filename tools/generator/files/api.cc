@@ -24,4 +24,16 @@ Api::Api(rules::GameState* game_state, rules::Player_sptr player)
   api = this;
 }
 
+const GameState* game_state() const {
+    return game_state_;
+}
+GameState* game_state() {
+    return game_state_;
+}
+
+void game_state_set(rules::GameState* gs) {
+    game_state_ = dynamic_cast<GameState*>(gs);
+}
+
+
 // @@GEN_HERE@@

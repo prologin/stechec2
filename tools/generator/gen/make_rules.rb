@@ -305,6 +305,8 @@ gen.fill_file_section("api.cc") { gen.print_cxx_api }
 gen.fill_file_section("api.hh") { gen.print_cxx_api_head }
 gen.fill_file_section("interface.cc") { gen.print_interface }
 gen.fill_file_section("constant.hh") { gen.print_cst }
+gen.fill_file_section("rules.cc") { gen.print_register_actions }
+gen.print_actions_hh
 gen.for_each_fun(false) do |fn|
   gen.print_action_file(fn)
 end
