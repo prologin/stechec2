@@ -1,0 +1,51 @@
+# Maintainer: Prologin <serveur@prologin.org>
+
+pkgver=prologin2015
+pkgname=stechec2-sphinxdoc
+pkgrel=1
+pkgdesc="Stechec2 sphinxdoc for ${pkgver}"
+arch=any
+makedepends=python-sphinx
+url="http://prologin.org/"
+license=('GPL')
+
+build() {
+    # Empty $srcdir
+    rm -rf "$srcdir"
+    mkdir "$srcdir"
+
+    cd "$srcdir"
+    generator sphinxdoc "/usr/share/stechec2/${pkgver}/${pkgver}.yml" .
+    echo ".
+n
+_
+API Prologin
+Prologin
+${pkgver}
+${pkgver}
+.rst
+index
+n
+n
+n
+n
+n
+n
+n
+n
+n
+n
+y
+n" | sphinx-quickstart
+    echo 'language = "fr"' >> "conf.py"
+    echo 'html_theme = "nature"' >> "conf.py"
+
+    # Include the generated file to the index
+    sed -i '14i\ \ \ file' "index.rst"
+    make html
+}
+
+package() {
+    mkdir -p "$pkgdir/usr/share/doc/stechec2/${pkgver}"
+    cp -r "$srcdir/_build/html" "$pkgdir/usr/share/doc/stechec2/${pkgver}"
+}

@@ -1,0 +1,15 @@
+# Maintainer: Prologin <serveur@prologin.org>
+
+pkgver=prologin2015
+pkgname=stechec2-makefiles
+pkgrel=1
+pkgdesc="Stechec2 makefiles for ${pkgver}"
+arch=any
+url="http://prologin.org/"
+license=('GPL')
+
+package() {
+    dest="${pkgdir}/usr/share/stechec2/${pkgver}/makefiles"
+    mkdir -p "$dest"
+    generator server "/usr/share/stechec2/${pkgver}/${pkgver}.yml" "$dest"
+}
