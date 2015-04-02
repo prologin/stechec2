@@ -10,5 +10,6 @@ def configure(conf):
 
 def build(bld):
     bld.recurse('generator')
-    bld.install_files('${PREFIX}/bin', \
+    bld.install_files('${PREFIX}/bin',
         ['stechec2-run'], chmod=Utils.O755)
+

@@ -17,7 +17,6 @@ out = 'build'
 def options(opt):
     opt.load('compiler_cxx')
     opt.load('unittest_gtest')
-    opt.load('boost')
     opt.load('ruby')
 
     opt.add_option('--enable-debug', action = 'store_true', default = False,
