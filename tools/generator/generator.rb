@@ -36,7 +36,7 @@ Options:
   server       create special Makefiles for worker nodes.
   rules        generate some boring piece for api rules.
   apidoc       generate latex API documentation for the subject.
-  sphinxdoc    generate sphinx documentation for the subject (prologin2012).
+  sphinxdoc    generate sphinx API documentation for the subject.
 
 Examples:
   generator player ant /tmp/
@@ -200,7 +200,6 @@ when "apidoc"
   File.open(path + "file.tex", 'w') do |f|
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
-  puts File.expand_path((path + "api.tex").to_s)
 
 when "sphinxdoc"
   require 'erb'
@@ -211,7 +210,6 @@ when "sphinxdoc"
   File.open(path + "file.rst", 'w') do |f|
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
-  puts File.expand_path((path + "api.rst").to_s)
 
 else
   puts "Bad argument '#{ARGV[0]}'. try: generator --help"

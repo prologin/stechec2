@@ -12,7 +12,7 @@
 #
 
 #
-# Cree un fichier .tex, contenant la documentation de l'api, decrit par
+# Cree un fichier .rst, contenant la documentation de l'api, decrit par
 # un fichier YAML
 # Appelé depuis generator.rb
 #
