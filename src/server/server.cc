@@ -68,8 +68,7 @@ void Server::run()
 
     for (auto player : players_->players)
         std::cout << player->name.c_str() << " "
-                  << player->score << " "
-                  << "0" << std::endl;
+                  << player->score << std::endl;
 
     sckt_close();
 }
