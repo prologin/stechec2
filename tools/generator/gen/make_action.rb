@@ -109,11 +109,6 @@ int #{class_name}::check(const GameState* st) const
     return 0;
 }
 
-void #{class_name}::handle_buffer(utils::Buffer& buf)
-{
-    #{bufhandle}
-}
-
 void #{class_name}::apply_on(GameState* st) const
 {
     // FIXME
