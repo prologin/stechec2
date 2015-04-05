@@ -4,6 +4,7 @@ pkgver=prologin2015
 pkgname=stechec2-makefiles
 pkgrel=1
 pkgdesc="Stechec2 makefiles for ${pkgver}"
+makedepends="stechec2"
 arch=any
 url="http://prologin.org/"
 license=('GPL')
