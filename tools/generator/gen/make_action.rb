@@ -61,9 +61,9 @@ EOF
     constr_proto = class_name + '(' + constr_args + ')'
 
     members = arg_list.map{|t,v| "#{t} #{v}_;"}.join("\n    ")
-    bufhandle = arg_list.map{|t,v| "buf.handle(#{v}_);"}.join("\n    ")
+    bufhandle = arg_list.map{|t,v| "buf.handle(#{v}_);"}.join("\n        ")
 
-    init_list = arg_list.map{|t,v| "#{v}_(#{v})"}.join("\n    , ")
+    init_list = arg_list.map{|t,v| "#{v}_(#{v})"}.join(", ")
 
     File.open("action_#{fn.name}.hh", 'w') do |file|
       file.write <<-EOF
@@ -86,10 +86,10 @@ public:
 
     virtual void handle_buffer(utils::Buffer& buf)
     {
-       #{bufhandle}
+        #{bufhandle}
     }
 
-    uint32_t player_id() const { return player_id_ };
+    uint32_t player_id() const { return player_id_; };
     uint32_t id() const { return ID_ACTION_#{fn.name.upcase}; }
 
 private:
