@@ -47,7 +47,8 @@ def configure(conf):
     conf.check_cxx(cxxflags = '-Wextra')
 
     conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra',
-                                       '-Wno-variadic-macros'])
+                                       '-Wno-variadic-macros',
+                                       '-Wno-return-type-c-linkage'])
 
     # Check for C++0x
     conf.check_cxx(cxxflags = '-std=c++11')
