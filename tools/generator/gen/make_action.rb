@@ -35,11 +35,11 @@ EOF
 #ifndef ACTIONS_HH
 #define ACTIONS_HH
 
-#{includes.join("\n")}
-
 enum action_id {
     #{action_ids.join(",\n    ")}
 };
+
+#{includes.join("\n")}
 
 #endif // !ACTIONS_HH
 EOF
