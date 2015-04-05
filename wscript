@@ -97,6 +97,17 @@ def configure(conf):
     # Google Flags
     conf.check_cxx(lib = "gflags", mandatory = True, uselib_store = "gflags")
 
+    # Google Flags namespace
+    if conf.check_cxx(cxxflags='-std=c++11', mandatory=False,
+            msg='Checking for gflags namespace',
+            fragment='''
+               #include <gflags/gflags.h>
+               using namespace gflags;
+               int main() {}'''):
+        conf.env.append_value('CXXFLAGS', '-DGFLAGS_NAMESPACE=gflags')
+    else:
+        conf.env.append_value('CXXFLAGS', '-DGFLAGS_NAMESPACE=google')
+
     # Ruby
     conf.check_ruby_version((1, 9))
 
