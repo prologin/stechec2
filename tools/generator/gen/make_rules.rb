@@ -291,7 +291,6 @@ convert_to_string_arr "int";
     build_constants
     build_enums
     build_structs
-    build_actions_enum
   end
 end
 

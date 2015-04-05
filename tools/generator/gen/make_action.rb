@@ -21,9 +21,11 @@ EOF
     # I don't think for_each_fun without block returns an enumerator
     # (which it really should)
     # so this code is less nice / more imperative than it could have been
+    action_ids = []
     includes = []
     for_each_fun(false) do |fn|
       if (not fn.dumps) && fn.conf['fct_action']
+        action_ids << "ID_ACTION_#{fn.name.upcase}"
         includes << "#include \"action_#{fn.name}.hh\""
       end
     end
@@ -35,26 +37,14 @@ EOF
 
 #{includes.join("\n")}
 
-#endif // !ACTIONS_HH
-EOF
-    end
-  end
-
-  def build_actions_enums
-    action_ids = []
-    for_each_fun(false) do |fn|
-      if (not fn.dumps) && fn.conf['fct_action']
-        action_ids << "ID_ACTION_#{fn.name.upcase}"
-      end
-    end
-
-    @f.puts <<EOF
-
 enum action_id {
     #{action_ids.join(",\n    ")}
 };
 
+#endif // !ACTIONS_HH
 EOF
+    end
+  end
 
   def print_action_file(fn)
     return nil unless fn_is_action? fn
