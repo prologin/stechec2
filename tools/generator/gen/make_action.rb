@@ -72,6 +72,7 @@ EOF
 
 #include <rules/action.hh>
 
+#include "actions.hh"
 #include "game_state.hh"
 #include "constant.hh"
 
