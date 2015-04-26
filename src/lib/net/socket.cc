@@ -5,7 +5,7 @@
 #include <utils/log.hh>
 #include <net/message.hh>
 
-DEFINE_int32(socket_timeout, -1, "Timeout value to use for all sock ops.");
+DEFINE_int32(socket_timeout, -1, "Timeout value to use for all sock ops, in ms.");
 
 namespace net {
 
