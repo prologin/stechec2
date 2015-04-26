@@ -2,7 +2,7 @@
 
 pkgver=prologin2015
 pkgname=stechec2
-pkgrel=2
+pkgrel=3
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('i686' 'x86_64')
 url="http://prologin.org/"
@@ -17,15 +17,18 @@ sha512sums=(SKIP
 
 prepare() {
     cd stechec2
-    ln --symbolic "$srcdir/${pkgver}" games/
+    ln --force --symbolic "${srcdir}/${pkgver}" games/
 }
 
 build() {
     cd stechec2
     python2 waf.py configure build --prefix=/usr --with-games=${pkgver}
+    (cd "games/${pkgver}/spectators/dumper"; make)
 }
 
 package() {
     cd stechec2
     python2 waf.py install --destdir="$pkgdir"
+    mkdir -p "${pkgdir}/usr/lib"
+    install -Dm755 "games/${pkgver}/spectators/dumper/dumper.so" "${pkgdir}/usr/lib/lib${pkgver}-dumper.so"
 }
