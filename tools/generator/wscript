@@ -40,6 +40,7 @@ def build(bld):
         'files/entry.cc',
         'files/game_state.cc',
         'files/game_state.hh',
+        'files/useapi.tex',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [

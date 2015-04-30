@@ -196,9 +196,12 @@ when "apidoc"
   s = File.read(get_file_path('gen/make_tex.rb', PKGRUBYDIR))
   path = Pathname.new($install_path)
   path.mkpath
-  File.open(path + "file.tex", 'w') do |f|
+  File.open(path + "apidoc.tex", 'w') do |f|
     f.puts ERB.new(s, nil, '<-%->', '$erbout_').result
   end
+
+  FileUtils.cp Pathname.new(PKGDATADIR) + 'files/useapi.tex', path+'useapi.tex'
+
 
 when "sphinxdoc"
   require 'erb'

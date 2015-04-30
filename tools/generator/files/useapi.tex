@@ -1,0 +1,124 @@
+\subsection{C}
+
+\begin{itemize}
+\item{Les booléens sont représentés par le type \texttt{bool}, défini par le
+      standard du C99, et que l'on retrouve dans le header \texttt{stdbool.h};}
+\item{Les fonctions prenant des tableaux en paramètres et retournant des
+      tableaux utilisent à la place de ces tableaux une structure
+      \texttt{type\_array}, où \texttt{type} est le type des données dans le
+      tableau. Ces structures contiennent deux éléments : les données,
+      \texttt{type* datas}, et la taille, \texttt{size\_t size}. Dans tous les
+      cas, la libération des données est laissée au soin du candidat ;}
+\item{Tout le reste est comme indiqué dans le sujet.}
+\end{itemize}
+
+\subsection{C++}
+
+\begin{itemize}
+\item{Les tableaux sont représentés par des \texttt{std::vector<type>} ;}
+\item{Le reste est identique au sujet.}
+\end{itemize}
+
+\subsection{C\#}
+
+\begin{itemize}
+\item{Les fonctions à utiliser sont des méthodes statiques de la classe Api.
+      Ainsi, pour utiliser la fonction \texttt{Foo}, il faut faire
+      \texttt{Api.Foo} ;}
+\item{Les noms des fonctions, structures et énumérations sont en
+      \texttt{CamelCase}. Ainsi, une fonction nommée \texttt{foo\_bar} dans
+      le sujet s'appellera \texttt{FooBar} en C\#.}
+\end{itemize}
+
+\subsection{Haskell}
+
+\begin{itemize}
+\item{L'API est fournie par le module \texttt{Api}.}
+\item{Les énumérations sont représentées par des types sommes, les structures
+      par des records. Seule la première lettre des noms de types et de
+      constructeurs est en majuscule. Le nom du constructeur d'une structure
+      est son nom de type.}
+\item{La commande \texttt{make doc} permet de générer la documentation dans le
+      fichier \texttt{doc/index.html} pour votre code ainsi que pour l'API.}
+\item{Pour pouvoir conserver des valeurs entre différents appels à vos fonctions
+      à compléter, il faut utiliser des variables mutables :}
+\begin{lstlisting}[language=Haskell]
+import Data.IORef
+import System.IO.Unsafe (unsafePerformIO)
+
+-- La pragma NOINLINE est importante !
+-- MonType ne doit pas être polymorphe !
+{-# NOINLINE #-}
+maVariable :: IORef MonType
+maVariable = unsafePerformIO (newIORef maValeurInitiale)
+
+fonctionACompleter :: IO ()
+fonctionACompleter = do
+  maValeur <- readIORef maVariable
+  ...
+  writeIORef maVariable maValeur'
+
+\end{lstlisting}
+\end{itemize}
+
+\subsection{Java}
+
+\begin{itemize}
+\item{Les fonctions à utiliser sont des méthodes statiques de la classe
+      \texttt{Interface}. Ainsi, pour utiliser la fonction \texttt{foo}, il
+      faut faire \texttt{Interface.foo} ;}
+\item{Les structures sont représentées par des classes dont tous les attributs
+      sont publics.}
+\end{itemize}
+
+\subsection{OCaml}
+
+\begin{itemize}
+\item{L'API est fournie par le fichier \texttt{api.ml}, qui est \texttt{open}
+      par défaut par le fichier à compléter ;}
+\item{Les énumérations sont représentées par des types sommes avec des
+      constructeurs sans paramètres. Seule la première lettre des noms des
+      constructeurs est en majuscule ;}
+\item{Les structures sont représentées par des records, sauf pour la structure
+      \texttt{position} qui est représentée par un couple \texttt{int * int} ;}
+\item{Les tableaux sont représentés par des \texttt{array} Caml classiques.}
+\end{itemize}
+
+\subsection{PHP}
+
+\begin{itemize}
+\item{Les constantes sont définies via des \texttt{define} et doivent donc être
+      utilisées sans les précéder d'un signe dollar ;}
+\item{Les énumérations sont définies comme des séries de constantes. Se référer
+      à la puce au-dessus ;}
+\item{Les structures sont gérées sous forme de tableaux associatifs. Ainsi, une
+      structure contenant un champ \texttt{x} et un champ \texttt{y} sera créée
+      comme ceci : \texttt{array('x' => 42, 'y' => 1337)}.}
+\end{itemize}
+
+\subsection{Python}
+
+\begin{itemize}
+\item{L'API est fournie par le module \texttt{api}, dont tout le contenu est
+      importé par défaut par le code à compléter ;}
+\item{Les énumérations sont représentées par des \texttt{IntEnum} Python, qui
+    peuvent-être utilisés comme ceci : \texttt{nom\_enum.CHAMP}. ;}
+\item{Les structures sont représentés par des \texttt{namedtuple} Python, dont
+      on peut accéder aux champs via la notation pointée habituelle, et
+      qui peuvent être créés comme ceci : \texttt{foo(bar=42, x=3)}, sauf pour
+      la structure \texttt{position} qui est représentée par un couple (x, y).}
+\end{itemize}
+
+\subsubsection{Python 2}
+
+La version de Python par défaut est Python 3. Cependant, si vous souhaitez
+toujours coder en Python 2, vous pouvez utiliser le dossier \emph{python2} à la
+place du dossier \emph{python}.
+
+Les différences par rapport à Python 3 sont les suivantes :
+
+\begin{itemize}
+\item{les constantes des énumérations sont représentées par de simples entiers
+      ;}
+\item{les gens dans la rue vous jettent des tomates et crient au scandale.}
+\end{itemize}
