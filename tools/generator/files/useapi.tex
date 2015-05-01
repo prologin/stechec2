@@ -48,7 +48,7 @@ import System.IO.Unsafe (unsafePerformIO)
 
 -- La pragma NOINLINE est importante !
 -- MonType ne doit pas être polymorphe !
-{-# NOINLINE #-}
+{-# NOINLINE maVariable #-}
 maVariable :: IORef MonType
 maVariable = unsafePerformIO (newIORef maValeurInitiale)
 
