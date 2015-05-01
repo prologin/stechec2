@@ -38,7 +38,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
 
     while (!is_finished())
     {
-        start_of_turn();
+        start_of_round();
         Actions* actions = get_actions();
         actions->clear();
 
@@ -55,7 +55,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
             if (action->player_id() != opt_.player->id)
                 apply_action(action);
 
-        end_of_turn();
+        end_of_round();
     }
 
     at_end();
@@ -71,7 +71,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 
     while (last_turn || !is_finished())
     {
-        start_of_turn();
+        start_of_round();
         Actions* actions = get_actions();
         actions->clear();
 
@@ -88,7 +88,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             apply_action(action);
         actions->clear();
 
-        end_of_turn();
+        end_of_round();
     }
 
     at_end();
@@ -117,7 +117,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     while (!is_finished())
     {
         unsigned int spectators_count = spectators_->players.size();
-        start_of_turn();
+        start_of_round();
 
         Actions* actions = get_actions();
         actions->clear();
@@ -179,7 +179,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             apply_action(action);
         msgr->push_actions(*actions);
 
-        end_of_turn();
+        end_of_round();
     }
 
     at_end();
@@ -204,7 +204,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
     at_start();
     at_client_start();
 
-    start_of_turn();
+    start_of_round();
     while (!is_finished())
     {
         uint32_t playing_id;
@@ -250,15 +250,15 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
         }
 
         /* End of each move */
-        end_of_player_turn(playing_id);
+        end_of_turn(playing_id);
 
         /* End of each turn */
         if (last_player_id == playing_id)
         {
             DEBUG("End of turn!");
-            end_of_turn();
+            end_of_round();
             if (!is_finished())
-                start_of_turn();
+                start_of_round();
             else
                 break; // Avoid calling is_finished() twice
         }
@@ -277,7 +277,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     at_start();
     at_spectator_start();
 
-    start_of_turn();
+    start_of_round();
     /* `last_turn` allows us to inspect the final state of the game, when no
      * other player can play anymore. */
     while (last_turn || !is_finished())
@@ -309,7 +309,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
                 apply_action(action);
 
             /* End of each move */
-            end_of_player_turn(playing_id);
+            end_of_turn(playing_id);
         }
         else /* Current player turn */
         {
@@ -337,9 +337,9 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
         if (last_player_id == playing_id)
         {
             DEBUG("End of turn!");
-            end_of_turn();
+            end_of_round();
             if (!is_finished())
-                start_of_turn();
+                start_of_round();
             else
             {
                 DEBUG("The next turn will be the last one!");
@@ -359,7 +359,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start();
 
-    start_of_turn();
+    start_of_round();
     while (!is_finished())
     {
         for (unsigned int i = 0; i < players_->players.size(); i++)
@@ -387,11 +387,10 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                         apply_action(action);
                 }
 
-                DEBUG("Alright, publish actions");
                 msgr->push_actions(*actions);
             }
 
-            end_of_player_turn(players_->players[i]->id);
+            end_of_turn(players_->players[i]->id);
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
@@ -406,14 +405,14 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 DEBUG("Acknowledging...");
                 msgr->ack();
 
-                end_of_player_turn(s->id);
+                end_of_turn(s->id);
             }
         }
 
-        end_of_turn();
-        DEBUG("End of turn!");
+        end_of_round();
+        DEBUG("End of round!");
         if (!is_finished())
-            start_of_turn();
+            start_of_round();
         else
             break; // Avoid calling is_finished() twice
     }

@@ -58,8 +58,8 @@ public:
     virtual void spectator_turn() {}
 
     // Called before / after every player has played
-    virtual void start_of_turn() {}
-    virtual void end_of_turn() {}
+    virtual void start_of_round() {}
+    virtual void end_of_round() {}
 
 protected:
     bool is_spectator(uint32_t id);
@@ -88,7 +88,7 @@ public:
     explicit TurnBasedRules(const Options opt);
 
     // Called each time a player has finished its turn
-    virtual void end_of_player_turn(uint32_t) {}
+    virtual void end_of_turn(uint32_t) {}
 
     virtual void client_loop(ClientMessenger_sptr msgr) final override;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
