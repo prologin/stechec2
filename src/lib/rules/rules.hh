@@ -87,8 +87,10 @@ class TurnBasedRules : public Rules
 public:
     explicit TurnBasedRules(const Options opt);
 
-    // Called each time a player has finished its turn
+    // Called each time a client has finished its turn
     virtual void end_of_turn(uint32_t) {}
+    virtual void end_of_player_turn(uint32_t) {}
+    virtual void end_of_spectator_turn(uint32_t) {}
 
     virtual void player_loop(ClientMessenger_sptr msgr) final override;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final override;

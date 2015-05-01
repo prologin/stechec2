@@ -217,6 +217,8 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             {
                 /* Actions of spectators are not published. */
                 DEBUG("Turn for spectator %d, never mind...", playing_id);
+                end_of_spectator_turn(playing_id);
+                end_of_turn(playing_id);
                 continue;
             }
 
@@ -250,6 +252,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
         }
 
         /* End of each turn */
+        end_of_player_turn(playing_id);
         end_of_turn(playing_id);
 
         /* End of each round */
@@ -292,6 +295,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             if (is_spectator(playing_id))
             {
                 DEBUG("Turn for spectator %d, never mind...", playing_id);
+                end_of_spectator_turn(playing_id);
+                end_of_turn(playing_id);
                 continue;
             }
 
@@ -307,6 +312,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             /* Apply them onto the gamestate */
             for (auto action : actions->actions())
                 apply_action(action);
+
+            end_of_player_turn(playing_id);
         }
         else /* Current player turn */
         {
@@ -323,12 +330,13 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             msgr->wait_for_ack();
             /* The server do not publish spectators' actions: do not try to
              * pull them.  */
+            end_of_spectator_turn(playing_id);
         }
 
         end_of_turn(playing_id);
 
         /* End of each round */
-        if (last_turn)
+        if (last_round)
         {
             /* If that was the last round, stop there. */
             DEBUG("That was the last turn, bye!");
@@ -390,6 +398,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 msgr->push_actions(*actions);
             }
 
+            end_of_player_turn(players_->players[i]->id);
             end_of_turn(players_->players[i]->id);
 
             /* Spectators must be able to see the state of the game between
@@ -405,6 +414,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 DEBUG("Acknowledging...");
                 msgr->ack();
 
+                end_of_spectator_turn(players_->players[i]->id);
                 end_of_turn(s->id);
             }
         }
