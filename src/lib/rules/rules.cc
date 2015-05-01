@@ -67,9 +67,9 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     at_start();
     at_spectator_start();
 
-    bool last_turn = false;
+    bool last_round = false;
 
-    while (last_turn || !is_finished())
+    while (last_round || !is_finished())
     {
         start_of_round();
         Actions* actions = get_actions();
@@ -80,7 +80,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
         msgr->wait_for_ack();
         actions->clear();
 
-        if (last_turn)
+        if (last_round)
             break;
 
         msgr->pull_actions(actions);
@@ -249,10 +249,10 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             actions->clear();
         }
 
-        /* End of each move */
+        /* End of each turn */
         end_of_turn(playing_id);
 
-        /* End of each turn */
+        /* End of each round */
         if (last_player_id == playing_id)
         {
             DEBUG("End of turn!");
@@ -270,7 +270,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
 {
-    bool last_turn = false;
+    bool last_round = false;
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
@@ -278,9 +278,9 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     at_spectator_start();
 
     start_of_round();
-    /* `last_turn` allows us to inspect the final state of the game, when no
+    /* `last_round` allows us to inspect the final state of the game, when no
      * other player can play anymore. */
-    while (last_turn || !is_finished())
+    while (last_round || !is_finished())
     {
 
         uint32_t playing_id;
@@ -295,7 +295,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
                 continue;
             }
 
-            DEBUG("Turn for player %d (not me)", playing_id);
+            DEBUG("Turn for player %d", playing_id);
 
             /* Get current player actions */
             Actions* actions = get_actions();
@@ -307,9 +307,6 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             /* Apply them onto the gamestate */
             for (auto action : actions->actions())
                 apply_action(action);
-
-            /* End of each move */
-            end_of_turn(playing_id);
         }
         else /* Current player turn */
         {
@@ -327,23 +324,26 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             /* The server do not publish spectators' actions: do not try to
              * pull them.  */
         }
-        /* End of each turn */
+
+        end_of_turn(playing_id);
+
+        /* End of each round */
         if (last_turn)
         {
-            /* If that was the last turn, stop there. */
+            /* If that was the last round, stop there. */
             DEBUG("That was the last turn, bye!");
             break;
         }
         if (last_player_id == playing_id)
         {
-            DEBUG("End of turn!");
+            DEBUG("End of round!");
             end_of_round();
             if (!is_finished())
                 start_of_round();
             else
             {
-                DEBUG("The next turn will be the last one!");
-                last_turn = true;
+                DEBUG("The next round will be the last one!");
+                last_round = true;
             }
         }
     }
