@@ -28,7 +28,7 @@ public:
     virtual bool is_finished();
 
     // 2)
-    virtual void client_loop(rules::ClientMessenger_sptr msgr);
+    virtual void player_loop(rules::ClientMessenger_sptr msgr);
     virtual void spectator_loop(rules::ClientMessenger_sptr msgr);
     virtual void server_loop(rules::ServerMessenger_sptr msgr);
 

@@ -16,7 +16,7 @@ Rules::Rules(const rules::Options& opt)
     GameState* game_state = new GameState();
     api_ = new Api(game_state, opt.player);
 
-    // Get the champion library if we are a client
+    // Get the champion library if we are a player
     if (!opt.champion_lib.empty())
     {
         champion_ = new utils::DLL(opt.champion_lib);
@@ -49,7 +49,7 @@ Rules::~Rules()
     delete api_;
 }
 
-void Rules::client_loop(rules::ClientMessenger_sptr msgr)
+void Rules::player_loop(rules::ClientMessenger_sptr msgr)
 {
     CHECK(champion_ != nullptr);
 

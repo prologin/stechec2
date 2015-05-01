@@ -31,7 +31,7 @@ Client::Client()
     if (FLAGS_spectator)
         client_loop = rules_lib_->get<rules::f_client_loop>("spectator_loop");
     else
-        client_loop = rules_lib_->get<rules::f_client_loop>("client_loop");
+        client_loop = rules_lib_->get<rules::f_client_loop>("player_loop");
 
     players_ = rules::Players_sptr(new rules::Players());
     spectators_ = rules::Players_sptr(new rules::Players());

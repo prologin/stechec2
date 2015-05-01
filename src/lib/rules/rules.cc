@@ -31,10 +31,10 @@ SynchronousRules::SynchronousRules(const Options opt)
 {
 }
 
-void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
+void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 {
     at_start();
-    at_client_start();
+    at_player_start();
 
     while (!is_finished())
     {
@@ -59,7 +59,7 @@ void SynchronousRules::client_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_client_end();
+    at_player_end();
 }
 
 void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -196,13 +196,13 @@ TurnBasedRules::TurnBasedRules(const Options opt)
 {
 }
 
-void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
+void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 {
     uint32_t last_player_id;
     msgr->pull_id(&last_player_id);
 
     at_start();
-    at_client_start();
+    at_player_start();
 
     start_of_round();
     while (!is_finished())
@@ -265,7 +265,7 @@ void TurnBasedRules::client_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_client_end();
+    at_player_end();
 }
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)

@@ -19,7 +19,7 @@ public:
     explicit Rules(const rules::Options& opt);
     virtual ~Rules();
 
-    void client_loop(rules::ClientMessenger_sptr msgr);
+    void player_loop(rules::ClientMessenger_sptr msgr);
     void server_loop(rules::ServerMessenger_sptr msgr);
     void spectator_loop(rules::ClientMessenger_sptr msgr);
 

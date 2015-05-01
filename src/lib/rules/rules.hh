@@ -23,7 +23,7 @@ public:
 
     /* Pure virtual methods */
 
-    virtual void client_loop(ClientMessenger_sptr msgr) = 0;
+    virtual void player_loop(ClientMessenger_sptr msgr) = 0;
     virtual void spectator_loop(ClientMessenger_sptr msgr) = 0;
     virtual void server_loop(ServerMessenger_sptr msgr) = 0;
 
@@ -41,13 +41,13 @@ public:
 
     // Function executed at the start of the game
     virtual void at_start() {}
-    virtual void at_client_start() {}
+    virtual void at_player_start() {}
     virtual void at_spectator_start() {}
     virtual void at_server_start() {}
 
     // Function executed at the end of the game
     virtual void at_end() {}
-    virtual void at_client_end() {}
+    virtual void at_player_end() {}
     virtual void at_spectator_end() {}
     virtual void at_server_end() {}
 
@@ -77,7 +77,7 @@ class SynchronousRules : public Rules
 public:
     explicit SynchronousRules(const Options opt);
 
-    virtual void client_loop(ClientMessenger_sptr msgr) final override;
+    virtual void player_loop(ClientMessenger_sptr msgr) final override;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
     virtual void server_loop(ServerMessenger_sptr msgr) final override;
 };
@@ -90,7 +90,7 @@ public:
     // Called each time a player has finished its turn
     virtual void end_of_turn(uint32_t) {}
 
-    virtual void client_loop(ClientMessenger_sptr msgr) final override;
+    virtual void player_loop(ClientMessenger_sptr msgr) final override;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
     virtual void server_loop(ServerMessenger_sptr msgr) final override;
 };

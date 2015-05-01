@@ -34,9 +34,9 @@ void rules_result()
     delete rules_;
 }
 
-void client_loop(rules::ClientMessenger_sptr msgr)
+void player_loop(rules::ClientMessenger_sptr msgr)
 {
-    rules_->client_loop(msgr);
+    rules_->player_loop(msgr);
 }
 
 void server_loop(rules::ServerMessenger_sptr msgr)

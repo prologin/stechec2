@@ -14,7 +14,7 @@ Rules::Rules(const rules::Options opt)
     }
     else
         champion_dll_ = nullptr;
-    
+
     // Init gamestate
     GameState* game_state = new GameState(opt.players);
 
@@ -60,7 +60,7 @@ bool Rules::is_finished()
 // end 1)
 
 // 2)
-void Rules::client_loop(rules::ClientMessenger_sptr msgr)
+void Rules::player_loop(rules::ClientMessenger_sptr msgr)
 {
     // FIXME
 }
