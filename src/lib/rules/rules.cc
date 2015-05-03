@@ -217,12 +217,16 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             {
                 /* Actions of spectators are not published. */
                 DEBUG("Turn for spectator %d, never mind...", playing_id);
+                start_of_spectator_turn(playing_id);
+                start_of_turn(playing_id);
                 end_of_spectator_turn(playing_id);
                 end_of_turn(playing_id);
                 continue;
             }
 
             DEBUG("Turn for player %d (not me)", playing_id);
+            start_of_player_turn(playing_id);
+            start_of_turn(playing_id);
 
             /* Get current player actions */
             Actions* actions = get_actions();
@@ -238,6 +242,9 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
         else /* Current player turn */
         {
             DEBUG("Turn for player %d (me!!!)", playing_id);
+            start_of_player_turn(playing_id);
+            start_of_turn(playing_id);
+
             get_actions()->clear();
             player_turn();
             Actions* actions = get_actions();
@@ -250,8 +257,6 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
             actions->clear();
         }
-
-        /* End of each turn */
         end_of_player_turn(playing_id);
         end_of_turn(playing_id);
 
@@ -295,12 +300,16 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             if (is_spectator(playing_id))
             {
                 DEBUG("Turn for spectator %d, never mind...", playing_id);
+                start_of_spectator_turn(playing_id);
+                start_of_turn(playing_id);
                 end_of_spectator_turn(playing_id);
                 end_of_turn(playing_id);
                 continue;
             }
 
             DEBUG("Turn for player %d", playing_id);
+            start_of_player_turn(playing_id);
+            start_of_turn(playing_id);
 
             /* Get current player actions */
             Actions* actions = get_actions();
@@ -318,6 +327,9 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
         else /* Current player turn */
         {
             DEBUG("Turn for spectator %d (me!!!)", playing_id);
+            start_of_spectator_turn(playing_id);
+            start_of_turn(playing_id);
+
             get_actions()->clear();
             spectator_turn();
             /* The server is waiting for this spectator actions, so the
@@ -370,18 +382,21 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     start_of_round();
     while (!is_finished())
     {
-        for (unsigned int i = 0; i < players_->players.size(); i++)
+        for (auto& p : players_->players)
         {
-            if (players_->players[i]->nb_timeout < max_consecutive_timeout)
+            start_of_player_turn(p->id);
+            start_of_turn(p->id);
+
+            if (p->nb_timeout < max_consecutive_timeout)
             {
-                DEBUG("Turn for player %d", players_->players[i]->id);
-                msgr->push_id(players_->players[i]->id);
+                DEBUG("Turn for player %d", p->id);
+                msgr->push_id(p->id);
                 Actions* actions = get_actions();
                 actions->clear();
                 if (!msgr->poll(timeout_))
                 {
-                    players_->players[i]->nb_timeout++;
-                    DEBUG("Timeout reached, never mind: %d", players_->players[i]->nb_timeout);
+                    p->nb_timeout++;
+                    DEBUG("Timeout reached, never mind: %d", p->nb_timeout);
                 }
                 else
                 {
@@ -398,13 +413,16 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 msgr->push_actions(*actions);
             }
 
-            end_of_player_turn(players_->players[i]->id);
-            end_of_turn(players_->players[i]->id);
+            end_of_player_turn(p->id);
+            end_of_turn(p->id);
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
             for (auto& s : spectators_->players)
             {
+                start_of_spectator_turn(s->id);
+                start_of_turn(s->id);
+
                 DEBUG("Turn for spectator %d", s->id);
                 msgr->push_id(s->id);
                 Actions* actions = get_actions();
@@ -414,7 +432,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 DEBUG("Acknowledging...");
                 msgr->ack();
 
-                end_of_spectator_turn(players_->players[i]->id);
+                end_of_spectator_turn(s->id);
                 end_of_turn(s->id);
             }
         }
