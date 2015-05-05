@@ -67,8 +67,12 @@ void Server::run()
     rules_result();
 
     for (auto player : players_->players)
-        std::cout << player->name.c_str() << " "
-                  << player->score << std::endl;
+    {
+        std::cout << "---" << std::endl
+                  << "player: " << player->name.c_str() << std::endl
+                  << "score: " << player->score << std::endl
+                  << "nb_timeout: " << player->nb_timeout << std::endl;
+    }
 
     sckt_close();
 }
