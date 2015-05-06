@@ -165,8 +165,10 @@ def stechec2_run(args, options):
         os.chmod(f_reqrep, 0o777)
         os.chmod(f_pubsub, 0o777)
 
-    def run_client(cid, client, name, is_spectator, isolate=False):
-        opts = client_opt + ['--champion', client, '--name', name]
+    def run_client(client_id, client, name, is_spectator):
+        opts = client_opt + ['--champion', client,
+                             '--client_id', str(client_id),
+                             '--name', name]
         if is_spectator:
             opts.append('--spectator')
         client_popt = dict(popt)
@@ -196,18 +198,20 @@ def stechec2_run(args, options):
         start_proc(name, opts, client_popt)
 
     # Start clients, then spectators
+    client_id = 0
     for i, lib_so in enumerate(clients):
+        client_id = client_id + 1
         lib_so = os.path.expanduser(lib_so)
         try:
             name = client_names[i]
         except IndexError:
             name = 'client-{}'.format(i + 1)
-        run_client(i + 1, lib_so, name, False, args.isolate)
+        run_client(client_id, lib_so, name, False, args.isolate)
 
     for i, lib_so in enumerate(spectators):
+        client_id = client_id + 1
         lib_so = os.path.expanduser(lib_so)
-        cid = i + len(clients) + 1
-        run_client(cid, lib_so, 'spectator-{}'.format(i + 1), True)
+        run_client(client_id, lib_so, 'spectator-{}'.format(i + 1), True)
 
     # Wait them all
     while poll:
