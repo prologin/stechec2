@@ -1,8 +1,9 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-pkgver=prologin2015
+_pkgver=prologin2015
 pkgname=stechec2
-pkgrel=4
+pkgrel=1
+pkgver=
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('i686' 'x86_64')
 url="http://prologin.org/"
@@ -11,24 +12,32 @@ provides=('stechec2' $pkgver)
 depends=('gflags' 'python2' 'zeromq' 'ocaml' 'python-yaml')
 makedepends=('git')
 source=("git+https://bitbucket.org/prologin/stechec2"
-        "git+https://bitbucket.org/prologin/${pkgver}")
+        "git+https://bitbucket.org/prologin/${_pkgver}")
 sha512sums=(SKIP
             SKIP)
 
+pkgver() {
+    cd "$pkgname"
+    stechec2_commits=$(git rev-list --count HEAD)
+    cd "../$_pkgver"
+    prologin_commits=$(git rev-list --count HEAD)
+    echo r$((stechec2_commits + prologin_commits))
+}
+
 prepare() {
     cd stechec2
-    ln --force --symbolic "${srcdir}/${pkgver}" games/
+    ln --force --symbolic "${srcdir}/${_pkgver}" games/
 }
 
 build() {
     cd stechec2
-    python2 waf.py configure build --prefix=/usr --with-games=${pkgver}
-    (cd "games/${pkgver}/spectators/dumper"; make)
+    python2 waf.py configure build --prefix=/usr --with-games=${_pkgver}
+    (cd "games/${_pkgver}/spectators/dumper"; make)
 }
 
 package() {
     cd stechec2
     python2 waf.py install --destdir="$pkgdir"
     mkdir -p "${pkgdir}/usr/lib"
-    install -Dm755 "games/${pkgver}/spectators/dumper/dumper.so" "${pkgdir}/usr/lib/lib${pkgver}-dumper.so"
+    install -Dm755 "games/${_pkgver}/spectators/dumper/dumper.so" "${pkgdir}/usr/lib/lib${_pkgver}-dumper.so"
 }
