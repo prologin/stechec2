@@ -107,6 +107,14 @@ void Server::sckt_close()
     sckt_->close();
 }
 
+bool used_identifier(uint player_id, rules::Players_sptr ps)
+{
+    for (rules::Player_sptr p : ps->players)
+        if (p->id == player_id)
+            return true;
+    return false;
+}
+
 void Server::wait_for_players()
 {
     // For each client connecting, we send back a unique id
@@ -131,9 +139,29 @@ void Server::wait_for_players()
 
         // To avoid useless message, the client_id of the request corresponds
         // to the type of the client connecting (PLAYER, SPECTATOR, ...)
+        // and the requested client identifier.
+        int id_and_type = id_req.client_id;
+        int player_id = id_and_type / rules::MAX_PLAYER_TYPE;
+        rules::PlayerType player_type =
+          static_cast<rules::PlayerType>(id_and_type % rules::MAX_PLAYER_TYPE);
+
+        ++nb_players_;
+        if (player_id == 0)
+        {
+            player_id = nb_players_;
+            NOTICE("Client did not request an identifier, defaulting to %i",
+                   player_id);
+        }
+
+        if (used_identifier(player_id, players_)
+            || used_identifier(player_id, spectators_))
+        {
+            ERR("Client identifier %i is already used", player_id);
+            player_id = 0; // Treated by client as invalid
+        }
+
         rules::Player_sptr new_player =
-            rules::Player_sptr(new rules::Player(++nb_players_,
-                        static_cast<rules::PlayerType>(id_req.client_id)));
+          rules::Player_sptr(new rules::Player(player_id, player_type));
         buf_req->handle(new_player->name);
 
         delete buf_req;
@@ -145,7 +173,7 @@ void Server::wait_for_players()
         sckt_->send(buf_rep);
 
         // Add the player to the list
-        if (static_cast<rules::PlayerType>(id_req.client_id) == rules::SPECTATOR)
+        if (new_player->type == rules::SPECTATOR)
             spectators_->players.push_back(new_player);
         else
             players_->players.push_back(new_player);
@@ -154,6 +182,12 @@ void Server::wait_for_players()
                 rules::playertype_str(
                     static_cast<rules::PlayerType>(new_player->type)).c_str());
     }
+
+    // Sort players by identifiers
+    std::sort(players_->players.begin(), players_->players.end(),
+              [] (rules::Player_sptr const& a, rules::Player_sptr const& b) {
+                return a->id < b->id;
+              });
 
     // Then send players info to all clients
     utils::Buffer buf_players;

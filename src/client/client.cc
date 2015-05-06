@@ -15,6 +15,7 @@ DEFINE_string(sub_addr, "tcp://0.0.0.0:42125",
               "Set subscribe address binding (ZeroMQ)");
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(champion, "champion.so", "Champion library");
+DEFINE_int32(client_id, 0, "Champion order");
 DEFINE_string(map, "default.map", "Map file");
 DEFINE_bool(spectator, false, "Set if the client is a spectator");
 DEFINE_int32(memory, 42, "Max memory the client can use (in MiB)");
@@ -93,8 +94,10 @@ void Client::sckt_init()
     // Send a message to get an ID from the server
     // To avoid useless message, the client_id of the request corresponds
     // to the type of the client connecting (PLAYER, SPECTATOR, ...)
+    // and its requested identifier.
+    int id_and_type = client_type + rules::MAX_PLAYER_TYPE * FLAGS_client_id;
     utils::Buffer buf_req;
-    net::Message msg(net::MSG_CONNECT, client_type);
+    net::Message msg(net::MSG_CONNECT, id_and_type);
 
     msg.handle_buffer(buf_req);
     buf_req.handle(FLAGS_name);

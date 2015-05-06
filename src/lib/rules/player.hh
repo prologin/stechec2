@@ -75,6 +75,7 @@ enum PlayerType
     PLAYER                      = 1,
     SPECTATOR                   = 2
 };
+const int MAX_PLAYER_TYPE = 3;
 
 static inline std::string playertype_str(PlayerType type)
 {
