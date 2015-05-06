@@ -387,32 +387,32 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
             start_of_player_turn(p->id);
             start_of_turn(p->id);
 
-                DEBUG("Turn for player %d", p->id);
-                msgr->push_id(p->id);
-                Actions* actions = get_actions();
-                actions->clear();
+            DEBUG("Turn for player %d", p->id);
+            msgr->push_id(p->id);
+            Actions* actions = get_actions();
+            actions->clear();
 
-                if (p->nb_timeout < max_consecutive_timeout)
+            if (p->nb_timeout < max_consecutive_timeout)
+            {
+                if (!msgr->poll(timeout_))
                 {
-                    if (!msgr->poll(timeout_))
-                    {
-                        p->nb_timeout++;
-                        DEBUG("Timeout reached, never mind: %d", p->nb_timeout);
-                    }
-                    else
-                    {
-                        DEBUG("Getting actions...");
-                        msgr->recv_actions(actions);
-                        DEBUG("Got %u actions", actions->size());
-                        DEBUG("Acknowledging...");
-                        msgr->ack();
-
-                        for (auto action: actions->actions())
-                            apply_action(action);
-                    }
+                    p->nb_timeout++;
+                    DEBUG("Timeout reached, never mind: %d", p->nb_timeout);
                 }
+                else
+                {
+                    DEBUG("Getting actions...");
+                    msgr->recv_actions(actions);
+                    DEBUG("Got %u actions", actions->size());
+                    DEBUG("Acknowledging...");
+                    msgr->ack();
 
-                msgr->push_actions(*actions);
+                    for (auto action: actions->actions())
+                        apply_action(action);
+                }
+            }
+
+            msgr->push_actions(*actions);
 
             end_of_player_turn(p->id);
             end_of_turn(p->id);
