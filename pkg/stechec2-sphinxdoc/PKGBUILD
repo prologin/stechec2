@@ -1,6 +1,7 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-pkgver=prologin2015
+_pkgver=prologin2015
+pkgver=r686
 pkgname=stechec2-sphinxdoc
 pkgrel=1
 pkgdesc="Stechec2 sphinxdoc for ${pkgver}"
@@ -9,13 +10,17 @@ makedepends=python-sphinx
 url="http://prologin.org/"
 license=('GPL')
 
+pkgver() {
+    echo r$(pacman -Qi stechec2 | grep Version | cut -dr -f3 | cut -d- -f1)
+}
+
 build() {
     # Empty $srcdir
     rm -rf "$srcdir"
     mkdir "$srcdir"
 
     cd "$srcdir"
-    generator sphinxdoc "/usr/share/stechec2/${pkgver}/${pkgver}.yml" .
+    generator sphinxdoc "/usr/share/stechec2/${_pkgver}/${_pkgver}.yml" .
     echo ".
 n
 _
@@ -46,6 +51,6 @@ n" | sphinx-quickstart
 }
 
 package() {
-    mkdir -p "$pkgdir/usr/share/doc/stechec2/${pkgver}"
-    cp -r "$srcdir/_build/html" "$pkgdir/usr/share/doc/stechec2/${pkgver}"
+    mkdir -p "$pkgdir/usr/share/doc/stechec2/${_pkgver}"
+    cp -r "$srcdir/_build/html" "$pkgdir/usr/share/doc/stechec2/${_pkgver}"
 }
