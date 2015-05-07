@@ -63,7 +63,7 @@ CXX		= $(CROSS)g++
 GMCS		= MONO_SHARED_DIR=/tmp gmcs </dev/null
 CPP		= $(CROSS)cpp
 JAVAC		= javac
-OCAMLC		= $(CROSS)ocamlc
+OCAMLC 		= $(CROSS)ocamlc
 GHC		= $(CROSS)ghc
 HSC2HS		= $(CROSS)hsc2hs
 LD		= $(CROSS)ld
@@ -167,8 +167,8 @@ cpp_flags		= $(_CPPFLAGS)
 cmd_cc			= $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
 cmd_cxx			= $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
 cmd_java		= $(JAVAC) $(java_flags) $<
-cmd_ocaml		= $(OCAMLC) -I /usr/lib/ocaml/num -I /usr/lib/ocaml/bytes -I /usr/lib/ocaml/batteries /usr/lib/ocaml/unix.cma /usr/lib/ocaml/nums.cma /usr/lib/ocaml/bigarray.cma /usr/lib/ocaml/str.cma /usr/lib/ocaml/batteries/batteries.cma $(_CAMLFLAGS) -c $< -o $@
-cmd_ocamlo		= $(OCAMLC) -I /usr/lib/ocaml/num -I /usr/lib/ocaml/bytes -I /usr/lib/ocaml/batteries /usr/lib/ocaml/unix.cma /usr/lib/ocaml/nums.cma /usr/lib/ocaml/bigarray.cma /usr/lib/ocaml/str.cma /usr/lib/ocaml/batteries/batteries.cma -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
+cmd_ocaml		= $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
+cmd_ocamlo		= $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
 cmd_hsc2hs		= $(HSC2HS) $< -o $@
 cmd_ghc			= $(GHC) -O9 -dynamic --make -shared -fPIC -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` $(filter %.hs,$^) -optl-Wl,--allow-multiple-definition $(foreach f,$(filter %.a %.o,$^),-optl-Wl,$(f)) -o $@
 
