@@ -170,7 +170,7 @@ cmd_java		= $(JAVAC) $(java_flags) $<
 cmd_ocaml		= $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
 cmd_ocamlo		= $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
 cmd_hsc2hs		= $(HSC2HS) $< -o $@
-cmd_ghc			= $(GHC) -O9 -dynamic --make -shared -fPIC -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` $(filter %.hs,$^) -optl-Wl,--allow-multiple-definition $(foreach f,$(filter %.a %.o,$^),-optl-Wl,$(f)) -o $@
+cmd_ghc			= $(GHC) -pgml $(CXX) -O9 -dynamic --make -shared -fPIC -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` $(filter %.hs %.o %.a,$^) -o $@
 
 ld_flags	= $(_LDFLAGS)
 cmd_ld_shared	= $(CXX) $(filter %.o %.a,$^) $(ld_flags) -shared -o $@ $(_LDLIBS)
