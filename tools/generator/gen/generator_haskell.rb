@@ -196,9 +196,9 @@ class HaskellCFileGenerator < CxxProto
 
     @f.puts "extern \"C\" {"
     for_each_user_fun false do |fn|
-      @f.puts "void hs_#{fn.name}(void);"
+      @f.puts "  void hs_#{fn.name}(void);"
     end
-    @f.puts "  extern void __stginit_#{$conf['conf']['player_filename'].capitalize} ( void );"
+    @f.puts "  extern void __attribute__((weak)) __stginit_#{$conf['conf']['player_filename'].capitalize} ( void );"
     @f.puts "}"
     print_include @header_file
     @f.puts
