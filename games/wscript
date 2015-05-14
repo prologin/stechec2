@@ -13,12 +13,15 @@ def options(opt):
     def with_games_callback(option, opt, value, parser):
         """Callback which sets a Python list as the option value and
         checks if the arguments are valid in this context."""
+        if value in ('*', 'all'):
+            setattr(parser.values, option.dest, AVAIL_GAMES)
+            return
+
         vals = value.split(',')
         for val in vals:
             if val not in AVAIL_GAMES:
                 raise ConfigurationError("%r is not a valid game" % val)
-
-        setattr(parser.values, option.dest, value.split(','))
+        setattr(parser.values, option.dest, vals)
 
     games = ','.join(AVAIL_GAMES) or 'none :( '
     opt.add_option('--with-games', type='string', action='callback',
