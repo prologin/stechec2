@@ -6,14 +6,13 @@ import itertools
 import os
 import os.path
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
 import time
 import yaml
 import signal
-
-poll = []
 
 parser = argparse.ArgumentParser(
     description='Run stechec processes for a match',
@@ -60,6 +59,10 @@ parser.add_argument(
     help='Command to use to debug. Default to "gdb --args".'
          ' For instance: "valgrind --leak-check=full"'
 )
+parser.add_argument(
+    '-i', '--isolate', action='store_true',
+    help='Isolate the clients with `isolate`'
+)
 
 parser.add_argument(
     'config-file', metavar='config-file',
@@ -77,8 +80,22 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.''')
 
 def stechec2_run(args, options):
     popt = {'stderr': sys.stdin, 'stdout': sys.stdout}
-    server_opt = ['stechec2-server']
-    client_opt = ['stechec2-client']
+    server_opt = [shutil.which('stechec2-server')]
+    client_opt = [shutil.which('stechec2-client')]
+
+    poll = []
+    isolate_boxes = []
+
+    def kill_handler(signal, frame):
+        for p in poll:
+            p.kill()
+        for box in isolate_boxes:
+            subprocess.call(['isolate', '--cg', '--box-id', str(box),
+                             '--cleanup'])
+        socket_dir.cleanup()
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT, kill_handler)
 
     if args.inhibit and args.process:
         print('You cannot use both --inhibit and --process', file=sys.stderr)
@@ -137,7 +154,7 @@ def stechec2_run(args, options):
     os.chmod(f_reqrep, 0o777)
     os.chmod(f_pubsub, 0o777)
 
-    def run_client(client, name, is_spectator):
+    def run_client(cid, client, name, is_spectator, isolate=False):
         opts = client_opt + ['--champion', client, '--name', name]
         if is_spectator:
             opts.append('--spectator')
@@ -146,6 +163,19 @@ def stechec2_run(args, options):
         client_popt['env']['CHAMPION_PATH'] = os.path.dirname(
             os.path.abspath(client)
         )
+        if isolate:
+            isolate_base = ['isolate', '--cg', '--box-id', str(cid),
+                    '-d', os.path.dirname(socket_dir.name) + ':rw',
+                    '-d', os.path.dirname(client_opt[0]),
+                    '-d', '/usr', '-d', '/home', '-d', '/bin'
+            ]
+            subprocess.call(isolate_base + ['--init'])
+            opts = isolate_base + [
+                    '--full-env',
+                    '--processes',
+                    '--run', '--',
+                   ] + opts
+            isolate_boxes.append(cid)
         start_proc(name, opts, client_popt)
 
     # Start clients, then spectators
@@ -155,24 +185,20 @@ def stechec2_run(args, options):
             name = client_names[i]
         except IndexError:
             name = 'client-{}'.format(i + 1)
-        run_client(lib_so, name, False)
+        run_client(i + 1, lib_so, name, False, args.isolate)
 
     for i, lib_so in enumerate(spectators):
         lib_so = os.path.expanduser(lib_so)
-        run_client(lib_so, 'spectator-{}'.format(i + 1), True)
+        cid = i + len(clients) + 1
+        run_client(cid, lib_so, 'spectator-{}'.format(i + 1), True)
 
     # Wait them all
     for p in poll:
         p.wait()
+    for box in isolate_boxes:
+        subprocess.call(['isolate', '--cg', '--box-id', str(box), '--cleanup'])
     socket_dir.cleanup()
 
-
-def kill_handler(signal, frame):
-    for p in poll:
-        p.kill()
-    sys.exit(0)
-
-signal.signal(signal.SIGINT, kill_handler)
 
 if __name__ == '__main__':
     args = parser.parse_args()
