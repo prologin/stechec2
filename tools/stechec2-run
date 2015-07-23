@@ -8,6 +8,7 @@ import os.path
 import shlex
 import subprocess
 import sys
+import tempfile
 import time
 import yaml
 import signal
@@ -83,6 +84,16 @@ def stechec2_run(args, options):
         print('You cannot use both --inhibit and --process', file=sys.stderr)
         sys.exit(2)
 
+    # Domain sockets
+    socket_dir = tempfile.TemporaryDirectory(prefix='stechec2-')
+    f_reqrep = socket_dir.name + '/reqrep'
+    f_pubsub = socket_dir.name + '/pubsub'
+    s_reqrep = 'ipc://' + f_reqrep
+    s_pubsub = 'ipc://' + f_pubsub
+
+    server_opt += ['--rep_addr', s_reqrep, '--pub_addr', s_pubsub]
+    client_opt += ['--req_addr', s_reqrep, '--sub_addr', s_pubsub]
+
     # Used by both client and server
     for i in ['rules', 'verbose', 'map', 'time', 'memory']:
         if i in options:
@@ -120,8 +131,11 @@ def stechec2_run(args, options):
 
     # Start the server
     start_proc('server', server_opt, popt)
-    # Let it start XXX: UGLY HACK. TO FIX
+    # Let it start (wait for the domain sockets to be created)
     time.sleep(1)
+
+    os.chmod(f_reqrep, 0o777)
+    os.chmod(f_pubsub, 0o777)
 
     def run_client(client, name, is_spectator):
         opts = client_opt + ['--champion', client, '--name', name]
@@ -150,6 +164,7 @@ def stechec2_run(args, options):
     # Wait them all
     for p in poll:
         p.wait()
+    socket_dir.cleanup()
 
 
 def kill_handler(signal, frame):
