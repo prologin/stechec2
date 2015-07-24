@@ -111,6 +111,15 @@ def stechec2_run(args, options):
     server_opt += ['--rep_addr', s_reqrep, '--pub_addr', s_pubsub]
     client_opt += ['--req_addr', s_reqrep, '--sub_addr', s_pubsub]
 
+    clients = options.get('clients', [])
+    client_names = options.get('names', [])
+    spectators = options.get('spectators', [])
+
+    if 'map' in options:
+        options['map'] = os.path.realpath(options['map'])
+    clients = list(map(os.path.realpath, clients))
+    spectators = list(map(os.path.realpath, spectators))
+
     # Used by both client and server
     for i in ['rules', 'verbose', 'map', 'time', 'memory']:
         if i in options:
@@ -118,9 +127,6 @@ def stechec2_run(args, options):
             client_opt += ['--' + i, str(options[i])]
 
     # Used by server only
-    clients = options.get('clients', [])
-    client_names = options.get('names', [])
-    spectators = options.get('spectators', [])
     server_opt += ['--nb_clients', str(len(clients) + len(spectators))]
 
     next_process = iter(itertools.count())
@@ -152,6 +158,7 @@ def stechec2_run(args, options):
     time.sleep(1)
 
     if args.isolate:
+        os.chmod(socket_dir.name, 0o777)
         os.chmod(f_reqrep, 0o777)
         os.chmod(f_pubsub, 0o777)
 
@@ -167,9 +174,13 @@ def stechec2_run(args, options):
         if isolate:
             prefix = os.path.realpath(os.path.dirname(client_opt[0]) + '/..')
             isolate_base = ['isolate', '--cg', '--box-id', str(cid),
-                    '-d', os.path.dirname(socket_dir.name) + ':rw',
-                    '-d', prefix,
+              '-d', os.path.realpath(os.path.dirname(socket_dir.name)) + ':rw',
+              '-d', prefix,
+              '-d', os.path.realpath('.'),
+              '-d', os.path.dirname(client),
             ]
+            if 'map' in options:
+                isolate_base += ['-d', os.path.dirname(options['map'])]
             subprocess.call(isolate_base + ['--init'])
             opts = isolate_base + [
                     '--env', 'LD_LIBRARY_PATH=' +
