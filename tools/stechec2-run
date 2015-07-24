@@ -151,8 +151,9 @@ def stechec2_run(args, options):
     # Let it start (wait for the domain sockets to be created)
     time.sleep(1)
 
-    os.chmod(f_reqrep, 0o777)
-    os.chmod(f_pubsub, 0o777)
+    if args.isolate:
+        os.chmod(f_reqrep, 0o777)
+        os.chmod(f_pubsub, 0o777)
 
     def run_client(cid, client, name, is_spectator, isolate=False):
         opts = client_opt + ['--champion', client, '--name', name]
@@ -164,13 +165,15 @@ def stechec2_run(args, options):
             os.path.abspath(client)
         )
         if isolate:
+            prefix = os.path.realpath(os.path.dirname(client_opt[0]) + '/..')
             isolate_base = ['isolate', '--cg', '--box-id', str(cid),
                     '-d', os.path.dirname(socket_dir.name) + ':rw',
-                    '-d', os.path.dirname(client_opt[0]),
-                    '-d', '/usr', '-d', '/home', '-d', '/bin'
+                    '-d', prefix,
             ]
             subprocess.call(isolate_base + ['--init'])
             opts = isolate_base + [
+                    '--env', 'LD_LIBRARY_PATH=' +
+                                os.environ.get('LD_LIBRARY_PATH', ''),
                     '--full-env',
                     '--processes',
                     '--run', '--',
