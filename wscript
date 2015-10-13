@@ -53,19 +53,8 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-Wno-return-type-c-linkage'])
 
     # Check for C++0x
-    conf.check_cxx(cxxflags = '-std=c++11')
-    conf.check_cxx(cxxflags = '-std=c++11', header_name = "cstdint")
-    conf.check_cxx(cxxflags = '-std=c++11', msg = 'Checking for std::shared_ptr',
-                   fragment = '''
-                   #include <memory>
-                   int main() { std::shared_ptr<int> p; }
-                   ''')
-    conf.check_cxx(cxxflags = '-std=c++11', msg = 'Checking for std::array',
-                   fragment = '''
-                   #include <array>
-                   int main() { std::array<int, 4> a; }
-                   ''')
-    conf.env.append_value('CXXFLAGS', '-std=c++11')
+    conf.check_cxx(cxxflags = '-std=c++14')
+    conf.env.append_value('CXXFLAGS', '-std=c++14')
 
     # Debug / Release
     if conf.options.debug:
@@ -101,7 +90,7 @@ def configure(conf):
     conf.check_cxx(lib = "gflags", mandatory = True, uselib_store = "gflags")
 
     # Google Flags namespace
-    if conf.check_cxx(cxxflags='-std=c++11', mandatory=False,
+    if conf.check_cxx(mandatory=False,
             msg='Checking for gflags namespace',
             fragment='''
                #include <gflags/gflags.h>
