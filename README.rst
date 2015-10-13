@@ -50,9 +50,9 @@ Clone the stechec2 repository::
 
 Then put every game you want to install in ``games/``::
 
-  git clone https://bitbucket.org/prologin/prologin2012.git games/prologin2012
-  git clone https://bitbucket.org/prologin/prologin2013.git games/prologin2013
-  git clone https://bitbucket.org/prologin/prologin2014.git games/prologin2014
+  for game in prologin{2012..2015}; do
+    git clone https://bitbucket.org/prologin/${game}.git games/$game
+  done
 
 A simple test game, ``tictactoe``, is already installed in ``games/``.
 
@@ -63,6 +63,9 @@ You can now configure the project using waf::
 Then build and install it::
 
   python2 waf.py build install
+
+**Archlinux**: A PKGBUILD is available in ``pkg/stechec2``:
+run ``makepkg && pacman -U stechec2-*.pkg.tar.xz``.
 
 Generate the player environment
 ---------------------------------
