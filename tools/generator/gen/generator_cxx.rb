@@ -54,7 +54,7 @@ class CxxFileGenerator < CxxProto
     print_banner "generator_cxx.rb"
     print_include @header_file
     @f.puts
-    for_each_user_fun do |fn| 
+    for_each_user_fun do |fn|
       @f.print cxx_proto(fn)
       print_body "  // fonction a completer"
     end

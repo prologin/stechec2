@@ -86,7 +86,7 @@ $conf["constant"].each do |f|
 \textbf{Constante:} & <%= esc(f['cst_name']) %> \\
 \textbf{Valeur:} & <%= f['cst_val'] %> \\
 \textbf{Description:} & <%= esc(f['cst_comment']) %> \\
-\end{tabular} 
+\end{tabular}
 \vspace{0.2cm} \\
 
 <%

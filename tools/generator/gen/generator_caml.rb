@@ -404,7 +404,7 @@ class CamlFileGenerator < FileGenerator
     @f.print conv_type(fn.ret)
     @f.print ' = "ml_', fn.name, '"' unless not external
   end
-  
+
   def generate_makefile
     target = $conf['conf']['player_lib']
     @f = File.open(@path + "Makefile", 'w')
@@ -470,7 +470,7 @@ include ../includes/rules.mk
 
     # callback register
     print_comment "/!\\ Ne touche pas a ce qui suit /!\\"
-    for_each_user_fun(false) do |fn| 
+    for_each_user_fun(false) do |fn|
       @f.print 'Callback.register "ml_', fn.name, '" ', fn.name, ";;"
     end
     @f.close

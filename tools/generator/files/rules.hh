@@ -36,7 +36,7 @@ public:
 protected:
     // FIXME
     // include user functions here
-    
+
 private:
     utils::DLL* champion_dll_;
     Api* api_;

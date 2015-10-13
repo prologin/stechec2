@@ -102,7 +102,7 @@ class CxxFileGenerator < CxxProto
     strs.each { |s| s.capitalize! }
     strs.join
   end
-  
+
   # api.cc
   def print_cxx_api
     for_each_fun do |fn|
@@ -224,7 +224,7 @@ convert_to_string_arr "int";
       convert_to_string_arr ty
     end
 
-    for_each_fun true, "function" do |fn| 
+    for_each_fun true, "function" do |fn|
       if fn.dumps then
         t = fn.dumps
         @f.puts "std::ostream& operator<<(std::ostream& os, #{t.name} v)"

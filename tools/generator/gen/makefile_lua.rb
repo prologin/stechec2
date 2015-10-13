@@ -71,7 +71,7 @@ EOF
 # -*- Makefile -*-
 
 # $(wildcard *.lua)
-SRC       = prologin.lua 
+SRC       = prologin.lua
 NAME      = #{$conf['conf']['player_lib']}.so
 
 MY_CXXFLAGS = -O2

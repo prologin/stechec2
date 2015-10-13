@@ -225,7 +225,7 @@ class FileGenerator
       name = e['enum_name']
       fields = e['enum_field']
 
-      @f.puts "const char *enum2string_#{name}[] = { #{(fields.map do |f| "\"#{f[0]}\"" end ).join(", ") } }; " 
+      @f.puts "const char *enum2string_#{name}[] = { #{(fields.map do |f| "\"#{f[0]}\"" end ).join(", ") } }; "
       @f.puts "#{name} string2int_#{name}(char * e){"
       c = 0;
       fields.each do |f|
@@ -361,7 +361,7 @@ class CProto < FileGenerator
     @f.print ext, ret_type
     @f.print " ", name, "("
     if args != nil and args != []
-      print_args = args.collect { |arg| 
+      print_args = args.collect { |arg|
         arg[1] + " " + arg[0]
       }
       @f.print print_args.join(", ")

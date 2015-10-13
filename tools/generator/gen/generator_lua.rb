@@ -36,9 +36,9 @@ class LuaInterface
 public:
   LuaInterface();
   ~LuaInterface();
-  
+
   void callLuaFunction(const char* name);
-  
+
 private:
   lua_State* l_;
 };
@@ -56,7 +56,7 @@ private:
   def generate_source()
     @f = File.open(@path + @source_file, 'w')
     print_banner "generator_lua.rb"
-    
+
     @f.puts <<-EOF
 #include "interface.hh"
 
@@ -67,7 +67,7 @@ LuaInterface gl_lua;
 */
 extern "C" {
     EOF
-      
+
     for_each_fun(false) do |name, ret, args|
       @f.print "int l_", name, "(lua_State* L)\n"
       @f.puts "{"
@@ -216,7 +216,7 @@ include ../includes/makelua
     ##  interface.hh file generation    ##
     ######################################
     LuaCxxFileGenerator.new.build	
-    
+
     ######################################
     ##  prologin.lua file generation    ##
     ######################################
@@ -229,7 +229,7 @@ include ../includes/makelua
     @f.close
 
     generate_makefile
-  
+
     # must copy the file bin2c.lua
     if File.exist? 'files/bin2c.lua'
       File.copy 'files/bin2c.lua', @path.to_s

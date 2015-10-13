@@ -339,7 +339,7 @@ class JsFileGenerator < FileGenerator
 
   def print_proto(name, ret_type, args)
   end
-    
+
   def generate_makefile
       target = $conf['conf']['player_lib']
       @f = File.open(@path + "Makefile", 'w')
@@ -376,7 +376,7 @@ class JsFileGenerator < FileGenerator
     print_banner "generator_js.rb"
     build_constants
     @f.puts
-    for_each_user_fun do |name, ret, args| 
+    for_each_user_fun do |name, ret, args|
       @f.print "function ", name, "()
 {
   // code ici

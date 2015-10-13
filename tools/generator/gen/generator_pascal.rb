@@ -179,7 +179,7 @@ EOF
       type = s["enum_name"]
       @f.puts "extern int INIT_PROLO_INTERFACE_ARRAY_OF_#{type.upcase};"
     end
-    
+
     for_each_enum do |x|
       name = x['enum_name']
       @f.puts "template<>"

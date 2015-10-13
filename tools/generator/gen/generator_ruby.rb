@@ -230,7 +230,7 @@ VALUE cxx2lang_array(const std::vector<Cxx>& vect)
     end
 @f.puts "
 void loadCallback()
-{ 
+{
 "
 
     # configure callbacks in the Ruby environment
@@ -266,7 +266,7 @@ void init(){
     rb_load_protect(rb_str_new2(file.c_str()), 0, &status);
     std::cout << \"status = \" << status << std::endl;
     if (status){
-       rb_p (rb_errinfo()); 
+       rb_p (rb_errinfo());
        abort();
     }
   }
@@ -277,7 +277,7 @@ void my_ruby_end(){
 }
 
 "
-  
+
     @f.puts "extern \"C\" {"
     for_each_user_fun do |fn|
       name = fn.name
@@ -304,7 +304,7 @@ void my_ruby_end(){
       end
       print_body "
   printf(\"calling ruby function: #{name}\\n\");
-  VALUE v = rb_eval_string(\"#{name}()\"); 
+  VALUE v = rb_eval_string(\"#{name}()\");
   return v;
 "
       fn.ret = ret
@@ -394,7 +394,7 @@ class RubyFileGenerator < CProto
     for_each_user_fun(false) do |fn|
       name = fn.name
       args = fn.args.map do |a| a.name end
-      @f.print "def ", name, "(#{args.join ', '})\n", "  # fonction a completer\n", "end\n" 
+      @f.print "def ", name, "(#{args.join ', '})\n", "  # fonction a completer\n", "end\n"
     end
     @f.close
   end

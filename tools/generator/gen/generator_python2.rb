@@ -282,7 +282,7 @@ EOF
   def generate_source()
     @f = File.open(@path + @source_file, 'w')
     print_banner "generator_python2.rb"
-    
+
     @f.puts <<-EOF
 #include "interface.hh"
 
@@ -293,7 +293,7 @@ static PyObject* champ_module;
 static void _init_python();
 
     EOF
-      
+
     build_common_wrappers
     for_each_enum { |e| build_enum_wrappers e }
     for_each_struct { |s| build_struct_wrappers s }

@@ -24,7 +24,7 @@ class PrologCFileGenerator < CxxProto
     @f = File.open(@path + @header_file, 'w')
     print_banner "generator_prolog.rb"
     print_include "SWI-Prolog.h", true
-    print_include "cstring", true 
+    print_include "cstring", true
     print_include "vector", true
 
     build_enums
@@ -294,7 +294,7 @@ class PrologFileGenerator < FileGenerator
   def print_constant(type, name, val)
       @f.print 'const(', val,', ', name.downcase, ").\n"
   end
-  
+
   def generate_makefile
     target = $conf['conf']['player_lib']
     @f = File.open(@path + "Makefile", 'w')

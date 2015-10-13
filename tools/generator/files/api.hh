@@ -34,7 +34,7 @@ public:
 
     const rules::Player_sptr player() const { return player_; }
     void player_set(rules::Player_sptr player) { player_ = player; }
-        
+
     rules::Actions* actions() { return &actions_; }
 
     const GameState* game_state() const { return game_state_; }
