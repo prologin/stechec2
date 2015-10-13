@@ -87,7 +87,7 @@ def stechec2_run(args, options):
     isolate_boxes = []
 
     def kill_handler(signal, frame):
-        for p in poll:
+        for _, p in poll:
             p.kill()
         for box in isolate_boxes:
             subprocess.call(['isolate', '--cg', '--box-id', str(box),
@@ -147,7 +147,7 @@ def stechec2_run(args, options):
         if to_start(p):
             print('>>> Starting {}[P={}]:'.format(name, p))
             print('    {}'.format(cmd_line))
-            poll.append(subprocess.Popen(opts, **popt))
+            poll.append((name, subprocess.Popen(opts, **popt)))
         else:
             print('>>> Not starting {}[P={}]:'.format(name, p))
             print('    {}'.format(cmd_line))
@@ -207,8 +207,15 @@ def stechec2_run(args, options):
         run_client(cid, lib_so, 'spectator-{}'.format(i + 1), True)
 
     # Wait them all
-    for p in poll:
-        p.wait()
+    while poll:
+        for i, (name, p) in enumerate(poll):
+            r = p.poll()
+            if r is not None:
+                if r != 0:
+                    print('>>> error: {} exited with code {}'.format(name, r))
+                poll.pop(i)
+        time.sleep(0.1)
+
     for box in isolate_boxes:
         subprocess.call(['isolate', '--cg', '--box-id', str(box), '--cleanup'])
     socket_dir.cleanup()
