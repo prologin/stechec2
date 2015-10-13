@@ -350,8 +350,8 @@ CSharpInterface gl_csharp;
 */
 CSharpInterface::CSharpInterface()
 {
-  const char*		champion_path = getenv("CHAMPION_PATH");
-  std::string		champion;
+  const char* champion_path = getenv("CHAMPION_PATH");
+  std::string champion;
 
   if (!champion_path)
     champion = "./#{target}-prologin.dll";

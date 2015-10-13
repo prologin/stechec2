@@ -209,7 +209,7 @@ convert_to_string_arr "int";
       args = []
       e["str_field"].each do |e|
         @f.puts "  std::string #{e[0]} = convert_to_string(in.#{e[0]});"
-	args.push "\"#{e[0]}:\" + #{e[0]}"
+      args.push "\"#{e[0]}:\" + #{e[0]}"
       end
       @f.puts "  std::string out = \"{\";"
       virgule = false;
