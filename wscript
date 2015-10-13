@@ -59,9 +59,9 @@ def configure(conf):
     # Debug / Release
     if conf.options.debug:
         conf.check_cxx(cxxflags = '-g')
-        conf.check_cxx(cxxflags = '-ggdb3')
         conf.env.append_value('DEFINES', '__DEBUG__')
-        conf.env.append_value('CXXFLAGS', ['-g', '-ggdb3'])
+        conf.env.append_value('CXXFLAGS', ['-g'])
+        conf.env.append_value('CPPFLAGS', ['-DNDEBUG'])
     else:
         conf.check_cxx(cxxflags = '-O2')
         conf.check_cxx(cxxflags = '-ffast-math')
@@ -96,9 +96,9 @@ def configure(conf):
                #include <gflags/gflags.h>
                using namespace gflags;
                int main() {}'''):
-        conf.env.append_value('CXXFLAGS', '-DGFLAGS_NAMESPACE=gflags')
+        conf.env.append_value('CPPFLAGS', '-DGFLAGS_NAMESPACE=gflags')
     else:
-        conf.env.append_value('CXXFLAGS', '-DGFLAGS_NAMESPACE=google')
+        conf.env.append_value('CPPFLAGS', '-DGFLAGS_NAMESPACE=google')
 
     # Ruby
     conf.check_ruby_version((1, 9))
