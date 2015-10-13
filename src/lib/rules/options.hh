@@ -3,6 +3,8 @@
 
 # include <string>
 # include <cstdint>
+# include <ostream>
+# include <memory>
 
 # include "player.hh"
 
@@ -33,6 +35,9 @@ struct Options
 
     // Verbosity of the logs displayed/written
     unsigned verbose;
+
+    // Game data dump output stream
+    std::shared_ptr<std::ostream> dump_stream;
 };
 
 } // namespace rules
