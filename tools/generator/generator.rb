@@ -29,7 +29,7 @@ code based on a yaml description file. This avoid maintaining "n * l"
 source, where "n" is the number of contest and "l" the number of langages
 available.
 
-Usage: generator <option> <yaml_file> <install_path>
+Usage: stechec2-generator <option> <yaml_file> <install_path>
 
 Options:
   player       create startup files, for candidats and for all langages.
@@ -39,8 +39,8 @@ Options:
   sphinxdoc    generate sphinx API documentation for the subject.
 
 Examples:
-  generator player ant /tmp/
-  generator apidoc /goinfre/titi.yaml foo/
+  stechec2-generator player ant /tmp/
+  stechec2-generator apidoc /goinfre/titi.yaml foo/
 
 Report bugs to <info@prologin.org>
 EOF

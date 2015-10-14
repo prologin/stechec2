@@ -20,7 +20,7 @@ build() {
     mkdir "$srcdir"
 
     cd "$srcdir"
-    generator sphinxdoc "/usr/share/stechec2/${_pkgver}/${_pkgver}.yml" .
+    stechec2-generator sphinxdoc "${_pkgver}" .
     echo ".
 n
 _

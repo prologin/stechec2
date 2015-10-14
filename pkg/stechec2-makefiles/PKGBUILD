@@ -17,5 +17,5 @@ pkgver() {
 package() {
     dest="${pkgdir}/usr/share/stechec2/${_pkgver}/makefiles"
     mkdir -p "$dest"
-    generator server "/usr/share/stechec2/${_pkgver}/${_pkgver}.yml" "$dest"
+    stechec2-generator server "${_pkgver}" "$dest"
 }

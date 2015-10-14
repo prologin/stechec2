@@ -70,9 +70,10 @@ Generate the player environment
 ---------------------------------
 
 To generate the player environment (different folders for each supported
-languages), you can use the ``generator`` script installed by stechec2::
+languages), you can use the ``stechec2-generator`` script installed by
+stechec2::
 
-  generator player /usr/share/stechec2/tictactoe/tictactoe.yml home_env/
+  stechec2-generator player tictactoe player_env
 
 Install languages dependencies
 ------------------------------

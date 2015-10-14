@@ -272,8 +272,8 @@ PATH:
 
 .. code-block:: bash
 
-  $ generator -h   # Display a lot of useful help
-  $ generator rules ./connect4.yml gen
+  $ stechec2-generator -h   # Display a lot of useful help
+  $ stechec2-generator rules ./connect4.yml gen
   $ mv gen/connect4/rules src
   $ rm -rf gen
   $ ls src

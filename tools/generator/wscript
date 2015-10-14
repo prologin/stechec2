@@ -14,13 +14,13 @@ def build(bld):
     bld(
         features = 'subst',
         source = 'generator.in',
-        target = 'generator',
+        target = 'stechec2-generator',
         chmod = Utils.O755,
         RUBY = bld.env.RUBY,
         GENERATOR_DIR = '%s/lib/stechec2/generator' % bld.env.PREFIX,
     )
 
-    bld.install_files('${PREFIX}/bin', ['generator'], chmod=Utils.O755)
+    bld.install_files('${PREFIX}/bin', ['stechec2-generator'], chmod=Utils.O755)
 
     bld.install_files('${PREFIX}/lib/stechec2/generator', [
         'conf.rb',
