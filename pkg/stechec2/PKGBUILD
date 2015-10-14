@@ -9,7 +9,7 @@ arch=('i686' 'x86_64')
 url="http://prologin.org/"
 license=('GPL')
 provides=('stechec2' $pkgver)
-depends=('gflags' 'python2' 'zeromq' 'ocaml' 'python-yaml')
+depends=('gflags' 'zeromq' 'ocaml' 'python-yaml')
 makedepends=('git')
 source=("git+https://bitbucket.org/prologin/stechec2"
         "git+https://bitbucket.org/prologin/${_pkgver}")
@@ -31,13 +31,13 @@ prepare() {
 
 build() {
     cd stechec2
-    python2 waf.py configure build --prefix=/usr --with-games=${_pkgver}
+    ./waf.py configure build --prefix=/usr --with-games=${_pkgver}
     (cd "games/${_pkgver}/spectators/dumper"; make)
 }
 
 package() {
     cd stechec2
-    python2 waf.py install --destdir="$pkgdir"
+    ./waf.py install --destdir="$pkgdir"
     mkdir -p "${pkgdir}/usr/lib"
     install -Dm755 "games/${_pkgver}/spectators/dumper/dumper.so" "${pkgdir}/usr/lib/lib${_pkgver}-dumper.so"
 }

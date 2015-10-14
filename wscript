@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python
 
 import subprocess
 import os.path
@@ -35,12 +35,6 @@ def configure(conf):
     conf.load('compiler_cxx')
     conf.load('unittest_gtest')
     conf.load('ruby')
-
-    # Look for Python 2
-    try:
-        conf.find_program('python2', var='PYTHON')
-    except conf.errors.ConfigurationError:
-        conf.find_program('python', var='PYTHON')
 
     # Warning flags
     conf.check_cxx(cxxflags = '-Wall')

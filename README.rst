@@ -20,7 +20,6 @@ Requirements
 
 * gcc >= 4.7
 * python
-* python2
 * zeromq
 * zeromq C++ wrapper
 * google-gflags
@@ -31,7 +30,7 @@ Requirements
 
 Arch Linux:
 
-  pacman --needed -S gcc python2 zeromq gtest ruby python-yaml gflags
+  pacman --needed -S gcc zeromq gtest ruby python-yaml gflags
 
 AUR:
 
@@ -58,11 +57,11 @@ A simple test game, ``tictactoe``, is already installed in ``games/``.
 
 You can now configure the project using waf::
 
-  python2 waf.py configure --with-games=tictactoe --prefix=/usr
+  ./waf.py configure --with-games=tictactoe --prefix=/usr
 
 Then build and install it::
 
-  python2 waf.py build install
+  ./waf.py build install
 
 **Archlinux**: A PKGBUILD is available in ``pkg/stechec2``:
 run ``makepkg && pacman -U stechec2-*.pkg.tar.xz``.

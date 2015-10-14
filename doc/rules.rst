@@ -290,7 +290,7 @@ Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
 
 .. code-block:: python
 
-  #! /usr/bin/env python2
+  #! /usr/bin/env python
 
   def options(opt):
       pass
