@@ -24,6 +24,17 @@ package_name = $conf['conf']['package_name']
 install_path = Pathname.new($install_path) + package_name + "rules"
 install_path.mkpath
 
+if $conf["rules_type"] == nil then
+  $conf["rules_type"] = "none"
+end
+rules_types = { "none" => nil,
+                "turnbased" => "TurnBasedRules",
+                "synchronous" => "SynchronousRules" }
+unless rules_types.include?($conf["rules_type"])
+  abort("Supported rules_type: 'none', 'synchronous' and 'turnbased'.")
+end
+$conf["rules_type"] = rules_types[$conf["rules_type"]]
+
 # Copie les quelques squelettes.
 files = %w{
   api.cc
@@ -55,6 +66,15 @@ class CxxFileGenerator < CxxProto
     replaces['!!provider!!'] = 'Prologin' # FIXME
     replaces['!!year!!'] = Date.today.year.to_s
     replaces['!!package_name!!'] = $conf['conf']['package_name']
+    if $conf['rules_type'].nil? then
+        replaces['!!rules_hh_inheritance!!'] = ""
+        replaces['!!rules_cc_inheritance!!'] = ""
+    else
+        replaces['!!rules_hh_inheritance!!'] = (" : public rules::" +
+                                                $conf['rules_type'])
+        replaces['!!rules_cc_inheritance!!'] = (" " + $conf['rules_type'] +
+                                                "(opt) ")
+    end
     replaces.each do |key, value|
       line = line.sub(key, value)
     end
@@ -281,19 +301,6 @@ convert_to_string_arr "int";
     (not fn.dumps) && fn.conf['fct_action']
   end
 
-  def print_register_actions
-    for_each_fun(false) do |fn|
-      if fn_is_action? fn then
-        @f.print <<-EOF
-    api_->actions()->register_action(
-        ID_ACTION_#{fn.name.upcase},
-        []() -> rules::IAction* { return new Action#{camel_case fn.name}(); }
-        );
-EOF
-      end
-    end
-  end
-
   def print_actions_hh
     # I don't think for_each_fun without block returns an enumerator
     # (which it really should)
@@ -405,6 +412,80 @@ EOF
     end
   end
 
+  def print_cxx_rules_head
+    if $conf["rules_type"] == nil
+      @f.write <<-EOF
+    virtual void player_loop(rules::ClientMessenger_sptr msgr);
+    virtual void spectator_loop(rules::ClientMessenger_sptr msgr);
+    virtual void server_loop(rules::ServerMessenger_sptr msgr);
+EOF
+    else
+      @f.write <<-EOF
+    virtual rules::Actions* get_actions();
+    virtual void apply_action(const rules::IAction_sptr& action);
+    virtual bool is_finished();
+
+protected:
+    // FIXME: Override #{$conf["rules_type"]} methods here
+EOF
+    end
+  end
+
+  def print_cxx_rules
+    # Register actions
+    @f.print "void Rules::register_actions()\n{\n"
+    for_each_fun(false) do |fn|
+      if fn_is_action? fn then
+        @f.print <<-EOF
+    api_->actions()->register_action(
+        ID_ACTION_#{fn.name.upcase},
+        []() -> rules::IAction* { return new Action#{camel_case fn.name}(); }
+        );
+EOF
+      end
+    end
+    @f.print "}\n\n"
+
+    # Rules boilerplate
+    if $conf["rules_type"] == nil
+      @f.write <<-EOF
+void Rules::player_loop(rules::ClientMessenger_sptr msgr)
+{
+    // FIXME
+}
+
+void Rules::spectator_loop(rules::ClientMessenger_sptr msgr)
+{
+    // FIXME
+}
+
+void Rules::server_loop(rules::ServerMessenger_sptr msgr)
+{
+    // FIXME
+}
+EOF
+    else
+      @f.write <<-EOF
+rules::Actions* Rules::get_actions()
+{
+    return api_->actions();
+}
+
+void Rules::apply_action(const rules::IAction_sptr& action)
+{
+    api_->game_state_set(action->apply(api_->game_state()));
+}
+
+bool Rules::is_finished()
+{
+    // FIXME
+    return true;
+}
+EOF
+    end
+  end
+
+
   # Constant.hh
   def print_cst
     build_constants
@@ -412,10 +493,6 @@ EOF
     build_structs
   end
 end
-
-def do_nothing
-end
-
 
 gen = CxxFileGenerator.new
 files.each do |fn|
@@ -425,7 +502,8 @@ gen.fill_file_section("api.cc") { gen.print_cxx_api }
 gen.fill_file_section("api.hh") { gen.print_cxx_api_head }
 gen.fill_file_section("interface.cc") { gen.print_interface }
 gen.fill_file_section("constant.hh") { gen.print_cst }
-gen.fill_file_section("rules.cc") { gen.print_register_actions }
+gen.fill_file_section("rules.cc") { gen.print_cxx_rules }
+gen.fill_file_section("rules.hh") { gen.print_cxx_rules_head }
 gen.print_actions_hh
 gen.for_each_fun(false) do |fn|
   gen.print_action_file(fn)
