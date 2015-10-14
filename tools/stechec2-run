@@ -128,6 +128,9 @@ def stechec2_run(args, options):
 
     # Used by server only
     server_opt += ['--nb_clients', str(len(clients) + len(spectators))]
+    for i in ['dump']:
+        if i in options:
+            server_opt += ['--' + i, str(options[i])]
 
     next_process = iter(itertools.count())
 

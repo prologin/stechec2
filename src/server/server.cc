@@ -2,6 +2,8 @@
 
 #include <gflags/gflags.h>
 #include <iostream>
+#include <fstream>
+#include <memory>
 #include <utils/log.hh>
 #include <net/message.hh>
 #include <rules/player.hh>
@@ -14,6 +16,7 @@ DEFINE_int32(time, 10000, "Timeout for a player turn (in ms)");
 DEFINE_int32(nb_clients, 2, "Number of players to expect");
 DEFINE_string(map, "default.map", "Map file");
 DEFINE_string(rules, "rules.so", "Rules library");
+DEFINE_string(dump, "", "Game data dump output path");
 
 Server::Server()
     : nb_players_(0)
@@ -50,6 +53,18 @@ void Server::run()
     rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;
+
+    // Create dump output stream
+    if (!FLAGS_dump.empty())
+    {
+        std::shared_ptr<std::ofstream> dump_stream =
+            std::make_shared<std::ofstream>(FLAGS_dump);
+        if (!dump_stream->is_open())
+            ERR("Cannot open dump file for writing %s: %s",
+                    FLAGS_dump.c_str(), strerror(errno));
+        else
+            rules_opt.dump_stream = std::move(dump_stream);
+    }
 
     // Rules specific initializations
     rules_init(rules_opt);

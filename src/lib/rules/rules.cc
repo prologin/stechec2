@@ -67,6 +67,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     at_start();
     at_spectator_start();
 
+    // FIXME(seirl): unused, last round missing?
     bool last_round = false;
 
     while (last_round || !is_finished())
@@ -97,9 +98,6 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
-    at_start();
-    at_server_start();
-
     std::unordered_set<uint32_t> spectators_ids;
     for (auto spectator : spectators_->players)
         spectators_ids.insert(spectator->id);
@@ -113,6 +111,11 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     std::set<uint32_t> players_timeouting;
     unsigned int players_count = players_->players.size() +
         spectators_->players.size();
+
+    at_start();
+    at_server_start();
+
+    dump_state_stream();
 
     while (!is_finished())
     {
@@ -180,6 +183,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         msgr->push_actions(*actions);
 
         end_of_round();
+
+        dump_state_stream();
     }
 
     at_end();
@@ -380,6 +385,9 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     at_server_start();
 
     start_of_round();
+
+    dump_state_stream();
+
     while (!is_finished())
     {
         for (auto& p : players_->players)
@@ -416,6 +424,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
             end_of_player_turn(p->id);
             end_of_turn(p->id);
+
+            dump_state_stream();
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
