@@ -71,6 +71,12 @@ public:
 protected:
     bool is_spectator(uint32_t id);
 
+    void dump_state_stream()
+    {
+        if (opt_.dump_stream)
+            dump_state(*opt_.dump_stream);
+    }
+
     Options opt_;
 
     Players_sptr players_;
