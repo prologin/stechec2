@@ -73,7 +73,7 @@ class CxxFileGenerator < CxxProto
         replaces['!!rules_hh_inheritance!!'] = (" : public rules::" +
                                                 $conf['rules_type'])
         replaces['!!rules_cc_inheritance!!'] = (" " + $conf['rules_type'] +
-                                                "(opt) ")
+                                                "(opt),")
     end
     replaces.each do |key, value|
       line = line.sub(key, value)
