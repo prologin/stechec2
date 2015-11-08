@@ -18,7 +18,7 @@ class Rules!!rules_hh_inheritance!!
 {
 public:
     explicit Rules(const rules::Options opt);
-    virtual ~Rules();
+    virtual ~Rules() {}
 
     // @@GEN_HERE@@
 
