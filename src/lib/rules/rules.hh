@@ -41,15 +41,15 @@ public:
 
     // Function executed at the start of the game
     virtual void at_start() {}
-    virtual void at_player_start() {}
-    virtual void at_spectator_start() {}
-    virtual void at_server_start() {}
+    virtual void at_player_start(ClientMessenger_sptr) {}
+    virtual void at_spectator_start(ClientMessenger_sptr) {}
+    virtual void at_server_start(ServerMessenger_sptr) {}
 
     // Function executed at the end of the game
     virtual void at_end() {}
-    virtual void at_player_end() {}
-    virtual void at_spectator_end() {}
-    virtual void at_server_end() {}
+    virtual void at_player_end(ClientMessenger_sptr) {}
+    virtual void at_spectator_end(ClientMessenger_sptr) {}
+    virtual void at_server_end(ServerMessenger_sptr) {}
 
     // Player's turn: call the champion within a sandbox
     virtual void player_turn() {}

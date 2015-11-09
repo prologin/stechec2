@@ -34,7 +34,7 @@ SynchronousRules::SynchronousRules(const Options opt)
 void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 {
     at_start();
-    at_player_start();
+    at_player_start(msgr);
 
     while (!is_finished())
     {
@@ -59,13 +59,13 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_player_end();
+    at_player_end(msgr);
 }
 
 void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 {
     at_start();
-    at_spectator_start();
+    at_spectator_start(msgr);
 
     // FIXME(seirl): unused, last round missing?
     bool last_round = false;
@@ -93,7 +93,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_spectator_end();
+    at_spectator_end(msgr);
 }
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
@@ -113,7 +113,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         spectators_->players.size();
 
     at_start();
-    at_server_start();
+    at_server_start(msgr);
 
     dump_state_stream();
 
@@ -188,7 +188,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     }
 
     at_end();
-    at_server_end();
+    at_server_end(msgr);
 }
 
 
@@ -207,7 +207,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
     msgr->pull_id(&last_player_id);
 
     at_start();
-    at_player_start();
+    at_player_start(msgr);
 
     start_of_round();
     while (!is_finished())
@@ -278,7 +278,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_player_end();
+    at_player_end(msgr);
 }
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -288,7 +288,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     msgr->pull_id(&last_player_id);
 
     at_start();
-    at_spectator_start();
+    at_spectator_start(msgr);
 
     start_of_round();
     /* `last_round` allows us to inspect the final state of the game, when no
@@ -374,7 +374,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     }
 
     at_end();
-    at_spectator_end();
+    at_spectator_end(msgr);
 }
 
 void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
@@ -382,7 +382,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     msgr->push_id(players_->players[players_->players.size() - 1]->id);
 
     at_start();
-    at_server_start();
+    at_server_start(msgr);
 
     start_of_round();
 
@@ -457,7 +457,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     }
 
     at_end();
-    at_server_end();
+    at_server_end(msgr);
 }
 
 } // namespace rules
