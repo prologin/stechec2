@@ -31,7 +31,8 @@ prepare() {
 
 build() {
     cd stechec2
-    ./waf.py configure build --prefix=/usr --with-games=${_pkgver}
+    ./waf.py configure build --prefix=/usr --libdir=/usr/lib \
+                             --with-games=${_pkgver}
 }
 
 package() {
