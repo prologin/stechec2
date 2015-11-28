@@ -7,6 +7,7 @@ namespace rules {
 
 ServerMessenger::ServerMessenger(net::ServerSocket_sptr sckt)
     : sckt_(std::move(sckt))
+    , last_client_id_(-1)
 {
 }
 

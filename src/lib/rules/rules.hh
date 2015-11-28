@@ -19,7 +19,7 @@ class Rules
 {
 public:
     explicit Rules(const Options opt);
-
+    virtual ~Rules() {}
 
     /* Pure virtual methods */
 
@@ -89,6 +89,7 @@ class SynchronousRules : public Rules
 {
 public:
     explicit SynchronousRules(const Options opt);
+    virtual ~SynchronousRules() {}
 
     virtual void player_loop(ClientMessenger_sptr msgr) final override;
     virtual void spectator_loop(ClientMessenger_sptr msgr) final override;
@@ -99,6 +100,7 @@ class TurnBasedRules : public Rules
 {
 public:
     explicit TurnBasedRules(const Options opt);
+    virtual ~TurnBasedRules() {}
 
     // Called each time a client starts its turn
     virtual void start_of_turn(uint32_t) {}

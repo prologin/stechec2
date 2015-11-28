@@ -20,6 +20,9 @@ public:
     DLL(const std::string& filename);
     virtual ~DLL();
 
+    DLL(const DLL&) = delete;
+    void operator=(const DLL&) = delete;
+
     // Gets a symbol from the DLL and automatically casts it to the wanted
     // type. Most likely T will be a function pointer type.
     template <typename T>

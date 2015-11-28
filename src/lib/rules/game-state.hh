@@ -14,6 +14,8 @@ public:
 
     virtual ~GameState();
 
+    void operator=(const rules::GameState&) = delete;
+
     // Copies this state and returns a new state object with the same data.
     virtual GameState* copy() const = 0;
 

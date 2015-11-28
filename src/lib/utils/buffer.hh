@@ -28,7 +28,7 @@ class Buffer
 {
 public:
     // If no buffer is provided, it's serialization
-    Buffer() : serialize_(true) {}
+    Buffer() : data_(), idx_(0), serialize_(true) {}
 
     // If a buffer is provided, it's unserialization
     Buffer(std::vector<uint8_t>  data)

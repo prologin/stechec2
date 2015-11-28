@@ -23,6 +23,8 @@ public:
            const std::string& reqrep_addr,
            int io_thread);
 
+    virtual ~Socket() {}
+
     virtual void init() { shared_init(); }
     virtual bool send(const utils::Buffer& msg, int flags = 0);
     virtual utils::Buffer* recv(int flags = 0);

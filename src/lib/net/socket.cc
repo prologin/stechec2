@@ -14,7 +14,9 @@ Socket::Socket(const std::string& pubsub_addr,
                int io_thread)
     : pubsub_addr_(pubsub_addr),
       reqrep_addr_(reqrep_addr),
-      ctx_(io_thread)
+      ctx_(io_thread),
+      pubsub_sckt_(),
+      reqrep_sckt_()
 {
 }
 
