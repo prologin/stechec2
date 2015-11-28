@@ -40,8 +40,7 @@ def configure(conf):
     conf.check_cxx(cxxflags = '-Wall')
     conf.check_cxx(cxxflags = '-Wextra')
 
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra',
-                                       '-Wno-variadic-macros'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra'])
 
     if 'clang' in conf.env.CXX[0]:
         conf.env.append_value('CXXFLAGS', ['-Wno-return-type-c-linkage'])
