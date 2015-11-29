@@ -13,7 +13,7 @@ public:
     MyGameState() : GameState(), x(0) {}
     MyGameState(const MyGameState& mgs) : GameState(), x(mgs.x) {}
 
-    virtual GameState* copy() const override { return new MyGameState(*this); }
+    GameState* copy() const override { return new MyGameState(*this); }
 
     int x;
 };
@@ -21,9 +21,9 @@ public:
 class MyIncrAction : public Action<MyGameState>
 {
 public:
-    virtual ~MyIncrAction() {}
+    ~MyIncrAction() override {}
 
-    virtual int check(const MyGameState* st) const override
+    int check(const MyGameState* st) const override
     {
         if (st->x >= 3)
             return 1;
@@ -31,22 +31,22 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&) override
+    void handle_buffer(utils::Buffer&) override
     {
     }
 
-    virtual uint32_t player_id() const override
+    uint32_t player_id() const override
     {
         return 0;
     }
 
-    virtual uint32_t id() const override
+    uint32_t id() const override
     {
         return 0;
     }
 
 private:
-    virtual void apply_on(MyGameState* st) const override
+    void apply_on(MyGameState* st) const override
     {
         st->x += 1;
     }
@@ -55,9 +55,9 @@ private:
 class MyDecrAction : public Action<MyGameState>
 {
 public:
-    virtual ~MyDecrAction() {}
+    ~MyDecrAction() override {}
 
-    virtual int check(const MyGameState* st) const override
+    int check(const MyGameState* st) const override
     {
         if (st->x <= 0)
             return 1;
@@ -65,22 +65,22 @@ public:
             return 0;
     }
 
-    virtual void handle_buffer(utils::Buffer&) override
+    void handle_buffer(utils::Buffer&) override
     {
     }
 
-    virtual uint32_t player_id() const override
+    uint32_t player_id() const override
     {
         return 0;
     }
 
-    virtual uint32_t id() const override
+    uint32_t id() const override
     {
         return 0;
     }
 
 private:
-    virtual void apply_on(MyGameState* st) const override
+    void apply_on(MyGameState* st) const override
     {
         st->x -= 1;
     }

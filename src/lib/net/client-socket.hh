@@ -17,8 +17,8 @@ class ClientSocket : public Socket
 public:
     ClientSocket(const std::string& sub_addr, const std::string& req_addr);
 
-    virtual void init() override;
-    virtual void close() override;
+    void init() override;
+    void close() override;
 
     utils::Buffer* pull(int flags = 0);
 };

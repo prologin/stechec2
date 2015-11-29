@@ -6,7 +6,7 @@ using namespace rules;
 
 class MockGameState : public GameState
 {
-    virtual GameState* copy() const override { return new MockGameState(); }
+    GameState* copy() const override { return new MockGameState(); }
 };
 
 // Check get_old_version / set_old_version
@@ -29,7 +29,7 @@ class ChainDeleteGameState : public MockGameState
 {
 public:
     ChainDeleteGameState(bool* flag) : MockGameState(), flag_(flag) {}
-    virtual ~ChainDeleteGameState() { *flag_ = true; }
+    ~ChainDeleteGameState() override { *flag_ = true; }
 
 private:
     bool* flag_;

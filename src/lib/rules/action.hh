@@ -50,7 +50,7 @@ class Action : public IAction
 {
 public:
     virtual int check(const TState* st) const = 0;
-    virtual int check(const GameState* st) const override
+    int check(const GameState* st) const override
     {
         return check(dynamic_cast<const TState*>(st));
     }
@@ -62,7 +62,7 @@ public:
 
 protected:
     virtual void apply_on(TState* st) const = 0;
-    virtual void apply_on(GameState* st) const override
+    void apply_on(GameState* st) const override
     {
         apply_on(dynamic_cast<TState*>(st));
     }

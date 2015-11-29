@@ -18,8 +18,8 @@ class ServerSocket : public Socket
 public:
     ServerSocket(const std::string& pub_addr, const std::string& rep_addr);
 
-    virtual void init() override;
-    virtual void close() override;
+    void init() override;
+    void close() override;
 
     bool push(const utils::Buffer& buf, int flags = 0);
 };
