@@ -85,8 +85,6 @@ static inline std::string playertype_str(PlayerType type)
     case SPECTATOR:
         return "SPECTATOR";
     }
-
-    return "";
 }
 
 } // namespace rules
