@@ -91,20 +91,18 @@ TEST(RulesAction, CheckApply)
     auto mgs = new MyGameState();
     EXPECT_EQ(0, mgs->x);
 
-    auto incr = new MyIncrAction();
-    auto decr = new MyDecrAction();
+    MyIncrAction incr;
+    MyDecrAction decr;
 
-    mgs = incr->apply(mgs);
+    mgs = incr.apply(mgs);
     EXPECT_EQ(1, mgs->x);
 
-    mgs = incr->apply(mgs);
+    mgs = incr.apply(mgs);
     EXPECT_EQ(2, mgs->x);
 
-    mgs = decr->apply(mgs);
+    mgs = decr.apply(mgs);
     EXPECT_EQ(1, mgs->x);
 
-    delete incr;
-    delete decr;
     delete mgs;
 }
 
@@ -112,18 +110,16 @@ TEST(RulesAction, CheckError)
 {
     auto mgs = new MyGameState();
 
-    auto incr = new MyIncrAction();
-    auto decr = new MyDecrAction();
+    MyIncrAction incr;
+    MyDecrAction decr;
 
-    EXPECT_NE(0, decr->check(mgs));
+    EXPECT_NE(0, decr.check(mgs));
 
     for (int i = 0; i < 3; ++i)
-        mgs = incr->apply(mgs);
+        mgs = incr.apply(mgs);
 
-    EXPECT_NE(0, incr->check(mgs));
+    EXPECT_NE(0, incr.check(mgs));
 
-    delete incr;
-    delete decr;
     delete mgs;
 }
 
@@ -131,16 +127,13 @@ TEST(RulesAction, CheckCancel)
 {
     auto mgs = new MyGameState();
 
-    auto incr = new MyIncrAction();
-    auto decr = new MyDecrAction();
+    MyIncrAction incr;
 
     EXPECT_EQ(0, mgs->x);
-    mgs = incr->apply(mgs);
+    mgs = incr.apply(mgs);
     EXPECT_EQ(1, mgs->x);
     mgs = cancel(mgs);
     EXPECT_EQ(0, mgs->x);
 
-    delete incr;
-    delete decr;
     delete mgs;
 }
