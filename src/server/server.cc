@@ -1,12 +1,12 @@
 #include "server.hh"
 
+#include <fstream>
 #include <gflags/gflags.h>
 #include <iostream>
-#include <fstream>
 #include <memory>
-#include <utils/log.hh>
 #include <net/message.hh>
 #include <rules/player.hh>
+#include <utils/log.hh>
 
 DEFINE_string(rep_addr, "tcp://0.0.0.0:42124",
               "Set reply address binding (ZeroMQ)");

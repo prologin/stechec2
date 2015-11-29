@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 
-#include <utils/log.hh>
 #include <net/message.hh>
+#include <utils/log.hh>
 
 DEFINE_int32(socket_timeout, -1, "Timeout value to use for all sock ops, in ms.");
 

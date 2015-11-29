@@ -4,8 +4,8 @@
 # include <utils/log.hh>
 
 # include "options.hh"
-# include "player.hh"
 # include "actions.hh"
+# include "player.hh"
 # include "action.hh"
 # include "server-messenger.hh"
 # include "client-messenger.hh"

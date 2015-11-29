@@ -47,7 +47,7 @@ private:
     unsigned int timeout_;
 };
 
-}
+} // namespace utils
 
 // Implementation of large templated member functions.
 # include "sandbox.inl"

@@ -100,4 +100,4 @@ void ServerMessenger::wait_for_ack()
     CHECK_EXC(ServerMessengerError, msg.type == net::MSG_ACK);
 }
 
-} // namespace net
+} // namespace rules

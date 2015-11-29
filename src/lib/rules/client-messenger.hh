@@ -47,6 +47,6 @@ private:
 
 typedef std::shared_ptr<ClientMessenger> ClientMessenger_sptr;
 
-} // namespace net
+} // namespace rules
 
 #endif // !LIB_RULES_CLIENTMESSENGER_HH_

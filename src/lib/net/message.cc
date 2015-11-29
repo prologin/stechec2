@@ -1,8 +1,8 @@
 #include "message.hh"
 
 #include <sstream>
-#include <ostream>
 #include <cstring>
+#include <ostream>
 
 namespace net {
 

@@ -1,12 +1,12 @@
 #include "client.hh"
 
 #include <gflags/gflags.h>
-#include <utils/log.hh>
-#include <utils/buffer.hh>
 #include <net/message.hh>
 #include <rules/action.hh>
-#include <rules/player.hh>
+#include <utils/buffer.hh>
+#include <utils/log.hh>
 #include <rules/options.hh>
+#include <rules/player.hh>
 
 DEFINE_string(name, "anonymous", "Client name (used for results)");
 DEFINE_string(req_addr, "tcp://0.0.0.0:42124",

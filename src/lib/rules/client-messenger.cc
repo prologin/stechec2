@@ -1,8 +1,8 @@
 #include "client-messenger.hh"
 
-#include <utils/log.hh>
 #include <net/message.hh>
 #include <rules/actions.hh>
+#include <utils/log.hh>
 
 namespace rules {
 

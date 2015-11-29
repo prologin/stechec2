@@ -7,10 +7,10 @@
 # include <cstdint>
 # include <cstdlib>
 # include <cstring>
+# include <list>
 # include <stdexcept>
 # include <string>
 # include <vector>
-# include <list>
 #include <utility>
 
 namespace utils {
@@ -121,6 +121,6 @@ private:
     bool serialize_;
 };
 
-}
+} // namespace utils
 
 #endif // !LIB_UTILS_BUFFER_HH_
