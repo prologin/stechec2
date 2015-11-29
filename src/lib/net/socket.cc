@@ -96,7 +96,8 @@ utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
             }
 
         std::vector<uint8_t> data;
-        data.assign((uint8_t*)zmsg.data(), (uint8_t*)zmsg.data() + zmsg.size());
+        data.assign(reinterpret_cast<uint8_t*>(zmsg.data()),
+                    reinterpret_cast<uint8_t*>(zmsg.data()) + zmsg.size());
 
         utils::Buffer* buf = new utils::Buffer(data);
 

@@ -58,7 +58,7 @@ public:
         handle(size);
 
         if (serialize_)
-            handle_mem((char*)s.c_str(), size);
+            handle_mem(const_cast<char*>(s.c_str()), size);
         else
         {
             CHECK_EXC(DeserializationError, idx_ + size <= data_.size());
