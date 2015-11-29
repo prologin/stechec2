@@ -19,7 +19,7 @@ class Sandbox
 {
 public:
     // Timeout in ms.
-    Sandbox(unsigned int timeout = 1000) : timeout_(timeout)
+    explicit Sandbox(unsigned int timeout = 1000) : timeout_(timeout)
     {
     }
 

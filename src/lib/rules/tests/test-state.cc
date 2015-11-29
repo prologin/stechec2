@@ -28,7 +28,7 @@ TEST(GameState, OldVersion)
 class ChainDeleteGameState : public MockGameState
 {
 public:
-    ChainDeleteGameState(bool* flag) : MockGameState(), flag_(flag) {}
+    explicit ChainDeleteGameState(bool* flag) : MockGameState(), flag_(flag) {}
     ~ChainDeleteGameState() override { *flag_ = true; }
 
 private:

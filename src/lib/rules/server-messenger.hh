@@ -21,7 +21,7 @@ public:
 class ServerMessenger : public Messenger
 {
 public:
-    ServerMessenger(net::ServerSocket_sptr sckt);
+    explicit ServerMessenger(net::ServerSocket_sptr sckt);
 
     void send(const utils::Buffer&) override;
 

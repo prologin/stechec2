@@ -17,7 +17,7 @@ public:
 class DLL
 {
 public:
-    DLL(const std::string& filename);
+    explicit DLL(const std::string& filename);
     virtual ~DLL();
 
     DLL(const DLL&) = delete;

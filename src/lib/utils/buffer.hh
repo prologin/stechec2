@@ -31,7 +31,7 @@ public:
     Buffer() : data_(), idx_(0), serialize_(true) {}
 
     // If a buffer is provided, it's unserialization
-    Buffer(std::vector<uint8_t>  data)
+    explicit Buffer(std::vector<uint8_t>  data)
         : data_(std::move(data)), idx_(0), serialize_(false) {}
 
     // Allow access to the serialized data
