@@ -18,9 +18,11 @@ test = do
   send_me_42 42
   send_me_42_and_1337 42 1337
   send_me_true True
+  send_me_tau 6.2831853
 
   assert' . (== 42) <$> returns_42
   assert' <$> returns_true
+  assert' . (\x -> abs (x - 6.2831853) < 0.0001) <$> returns_tau
   assert' . (== [1..100]) <$> returns_range 1 100
   assert' . (== [1..10000]) <$> returns_range 1 10000
   assert' . (== [1..7]) <$> returns_sorted [1, 3, 2, 4, 5, 7, 6]

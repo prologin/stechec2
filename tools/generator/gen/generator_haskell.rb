@@ -713,6 +713,7 @@ EOF
 
     build_simple("int", "fromIntegral", "fromIntegral")
     build_simple("bool", "(\\bx -> if bx then 1 else 0)", "(/= 0)")
+    build_simple("double", "CDouble", "(\\(CDouble x) -> x)")
 
     # protos
     build_enums
