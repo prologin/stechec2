@@ -469,7 +469,8 @@ class JavaFileGenerator < JavaProto
     @java_types = {
       'void' => 'void',
       'int' => 'int',
-      'bool' => 'boolean'
+      'bool' => 'boolean',
+      'double' => 'double'
     }
     @java_obj_types = {
       'int' => 'Integer',
