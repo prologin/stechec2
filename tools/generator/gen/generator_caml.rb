@@ -62,6 +62,15 @@ value cxx2lang<value, int>(int in)
   CAMLreturn(Val_int(in));
 }
 
+template <>
+value cxx2lang<value, double>(double in)
+{
+  CAMLparam0();
+  CAMLlocal1(v);
+  Store_double_val(v, in);
+  CAMLreturn(v);
+}
+
 template<>
 value cxx2lang<value, std::string>(std::string in)
 {
@@ -115,6 +124,13 @@ int lang2cxx<value, int>(value in)
 {
   CAMLparam1(in);
   CAMLreturnT(int, Int_val(in));
+}
+
+template <>
+double lang2cxx<value, double>(value in)
+{
+  CAMLparam1(in);
+  CAMLreturnT(double, Double_val(in));
 }
 
 template <>
@@ -338,6 +354,8 @@ class CamlFileGenerator < FileGenerator
       "unit"
     elsif type.is_array?
       "#{type.type.name} array"
+    elsif type.name == "double"
+      "float"
     else
       type.name
     end
