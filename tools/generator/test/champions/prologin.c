@@ -7,6 +7,7 @@
 #include "prologin.h"
 
 #include <assert.h>
+#include <math.h>
 
 ///
 // Called 10K times to test if things work well.
@@ -16,8 +17,10 @@ void test()
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
+    send_me_tau(6.2831853);
     assert(returns_42() == 42);
     assert(returns_true() == true);
+    assert(fabs(returns_tau() - 6.2831) < 0.001);
 
     int_array r = returns_range(1, 100);
     for (int i = 1; i < 100; ++i)
