@@ -66,9 +66,7 @@ template <>
 value cxx2lang<value, double>(double in)
 {
   CAMLparam0();
-  CAMLlocal1(v);
-  Store_double_val(v, in);
-  CAMLreturn(v);
+  CAMLreturn(caml_copy_double(in));
 }
 
 template<>
