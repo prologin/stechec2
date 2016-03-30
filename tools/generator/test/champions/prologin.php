@@ -15,9 +15,11 @@ function test()
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
+    send_me_tau(6.2831853);
 
     assert("returns_42() === 42");
     assert("returns_true() === true");
+    assert("abs(returns_tau() - 6.2831853) < 0.0001");
     assert("returns_range(1, 100) === range(1, 99)");
     assert("returns_range(1, 10000) === range(1, 9999)");
     assert("returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7)");

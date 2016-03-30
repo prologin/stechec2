@@ -248,6 +248,15 @@ zval* cxx2lang<zval*, bool>(bool in)
 }
 
 template <>
+zval* cxx2lang<zval*, double>(double in)
+{
+    zval* x;
+    MAKE_STD_ZVAL(x);
+    ZVAL_DOUBLE(x, in);
+    return x;
+}
+
+template <>
 zval* cxx2lang<zval*, std::string>(std::string in)
 {
     zval* x;
@@ -285,6 +294,16 @@ int lang2cxx<zval*, int>(zval* in)
         throw 42;
     }
     return (int)Z_LVAL_P(in);
+}
+
+template <>
+double lang2cxx<zval*, double>(zval* in)
+{
+    if (in->type != IS_DOUBLE) {
+        zend_error(E_WARNING, "parameter should be a double");
+        throw 42;
+    }
+    return (double)Z_DVAL_P(in);
 }
 
 template <>

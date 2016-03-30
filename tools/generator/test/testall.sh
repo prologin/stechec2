@@ -21,7 +21,7 @@ runtest() {
         cd ..
         return
     fi
-    g++ -std=c++11 -o runner ../runner.cc ./champion.so
+    g++ -std=c++11 -g -Wall -Wextra -o runner ../runner.cc ./champion.so
     echo "Running test"
     if ! ./runner $NB_TESTS; then
         ERROR="$ERROR $lang"
