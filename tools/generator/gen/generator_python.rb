@@ -60,9 +60,16 @@ PyObject* cxx2lang<PyObject*, int>(int in)
 
 
 template <>
+PyObject* cxx2lang<PyObject*, double>(double in)
+{
+  return PyFloat_FromDouble(in);
+}
+
+
+template <>
 PyObject* cxx2lang<PyObject*, std::string>(std::string in)
 {
-return PyUnicode_FromString (in.c_str());
+  return PyUnicode_FromString(in.c_str());
 }
 
 
@@ -94,12 +101,17 @@ template <>
 int lang2cxx<PyObject*, int>(PyObject* in)
 {
   long out = PyLong_AsLong(in);
-  if (out == -1)
-    if (PyErr_Occurred())
-    {
-      throw 42;
-    }
+  if (PyErr_Occurred())
+    throw 42;
+  return out;
+}
 
+template <>
+double lang2cxx<PyObject*, double>(PyObject* in)
+{
+  double out = PyFloat_AsDouble(in);
+  if (PyErr_Occurred())
+    throw 42;
   return out;
 }
 

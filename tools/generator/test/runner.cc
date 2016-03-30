@@ -23,6 +23,11 @@ void api_send_me_true(bool b)
     assert(b);
 }
 
+void api_send_me_tau(double b)
+{
+    assert(b > 6.2831 && b < 6.2832);
+}
+
 int api_returns_42()
 {
     return 42;
@@ -31,6 +36,11 @@ int api_returns_42()
 bool api_returns_true()
 {
     return true;
+}
+
+double api_returns_tau()
+{
+    return 6.2831853;
 }
 
 test_enum api_returns_val1()

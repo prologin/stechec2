@@ -55,6 +55,12 @@ function:
     fct_arg:
       - [b, bool, a boolean]
   -
+    fct_name: send_me_tau
+    fct_summary: Send me a double approximating tau
+    fct_ret_type: void
+    fct_arg:
+      - [t, double, a double approximating tau]
+  -
     fct_name: returns_42
     fct_summary: Returns 42
     fct_ret_type: int
@@ -63,6 +69,11 @@ function:
     fct_name: returns_true
     fct_summary: Returns true
     fct_ret_type: bool
+    fct_arg: []
+  -
+    fct_name: returns_tau
+    fct_summary: Returns a double approximating tau
+    fct_ret_type: double
     fct_arg: []
   -
     fct_name: returns_val1

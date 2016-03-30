@@ -139,7 +139,7 @@ class FileGenerator
   def initialize
     # Add required builtin types
     @types = TypesHash.new
-    ['void', 'int', 'bool', 'string'].each do |x|
+    ['void', 'int', 'double', 'bool', 'string'].each do |x|
       @types[x] = SimpleType.new x
     end
 
