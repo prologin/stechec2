@@ -13,8 +13,10 @@ namespace Prologin {
       Api.SendMe42(42);
       Api.SendMe42And1337(42, 1337);
       Api.SendMeTrue(true);
+      Api.SendMeTau(6.2831853);
       Debug.Assert(Api.Returns42() == 42);
       Debug.Assert(Api.ReturnsTrue() == true);
+      Debug.Assert(Math.Abs(Api.ReturnsTau() - 6.2831853) < 0.0001);
 
       int[] r = Api.ReturnsRange(1, 100);
       for (int i = 1; i < 100; ++i)

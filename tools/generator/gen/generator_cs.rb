@@ -270,6 +270,8 @@ std::vector<#{name}> lang2cxx< MonoArray*, std::vector<#{name}> >(MonoArray* in)
       "void"
     elsif ft.name == "string"
       "MonoString*"
+    elsif ft.name == "double"
+      "double"
     else
       "gint32"
     end
