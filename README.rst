@@ -31,10 +31,13 @@ Requirements
 Arch Linux:
 
   pacman --needed -S gcc zeromq gtest ruby python-yaml gflags
+  pacaur -S gcovr
 
-AUR:
+Debian/Ubuntu:
 
-  pacaur gcovr
+  apt-get install build-essential libzmq3-dev libzmqpp-dev python-yaml ruby \
+                  libgtest-dev libgflags-dev gcovr
+
 
 Installation
 ------------
@@ -89,7 +92,11 @@ Requirements:
 
 Archlinux:
 
-  pacman -S php php-embed ocaml mono jdk7-openjdk
+  pacman -S php php-embed ocaml mono jdk8-openjdk
+
+Debian/Ubuntu:
+
+  apt-get install php5 php5-dev ocaml mono-devel openjdk-8-jdk
 
 Create your AI
 --------------
