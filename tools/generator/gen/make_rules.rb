@@ -366,10 +366,10 @@ public:
     #{constr_proto} : #{init_list} {}
     #{class_name}() {} // for register_action()
 
-    virtual int check(const GameState* st) const override;
-    virtual void apply_on(GameState* st) const override;
+    int check(const GameState* st) const override;
+    void apply_on(GameState* st) const override;
 
-    virtual void handle_buffer(utils::Buffer& buf) override
+    void handle_buffer(utils::Buffer& buf) override
     {
         #{bufhandle}
     }
@@ -415,15 +415,15 @@ EOF
   def print_cxx_rules_head
     if $conf["rules_type"] == nil
       @f.write <<-EOF
-    virtual void player_loop(rules::ClientMessenger_sptr msgr) override;
-    virtual void spectator_loop(rules::ClientMessenger_sptr msgr) override;
-    virtual void server_loop(rules::ServerMessenger_sptr msgr) override;
+    void player_loop(rules::ClientMessenger_sptr msgr) override;
+    void spectator_loop(rules::ClientMessenger_sptr msgr) override;
+    void server_loop(rules::ServerMessenger_sptr msgr) override;
 EOF
     else
       @f.write <<-EOF
-    virtual rules::Actions* get_actions() override;
-    virtual void apply_action(const rules::IAction_sptr& action) override;
-    virtual bool is_finished() override;
+    rules::Actions* get_actions() override;
+    void apply_action(const rules::IAction_sptr& action) override;
+    bool is_finished() override;
 
 protected:
     // FIXME: Override #{$conf["rules_type"]} methods here
