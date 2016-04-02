@@ -13,7 +13,7 @@ class GameState : public rules::GameState
         // additional parameters? for instance map
         GameState(rules::Players_sptr players);
         GameState(const GameState& st);
-        virtual rules::GameState* copy() const;
+        virtual rules::GameState* copy() const override;
         ~GameState();
 
     private:
