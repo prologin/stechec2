@@ -293,7 +293,7 @@ to the script file : gen/" + script
     end
   end
 
-  def for_each_fun(print_comment = true, arr = 'function', prestr = '', &block)
+  def for_each_fun(print_comment = true, arr = 'function', dump_fun = true, prestr = '', &block)
     $conf[arr].delete_if {|x| x['doc_extra'] }
     $conf[arr].each do |x|
       fn = Function.new(@types, x)
@@ -302,8 +302,7 @@ to the script file : gen/" + script
       if print_comment then @f.puts end
     end
 
-    # XXX: That's quite dirty.
-    if arr == 'function'
+    if dump_fun
       @dumpfuns.each do |f|
         print_multiline_comment(f.conf['fct_summary'], prestr) if print_comment
         block.call(f)
@@ -313,7 +312,7 @@ to the script file : gen/" + script
   end
 
   def for_each_user_fun(print_comment = true, &block)
-    for_each_fun(print_comment, 'user_function') { |fn|
+    for_each_fun(print_comment, 'user_function', false) { |fn|
       if not fn.dumps then
         block.call(fn)
       end
@@ -619,23 +618,6 @@ class JavaProto < FileGenerator
     end
   end
 
-  def for_each_fun(print_comment = true, arr = 'function', prestr = '', &block)
-    $conf[arr].delete_if {|x| x['doc_extra'] }
-    $conf[arr].each do |x|
-      fn = Function.new(@types, x)
-      print_multiline_comment(x['fct_summary'], prestr) if print_comment
-      block.call(fn)
-      @f.puts
-    end
-    if arr == 'function'
-      @dumpfuns.each do |f|
-        print_multiline_comment(f.conf['fct_summary'], prestr) if print_comment
-        block.call(f)
-        @f.puts
-      end
-    end
-  end
-
   def camel_case(str)
     strs = str.split("_")
     strs.each { |s| s.capitalize! }
@@ -643,7 +625,7 @@ class JavaProto < FileGenerator
   end
 
   def for_each_user_fun(print_comment = true, prestr = '', &block)
-    for_each_fun(print_comment, 'user_function', prestr) { |fn| block.call(fn) }
+    for_each_fun(print_comment, 'user_function', false, prestr) { |fn| block.call(fn) }
   end
 
   # print a constant

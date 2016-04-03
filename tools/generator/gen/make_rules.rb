@@ -125,7 +125,7 @@ class CxxFileGenerator < CxxProto
 
   # api.cc
   def print_cxx_api
-    for_each_fun do |fn|
+    for_each_fun(true, "function", false) do |fn|
       if not fn.dumps then
         # genérer plein de boilerplate pour les actions
         if fn.conf['fct_action'] then
@@ -404,7 +404,7 @@ EOF
 
   # api.hh
   def print_cxx_api_head
-    for_each_fun(true, "function", "    ") do |fn|
+    for_each_fun(true, "function", false, "    ") do |fn|
       if not fn.dumps then
         @f.print cxx_proto(fn, "", "   ");
         @f.print ";\n"
