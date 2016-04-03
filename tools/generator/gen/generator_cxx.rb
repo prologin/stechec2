@@ -53,7 +53,7 @@ namespace std {
     std::size_t operator()(const std::vector<T>& v)
     {
       std::size_t res = v.size();
-      for (auto &e : v)
+      for (const auto& e : v)
         res ^= std::hash<T>()(e) + 0x9e3779b9 + (res << 6) + (res >> 2);
       return res;
     }
