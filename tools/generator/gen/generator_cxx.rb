@@ -32,19 +32,7 @@ class CxxFileGenerator < CxxProto
   def build_structs_operators
     @f.puts <<-EOF
 // Les fonctions suivantes définissent les opérations de comparaison, d'égalité
-// et de hachage sur les vecteurs et sur les structures du sujet.
-
-template <typename T>
-inline bool operator==(const std::vector<T>& a, const std::vector<T>& b)
-{
-  return std::equal(a.begin(), a.end(), b.begin());
-}
-
-template <typename T>
-inline bool operator<(const std::vector<T>& a, const std::vector<T>& b)
-{
-  return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
-}
+// et de hachage sur les structures du sujet.
 
 namespace std {
   template <typename T>

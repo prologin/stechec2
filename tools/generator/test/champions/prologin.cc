@@ -77,9 +77,6 @@ void test()
     }
 
     // Test custom operators on structs.
-    assert((std::vector<int>{1, 2, 3, 4}) < (std::vector<int>{3, 4, 1, 2}));
-    assert((std::vector<int>{1, 2, 42}) == (std::vector<int>{1, 2, 42}));
-
     struct_with_array s2;
     s2.field_int = 42;
     for (int i = 0; i < 42; ++i)
@@ -91,4 +88,5 @@ void test()
     assert(s == s2);
     s2.field_int = 1337;
     assert(s < s2);
+    assert(std::hash<struct_with_array>()(s2) != 42);
 }
