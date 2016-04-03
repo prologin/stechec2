@@ -156,8 +156,8 @@ EOF
           @f.print cxx_proto(fn, "Api::")
           @f.puts "
 {
-  // TODO
-  abort();
+    // TODO
+    abort();
 }
 "
         end
@@ -404,10 +404,10 @@ EOF
 
   # api.hh
   def print_cxx_api_head
-    for_each_fun do |fn|
+    for_each_fun(true, "function", "    ") do |fn|
       if not fn.dumps then
-        @f.print cxx_proto(fn, "", "  ");
-        @f.print ";"
+        @f.print cxx_proto(fn, "", "   ");
+        @f.print ";\n"
       end
     end
   end

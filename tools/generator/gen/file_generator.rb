@@ -293,11 +293,11 @@ to the script file : gen/" + script
     end
   end
 
-  def for_each_fun(print_comment = true, arr = 'function', &block)
+  def for_each_fun(print_comment = true, arr = 'function', prestr = '', &block)
     $conf[arr].delete_if {|x| x['doc_extra'] }
     $conf[arr].each do |x|
       fn = Function.new(@types, x)
-      print_multiline_comment(x['fct_summary']) if print_comment
+      print_multiline_comment(x['fct_summary'], prestr) if print_comment
       block.call(fn)
       if print_comment then @f.puts end
     end
@@ -305,7 +305,7 @@ to the script file : gen/" + script
     # XXX: That's quite dirty.
     if arr == 'function'
       @dumpfuns.each do |f|
-        print_multiline_comment(f.conf['fct_summary']) if print_comment
+        print_multiline_comment(f.conf['fct_summary'], prestr) if print_comment
         block.call(f)
         if print_comment then @f.puts end
       end
@@ -468,10 +468,8 @@ class CxxProto < CProto
 
   def print_multiline_comment(str, prestr = '')
     return unless str
-    @f.puts prestr + '///'
-    str.each_line {|s| @f.print prestr + '// ', s }
-    # @f.puts
-    @f.puts "", prestr + "//"
+    str.each_line {|s| @f.print prestr + '/// ', s }
+    @f.puts
   end
 
   def print_empty_arg
