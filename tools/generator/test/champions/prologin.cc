@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cstring>
 
 ///
 // Called 10K times to test if things work well.
@@ -74,5 +75,20 @@ void test()
             assert(l[i].field_str_arr[j].field_bool == true);
         }
     }
-}
 
+    // Test custom operators on structs.
+    assert((std::vector<int>{1, 2, 3, 4}) < (std::vector<int>{3, 4, 1, 2}));
+    assert((std::vector<int>{1, 2, 42}) == (std::vector<int>{1, 2, 42}));
+
+    struct_with_array s2;
+    s2.field_int = 42;
+    for (int i = 0; i < 42; ++i)
+    {
+        s2.field_int_arr.push_back(42);
+        simple_struct ss = { 42, true };
+        s2.field_str_arr.push_back(ss);
+    }
+    assert(s == s2);
+    s2.field_int = 1337;
+    assert(s < s2);
+}

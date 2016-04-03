@@ -29,16 +29,92 @@ class CxxFileGenerator < CxxProto
     end
   end
 
+  def build_structs_operators
+    @f.puts <<-EOF
+// Les fonctions suivantes définissent les opérations de comparaison, d'égalité
+// et de hachage sur les vecteurs et sur les structures du sujet.
+
+template <typename T>
+inline bool operator==(const std::vector<T>& a, const std::vector<T>& b)
+{
+  return std::equal(a.begin(), a.end(), b.begin());
+}
+
+template <typename T>
+inline bool operator<(const std::vector<T>& a, const std::vector<T>& b)
+{
+  return std::lexicographical_compare(a.begin(), a.end(), b.begin(), b.end());
+}
+
+namespace std {
+  template <typename T>
+  struct hash<std::vector<T>>
+  {
+    std::size_t operator()(const std::vector<T>& v)
+    {
+      std::size_t res = v.size();
+      for (auto &e : v)
+        res ^= std::hash<T>()(e) + 0x9e3779b9 + (res << 6) + (res >> 2);
+      return res;
+    }
+  };
+}
+
+EOF
+
+    for_each_struct(false) do |x|
+      @f.print "inline bool operator==("
+      @f.puts "const #{x['str_name']}& a, const #{x['str_name']}& b) {"
+      x['str_field'].each do |f|
+          @f.puts "  if (a.#{f[0]} != b.#{f[0]}) return false;"
+      end
+      @f.puts "  return true;"
+      @f.puts "}\n\n"
+
+      @f.print "inline bool operator<("
+      @f.puts "const #{x['str_name']}& a, const #{x['str_name']}& b) {"
+      x['str_field'].each do |f|
+          @f.puts "  if (a.#{f[0]} < b.#{f[0]}) return true;"
+          @f.puts "  if (a.#{f[0]} > b.#{f[0]}) return false;"
+      end
+      @f.puts "  return false;"
+      @f.puts "}\n\n"
+
+      @f.puts <<-EOF
+namespace std {
+  template <>
+  struct hash<#{x['str_name']}>
+  {
+    std::size_t operator()(const #{x['str_name']}& s)
+    {
+      std::size_t res = 0;
+EOF
+      x['str_field'].each do |f|
+          @f.print "      res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + ";
+          @f.puts "std::hash<#{conv_type(@types[f[1]])}>()(s.#{f[0]});"
+      end
+      @f.puts <<-EOF
+      return res;
+    }
+  };
+}
+
+EOF
+    end
+  end
+
   def generate_header()
     @f = File.open(@path + @header_file, 'w')
     print_banner "generator_cxx.rb"
     @f.puts "#ifndef PROLOGIN_HH_", "# define PROLOGIN_HH_", ""
-    @f.puts "# include <vector>", ""
+    @f.puts "# include <functional>", ""
     @f.puts "# include <string>", ""
+    @f.puts "# include <vector>", ""
     build_constants
     build_enums
     build_structs
     build_inlines
+    build_structs_operators
     @f.puts "", 'extern "C" {', ""
     for_each_user_fun do |fn|
       @f.print cxx_proto(fn)
