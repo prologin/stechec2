@@ -560,18 +560,19 @@ EOF
     ##  prologin.py file generation     ##
     ######################################
     @f = File.new(@path + @source_file, 'w')
-    @f.puts "# -*- coding: utf-8 -*-"
+    @f.puts "# coding: utf-8"
     print_banner "generator_python.rb"
     @f.puts "from api import *", ""
 
     for_each_user_fun do |fn|
       @f.puts "def " + fn.name + "():"
-      @f.puts "    pass # Place ton code ici"
+      @f.puts "    # Place ton code ici"
+      @f.puts "    pass"
     end
     @f.close
 
     @f = File.new(@path + "api.py", 'w')
-    @f.puts "# -*- coding: iso-8859-1 -*-"
+    @f.puts "# coding: iso-8859-1"
     @f.puts "from _api import *", ""
     build_constants
     build_enums
