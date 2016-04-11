@@ -122,6 +122,11 @@ class Function
                "  argument \##{i+1} `#{arg[0]}` already defined"
           exit 1
         end
+        if types[arg[1]] == nil
+          puts "error: in function `#{@name}`\n" \
+               "  `#{arg[1]}` does not denote a valid type"
+          exit 1
+        end
         arg_names << arg[0]
         type_names << arg[1]
       end
