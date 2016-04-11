@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/bash
 
 SUCCESS=
 ERROR=
@@ -46,3 +46,29 @@ echo "---> RESULTS:"
 echo "       BUILD FAILED: $NOBUILD"
 echo "       FAILED: $ERROR"
 echo "       SUCCEEDED: $SUCCESS"
+
+# Inconsistency checks
+
+assertfails() {
+    conf=$1
+    shift
+    needed=( "$@" )
+    env_path="$(mktemp -d --suffix=-test-stechec-generator)"
+
+    output="$(stechec2-generator player "$conf" "$env_path" 2>&1)"
+    rm -r "$env_path"
+
+    for string in "${needed[@]}"; do
+        if [[ $output != *$string* ]]; then
+            echo -e "$conf:\tshould have failed with '$string'; it did not."
+            return
+        fi
+    done
+
+    echo -e "$conf:\ttest passed"
+}
+
+echo
+assertfails "./test-fail-multi-args.yml" "barfoo" "already defined"
+assertfails "./test-fail-arg-type.yml" "sometype" "conflicts with type name"
+assertfails "./test-fail-unknown-type.yml" "whatever" "does not denote a valid type"
