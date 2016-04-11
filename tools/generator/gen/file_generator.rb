@@ -208,12 +208,12 @@ class FileGenerator
         if x["doc_extra"] == nil then
           keys.each do |k|
             if x[k] == nil then
-              puts "erreur : in section #{key_name}, part : #{x[key_part]}, missing field #{k}"
+              puts "error: in section #{key_name}, part: #{x[key_part]}, missing field #{k}"
               exit 1
             end
           end
           if not fun.call(x) then
-            puts "erreur : in section #{key_name}, part : #{x[key_part]}"
+            puts "error: in section #{key_name}, part: #{x[key_part]}"
             exit 1
           end
         end
