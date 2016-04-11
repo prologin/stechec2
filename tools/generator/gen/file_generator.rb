@@ -10,6 +10,8 @@
 # Copyright (C) 2005, 2006 Prologin
 #
 
+require 'set'
+
 class Type
   attr_reader :name
 
@@ -112,6 +114,26 @@ class Function
     @name = conf['fct_name']
     @ret = types[conf['fct_ret_type']]
     if conf['fct_arg']
+      arg_names = [].to_set
+      type_names = [].to_set
+      conf['fct_arg'].each_with_index do |arg, i|
+        if arg_names.include?(arg[0])
+          puts "errror: in function `#{@name}`\n" \
+               "  argument \##{i+1} `#{arg[0]}` already defined"
+          exit 1
+        end
+        arg_names << arg[0]
+        type_names << arg[1]
+      end
+      conf['fct_arg'].each_with_index do |arg, i|
+        if type_names.include?(arg[0])
+          puts "error: in function `#{@name}`\n" \
+               "  argument \##{i+1} `#{arg[0]}` conflicts with type name `#{arg[0]}` " \
+               "(C code will not compile);\n" \
+               "  chose another argument name"
+          exit 1
+        end
+      end
       @args = conf['fct_arg'].map do |arg|
         FunctionArg.new(types, arg)
       end
