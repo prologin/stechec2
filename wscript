@@ -139,7 +139,6 @@ def build_lib(bld):
             src/lib/net/server-socket.cc
             src/lib/net/client-socket.cc
             src/lib/net/message.cc
-            src/lib/net/signal.cc
 
             src/lib/rules/action.cc
             src/lib/rules/actions.cc
