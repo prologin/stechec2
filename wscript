@@ -141,11 +141,13 @@ def coverage(ctx):
     """Compute a code coverage report (Gcov)"""
     # For some mysterious reason, "ctx" has no "env" attribute, here, so it's
     # not possible to get the GCOVR environment variable.
+    subprocess.check_call(['mkdir', '-p', 'coverage'],
+                           cwd=os.path.join(ctx.path.abspath(), out))
     subprocess.check_call(['gcovr',
                            '-r', '..',
                            '--html', '--html-details',
                            '--exclude=.*unittest-gtest.*',
-                           '-o', 'gcov-report.html'],
+                           '-o', 'coverage/gcov-report.html'],
                            cwd=os.path.join(ctx.path.abspath(), out))
 
 def build_lib(bld):
