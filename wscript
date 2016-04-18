@@ -22,7 +22,11 @@ def options(opt):
     opt.add_option('--enable-debug', action = 'store_true', default = False,
                    help = 'build a debug version', dest = 'debug')
     opt.add_option('--enable-asan', dest='asan', action='store_true',
-                   help="Build with GCC's address sanitizer")
+                   help="Build with Clang's address sanitizer")
+    opt.add_option('--enable-msan', dest='msan', action='store_true',
+                   help="Build with Clang's memory sanitizer")
+    opt.add_option('--enable-tsan', dest='tsan', action='store_true',
+                   help="Build with Clang's thread sanitizer")
     opt.add_option('--enable-gcov', dest='gcov', action='store_true',
                    help='Instrument build to compute code coverage')
     opt.add_option('--enable-werror', action = 'store_true', default = False,
@@ -32,6 +36,9 @@ def options(opt):
     opt.recurse('tools')
 
 def configure(conf):
+    if conf.options.asan or conf.options.msan or conf.options.tsan:
+        conf.find_program('clang++', var='CXX')
+
     conf.load('compiler_cxx')
     conf.load('unittest_gtest')
     conf.load('ruby')
@@ -65,6 +72,18 @@ def configure(conf):
                        linkflags='-fsanitize=address')
         conf.env.append_value('CXXFLAGS', ['-fsanitize=address'])
         conf.env.append_value('LINKFLAGS', ['-fsanitize=address'])
+
+    if conf.options.msan:
+        conf.check_cxx(cxxflags='-fsanitize=memory',
+                       linkflags='-fsanitize=memory')
+        conf.env.append_value('CXXFLAGS', ['-fsanitize=memory'])
+        conf.env.append_value('LINKFLAGS', ['-fsanitize=memory'])
+
+    if conf.options.tsan:
+        conf.check_cxx(cxxflags='-fsanitize=thread',
+                       linkflags='-fsanitize=thread')
+        conf.env.append_value('CXXFLAGS', ['-fsanitize=thread'])
+        conf.env.append_value('LINKFLAGS', ['-fsanitize=thread'])
 
     if conf.options.gcov:
         conf.check_cxx(cxxflags='-fprofile-arcs -ftest-coverage',
