@@ -558,7 +558,8 @@ class CSharpProto < CxxProto
   end
 
   def print_constant(type, name, val)
-      @f.print "\t\tpublic const int ", name, " = ", val, ";\n"
+    type = 'int' if type.nil?
+    @f.print "\t\tpublic const ", type, " ", name, " = ", val, ";\n"
   end
 
   def build_enums
@@ -657,9 +658,7 @@ class JavaProto < FileGenerator
 
   # print a constant
   def print_constant(type, name, val)
-    if type == nil
-      type = 'int'
-    end
+    type = 'int' if type.nil?
     @f.print '  public static final ', type, ' ', name, ' = ', val, ";\n"
   end
 

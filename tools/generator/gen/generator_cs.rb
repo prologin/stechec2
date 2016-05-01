@@ -283,7 +283,6 @@ std::vector<#{name}> lang2cxx< MonoArray*, std::vector<#{name}> >(MonoArray* in)
 template <>
 MonoObject* cxx2lang< MonoObject*, #{name} >(#{name} in)
 {
-  void* arg;
   MonoClass*  mcKlass  = mono_class_from_name(gl_csharp.getImage(), \"Prologin\", \"#{camel_case(name)}\");
   MonoObject* moObj    = mono_object_new(gl_csharp.getDomain(), mcKlass);
 mono_runtime_object_init(moObj);
@@ -292,8 +291,8 @@ mono_runtime_object_init(moObj);
       fn = f[0]
       ft = @types[f[1]]
       @f.puts <<-EOF
-  arg = reinterpret_cast< void* >(cxx2lang< #{cmonotype(ft)}, #{cxx_type(ft)} >(in.#{fn}));
-  mono_field_set_value(moObj, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &arg);
+  auto arg_#{fn} = cxx2lang< #{cmonotype(ft)}, #{cxx_type(ft)} >(in.#{fn});
+  mono_field_set_value(moObj, mono_class_get_field_from_name(mcKlass, \"#{camel_case(fn)}\"), &arg_#{fn});
       EOF
     end
     @f.puts <<-EOF
