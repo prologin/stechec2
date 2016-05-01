@@ -7,6 +7,16 @@ constant:
     cst_name: CONST_VAL
     cst_val: 42
     cst_comment: Constant value
+  -
+    cst_name: CONST_DOUBLE
+    cst_val: 42.42
+    cst_type: double
+    cst_comment: Floating point constant
+  -
+    cst_name: CONST_DOUBLE_2
+    cst_val: 1337
+    cst_type: double
+    cst_comment: Floating point constant with integer value
 
 enum:
   -
@@ -25,6 +35,7 @@ struct:
     str_field:
       - [field_i, int, "Integer field"]
       - [field_bool, bool, "Bool field"]
+      - [field_double, double, "Double field"]
   -
     str_name: struct_with_array
     str_summary: Structure which contains an array.

@@ -46,7 +46,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         sr[i] = 42;
-        ss[i] = (simple_struct){42, true};
+        ss[i] = (simple_struct){42, true, 42.42};
     }
     s.field_int_arr = (int_array){sr, 42};
     s.field_str_arr = (simple_struct_array){ss, 42};
@@ -65,7 +65,7 @@ void test()
         for (int j = 0; j < 42; ++j)
         {
             l[i].field_int_arr.datas[j] = 42;
-            l[i].field_str_arr.datas[j] = (simple_struct){ 42, true };
+            l[i].field_str_arr.datas[j] = (simple_struct){ 42, true, 42.42 };
         }
     }
     struct_with_array_array ll = send_me_struct_array((struct_with_array_array){l, 42});
@@ -85,6 +85,7 @@ void test()
             assert(ll.datas[i].field_int_arr.datas[j] == 42);
             assert(ll.datas[i].field_str_arr.datas[j].field_i == 42);
             assert(ll.datas[i].field_str_arr.datas[j].field_bool == true);
+            assert(ll.datas[i].field_str_arr.datas[j].field_double == 42.42);
         }
     }
     for (int i = 0; i < 42; ++i)

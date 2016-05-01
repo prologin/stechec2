@@ -43,7 +43,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         s.field_int_arr.push_back(42);
-        simple_struct ss = { 42, true };
+        simple_struct ss = { 42, true, 42.42 };
         s.field_str_arr.push_back(ss);
     }
     send_me_42s(s);
@@ -57,7 +57,7 @@ void test()
         for (int j = 0; j < 42; ++j)
         {
             l[i].field_int_arr.push_back(42);
-            simple_struct ss = { 42, true };
+            simple_struct ss = { 42, true, 42.42 };
             l[i].field_str_arr.push_back(ss);
         }
     }
@@ -73,6 +73,7 @@ void test()
             assert(l[i].field_int_arr[j] == 42);
             assert(l[i].field_str_arr[j].field_i == 42);
             assert(l[i].field_str_arr[j].field_bool == true);
+            assert(l[i].field_str_arr[j].field_double == 42.42);
         }
     }
 
@@ -82,7 +83,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         s2.field_int_arr.push_back(42);
-        simple_struct ss = { 42, true };
+        simple_struct ss = { 42, true, 42.42 };
         s2.field_str_arr.push_back(ss);
     }
     assert(s == s2);

@@ -10,11 +10,14 @@ import Control.Exception
 
 assert' x = assert x ()
 
-theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True))
+theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True 42.42))
 
 -- Called 10K times to test if things work well.
 test :: IO ()
 test = do
+  -- Check the types of constants.
+  const (return ()) (const_val :: Int, const_double :: Double)
+
   send_me_42 42
   send_me_42_and_1337 42 1337
   send_me_true True

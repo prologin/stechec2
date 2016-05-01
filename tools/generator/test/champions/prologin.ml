@@ -14,6 +14,11 @@ let times42 x = Array.make 42 x
 ** Called 10K times to test if things work well.
 *)
 let test () =  (* Pose ton code ici *)
+    (* Check the types of constants. *)
+    ignore (const_val : int);
+    ignore (const_double : float);
+    ignore (const_double_2 : float);
+
     send_me_42 42;
     send_me_42_and_1337 42 1337;
     send_me_true true;
@@ -27,16 +32,16 @@ let test () =  (* Pose ton code ici *)
     assert ((returns_sorted (range 1 10000)) = (range 1 10000));
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 { field_i = 42; field_bool = true } };
+                  field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } };
     send_me_test_enum Val1 Val2;
     let l = send_me_struct_array (
         times42 { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 { field_i = 42; field_bool = true } }
+                  field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } }
     ) in
     assert (l = (times42 { field_int = 42;
                            field_int_arr = times42 42;
-                           field_str_arr = times42 { field_i = 42; field_bool = true } }));
+                           field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } }));
     flush stderr; flush stdout;; (* Pour que vos sorties s'affichent *)
 
 (* /!\ Ne touche pas a ce qui suit /!\ *)

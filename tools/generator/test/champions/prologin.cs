@@ -45,6 +45,7 @@ namespace Prologin {
         SimpleStruct ss = new SimpleStruct();
         ss.FieldI = 42;
         ss.FieldBool = true;
+        ss.FieldDouble = 42.42;
         s.FieldStrArr[i] = ss;
       }
       Api.SendMe42s(s);
@@ -64,6 +65,7 @@ namespace Prologin {
           SimpleStruct ss = new SimpleStruct();
           ss.FieldI = 42;
           ss.FieldBool = true;
+          ss.FieldDouble = 42.42;
           l[i].FieldStrArr[j] = ss;
         }
       }
@@ -80,6 +82,7 @@ namespace Prologin {
           Debug.Assert(l[i].FieldIntArr[j] == 42);
           Debug.Assert(l[i].FieldStrArr[j].FieldI == 42);
           Debug.Assert(l[i].FieldStrArr[j].FieldBool == true);
+          Debug.Assert(l[i].FieldStrArr[j].FieldDouble == 42.42);
         }
       }
     }

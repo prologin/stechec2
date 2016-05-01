@@ -41,6 +41,7 @@ public class Prologin extends Interface
         SimpleStruct ss = new SimpleStruct();
         ss.field_i = 42;
         ss.field_bool = true;
+        ss.field_double = 42.42;
         s.field_str_arr[i] = ss;
     }
     send_me_42s(s);
@@ -60,6 +61,7 @@ public class Prologin extends Interface
         SimpleStruct ss = new SimpleStruct();
         ss.field_i = 42;
         ss.field_bool = true;
+        ss.field_double = 42.42;
         l[i].field_str_arr[j] = ss;
       }
     }
@@ -76,6 +78,7 @@ public class Prologin extends Interface
         assert(l[i].field_int_arr[j] == 42);
         assert(l[i].field_str_arr[j].field_i == 42);
         assert(l[i].field_str_arr[j].field_bool == true);
+        assert(l[i].field_str_arr[j].field_double == 42.42);
       }
     }
 
