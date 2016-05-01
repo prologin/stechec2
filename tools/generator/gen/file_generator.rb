@@ -657,7 +657,10 @@ class JavaProto < FileGenerator
 
   # print a constant
   def print_constant(type, name, val)
-    @f.print '  public static final int ', name, ' = ', val, ";\n"
+    if type == nil
+      type = 'int'
+    end
+    @f.print '  public static final ', type, ' ', name, ' = ', val, ";\n"
   end
 
   # print a java prototype

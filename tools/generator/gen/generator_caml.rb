@@ -371,6 +371,9 @@ class CamlFileGenerator < FileGenerator
   end
 
   def print_constant(type, name, val)
+      if type == 'double'
+        val = Float(val)
+      end
       @f.print 'let ', name.downcase, " = ", val, "\n"
   end
 
@@ -390,13 +393,13 @@ class CamlFileGenerator < FileGenerator
       @f.print "type #{s['str_name']} = "
       if s['str_tuple']
         @f.print "("
-        args = s['str_field'].map { |f| f[1] }
+        args = s['str_field'].map { |f| conv_type(@types[f[1]]) }
         @f.print args.join(" * ")
         @f.puts ")"
       else
         @f.puts "{"
         s['str_field'].each do |f|
-          @f.puts "  #{f[0]} : #{f[1]} ; (* <- #{f[2]} *)"
+          @f.puts "  #{f[0]} : #{conv_type(@types[f[1]])} ; (* <- #{f[2]} *)"
         end
         @f.puts "}"
       end

@@ -663,8 +663,9 @@ include ../includes/rules.mk
     @f.puts "module Api (#{build_export_list}) where", ""
     @f.puts "import CApi", ""
     for_each_constant false do |x|
+      type = x['cst_type'] == nil ? "Int" : haskell_type(@types[x['cst_type']])
       print_multiline_doc_comment x['cst_comment']
-      @f.puts "#{x['cst_name'].downcase}  :: Int"
+      @f.puts "#{x['cst_name'].downcase} :: #{type}"
       @f.puts "#{x['cst_name'].downcase} = #{x['cst_val']}"
     end
     @f.close

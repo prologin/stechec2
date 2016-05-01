@@ -198,6 +198,12 @@ std::string convert_to_string(int i){
   std::string result = s.str();
   return result;
 }
+std::string convert_to_string(double i){
+  std::ostringstream s;
+  s << i;
+  std::string result = s.str();
+  return result;
+}
 std::string convert_to_string(std::string i){
   return i;
 }
