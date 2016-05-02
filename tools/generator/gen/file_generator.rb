@@ -171,6 +171,11 @@ class FileGenerator
     end
 
     # checking conf...
+    def inspect_const(x)
+      x["cst_type"] = 'int' if x["cst_type"].nil?
+      x["cst_val"] = Float(x["cst_val"]) if x["cst_type"] == 'double'
+      true
+    end
     def inspect_enum(x)
       out = true;
       x["enum_field"].each do |f|
@@ -194,6 +199,7 @@ class FileGenerator
     end
     keys =
       [
+       ["constant", "cst_name", ["cst_name", "cst_val", "cst_comment"], lambda { |x| return inspect_const x } ],
        ["enum", "enum_name", ["enum_name", "enum_summary", "enum_field"], lambda { |x| return inspect_enum x } ],
        ["struct", "str_name", ["str_name", "str_summary", "str_tuple", "str_field"], lambda { |x| return inspect_str x } ],
        ["function", "fct_name", ["fct_name", "fct_summary", "fct_ret_type", "fct_arg"], lambda { |x| return inspect_fun x } ]
@@ -558,7 +564,6 @@ class CSharpProto < CxxProto
   end
 
   def print_constant(type, name, val)
-    type = 'int' if type.nil?
     @f.print "\t\tpublic const ", type, " ", name, " = ", val, ";\n"
   end
 
@@ -658,7 +663,6 @@ class JavaProto < FileGenerator
 
   # print a constant
   def print_constant(type, name, val)
-    type = 'int' if type.nil?
     @f.print '  public static final ', type, ' ', name, ' = ', val, ";\n"
   end
 

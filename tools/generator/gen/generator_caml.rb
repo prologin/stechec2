@@ -371,9 +371,6 @@ class CamlFileGenerator < FileGenerator
   end
 
   def print_constant(type, name, val)
-      if type == 'double'
-        val = Float(val)
-      end
       @f.print 'let ', name.downcase, " = ", val, "\n"
   end
 
