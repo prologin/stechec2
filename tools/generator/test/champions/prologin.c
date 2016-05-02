@@ -14,6 +14,9 @@
 //
 void test()
 {
+    assert(CONST_VAL/4 == 10);
+    assert(CONST_DOUBLE_2/2 == 668.5);
+
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
