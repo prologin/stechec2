@@ -135,12 +135,17 @@ Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
                        sandbox_impl::thread_proc<Ret, Args...>, &params) < 0)
         FATAL("Sandbox thread creation failed");
 
-    // Wait until timeout or normal return.
-    if (pthread_timedjoin_np(sandbox_thread, NULL, &ts) == ETIMEDOUT)
+    if (get_timeout() == 0)
+        pthread_join(sandbox_thread, NULL);
+    else
     {
-        ERR("Sandbox call exceeded the time limit");
-        pthread_cancel(sandbox_thread);
-        throw SandboxTimeout();
+        // Wait until timeout or normal return.
+        if (pthread_timedjoin_np(sandbox_thread, NULL, &ts) == ETIMEDOUT)
+        {
+            ERR("Sandbox call exceeded the time limit");
+            pthread_cancel(sandbox_thread);
+            throw SandboxTimeout();
+        }
     }
 
     return retval;
