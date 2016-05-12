@@ -82,7 +82,7 @@ $conf["constant"].each do |f|
    if f['cst_comment']
 %>
 
-\noindent \begin{tabular}{lp{15cm}}
+\noindent \begin{tabular}{lp{11cm}}
 \textbf{Constante:} & <%= esc(f['cst_name']) %> \\
 \textbf{Valeur:} & <%= f['cst_val'] %> \\
 \textbf{Description:} & <%= esc(f['cst_comment']) %> \\
