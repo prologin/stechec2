@@ -1,9 +1,9 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-_pkgver=prologin2015
+_pkgver=prologin2016
 pkgname=stechec2
 pkgrel=1
-pkgver=
+pkgver=r779
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('i686' 'x86_64')
 url="http://prologin.org/"

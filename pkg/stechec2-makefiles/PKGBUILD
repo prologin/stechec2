@@ -1,12 +1,12 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-_pkgver=prologin2015
-pkgver=686
+_pkgver=prologin2016
+pkgver=r779
 pkgname=stechec2-makefiles
 pkgrel=1
 pkgdesc="Stechec2 makefiles for ${pkgver}"
-makedepends="stechec2"
-arch=any
+makedepends=("stechec2")
+arch=("any")
 url="http://prologin.org/"
 license=('GPL')
 
