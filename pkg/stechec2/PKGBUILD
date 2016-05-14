@@ -3,7 +3,7 @@
 _pkgver=prologin2016
 pkgname=stechec2
 pkgrel=1
-pkgver=r779
+pkgver=r783
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('i686' 'x86_64')
 url="http://prologin.org/"

@@ -165,7 +165,7 @@ def stechec2_run(args, options):
         os.chmod(f_reqrep, 0o777)
         os.chmod(f_pubsub, 0o777)
 
-    def run_client(client_id, client, name, is_spectator):
+    def run_client(client_id, client, name, is_spectator, isolate=False):
         opts = client_opt + ['--champion', client,
                              '--client_id', str(client_id),
                              '--name', name]
