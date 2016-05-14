@@ -246,6 +246,7 @@ class CFileGenerator < CProto
   def generate_header
     @f = File.open(@path + @header_file, 'w')
     print_banner "generator_c.rb"
+    @f.puts "#pragma once", ""
     @f.puts "#include <stdlib.h>", "#include <stdbool.h>", ""
     build_constants
     build_enums
