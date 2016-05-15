@@ -74,6 +74,7 @@ OCAML_CFLAGS    = -O2 -I`ocamlc -where`
 HASKELL_CFLAGS	= -O2 -I`$(GHC) --print-libdir`/include -std=c++11
 
 LANG_FILE     	= _lang
+DIST_FILE	= champion.tgz
 
 ifeq ($(STECHEC_LANG),haskell)
 	LINK_CMD = ghc
@@ -203,7 +204,7 @@ _run_reqs	:= $(_targets) $(foreach t,$(lib_TARGETS),$($(t)-dists))
 # rules
 # ==============================================================================
 
-.PHONY: all clean distclean
+.PHONY: all clean tar dist dist-upload distclean getmap
 .DEFAULT_GOAL :=
 
 all: $(_targets)
@@ -251,9 +252,21 @@ list-run-reqs:
 %.hs: %.hsc
 	$(call cmd,hsc2hs)
 
-tar:
+$(DIST_FILE): $(_dist)
 	@echo $(STECHEC_LANG) > $(LANG_FILE)
 	$(call cmd,tar)
 	@rm $(LANG_FILE)
+
+tar: $(DIST_FILE)
+
+dist: $(DIST_FILE)
+
+dist-upload: $(DIST_FILE)
+	@echo "Uploading $^..."
+	@/var/prologin/venv/bin/python -m prologin.concours.api champion upload $^
+
+getmap: 
+	@echo -n "map id: "
+	@read id && /var/prologin/venv/bin/python -m prologin.concours.api map get "$${id}"
 
 -include $(_deps)
