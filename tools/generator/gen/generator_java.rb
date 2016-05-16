@@ -402,11 +402,13 @@ ProloginJavaRunTime::ProloginJavaRunTime()
   classpath.append(champion_path);
 
   JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
-  JavaVMOption options[2];
-  options[0].optionString = (char*)classpath.c_str();
-  options[1].optionString = (char*)"-ea";
+  JavaVMOption options[4];
+  options[0].optionString = (char*) classpath.c_str();
+  options[1].optionString = (char*) "-ea";
+  options[2].optionString = (char*) "-XX:MaxHeapSize=512m";
+  options[3].optionString = (char*) "-XX:CompressedClassSpaceSize=64m";
   vm_args.version = JNI_VERSION_1_6;
-  vm_args.nOptions = 2;
+  vm_args.nOptions = 4;
   vm_args.options = options;
   vm_args.ignoreUnrecognized = false;
   JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
