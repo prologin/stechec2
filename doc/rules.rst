@@ -1,25 +1,25 @@
-==================================================
-How to implement the rules of a game in stechec2 ?
-==================================================
+Implementing games rules in stechec2
+====================================
 
 Introduction
 ============
 
 So you want to organize a big contest between IAs and you don't know where to
-start ? This tutorial is for you ! We're going to implement a basic [Connect
-Four](http://en.wikipedia.org/wiki/Connect_Four) game in this tutorial, step by
+start? This tutorial is for you! We're going to implement a basic
+`Connect Four`_ game in this tutorial, step by
 step, to understand the mechanics of stechec2's rules writing.
 
 If you're stuck in some part, you can help yourself with the tictactoe game
 that has already been implemented in ``games/tictactoe``.
 
+.. _`Connect Four`: http://en.wikipedia.org/wiki/Connect_Four
 
 Think about The Game
 ====================
 
 We must define first *exactly* the rules of our game: how it works, who plays
 first, how many players a play can handle, who wins…
-The rules of the Connect Four are very simple : two players, a turn by turn
+The rules of the Connect Four are very simple: two players, a turn by turn
 game, only one action (drop a disk somewhere).
 
 We can begin to describe the rules in the .yml:
@@ -259,13 +259,13 @@ Add this at the end::
       fct_ret_type: bool
       fct_arg: []
 
-And we're done !
+And we're done!
 
 Generate the skeleton
 =====================
 
 Stechec2 provides a script to generate a skeleton of the rules. It really saves
-a lot of time, so don't skip this part !
+a lot of time, so don't skip this part!
 
 If you have properly installed stechec2, you should have the generator in your
 PATH:
@@ -415,8 +415,9 @@ really important: you don't want to test all the possible cases with custom
 champions.
 
 Let's create a ``src/tests`` folder, where we'll put all our test files. The
-tests use googletest, you can find a reference documentation
-[here](http://code.google.com/p/googletest/).
+tests use googletest, you can find a `reference documentation`_.
+
+.. _`reference documentation`: http://code.google.com/p/googletest/
 
 Here, we're going to create a ``test-gamestate.cc`` to test that the functions
 we just created are working well.
@@ -551,7 +552,7 @@ Now here's a template of the ``drop`` action class you're going to implement in
 Note that:
 
 * **check** should return an element of the error enumeration we've defined in
-  the rules (see ``constant.hh``) : { OK, OUT_OF_BOUNDS, FULL, ALREADY_PLAYED }
+  the rules (see ``constant.hh``): { OK, OUT_OF_BOUNDS, FULL, ALREADY_PLAYED }
 
 * **handle_buffer** only has to "bufferize" each attribute of the object. For
   that, use the ``buf.handle()`` function like this::
@@ -578,7 +579,7 @@ the GameState and the rules::Player objects. For instance with my_player::
         return player_->id;
     }
 
-Implement all the other observers : ``get_column`` and ``get_cell``. You'll
+Implement all the other observers: ``get_column`` and ``get_cell``. You'll
 have to replace ``rules::GameState`` to ``GameState`` (the one defined in
 ``game.cc``) in ``api.hh`` in order to be able to call our gamestate-specific
 functions.
@@ -727,4 +728,4 @@ At the end of each turn, we have to check if someone has won, by overloading
 ``end_of_player_turn``, and doing the needful. Then, you can implement
 ``is_finished``.
 
-And that's it !
+And that's it!
