@@ -277,7 +277,8 @@ PATH:
   $ mv gen/connect4/rules src
   $ rm -rf gen
   $ ls src
-  api.cc  api.hh  constant.hh  entry.cc  interface.cc  rules.cc  rules.hh
+  actions.hh  api.cc  api.hh  constant.hh  entry.cc  game_state.cc
+  game_state.hh  interface.cc  rules.cc  rules.hh
 
 You don't have to modify ``constant.hh``, ``entry.hh`` and ``interface.hh``.
 They are generated files that shouldn't be manually edited.
@@ -301,10 +302,11 @@ Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
   def build(bld):
       bld.shlib(
           source = '''
-              src/rules.cc
-              src/entry.cc
-              src/interface.cc
               src/api.cc
+              src/entry.cc
+              src/game_state.cc
+              src/interface.cc
+              src/rules.cc
           ''',
           defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
           target = 'connect4',
@@ -338,9 +340,7 @@ TurnBasedRules, which matches the gameplay of the Connect4.
 
 In ``rules.hh``:
 
-* delete the methods ``client_loop``, ``server_loop`` and ``spectator_loop``.
-* include ``rules/rules.hh`` at the top of your files (it contains the generic
-  loops)
+* delete the methods ``player_loop``, ``spectator_loop`` and ``server_loop``.
 * make the class inherit from TurnBasedRules::
 
     class Rules : public rules::TurnBasedRules
@@ -348,7 +348,7 @@ In ``rules.hh``:
 
 In ``rules.cc``:
 
-* delete the methods ``client_loop``, ``server_loop`` and ``spectator_loop``.
+* delete the methods ``player_loop``, ``spectator_loop`` and ``server_loop``.
 * initialize TurnBasedRules with the options in the constructor::
 
     Rules::Rules(const rules::Options opt)
@@ -358,15 +358,11 @@ If you're interested in how the generic loops work behind the scene, you can
 take a look at ``stechec2/src/lib/rules/rules.hh``.
 
 We we'll come back to this code later, but for now if we want it to compile, we
-should first add this::
+should first add this in ``rules.hh``::
 
-    #include <rules/actions.hh> // At the top of the file
-
-and::
-
-    virtual rules::Actions* get_actions() { return NULL; }
-    virtual void apply_action(const rules::IAction_sptr&) {}
-    virtual bool is_finished() { return true; }
+    rules::Actions* get_actions() override { return NULL; }
+    void apply_action(const rules::IAction_sptr&) override {}
+    bool is_finished() override { return true; }
 
 This is of course just a temporary fix to allow us to compile the code.
 
@@ -379,33 +375,26 @@ which we can interact with (the methods of this class will change the state of
 the game.) The majority of this part will be left as an exercise for the
 reader.
 
-The GameState will be located in ``game.cc`` and ``game.hh``. Don't forget to
-add those files to the ``wscript``.
-
-The GameState should inherit from rules::GameState (``#include
-<rules/game-state.hh>``), have a copy constructor and a destructor, and
-override a ``copy()`` method. You'll also have ``get_current_turn`` and
+The basics of the GameState class are generated in the files ``game_state.cc``
+and ``game_state.hh``. Besides the already presents method, you'll also need
+for this game to define the following: ``get_current_turn`` and
 ``increment_turn`` which will do the needful with an internal counter, a
 ``get_board`` method which will return the 2D board, a ``drop`` to drop a
 disk somewhere (returns true if the disk has been successfuly dropped), a
 ``is_full`` to check if one can play in a specific column, and finally, a
 ``winner`` method which will return the winner if there's one, -1 else.
 
-Here's a template of the functions you'll need to implement::
-
-    GameState(rules::Players_sptr players);
-    GameState(const GameState& st);
-    ~GameState();
-    virtual rules::GameState* copy() const;
+Here's a template of the additional functions you'll need to implement::
 
     void increment_turn();
-
     int get_current_turn() const;
     bool is_full(int column) const;
     std::array<std::array<int, NB_COLS>, NB_ROWS> get_board() const;
     int winner() const;
 
     void drop(int column, int player);
+
+You will need to include ``"constant.hh"`` to make use of the constants.
 
 Testing
 -------
@@ -422,10 +411,10 @@ tests use googletest, you can find a `reference documentation`_.
 Here, we're going to create a ``test-gamestate.cc`` to test that the functions
 we just created are working well.
 
-Here's a template for ``test-game.cc``::
+Here's a template for ``test-gamestate.cc``::
 
     #include <gtest/gtest.h>
-    #include "../game.hh"
+    #include "../game_state.hh"
 
     class GameStateTest : public ::testing::Test
     {
@@ -496,7 +485,7 @@ cancel() action that undoes actions). When a player wants to perform an action,
 the rules first check if the action can be made considering the current state
 of the game. If everything is okay, the stechec2 client "apply" the action to
 the gamestate and send the action over the network. The server then receives
-the action, and check if it can be made too. If not, there's a big
+the action, and checks if it can be made too. If not, there's a big
 synchronisation problem (or possibly an attack), so the server disconnects the
 client. Else, the server applies the action locally to his gamestate and
 broadcast the action to the other players (so that they can do the same with
@@ -510,8 +499,8 @@ An action must define five functions that will be used by the rules:
 * **id()**: returns the ID of the action (usually an element of an enum) ;
 * **player_id()**: returns the ID of the player that sent the action ;
 
-For now we just have one action, so we can just put that in a new file called
-``actions.hh``::
+For now we just have one action, so we can just put that in the generated file
+called ``actions.hh`` (don't forget to add those files to the ``wscript``)::
 
     enum action_id {
         ID_ACTION_DROP,
@@ -534,14 +523,14 @@ Now here's a template of the ``drop`` action class you're going to implement in
             /* Necessary later, init attributes to random values */
             ActionDrop();
 
-            virtual int check(const GameState*) const;
-            virtual void handle_buffer(utils::Buffer&);
+            int check(const GameState*) const override;
+            void handle_buffer(utils::Buffer&) override;
 
-            uint32_t player_id() const { return player_; }
-            uint32_t id() const { return ID_ACTION_DROP; }
+            uint32_t player_id() const override { return player_; }
+            uint32_t id() const override { return ID_ACTION_DROP; }
 
         protected:
-            virtual void apply_on(GameState*) const;
+            void apply_on(GameState*) const override;
 
         protected:
             int player_;
