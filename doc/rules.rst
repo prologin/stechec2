@@ -217,6 +217,7 @@ So, here are the observers we'll implement:
 * ``my_player``: returns the ID of the current player
 * ``get_column``: returns the column (a int array corresponding to the disks
   of a column and their owners (-1 for "free", the id of the player else).
+  The indice ``0`` of a column will represent its bottom.
 * ``cell``: returns the owner of the specified cell (-1 for "free").
 
 The actions:
@@ -237,7 +238,7 @@ Add this at the end::
       fct_arg: []
     -
       fct_name: get_column
-      fct_summary: Return the column
+      fct_summary: Return the column; indice 0 represents the bottom
       fct_ret_type: int array
       fct_arg:
         - [number, int, number of the column]
