@@ -63,9 +63,9 @@ EOF
       @f.puts
     end
     @f.print "    "
-    @f.puts "    try {"
+    @f.puts "try {"
     unless f.ret.is_nil?
-      @f.print "zval* ret = "
+      @f.print "        zval* ret = "
       if f.ret.is_array?
         @f.print "cxx2lang_array("
       else
@@ -89,7 +89,7 @@ EOF
     if f.ret.is_nil?
       @f.puts "    RETURN_NULL();"
     else
-      @f.puts "    RETURN_ZVAL(ret, 0, 0);"
+      @f.puts "        RETURN_ZVAL(ret, 0, 0);"
     end
     @f.puts "    } catch (...) { RETURN_NULL(); }"
     @f.puts "}"
@@ -107,7 +107,7 @@ EOF
     @f.puts
     @f.puts "    MAKE_STD_ZVAL(ret);"
     @f.puts "    MAKE_STD_ZVAL(fname);"
-    @f.puts "    ZVAL_STRING(fname, \"#{f.name}\", 1);"
+    @f.puts "    ZVAL_STRING(fname, \"#{f.name}\");"
 
     i = 0
     f.args.each do |a|
@@ -187,28 +187,28 @@ EOF
     @f.puts "#{name} lang2cxx<zval*, #{name}>(zval* in)"
     @f.puts "{"
     @f.puts "    #{name} out;"
-    @f.puts "    if (in->type != IS_ARRAY) {"
+    @f.puts "    if (Z_TYPE_P(in) != IS_ARRAY) {"
     @f.puts "        zend_error(E_WARNING, \"parameter is not a structure\");"
     @f.puts "        throw 42;"
     @f.puts "    }"
-    @f.puts "    zval** tmp;"
     @f.puts "    HashTable* ht = Z_ARRVAL_P(in);"
+    @f.puts "    zval* tmp = NULL;"
     s['str_field'].each do |f|
       n = f[0]
       t = @types[f[1]]
-      @f.print "    if (zend_hash_find(ht, \"#{n}\", #{n.length + 1},"
-      @f.puts " (void**)&tmp) != SUCCESS) {"
+      @f.puts "    tmp = zend_hash_str_find(ht, \"#{n}\", #{n.length});"
+      @f.puts "    if (tmp == NULL) {"
       @f.print "        zend_error(E_WARNING, "
       @f.puts "\"field \\\"#{n}\\\" of struct \\\"#{name}\\\" not found\");"
       @f.puts "        throw 42;"
       @f.puts "    }"
       @f.print "    out.#{n} = "
       if t.is_array? then
-        @f.print "lang2cxx_array<#{t.type.name}>(*tmp)"
+        @f.print "lang2cxx_array<#{t.type.name}>(tmp)"
       else
-        @f.print "lang2cxx<zval*, #{t.name}>(*tmp)"
+        @f.print "lang2cxx<zval*, #{t.name}>(tmp)"
       end
-      @f.puts ";"
+      @f.puts ";\n\n"
     end
     @f.puts "    return out;"
     @f.puts "}"
@@ -261,7 +261,7 @@ zval* cxx2lang<zval*, std::string>(std::string in)
 {
     zval* x;
     MAKE_STD_ZVAL(x);
-    ZVAL_STRINGL(x, in.c_str(), in.length(), true);
+    ZVAL_STRINGL(x, in.c_str(), in.length());
     return x;
 }
 
@@ -289,7 +289,7 @@ Cxx lang2cxx(Lang in)
 template <>
 int lang2cxx<zval*, int>(zval* in)
 {
-    if (in->type != IS_LONG) {
+    if (Z_TYPE_P(in) != IS_LONG) {
         zend_error(E_WARNING, "parameter should be an int");
         throw 42;
     }
@@ -299,7 +299,7 @@ int lang2cxx<zval*, int>(zval* in)
 template <>
 double lang2cxx<zval*, double>(zval* in)
 {
-    if (in->type != IS_DOUBLE) {
+    if (Z_TYPE_P(in) != IS_DOUBLE) {
         zend_error(E_WARNING, "parameter should be a double");
         throw 42;
     }
@@ -309,17 +309,17 @@ double lang2cxx<zval*, double>(zval* in)
 template <>
 bool lang2cxx<zval*, bool>(zval* in)
 {
-    if (in->type != IS_BOOL) {
+    if (Z_TYPE_P(in) != IS_TRUE && Z_TYPE_P(in) != IS_FALSE) {
         zend_error(E_WARNING, "parameter should be a boolean");
         throw 42;
     }
-    return Z_BVAL_P(in);
+    return (bool)(Z_TYPE_P(in) == IS_TRUE);
 }
 
 template <>
 std::string lang2cxx<zval*, std::string>(zval* in)
 {
-    if (in->type != IS_STRING) {
+    if (Z_TYPE_P(in) != IS_STRING) {
         zend_error(E_WARNING, "parameter should be a string");
         throw 42;
     }
@@ -329,7 +329,7 @@ std::string lang2cxx<zval*, std::string>(zval* in)
 template <typename Cxx>
 std::vector<Cxx> lang2cxx_array(zval* in)
 {
-    if (in->type != IS_ARRAY) {
+    if (Z_TYPE_P(in) != IS_ARRAY) {
         zend_error(E_WARNING, "parameter should be an array");
         throw 42;
     }
@@ -340,9 +340,8 @@ std::vector<Cxx> lang2cxx_array(zval* in)
 
     for (size_t i = 0; i < s; ++i)
     {
-        zval** v;
-        zend_hash_index_find(ht, i, (void**)&v);
-        out.push_back(lang2cxx<zval*, Cxx>(*v));
+        zval* v = zend_hash_index_find(ht, i);
+        out.push_back(lang2cxx<zval*, Cxx>(v));
     }
 
     return out;
@@ -404,7 +403,7 @@ static void _init_php()
 
     snprintf(buffer, 1024, "include('%s/%s.php');", path, "#{$conf['conf']['player_filename']}");
 
-    php_embed_init(1, argv PTSRMLS_CC);
+    php_embed_init(1, argv);
     zend_startup_module(&api_module_entry);
     zend_eval_string(buffer, NULL, "PHP to Stechec interface");
 }
