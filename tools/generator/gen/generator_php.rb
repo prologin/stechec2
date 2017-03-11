@@ -65,11 +65,11 @@ EOF
     @f.print "    "
     @f.puts "try {"
     unless f.ret.is_nil?
-      @f.print "        zval* ret = "
+      @f.print "        zval ret = "
       if f.ret.is_array?
         @f.print "cxx2lang_array("
       else
-        @f.print "cxx2lang<zval*, #{cxx_type(f.ret)}>("
+        @f.print "cxx2lang<zval, #{cxx_type(f.ret)}>("
       end
     end
     @f.print "api_", f.name, "("
@@ -89,7 +89,7 @@ EOF
     if f.ret.is_nil?
       @f.puts "    RETURN_NULL();"
     else
-      @f.puts "        RETURN_ZVAL(ret, 0, 0);"
+      @f.puts "        RETURN_ZVAL(&ret, 0, 0);"
     end
     @f.puts "    } catch (...) { RETURN_NULL(); }"
     @f.puts "}"
@@ -98,16 +98,14 @@ EOF
   def generate_user_fun(f)
     @f.puts cxx_proto(f, "", 'extern "C"')
     @f.puts "{"
-    @f.puts "    zval* ret;"
-    @f.puts "    zval* fname;"
+    @f.puts "    zval ret;"
+    @f.puts "    zval fname;"
     if f.args.length > 0 then
-      @f.puts "    zval* params[#{f.args.length}];"
+      @f.puts "    zval params[#{f.args.length}];"
     end
     @f.puts "    _init_php();"
     @f.puts
-    @f.puts "    MAKE_STD_ZVAL(ret);"
-    @f.puts "    MAKE_STD_ZVAL(fname);"
-    @f.puts "    ZVAL_STRING(fname, \"#{f.name}\");"
+    @f.puts "    ZVAL_STRING(&fname, \"#{f.name}\");"
 
     i = 0
     f.args.each do |a|
@@ -116,24 +114,17 @@ EOF
     end
 
     p = if f.args.length != 0 then "params" else "NULL" end
-    @f.puts "    if (call_user_function(EG(function_table), NULL, fname, ret, #{i}, #{p} TSRMLS_CC) == FAILURE)"
+    @f.puts "    if (call_user_function(EG(function_table), NULL, &fname, &ret, #{i}, #{p} TSRMLS_CC) == FAILURE)"
     @f.puts "    {"
     @f.puts "        abort();"
     @f.puts "    }"
 
     if not f.ret.is_nil? then
-      @f.puts "    #{cxx_type(f.ret)} cxxret = lang2cxx<zval*, #{cxx_type(f.ret)}>(ret);"
+      @f.puts "    #{cxx_type(f.ret)} cxxret = lang2cxx<zval*, #{cxx_type(f.ret)}>(&ret);"
     elsif f.ret.is_array? then
-      @f.puts "    #{cxx_type(f.ret)} cxxret = lang2cxx_array<#{cxx_type(f.ret.type)}>(ret);"
+      @f.puts "    #{cxx_type(f.ret)} cxxret = lang2cxx_array<#{cxx_type(f.ret.type)}>(&ret);"
     end
 
-    @f.puts "    zval_ptr_dtor(&ret);"
-    @f.puts "    zval_ptr_dtor(&fname);"
-    i = 0
-    f.args.each do |a|
-      @f.puts "    zval_ptr_dtor(&params[#{i}]);"
-      i += 1
-    end
     if not f.ret.is_nil?
       @f.puts "    return cxxret;"
     end
@@ -144,9 +135,9 @@ EOF
     name = e['enum_name']
     @f.puts <<-EOF
 template <>
-zval* cxx2lang<zval*, #{name}>(#{name} in)
+zval cxx2lang<zval, #{name}>(#{name} in)
 {
-    return cxx2lang<zval*, int>((int)in);
+    return cxx2lang<zval, int>((int)in);
 }
 
 template <>
@@ -160,12 +151,11 @@ EOF
   def generate_struct_wrappers(s)
     name = s['str_name']
     @f.puts "template <>"
-    @f.puts "zval* cxx2lang<zval*, #{name}>(#{name} in)"
+    @f.puts "zval cxx2lang<zval, #{name}>(#{name} in)"
     @f.puts "{"
-    @f.puts "    zval* ret;"
-    @f.puts "    zval* tmp;"
-    @f.puts "    MAKE_STD_ZVAL(ret);"
-    @f.puts "    array_init(ret);"
+    @f.puts "    zval ret;"
+    @f.puts "    zval tmp;"
+    @f.puts "    array_init(&ret);"
     s['str_field'].each do |f|
       n = f[0]
       t = @types[f[1]]
@@ -173,10 +163,10 @@ EOF
       if t.is_array?
         @f.print "cxx2lang_array(in.#{n})"
       else
-        @f.print "(cxx2lang<zval*, #{t.name}>(in.#{n}))"
+        @f.print "(cxx2lang<zval, #{t.name}>(in.#{n}))"
       end
       @f.puts ";"
-      @f.puts "    add_assoc_zval(ret, \"#{n}\", tmp);"
+      @f.puts "    add_assoc_zval(&ret, \"#{n}\", &tmp);"
     end
     @f.puts "    return ret;"
     @f.puts "}"
@@ -230,52 +220,49 @@ Lang cxx2lang(Cxx in)
 }
 
 template <>
-zval* cxx2lang<zval*, int>(int in)
+zval cxx2lang<zval, int>(int in)
 {
-    zval* x;
-    MAKE_STD_ZVAL(x);
-    ZVAL_LONG(x, (long)in);
+    zval x;
+    ZVAL_LONG(&x, (long)in);
     return x;
 }
 
 template <>
-zval* cxx2lang<zval*, bool>(bool in)
+zval cxx2lang<zval, bool>(bool in)
 {
-    zval* x;
-    MAKE_STD_ZVAL(x);
-    ZVAL_BOOL(x, in);
+    zval x;
+    ZVAL_BOOL(&x, in);
     return x;
 }
 
 template <>
-zval* cxx2lang<zval*, double>(double in)
+zval cxx2lang<zval, double>(double in)
 {
-    zval* x;
-    MAKE_STD_ZVAL(x);
-    ZVAL_DOUBLE(x, in);
+    zval x;
+    ZVAL_DOUBLE(&x, in);
     return x;
 }
 
 template <>
-zval* cxx2lang<zval*, std::string>(std::string in)
+zval cxx2lang<zval, std::string>(std::string in)
 {
-    zval* x;
-    MAKE_STD_ZVAL(x);
-    ZVAL_STRINGL(x, in.c_str(), in.length());
+    zval x;
+    ZVAL_STRINGL(&x, in.c_str(), in.length());
     return x;
 }
 
 template <typename Cxx>
-zval* cxx2lang_array(const std::vector<Cxx>& in)
+zval cxx2lang_array(const std::vector<Cxx>& in)
 {
-    zval* x;
-    MAKE_STD_ZVAL(x);
-    array_init(x);
+    zval x;
+    array_init(&x);
 
     size_t s = in.size();
 
-    for (size_t i = 0; i < s; ++i)
-      add_next_index_zval(x, cxx2lang<zval*, Cxx>(in[i]));
+    for (size_t i = 0; i < s; ++i) {
+      zval tmp = cxx2lang<zval, Cxx>(in[i]);
+      add_next_index_zval(&x, &tmp);
+    }
 
     return x;
 }
@@ -485,7 +472,7 @@ lib_TARGETS = #{target}
 #{target}-dists += api.php interface.hh
 #{target}-srcs = interface.cc
 #{target}-cxxflags = -fPIC $(shell php-config --includes) -Wno-write-strings
-#{target}-ldflags = -s $(shell php-config --libs --ldflags) -lphp5
+#{target}-ldflags = -s $(shell php-config --libs --ldflags) -lphp7
 
 STECHEC_LANG=php
 include ../includes/rules.mk
