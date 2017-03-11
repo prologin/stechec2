@@ -12,6 +12,10 @@ require('api.php');
  */
 function test()
 {
+    if (ini_get('zend.assertions') !== '1') {
+        die("Assertions are not enabled, set zend.assertions = 1 in php.ini.");
+    }
+
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
