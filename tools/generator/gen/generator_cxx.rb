@@ -59,11 +59,28 @@ EOF
       @f.puts "  return true;"
       @f.puts "}\n\n"
 
+      @f.print "inline bool operator!=("
+      @f.puts "const #{x['str_name']}& a, const #{x['str_name']}& b) {"
+      x['str_field'].each do |f|
+          @f.puts "  if (a.#{f[0]} != b.#{f[0]}) return true;"
+      end
+      @f.puts "  return false;"
+      @f.puts "}\n\n"
+
       @f.print "inline bool operator<("
       @f.puts "const #{x['str_name']}& a, const #{x['str_name']}& b) {"
       x['str_field'].each do |f|
           @f.puts "  if (a.#{f[0]} < b.#{f[0]}) return true;"
           @f.puts "  if (a.#{f[0]} > b.#{f[0]}) return false;"
+      end
+      @f.puts "  return false;"
+      @f.puts "}\n\n"
+
+      @f.print "inline bool operator>("
+      @f.puts "const #{x['str_name']}& a, const #{x['str_name']}& b) {"
+      x['str_field'].each do |f|
+          @f.puts "  if (a.#{f[0]} > b.#{f[0]}) return true;"
+          @f.puts "  if (a.#{f[0]} < b.#{f[0]}) return false;"
       end
       @f.puts "  return false;"
       @f.puts "}\n\n"
