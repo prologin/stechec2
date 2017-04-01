@@ -429,8 +429,6 @@ class CProto < FileGenerator
   def conv_type(type)
     if type.is_array?
       "std::vector<#{type.type.name}>"
-    elsif type.is_enum?
-      "int"
     else
       type.name
     end
