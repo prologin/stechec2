@@ -92,7 +92,7 @@ endef
 
 define get_ocaml_objs
   $(1)-mlsrcs := $$(filter %.ml,$$($(1)-srcs))
-  $(1)-camlobjs := $$(shell python $(MFPATH)/toposort.py $$($(1)-mlsrcs))
+  $(1)-camlobjs := $$(shell python3 $(MFPATH)/toposort.py $$($(1)-mlsrcs))
   ifneq ($$($(1)-camlobjs),)
     $(1)-objs := $(1)-caml.o $(value $(1)-objs)
     $(1)-cflags := $$($(1)-cflags) $$(OCAML_CFLAGS)
