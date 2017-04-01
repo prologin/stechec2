@@ -38,7 +38,6 @@ runtest java Prologin.java
 runtest caml prologin.ml
 runtest cxx prologin.cc
 runtest python prologin.py
-runtest python2 prologin-py2.py
 runtest haskell Prologin.hs
 
 echo

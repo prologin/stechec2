@@ -13,7 +13,6 @@ tools/generator/test/java
 tools/generator/test/php
 tools/generator/test/haskell
 tools/generator/test/python
-tools/generator/test/python2
 tools/generator/test/README
 games/*
 !games/tictactoe
