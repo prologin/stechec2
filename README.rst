@@ -90,14 +90,15 @@ Requirements:
 - ocaml
 - mono
 - jdk-java
+- ghc
 
 Archlinux::
 
-  pacman -S php php-embed ocaml mono jdk8-openjdk
+  pacman --needed -S php php-embed ocaml mono jdk8-openjdk ghc
 
 Debian/Ubuntu::
 
-  apt-get install php5 php5-dev ocaml mono-devel openjdk-8-jdk
+  apt-get install php5 php5-dev ocaml mono-devel openjdk-8-jdk ghc
 
 Create your AI
 --------------
