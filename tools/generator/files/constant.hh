@@ -13,6 +13,8 @@
 #ifndef CONSTANT_HH_
 # define CONSTANT_HH_
 
+#include <functional> // needed for std::hash
+
 // @@GEN_HERE@@
 
 #endif // !CONSTANT_HH_

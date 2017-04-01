@@ -134,7 +134,7 @@ class HaskellCFileGenerator < CxxProto
     @f = File.open(@path + @header_c_file, 'w')
     print_banner "generator_haskell.rb"
     print_include "stdbool.h", true
-    build_enums
+    CProto.instance_method(:build_enums).bind(self).call()
 
     array_types = hs_get_array_types()
 

@@ -504,6 +504,27 @@ class CxxProto < CProto
     @f.puts
   end
 
+  def build_enums
+    for_each_enum do |x|
+      @f.puts "typedef enum #{x['enum_name']} {"
+      x['enum_field'].each do |f|
+        name = f[0].upcase
+        @f.print "  ", name, ", "
+        @f.print "/* <- ", f[1], " */\n"
+      end
+      @f.print "} ", x['enum_name'], ";
+// This is needed for old compilers
+namespace std
+{
+  template <> struct hash<", x['enum_name'], "> {
+    size_t operator()(const ", x['enum_name'], "& v) const {
+      return hash<int>()(static_cast<int>(v));
+    }
+  };
+}\n"
+    end
+  end
+
   def print_empty_arg
   end
 
