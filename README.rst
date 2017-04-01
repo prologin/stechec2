@@ -28,12 +28,12 @@ Requirements
 * ruby (only for the generators)
 * python-yaml
 
-Arch Linux:
+Arch Linux::
 
   pacman --needed -S gcc zeromq gtest ruby python-yaml gflags
   pacaur -S gcovr
 
-Debian/Ubuntu:
+Debian/Ubuntu::
 
   apt-get install build-essential libzmq3-dev libzmqpp-dev python-yaml ruby \
                   libgtest-dev libgflags-dev gcovr
@@ -42,7 +42,7 @@ Debian/Ubuntu:
 Installation
 ------------
 
-Let's assume you want to install stechec2 with the prologin2013 game, and then
+Let's assume you want to install stechec2 with all the Prologin games, and then
 use it as a player.
 
 Clone the stechec2 repository::
@@ -52,15 +52,16 @@ Clone the stechec2 repository::
 
 Then put every game you want to install in ``games/``::
 
-  for game in prologin{2012..2015}; do
+  for game in prologin{2012..2016}; do
     git clone https://bitbucket.org/prologin/${game}.git games/$game
   done
 
 A simple test game, ``tictactoe``, is already installed in ``games/``.
 
-You can now configure the project using waf::
+You can then configure the project using waf, while specifying the games you
+want to use::
 
-  ./waf.py configure --with-games=tictactoe --prefix=/usr
+  ./waf.py configure --with-games=tictactoe,prologin2016 --prefix=/usr
 
 Then build and install it::
 
@@ -90,11 +91,11 @@ Requirements:
 - mono
 - jdk-java
 
-Archlinux:
+Archlinux::
 
   pacman -S php php-embed ocaml mono jdk8-openjdk
 
-Debian/Ubuntu:
+Debian/Ubuntu::
 
   apt-get install php5 php5-dev ocaml mono-devel openjdk-8-jdk
 
@@ -104,7 +105,7 @@ Create your AI
 You should now be able to choose your favorite language folder and begin to
 code::
 
-  cd home_env/python/
+  cd player_env/python/
   $EDITOR prologin.py
   make
 
@@ -116,10 +117,10 @@ editing the Makefile), do::
 Launch a match
 --------------
 
-Launch a stechec2 server and as many stechec2 client as there are players is
-very painful and can be avoided easily. There is a wrapper called
-``stechec2-run`` which runs everything you need in separate child processes,
-and only needs a tiny YAML configuration file to work.
+To launch a match, you need to launch a ``stechec2-server`` and one
+``stechec2-client`` per player. There is a wrapper called ``stechec2-run``
+which runs everything you need in separate child processes, and only needs a
+tiny YAML configuration file to work.
 
 A simple ``config.yml`` could be::
 
@@ -143,16 +144,12 @@ Add spectators
 Spectators are players that don't take part of the game, but can watch its
 different states during the match (to display it or to log it, for instance).
 
-Make sure to compile the spectators first::
+Make sure to compile your spectator first::
 
   cd /path/to/prologin2014/gui
-  make
-  cd /path/to/prologin2014/dumper
   make
 
 Then you just have to add those lines to the ``config.yml``::
 
   spectators:
    - /path/to/prologin2014/gui/gui.so
-   - /path/to/prologin2014/dumper/dumper.so
-
