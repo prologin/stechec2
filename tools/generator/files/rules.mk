@@ -24,7 +24,7 @@ endif
 ifndef NOCOLORS
   quiet_cmd_cc			= [1;32mcc   $< -> $@[0m
   quiet_cmd_cxx			= [1;32mcxx  $< -> $@[0m
-  quiet_cmd_gmcs		= [1;34mcs   $^ -> $@[0m
+  quiet_cmd_mcs		= [1;34mcs   $^ -> $@[0m
   quiet_cmd_java		= [1;34mjava $< -> $@[0m
   quiet_cmd_ocaml		= [1;33mcaml $< -> $@[0m
   quiet_cmd_ocamlo		= [1;33mcaml $< -> $@[0m
@@ -37,7 +37,7 @@ ifndef NOCOLORS
 else
   quiet_cmd_cc		= CC      $@
   quiet_cmd_cxx		= CXX     $@
-  quiet_cmd_gmcs	= CS      $@
+  quiet_cmd_mcs	= CS      $@
   quiet_cmd_java	= JAVA    $@
   quiet_cmd_ocaml	= OCAML   $@
   quiet_cmd_ocamlo	= OCAML   $@
@@ -60,7 +60,7 @@ exists = $(if $(shell test -e $(1) && echo exists),$(1),)
 
 CC		= $(CROSS)gcc
 CXX		= $(CROSS)g++
-GMCS		= MONO_SHARED_DIR=/tmp gmcs </dev/null
+mcs		= MONO_SHARED_DIR=/tmp mcs </dev/null
 CPP		= $(CROSS)cpp
 JAVAC		= javac
 OCAMLC 		= $(CROSS)ocamlc
@@ -127,8 +127,8 @@ define get_csclass
     _targets := $$(_targets) $(1)-prologin.dll
 
 $(1)-prologin.dll: $$(src)
-	$$(call cmd,gmcs)
-	$(Q)$(GMCS) -out:$$@ $$($(1)-csflags) $$^
+	$$(call cmd,mcs)
+	$(Q)$(mcs) -out:$$@ $$($(1)-csflags) $$^
   endif
 endef
 
