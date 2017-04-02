@@ -277,12 +277,14 @@ Lang_array cxx2lang_array(const std::vector<Cxx>& in)
 template<typename Lang, typename Lang_array, typename Cxx>
 Lang_array* cxx2lang_array_ptr(const std::vector<Cxx>& in)
 {
-  static Lang_array out; out = { NULL, in.size() };
-  out.datas = (Lang *)malloc((out.length) * sizeof(Lang));
-  __internal_need_free.push_back(out.datas);
-  for (int i = 0; i < out.length; ++i)
-    out.datas[i] = cxx2lang<Lang, Cxx>(in[i]);
-  return &out;
+  Lang_array* out = (Lang_array*)malloc(sizeof (Lang_array));
+  __internal_need_free.push_back(out);
+  *out = { NULL, in.size() };
+  out->datas = (Lang *)malloc((out->length) * sizeof(Lang));
+  __internal_need_free.push_back(out->datas);
+  for (int i = 0; i < out->length; ++i)
+    out->datas[i] = cxx2lang<Lang, Cxx>(in[i]);
+  return out;
 }
 EOF
 
@@ -335,14 +337,15 @@ EOF
 template<>
 #{ctype}* cxx2lang<#{ctype}*, #{cxxtype}>(#{cxxtype} in)
 {
-  static #{ctype} out;
+  #{ctype}* out = (#{ctype}*)malloc(sizeof (#{ctype}));
+  __internal_need_free.push_back(out);
 EOF
       x['str_field'].each do |f|
         name = f[0]
         type = @types[f[1]]
-        @f.puts "  out.#{name} = #{hs_get_cxx2lang(type)}(in.#{name});"
+        @f.puts "  out->#{name} = #{hs_get_cxx2lang(type)}(in.#{name});"
       end
-      @f.puts "  return &out;", "}", ""
+      @f.puts "  return out;", "}", ""
     end
 
     for_each_fun false do |fn|
