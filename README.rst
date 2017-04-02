@@ -98,7 +98,8 @@ Archlinux::
 
 Debian/Ubuntu::
 
-  apt-get install php5 php5-dev ocaml mono-devel openjdk-8-jdk ghc
+  apt-get install php7.0 php7.0-dev libphp7.0-embed ocaml mono-devel ghc \
+                  openjdk-8-jdk
 
 Create your AI
 --------------
