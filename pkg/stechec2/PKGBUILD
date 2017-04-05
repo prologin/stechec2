@@ -1,9 +1,10 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-_pkgver=prologin2016
+_host=https://github.com/prologin
+_pkgver=prologin2017
 pkgname=stechec2
 pkgrel=1
-pkgver=r786
+pkgver=r627
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('i686' 'x86_64')
 url="http://prologin.org/"
@@ -11,8 +12,8 @@ license=('GPL')
 provides=('stechec2' $pkgver)
 depends=('gflags' 'zeromq' 'ocaml' 'python-yaml')
 makedepends=('git')
-source=("git+https://bitbucket.org/prologin/stechec2"
-        "git+https://bitbucket.org/prologin/${_pkgver}")
+source=("git+${_host}/stechec2"
+        "git+${_host}/${_pkgver}")
 sha512sums=(SKIP
             SKIP)
 
