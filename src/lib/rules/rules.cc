@@ -131,7 +131,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 
         for (unsigned int i = 0; i < players_count; ++i)
         {
-            if (!msgr->poll(timeout_))
+            if (!msgr->poll(timeout_ > 0 ? timeout_ : -1))
                 break;
 
             // Ignore revived players
@@ -402,7 +402,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
             if (p->nb_timeout < max_consecutive_timeout)
             {
-                if (!msgr->poll(timeout_))
+                if (!msgr->poll(timeout_ > 0 ? timeout_ : -1))
                 {
                     p->nb_timeout++;
                     DEBUG("Timeout reached, never mind: %d", p->nb_timeout);
