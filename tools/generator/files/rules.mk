@@ -113,7 +113,7 @@ define get_haskell_objs
   $(1)-hsc-src := $$(filter %.hsc,$$($(1)-srcs))
   $(1)-hs-src := $$(filter %.hs,$$($(1)-srcs)) $$($(1)-hsc-src:.hsc=.hs)
 
-  ifneq ($$($(1)-hs-src),)
+  ifneq ($$(strip $$($(1)-hs-src)),)
     $(1)-deps := $$($(1)-hs-src)
     $(1)-cxxflags := $$($(1)-cxxflags) $$(HASKELL_CFLAGS)
   endif
