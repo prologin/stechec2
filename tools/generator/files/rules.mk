@@ -71,7 +71,7 @@ LD     = $(CROSS)ld
 OCAML_LIBS     = -L`ocamlc -where` -Wl,-R`ocamlc -where` -lcamlrun_shared -lcurses -lm
 OCAML_CFLAGS   = -O2 -I`ocamlc -where`
 
-HASKELL_CFLAGS = -O2 -I`$(GHC) --print-libdir`/include -std=c++11
+HASKELL_CFLAGS = -O2 -I`$(GHC) --print-libdir`/include
 
 LANG_FILE      = _lang
 DIST_FILE      = champion.tgz
@@ -163,7 +163,7 @@ endef
 
 
 c_flags    = $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
-cxx_flags  = $(_CXXFLAGS) -MD -MP -MF $(@D)/.$(@F).d
+cxx_flags  = $(_CXXFLAGS) -std=c++14 -MD -MP -MF $(@D)/.$(@F).d
 cpp_flags  = $(_CPPFLAGS)
 cmd_cc     = $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
 cmd_cxx    = $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
