@@ -1,6 +1,8 @@
 #include "server-socket.hh"
 
 #include <memory>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <zmq.hpp>
 
 #include <utils/log.hh>
@@ -15,6 +17,10 @@ ServerSocket::ServerSocket(const std::string& pub_addr,
 
 void ServerSocket::init()
 {
+    // We want to create the domain sockets with mode 777 to allow users from
+    // different processes to communicate with us.
+    mode_t old_umask = umask(0);
+
     try
     {
         pubsub_sckt_ =
@@ -36,6 +42,9 @@ void ServerSocket::init()
     {
         FATAL("REP: %s: %s", reqrep_addr_.c_str(), e.what());
     }
+
+    // Restore the process umask
+    umask(old_umask);
 
     shared_init();
 }
