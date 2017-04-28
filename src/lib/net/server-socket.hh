@@ -21,7 +21,7 @@ public:
     void init() override;
     void close() override;
 
-    bool push(const utils::Buffer& buf, int flags = 0);
+    bool push(const utils::Buffer& buf, int flags = 0, size_t sleep = 0);
 };
 
 typedef std::shared_ptr<ServerSocket> ServerSocket_sptr;

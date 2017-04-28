@@ -5,6 +5,9 @@
 #include <sys/types.h>
 #include <zmq.hpp>
 
+#include <thread>
+#include <chrono>
+
 #include <utils/log.hh>
 
 namespace net {
@@ -70,8 +73,10 @@ void ServerSocket::close()
     }
 }
 
-bool ServerSocket::push(const utils::Buffer& buf, int flags)
+bool ServerSocket::push(const utils::Buffer& buf, int flags, size_t sleep)
 {
+    if (sleep)
+        std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
     return send_sckt(buf, pubsub_sckt_, flags);
 }
 
