@@ -60,7 +60,7 @@ exists = $(if $(shell test -e $(1) && echo exists),$(1),)
 
 CC     = $(CROSS)gcc
 CXX    = $(CROSS)g++
-mcs    = MONO_SHARED_DIR = /tmp mcs </dev/null
+mcs    = MONO_SHARED_DIR=/tmp mcs </dev/null
 CPP    = $(CROSS)cpp
 JAVAC  = javac
 OCAMLC = $(CROSS)ocamlc
