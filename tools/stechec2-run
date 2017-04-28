@@ -157,8 +157,6 @@ def stechec2_run(args, options):
 
     # Start the server
     start_proc('server', server_opt, popt)
-    # Let it start (wait for the domain sockets to be created)
-    time.sleep(1)
 
     if args.isolate:
         os.chmod(socket_dir.name, 0o777)

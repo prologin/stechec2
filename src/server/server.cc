@@ -196,7 +196,7 @@ void Server::wait_for_players()
     msg_players.handle_buffer(buf_players);
     players_->handle_buffer(buf_players);
 
-    sckt_->push(buf_players);
+    sckt_->push(buf_players, 0, 500);
 
     // And spectators
     utils::Buffer buf_spectators;
