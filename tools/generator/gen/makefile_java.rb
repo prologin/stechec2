@@ -16,7 +16,7 @@ class JavaMakefile
     f.print <<-EOF
 # -*- Makefile -*-
 
-JAVA_HOME ?= $(shell readlink -f /usr/bin/java | sed "s:bin/java$$::")
+JAVA_HOME ?= $(shell readlink -f /usr/bin/java | sed "s:/jre/bin/java$$::")
 lib_TARGETS = #{target}
 
 #{target}-srcs = Interface.java Prologin.java $(wildcard *.java)
