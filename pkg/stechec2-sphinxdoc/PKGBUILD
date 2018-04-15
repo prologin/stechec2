@@ -1,12 +1,12 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-_pkgver=prologin2015
-pkgver=r686
+_pkgver=prologin2018
+pkgver=r641
 pkgname=stechec2-sphinxdoc
 pkgrel=1
 pkgdesc="Stechec2 sphinxdoc for ${pkgver}"
-arch=any
-makedepends=python-sphinx
+arch=(any)
+makedepends=(python-sphinx stechec2)
 url="http://prologin.org/"
 license=('GPL')
 
@@ -21,32 +21,19 @@ build() {
 
     cd "$srcdir"
     stechec2-generator sphinxdoc "${_pkgver}" .
-    echo ".
-n
-_
-API Prologin
-Prologin
-${pkgver}
-${pkgver}
-.rst
-index
-n
-n
-n
-n
-n
-n
-n
-n
-n
-n
-y
-n" | sphinx-quickstart
-    echo 'language = "fr"' >> "conf.py"
-    echo 'html_theme = "nature"' >> "conf.py"
+    sphinx-quickstart --quiet --project "API Prologin" --author "Prologin" \
+      -v 2018 --release 1 --language fr --master index --suffix .rst \
+      --makefile --no-batchfile .
 
-    # Include the generated file to the index
-    sed -i '14i\ \ \ file' "index.rst"
+    cat > index.rst <<EOF
+Bievenue sur la documentation de l'API !
+========================================
+
+.. toctree::
+   :maxdepth: 2
+
+   file
+EOF
     make html
 }
 
