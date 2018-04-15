@@ -1,7 +1,7 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
 _url=git@github.com/prologin
-_pkgver=prologin2017
+_pkgver=prologin2018
 pkgname=stechec2
 pkgrel=1
 pkgver=r654

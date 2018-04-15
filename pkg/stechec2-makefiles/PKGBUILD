@@ -1,7 +1,7 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
-_pkgver=prologin2017
-pkgver=r654
+_pkgver=prologin2018
+pkgver=r641
 pkgname=stechec2-makefiles
 pkgrel=1
 pkgdesc="Stechec2 makefiles for ${_pkgver}"
