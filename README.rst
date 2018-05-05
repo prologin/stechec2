@@ -47,13 +47,13 @@ use it as a player.
 
 Clone the stechec2 repository::
 
-  git clone https://bitbucket.org/prologin/stechec2.git
+  git clone https://github.com/prologin/stechec2
   cd stechec2
 
 Then put every game you want to install in ``games/``::
 
   for game in prologin{2012..2016}; do
-    git clone https://bitbucket.org/prologin/${game}.git games/$game
+    git clone https://github.com/prologin/${game}.git games/$game
   done
 
 A simple test game, ``tictactoe``, is already installed in ``games/``.
