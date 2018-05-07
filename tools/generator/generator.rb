@@ -53,7 +53,7 @@ require 'fileutils'
 require 'pathname'
 require 'conf'
 
-$languages = %w[c cs cxx caml java python php haskell]
+$languages = %w[c cs cxx caml java python php rust haskell]
 
 def make_player
   $languages.each do |x|
@@ -76,6 +76,7 @@ def make_player
   JavaFileGenerator.new.build
   HaskellFileGenerator.new.build
 #  RubyFileGenerator.new.build
+  RustFileGenerator.new.build
 #  LuaFileGenerator.new.build
   PythonFileGenerator.new.build
   PhpFileGenerator.new.build

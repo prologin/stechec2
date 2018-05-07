@@ -70,6 +70,7 @@ def build(bld):
         'gen/generator_php.rb',
         'gen/generator_caml.rb',
         'gen/generator_ruby.rb',
+        'gen/generator_rust.rb',
         'gen/generator_prolog.rb',
         'gen/generator_haskell.rb',
         'gen/generator_c.rb',
