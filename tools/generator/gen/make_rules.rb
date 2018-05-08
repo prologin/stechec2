@@ -17,6 +17,7 @@
 # Appelé depuis generator.rb
 #
 
+require "date"
 require "gen/generator_c.rb"
 
 # cree le repertoire et detare la tarball dedans
