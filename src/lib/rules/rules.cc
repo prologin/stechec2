@@ -291,12 +291,14 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
     at_spectator_start(msgr);
 
     start_of_round();
+    uint32_t previous_playing_id = static_cast<uint32_t>(-1);
     /* `last_round` allows us to inspect the final state of the game, when no
      * other player can play anymore. */
     while (last_round || !is_finished())
     {
 
         uint32_t playing_id;
+        bool my_turn = false;
 
         DEBUG("Waiting for a turn...");
         /* Other players turns */
@@ -313,6 +315,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             }
 
             DEBUG("Turn for player %d", playing_id);
+            previous_playing_id = playing_id;
             start_of_player_turn(playing_id);
             start_of_turn(playing_id);
 
@@ -332,6 +335,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
         else /* Current player turn */
         {
             DEBUG("Turn for spectator %d (me!!!)", playing_id);
+            my_turn = true;
             start_of_spectator_turn(playing_id);
             start_of_turn(playing_id);
 
@@ -359,7 +363,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             DEBUG("That was the last turn, bye!");
             break;
         }
-        if (last_player_id == playing_id)
+        if (last_player_id == previous_playing_id && my_turn)
         {
             DEBUG("End of round!");
             end_of_round();
