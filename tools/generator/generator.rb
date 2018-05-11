@@ -113,6 +113,7 @@ def make_includes
 #   PascalMakefile.new.build_client(install_path)
 #   PrologMakefile.new.build_client(install_path)
 #   RubyMakefile.new.build_client(install_path)
+#   RustMakefile.new.build_client(install_path)
 #   JsMakefile.new.build_client(install_path)
 #   LuaMakefile.new.build_client(install_path)
 end
@@ -138,6 +139,7 @@ def make_server
   PhpMakefile.new.build_metaserver(install_path)
   # PrologMakefile.new.build_metaserver(install_path)
   # RubyMakefile.new.build_metaserver(install_path) TODO
+  RustMakefile.new.build_metaserver(install_path)
   # JsMakefile.new.build_metaserver(install_path) TODO
   # copy some used files
   path = Pathname.new(PKGDATADIR) + "files"

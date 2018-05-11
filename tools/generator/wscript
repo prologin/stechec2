@@ -51,6 +51,7 @@ def build(bld):
         'gen/makefile_prolog.rb',
         'gen/makefile_js.rb',
         'gen/makefile_ruby.rb',
+        'gen/makefile_rust.rb',
         'gen/makefile_python.rb',
         'gen/makefile_cs.rb',
         'gen/makefile_lua.rb',
