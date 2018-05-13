@@ -7,7 +7,7 @@
       tableaux utilisent à la place de ces tableaux une structure
       \texttt{type\_array}, où \texttt{type} est le type des données dans le
       tableau. Ces structures contiennent deux éléments : les données,
-      \texttt{type* datas}, et la taille, \texttt{size\_t size}. Dans tous les
+      \texttt{type* datas}, et la taille, \texttt{size\_t length}. Dans tous les
       cas, la libération des données est laissée au soin du candidat ;}
 \item{Tout le reste est comme indiqué dans le sujet.}
 \end{itemize}
@@ -108,4 +108,22 @@ fonctionACompleter = do
       on peut accéder aux champs via la notation pointée habituelle, et
       qui peuvent être créés comme ceci : \texttt{foo(bar=42, x=3)}, sauf pour
       la structure \texttt{position} qui est représentée par un couple (x, y).}
+\end{itemize}
+
+\subsection{Rust}
+
+\begin{itemize}
+\item{L'API est fournie par le module \texttt{api}, dont tout le contenu est
+      importé par défaut par le code à compléter. ;}
+\item{Les noms des structures et énumérations sont en \texttt{CamelCase}.
+      Ainsi, une structure nommée \texttt{foo\_bar} dans le sujet
+      s'appellera \texttt{FooBar} en Rust.}
+\item{Les fonctions prenant des tableaux en paramètres et retournant des
+      tableaux utilisent à la place de ces tableaux une structure
+      \texttt{Array<T>}, où \texttt{T} est le type des données dans le
+      tableau. Ces structures contiennent deux éléments : les données,
+      \texttt{ptr: *const T}, et la taille, \texttt{len: usize}.
+      Dans tous les cas, la libération des données est laissée au soin du
+      candidat, en utilisant la méthode \texttt{unsafe fn free(self: Array<T>);}
+      fournie. ;}
 \end{itemize}

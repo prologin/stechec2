@@ -38,6 +38,7 @@ runtest java Prologin.java
 runtest caml prologin.ml
 runtest cxx prologin.cc
 runtest python prologin.py
+runtest rust prologin.rs
 runtest haskell Prologin.hs
 
 echo

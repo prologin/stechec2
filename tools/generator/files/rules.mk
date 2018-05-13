@@ -30,6 +30,7 @@ ifndef NOCOLORS
   quiet_cmd_ocamlo    = [1;33mcaml   $< -> $@[0m
   quiet_cmd_hsc2hs    = [1;32mhsc2hs $< -> $@[0m
   quiet_cmd_ghc       = [1;33mghc    $^ -> $@[0m
+  quiet_cmd_rustc     = [1;33mrustc  $^ -> $@[0m
   quiet_cmd_ld_shared = [1;36mlib    $@[0m
   quiet_cmd_clean     = [1;35mclean[0m
   quiet_cmd_distclean = [1;35mdistclean[0m
@@ -43,6 +44,7 @@ else
   quiet_cmd_ocamlo    = OCAML   $@
   quiet_cmd_hsc2hs    = HSC2HS  $@
   quiet_cmd_ghc       = GHC     $@
+  quiet_cmd_rustc     = RUSTC   $@
   quiet_cmd_ld_shared = LINK    $@
   quiet_cmd_clean     = CLEAN   objects
   quiet_cmd_distclean = CLEAN   targets
@@ -66,6 +68,7 @@ JAVAC  = javac
 OCAMLC = $(CROSS)ocamlc
 GHC    = $(CROSS)ghc
 HSC2HS = $(CROSS)hsc2hs
+RUSTC  = $(CROSS)rustc
 LD     = $(CROSS)ld
 
 OCAML_LIBS     = -L`ocamlc -where` -Wl,-R`ocamlc -where` -lcamlrun_shared -lcurses -lm
@@ -153,6 +156,7 @@ define build_lib
   $(1).so: override _CPPFLAGS = $$($(1)-cppflags)
   $(1).so: override _CFLAGS = $$($(1)-cflags)
   $(1).so: override _CXXFLAGS = $$($(1)-cxxflags)
+  $(1).so: override _RUSTCFLAGS = $$($(1)-rustcflags)
   ifdef $(1)-deps
     $(1).so: $$($(1)-deps)
   endif
@@ -162,21 +166,24 @@ $(1).so: $$(_obj)
 endef
 
 
-c_flags    = $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
-cxx_flags  = $(_CXXFLAGS) -std=c++14 -MD -MP -MF $(@D)/.$(@F).d
-cpp_flags  = $(_CPPFLAGS)
-cmd_cc     = $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
-cmd_cxx    = $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
-cmd_java   = $(JAVAC) $(java_flags) $<
-cmd_ocaml  = $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
-cmd_ocamlo = $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
-cmd_hsc2hs = $(HSC2HS) $< -o $@
-cmd_ghc    = $(GHC) -pgml $(CXX) -O9 -dynamic --make -shared -fPIC \
-             -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` \
-             $(filter %.hs %.o %.a,$^) -o $@
+c_flags     = $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
+cxx_flags   = $(_CXXFLAGS) -std=c++14 -MD -MP -MF $(@D)/.$(@F).d
+cpp_flags   = $(_CPPFLAGS)
+rustc_flags = $(_RUSTCFLAGS) -C relocation-model=pic -C panic=abort \
+              --crate-type=staticlib --emit link,dep-info=$(@D)/.$(@F).d
+cmd_cc      = $(CC) $(c_flags) $(cpp_flags) -fPIC -c $< -o $@
+cmd_cxx     = $(CXX) $(cxx_flags) $(cpp_flags) -fPIC -c $< -o $@
+cmd_java    = $(JAVAC) $(java_flags) $<
+cmd_ocaml   = $(OCAMLC) $(_CAMLFLAGS) -c $< -o $@
+cmd_ocamlo  = $(OCAMLC) -output-obj $(_CAMLFLAGS) $(filter %.cmo,$^) -o $@
+cmd_hsc2hs  = $(HSC2HS) $< -o $@
+cmd_ghc     = $(GHC) -pgml $(CXX) -O9 -dynamic --make -shared -fPIC \
+              -L`$(GHC) --print-libdir` -lHSrts-ghc`$(GHC) --numeric-version` \
+              $(filter %.hs %.o %.a,$^) -o $@
+cmd_rustc   = $(RUSTC) $(rustc_flags) $< -o $@
 
 ld_flags      = $(_LDFLAGS)
-cmd_ld_shared = $(CXX) $(filter %.o %.a,$^) $(ld_flags) -shared -o $@ $(_LDLIBS)
+cmd_ld_shared = $(CXX) $(ld_flags) $(filter %.o %.a,$^) $(_LDLIBS) -shared -o $@
 
 cmd_clean     = $(RM) $(_cleanfiles)
 cmd_distclean = $(RM) $(_dcleanfiles)
@@ -189,6 +196,7 @@ _targets    := $(foreach l,$(lib_TARGETS),$(l).so)
 $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),c)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),cc)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),cpp)))
+$(foreach t,$(lib_TARGETS),$(eval $(call get_objs,$(t),rs)))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_ocaml_objs,$(t))))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_haskell_objs,$(t))))
 $(foreach t,$(lib_TARGETS),$(eval $(call get_jclass,$(t))))
@@ -238,6 +246,9 @@ list-run-reqs:
 
 %.o: %.cpp
 	$(call cmd,cxx)
+
+%.o: %.rs
+	$(call cmd,rustc)
 
 %.class: %.java
 	$(call cmd,java)

@@ -243,6 +243,7 @@ EOF
 end
 
 class CFileGenerator < CProto
+  attr_accessor :path, :header_file
   def generate_header
     @f = File.open(@path + @header_file, 'w')
     print_banner "generator_c.rb"
@@ -336,4 +337,3 @@ include ../includes/rules.mk
     generate_makefile
   end
 end
-
