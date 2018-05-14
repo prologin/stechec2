@@ -688,7 +688,6 @@ include ../includes/rules.mk
     @f.puts "#include \"interface_c.hh\""
 
     @f.puts <<-EOF
-type CBool = CChar
 
 class ApiStorable a where
   type ApiStorableType a
