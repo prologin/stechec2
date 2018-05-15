@@ -118,12 +118,5 @@ fonctionACompleter = do
 \item{Les noms des structures et énumérations sont en \texttt{CamelCase}.
       Ainsi, une structure nommée \texttt{foo\_bar} dans le sujet
       s'appellera \texttt{FooBar} en Rust.}
-\item{Les fonctions prenant des tableaux en paramètres et retournant des
-      tableaux utilisent à la place de ces tableaux une structure
-      \texttt{Array<T>}, où \texttt{T} est le type des données dans le
-      tableau. Ces structures contiennent deux éléments : les données,
-      \texttt{ptr: *const T}, et la taille, \texttt{len: usize}.
-      Dans tous les cas, la libération des données est laissée au soin du
-      candidat, en utilisant la méthode \texttt{unsafe fn free(self: Array<T>);}
-      fournie. ;}
+\item{Les tableaux sont représentés par des \texttt{Vec<T>}.}
 \end{itemize}
