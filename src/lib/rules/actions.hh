@@ -6,8 +6,11 @@
 # include <memory>
 # include <unordered_map>
 # include <utils/buffer.hh>
+# include <utils/log.hh>
 
 # include "action.hh"
+
+# define MAX_ACTIONS 1024
 
 namespace rules {
 
@@ -22,7 +25,12 @@ public:
     void handle_buffer(utils::Buffer& buf);
 
     void add(IAction_sptr action)
-        { actions_.push_back(action); }
+    {
+        if (actions_.size() >= MAX_ACTIONS)
+            FATAL("Too many actions (>%d) sent during this turn.",
+                  MAX_ACTIONS);
+        actions_.push_back(action);
+    }
 
     void cancel()
         { actions_.pop_back(); }
