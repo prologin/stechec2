@@ -17,7 +17,7 @@ import signal
 parser = argparse.ArgumentParser(
     description='Run stechec processes for a match',
     epilog='''Configuration file example:
-    rules: libprologin2013.so
+    rules: libprologin2018.so
     map: ./simple.map
     verbose: 3
     clients:
@@ -27,8 +27,8 @@ parser = argparse.ArgumentParser(
       - Blue ones
       - Red ones
     spectators:
-      - ./dumper.so
       - ./gui.so
+    dump: dump.json
 
 Report bugs to <serveur@prologin.org>''',
     formatter_class=argparse.RawDescriptionHelpFormatter
