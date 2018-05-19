@@ -562,12 +562,12 @@ class JavaFileGenerator < JavaProto
     @f.print <<-EOF
 # -*- Makefile -*-
 
-JAVA_HOME ?= $(shell readlink -f /usr/bin/java | sed "s:/bin/java$$::")
+JAVA_HOME ?= $(shell readlink -f /usr/bin/java | sed "s:/jre/bin/java$$::")
 lib_TARGETS = #{target}
 
 #{target}-srcs = Interface.java Prologin.java
 #{target}-cxxflags = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -ggdb3
-#{target}-ldflags = -Wl,-rpath -Wl,$(JAVA_HOME)/lib/server/ -L$(JAVA_HOME)/lib/server/ -ljvm
+#{target}-ldflags = -Wl,-rpath -Wl,$(JAVA_HOME)/jre/lib/amd64/server/ -L$(JAVA_HOME)/jre/lib/amd64/server/ -ljvm
 
 # Evite de toucher a ce qui suit
 EOF
