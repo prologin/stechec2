@@ -101,6 +101,13 @@ def stechec2_run(args, options):
         print('You cannot use both --inhibit and --process', file=sys.stderr)
         sys.exit(2)
 
+    # Check options
+    options_whitelist = ['rules', 'map', 'verbose', 'clients', 'names',
+                         'spectators', 'dump', 'time', 'memory']
+    for opt in options:
+        if opt not in options_whitelist:
+            sys.exit("Error in yaml config file, unknown option: " + opt)
+
     # Domain sockets
     socket_dir = tempfile.TemporaryDirectory(prefix='stechec2-')
     f_reqrep = socket_dir.name + '/reqrep'
