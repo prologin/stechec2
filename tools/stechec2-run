@@ -2,6 +2,7 @@
 # -*- encoding: utf-8 -*-
 
 import argparse
+import ctypes
 import itertools
 import os
 import os.path
@@ -76,6 +77,14 @@ def version():
 Copyright © 2013-2014, Prologin.
 This is free software; see the source for copying conditions. There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.''')
+
+
+LIBC = ctypes.CDLL('libc.so.6')
+LIBC.strsignal.restype = ctypes.c_char_p
+
+
+def signal_message(signal: int) -> str:
+    return LIBC.strsignal(signal).decode()
 
 
 def stechec2_run(args, options):
@@ -230,8 +239,14 @@ def stechec2_run(args, options):
         for i, (name, p) in enumerate(poll):
             r = p.poll()
             if r is not None:
-                if r != 0:
+                if r > 0:
                     print('>>> error: {} exited with code {}'.format(name, r))
+                elif r < 0:
+                    signal_code = -r
+                    sig = signal.Signals(signal_code)
+                    print('>>> error: {} killed by signal {}: {} ({})'
+                        .format(name, signal_code, sig.name,
+                                signal_message(signal_code)))
                 poll.pop(i)
         time.sleep(0.1)
 
