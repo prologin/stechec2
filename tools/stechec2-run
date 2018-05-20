@@ -128,14 +128,13 @@ def stechec2_run(args, options):
 
     # Used by server only
 
-    clients_count = str(len(clients) + len(spectators))
+    clients_count = len(clients) + len(spectators)
     if clients_count == 0:
-        print("Couldn't find any client nor spectator. "
-              "Did you forget some `spectators` or `clients` entries "
-              "in your yaml configuration?", file=sys.stderr)
-        sys.exit(3)
+        sys.exit("Couldn't find any client nor spectator. "
+                 "Did you forget some `spectators` or `clients` entries "
+                 "in your yaml configuration?")
 
-    server_opt += ['--nb_clients', clients_count]
+    server_opt += ['--nb_clients', str(clients_count)]
     for i in ['dump']:
         if i in options:
             server_opt += ['--' + i, str(options[i])]
