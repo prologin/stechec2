@@ -117,6 +117,9 @@ bool used_identifier(uint player_id, rules::Players_sptr ps)
 
 void Server::wait_for_players()
 {
+    if (FLAGS_nb_clients <= 0)
+        FATAL("Server started with nb_clients <= 0.");
+
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
