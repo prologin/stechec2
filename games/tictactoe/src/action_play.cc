@@ -2,11 +2,15 @@
 
 int ActionPlay::check(const GameState* st) const
 {
-    // FIXME
-    return 0;
+    if (!st->is_valid_cell(pos_))
+        return OUT_OF_BOUNDS;
+    if (st->get_cell(pos_) != st->NO_PLAYER)
+        return ALREADY_OCCUPIED;
+
+    return OK;
 }
 
 void ActionPlay::apply_on(GameState* st) const
 {
-    // FIXME
+    st->set_cell(pos_, player_);
 }
