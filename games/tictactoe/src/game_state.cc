@@ -6,6 +6,9 @@ GameState::GameState(rules::Players_sptr players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
               NO_PLAYER, NO_PLAYER, NO_PLAYER})
 {
+    for (auto& player : players->players)
+        if (player->type == rules::PLAYER)
+            is_player_turn_.emplace(std::make_pair(player->id, false));
 }
 
 rules::GameState* GameState::copy() const
@@ -13,7 +16,7 @@ rules::GameState* GameState::copy() const
     return new GameState(*this);
 }
 
-std::vector<int> GameState::get_board()
+std::vector<int> GameState::get_board() const
 {
     return board_;
 }
@@ -23,17 +26,17 @@ bool GameState::is_valid_cell(position pos) const
     return 0 <= pos.x && pos.x < 3 && 0 <= pos.y && pos.y < 3;
 }
 
-const int GameState::get_cell(position pos) const
+int GameState::get_cell(position pos) const
 {
     if (!is_valid_cell(pos))
         return NO_PLAYER;
     return board_[3 * pos.y + pos.x];
 }
 
-void GameState::set_cell(position pos, int player)
+void GameState::set_cell(position pos, int player_id)
 {
     if (is_valid_cell(pos))
-        board_[3 * pos.y + pos.x] = player;
+        board_[3 * pos.y + pos.x] = player_id;
 }
 
 int GameState::winner() const
@@ -68,13 +71,25 @@ int GameState::winner() const
     return NO_PLAYER;
 }
 
+void GameState::set_player_turn(int player_id, bool state)
+{
+    assert(is_player_turn_.count(player_id) != 0);
+    is_player_turn_.at(player_id) = state;
+}
+
+bool GameState::is_player_turn(int player_id) const
+{
+    assert(is_player_turn_.count(player_id) != 0);
+    return is_player_turn_.at(player_id);
+}
+
 std::ostream& operator<<(std::ostream& out, const GameState& gs)
 {
-    for (size_t i = 0; i < gs.board().size(); ++i)
+    for (size_t i = 0; i < gs.get_board().size(); ++i)
     {
         if (i % 3 == 0 && i != 0)
             out << "\n";
-        out << gs.board().at(i);
+        out << gs.get_board().at(i);
     }
 
     out << std::endl;
