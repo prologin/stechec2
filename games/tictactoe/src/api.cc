@@ -42,20 +42,21 @@ error Api::play(position pos)
 /// Returns your team number
 int Api::my_team()
 {
-    // TODO
-    abort();
+    return player_->id;
 }
 
 /// Returns the TicTacToe board
 std::vector<int> Api::board()
 {
-    // TODO
-    abort();
+    return game_state_->get_board();
 }
 
 /// Cancels the last played action
 bool Api::cancel()
 {
-    // TODO
-    abort();
+    if (!game_state_->can_cancel())
+        return false;
+    actions_.cancel();
+    game_state_ = rules::cancel(game_state_);
+    return true;
 }
