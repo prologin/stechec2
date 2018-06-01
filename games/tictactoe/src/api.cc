@@ -7,68 +7,55 @@
 ** The complete GNU General Public Licence Notice can be found as the
 ** `NOTICE' file in the root directory.
 **
-** Copyright (C) 2012 Prologin
+** Copyright (C) 2018 Prologin
 */
 
-#include "api.hh"
-
 #include <stdlib.h>
-#include <rules/game-state.hh>
 
-#include "action-play.hh"
+#include "actions.hh"
+#include "api.hh"
 
 // global used in interface.cc
 Api* api;
 
 Api::Api(GameState* game_state, rules::Player_sptr player)
-    : game_state_(game_state),
-      player_(player)
+    : game_state_(game_state)
+    , player_(player)
 {
-  api = this;
+    api = this;
 }
 
-///
-// Returns your team number
-//
-int Api::my_team()
+/// Play at the given position
+error Api::play(position pos)
 {
-    return player_->id;
-}
-
-///
-// Returns the TicTacToe board
-//
-std::vector<int> Api::board()
-{
-    return game_state_->board();
-}
-
-///
-// Play at the given position
-//
-error Api::play(int x, int y)
-{
-    rules::IAction_sptr action(new ActionPlay(x, y, player_->id));
+    rules::IAction_sptr action(new ActionPlay(pos, player_->id));
 
     error err;
     if ((err = static_cast<error>(action->check(game_state_))) != OK)
         return err;
 
-    game_state_ = dynamic_cast<GameState*>(action->apply(game_state_));
     actions_.add(action);
-
+    game_state_set(action->apply(game_state_));
     return OK;
 }
 
-///
-// Cancels the last played action
-//
+/// Returns your team number
+int Api::my_team()
+{
+    // TODO
+    abort();
+}
+
+/// Returns the TicTacToe board
+std::vector<int> Api::board()
+{
+    // TODO
+    abort();
+}
+
+/// Cancels the last played action
 bool Api::cancel()
 {
-    if (!game_state_->can_cancel())
-        return false;
-
-    game_state_ = rules::cancel(game_state_);
-
-    return true;
+    // TODO
+    abort();
 }
