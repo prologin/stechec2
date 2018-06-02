@@ -100,3 +100,19 @@ Then, add those lines to your :code:`config.yml`::
 
   spectators:
     - /path/to/prologin2014/gui/gui.so
+
+Debugging
+---------
+
+To use gdb with stechec2 you can add the ``--debug`` option (or simply ``-d``)
+followed by the client id you want to debug:
+
+.. code-block:: bash
+
+    stechec2-run -d 1 config.yml
+
+You can find other useful options by running:
+
+.. code-block:: bash
+
+    stechec2-run -h
