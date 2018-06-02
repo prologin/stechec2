@@ -38,6 +38,7 @@ Write the YAML
 First, we must write some config boilerplate at the top of the file::
 
   name: connect4  # The name of the game
+  rules_type: turnbased # The type of rules to follow
 
   constant:
     # Place your constants here
@@ -60,8 +61,8 @@ you defined and ``_ array`` (where _ is a type itself). You can even use arrays
 of arrays (``int array array array``, for instance, will create a 3D matrix of
 ints).
 
-The player functions
---------------------
+The user functions
+------------------
 
 Depending of how the game works, the player should implement some functions
 in which he calls the actions of the API. Usually, this is done by:
@@ -82,6 +83,8 @@ In the yaml, a function is described like this:
 * ``fct_name``: the name of the function.
 * ``fct_summary``: a short documentation of the function.
 * ``fct_ret_type``: the return type of the function (bool, void, int array…).
+* ``fct_action`` (yes/no): if the function is a game action (default value is
+  no).
 * ``fct_arg``: the list of arguments that the function takes. Each item is a
   list containing:
 
@@ -208,7 +211,8 @@ functions are usually separated in three kinds:
 * The actions: functions that the player can call to perform some action. They
   usually take some parameters to describe how the action should be executed
   and return an error. Errors are generally represented by an enum you have to
-  implement.
+  implement. Note that you need to add a ``fct_action: yes`` field to the
+  function.
 * The state modifiers: functions that can cancel some actions or modify the
   state of the game.
 
@@ -232,6 +236,13 @@ Add this at the end::
 
   function:
     -
+      fct_name: drop
+      fct_summary: Drop a disk at the given position
+      fct_ret_type: error
+      fct_action: yes
+      fct_arg:
+        - [column, int, column where to drop a disk]
+    -
       fct_name: my_player
       fct_summary: Return your player number
       fct_ret_type: int
@@ -248,12 +259,6 @@ Add this at the end::
       fct_ret_type: int
       fct_arg:
         - [pos, position, position of the cell]
-    -
-      fct_name: drop
-      fct_summary: Drop a disk at the given position
-      fct_ret_type: error
-      fct_arg:
-        - [column, int, column where to drop a disk]
     -
       fct_name: cancel
       fct_summary: Cancel the last played action
@@ -278,8 +283,8 @@ PATH:
   $ mv gen/connect4/rules src
   $ rm -rf gen
   $ ls src
-  actions.hh  api.cc  api.hh  constant.hh  entry.cc  game_state.cc
-  game_state.hh  interface.cc  rules.cc  rules.hh
+  action_drop.cc  actions.hh  api.hh       entry.cc       game_state.hh rules.cc
+  action_drop.hh  api.cc      constant.hh  game_state.cc  interface.cc  rules.hh
 
 You don't have to modify ``constant.hh``, ``entry.hh`` and ``interface.hh``.
 They are generated files that shouldn't be manually edited.
@@ -303,6 +308,7 @@ Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
   def build(bld):
       bld.shlib(
           source = '''
+              src/action_drop.cc
               src/api.cc
               src/entry.cc
               src/game_state.cc
@@ -335,37 +341,11 @@ the three functions every rules should implement: ``client_loop``,
 ``spectator_loop`` and ``server_loop``. Writing these loops are painful: you
 have to handle the turns, the phases, the order of each players… luckily
 stechec2 provides some generic loops for some kind of games: ``TurnBasedRules``
-and ``SynchronousRules``. We just have to inherit our Rules class from
-TurnBasedRules, which matches the gameplay of the Connect4.
-
-
-In ``rules.hh``:
-
-* delete the methods ``player_loop``, ``spectator_loop`` and ``server_loop``.
-* make the class inherit from TurnBasedRules::
-
-    class Rules : public rules::TurnBasedRules
-    {
-
-In ``rules.cc``:
-
-* delete the methods ``player_loop``, ``spectator_loop`` and ``server_loop``.
-* initialize TurnBasedRules with the options in the constructor::
-
-    Rules::Rules(const rules::Options opt)
-      : TurnBasedRules(opt)
+and ``SynchronousRules``. By adding the ``rules_type`` attribute in your
+configuration file, we don't need to worry about those functions.
 
 If you're interested in how the generic loops work behind the scene, you can
-take a look at ``stechec2/src/lib/rules/rules.hh``.
-
-We we'll come back to this code later, but for now if we want it to compile, we
-should first add this in ``rules.hh``::
-
-    rules::Actions* get_actions() override { return NULL; }
-    void apply_action(const rules::IAction_sptr&) override {}
-    bool is_finished() override { return true; }
-
-This is of course just a temporary fix to allow us to compile the code.
+take a look at ``stechec2/src/lib/rules/rules.cc``.
 
 
 The game-state
@@ -380,10 +360,10 @@ The basics of the GameState class are generated in the files ``game_state.cc``
 and ``game_state.hh``. Besides the already presents method, you'll also need
 for this game to define the following: ``get_current_turn`` and
 ``increment_turn`` which will do the needful with an internal counter, a
-``get_board`` method which will return the 2D board, a ``drop`` to drop a
-disk somewhere (returns true if the disk has been successfuly dropped), a
-``is_full`` to check if one can play in a specific column, and finally, a
-``winner`` method which will return the winner if there's one, -1 else.
+``get_board`` method which will return the 2D board, a ``drop`` to drop a disk
+somewhere, a ``is_full`` to check if one can play in a specific column, and
+finally, a ``winner`` method which will return the winner if there's one, -1
+else.
 
 Here's a template of the additional functions you'll need to implement::
 
@@ -465,6 +445,63 @@ Create the following tests:
 
 * **CheckWinner**: checks that you winner() function works correctly
 
+To take tests into account, you first need to update your ``wscript``
+
+.. code-block:: python
+  :emphasize-lines: 3,4, 29-47
+
+  #! /usr/bin/env python
+
+  import glob
+  import os.path
+
+
+  def options(opt):
+      pass
+
+  def configure(cfg):
+      pass
+
+  def build(bld):
+      bld.shlib(
+          source = '''
+              src/action_drop.cc
+              src/api.cc
+              src/entry.cc
+              src/game_state.cc
+              src/interface.cc
+              src/rules.cc
+          ''',
+          defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
+          target = 'connect4',
+          use = ['stechec2'],
+      )
+
+
+      abs_pattern = os.path.join(bld.path.abspath(), 'src/tests/test-*.cc')
+      for test_src in glob.glob(abs_pattern):
+
+          test_name = os.path.split(test_src)[-1]
+          test_name = test_name[5:-3]
+
+          # Waf requires a relative path for the source
+          src_relpath = os.path.relpath(test_src, bld.path.abspath())
+
+          bld.program(
+              features = 'gtest',
+              source = src_relpath,
+              target = 'connect4-test-{}'.format(test_name),
+              use = ['connect4', 'stechec2-utils'],
+              includes = ['.'],
+              defines = ['MODULE_COLOR=ANSI_COL_PURPLE',
+              'MODULE_NAME="connect4"'],
+          )
+
+      bld.install_files('${PREFIX}/share/stechec2/connect4', [
+          'connect4.yml',
+      ])
+
+
 To run the tests, you just have to build using the ``--check`` option:
 
 .. code-block:: bash
@@ -500,57 +537,10 @@ An action must define five functions that will be used by the rules:
 * **id()**: returns the ID of the action (usually an element of an enum) ;
 * **player_id()**: returns the ID of the player that sent the action ;
 
-For now we just have one action, so we can just put that in the generated file
-called ``actions.hh`` (don't forget to add those files to the ``wscript``)::
-
-    enum action_id {
-        ID_ACTION_DROP,
-    }
-
-Now here's a template of the ``drop`` action class you're going to implement in
-``action-drop.{cc,hh}``::
-
-    # include <rules/action.hh>
-
-    # include "constant.hh"
-    # include "game.hh"
-    # include "actions.hh"
-
-    class ActionDrop : public rules::Action<GameState>
-    {
-        public:
-            ActionDrop(int player /* ... */);
-
-            /* Necessary later, init attributes to random values */
-            ActionDrop();
-
-            int check(const GameState*) const override;
-            void handle_buffer(utils::Buffer&) override;
-
-            uint32_t player_id() const override { return player_; }
-            uint32_t id() const override { return ID_ACTION_DROP; }
-
-        protected:
-            void apply_on(GameState*) const override;
-
-        protected:
-            int player_;
-            /* ... */
-    };
-
-
-Note that:
-
-* **check** should return an element of the error enumeration we've defined in
-  the rules (see ``constant.hh``): { OK, OUT_OF_BOUNDS, FULL, ALREADY_PLAYED }
-
-* **handle_buffer** only has to "bufferize" each attribute of the object. For
-  that, use the ``buf.handle()`` function like this::
-
-    buf.handle(player_);
-    buf.handle(id_);
-    buf.handle(/* Any kind of simple type */);
-    buf.handle_array(/* Array */);
+Most of these functions are already implemented automatically in ``actions.hh``,
+but we still need to code the ``check`` and ``apply_on`` functions. Note that
+``check`` should return an element of the error enumeration we've defined in the
+rules (see ``constant.hh``): { OK, OUT_OF_BOUNDS, FULL, ALREADY_PLAYED }.
 
 The API
 -------
@@ -569,10 +559,9 @@ the GameState and the rules::Player objects. For instance with my_player::
         return player_->id;
     }
 
-Implement all the other observers: ``get_column`` and ``get_cell``. You'll
-have to replace ``rules::GameState`` to ``GameState`` (the one defined in
-``game.cc``) in ``api.hh`` in order to be able to call our gamestate-specific
-functions.
+Implement all the other observers: ``get_column`` and ``get_cell``. In order to
+call our gamestate-specific functions, you need to use the ``game_state_``
+member.
 
 The ``cancel`` function is already implemented in stechec2. To call it you just
 have to do this::
@@ -590,39 +579,9 @@ have to do this::
 Internally, there's a linked list of gamestates. The ``rules::cancel`` function
 simply removes the current gamestate and returns the last.
 
-The actions are more difficult to implement. The simplest solution is this one
-: during each turn, you keep a ``rules::Actions`` object in your ``Api``
-object, and each time a player executes an action, it will be locally applied
-to the gamestate, and then send to the server at the end of the turn.
-
-So let's add a ``rules::Actions`` attribute to our class, and a getter that
-returns a reference to this object.
-
-We also have to add a getter and a setter for the game_state : we can't just
-replace it, it would prevent to use cancel(), so we have to use the
-rules::GameState API::
-
-    GameState* game_state() { return game_state_; }
-    void game_state_set(rules::GameState* gs)
-        { game_state_ = dynamic_cast<GameState*>(gs); }
-
-Now we can implement ``Api::drop``. We first have to instanciate a
-``rules::IAction_sptr`` using our action constructor. Then we retrieves the
-result of ``check`` and cast it into an ``error`` (since ``check`` returns an
-int). If the result is ``OK``, we apply the action locally and add it to the
-Actions object and return ``OK``, else, we return the error::
-
-    error Api::drop(int column)
-    {
-        rules::IAction_sptr action(new ActionDrop(column, player_->id));
-
-        error err;
-        if ((err = static_cast<error>(action->check(game_state_))) != OK)
-            return err;
-        actions_.add(action);
-        game_state_set(action->apply(game_state()));
-        return OK;
-    }
+The actions in the API are already implemented. Each action, first calls the
+appropriate ``check`` function, and if this returns OK, calls ``apply_on`` to
+update our gamestate, and add the action to the actions list.
 
 
 The rules object
@@ -643,79 +602,102 @@ Then add these attributes to the Rules class::
         f_champion_play_turn champion_play_turn;
         f_champion_end_game champion_end_game;
 
-    private:
-        utils::DLL* champion_;
-        Api* api_;
-        utils::Sandbox sandbox_;
 
+In the ``Rules`` constructor, we have to retrieve the champion library
 
-In the ``Rules`` constructor, we have to initialize a few objects, register
-some actions and retrieve the champion library::
+.. code-block:: cpp
+  :emphasize-lines: 8-13
 
-    Rules::Rules(const rules::Options opt)
-        : TurnBasedRules(opt)
-    {
-        if (!opt.champion_lib.empty())
-            champion_dll_ = new utils::DLL(opt.champion_lib);
-        else
-            champion_dll_ = nullptr;
+  Rules::Rules(const rules::Options opt)
+      : TurnBasedRules(opt), sandbox_(opt.time)
+  {
+      if (!opt.champion_lib.empty())
+      {
+          champion_dll_ = std::make_unique<utils::DLL>(opt.champion_lib);
+  
+        champion_init_game_ =
+            champion_dll_->get<f_champion_init_game>("init_game");
+        champion_play_turn_ =
+            champion_dll_->get<f_champion_play_turn>("play_turn");
+        champion_end_game_ =
+            champion_dll_->get<f_champion_end_game>("end_game");
+      }
+  
+      GameState* game_state = new GameState(opt.players);
+      api_ = std::make_unique<Api>(game_state, opt.player);
+      register_actions();
+  }
 
-        // Init the gamestate
-        GameState* game_state = new GameState(opt.players);
-
-        // Init the API
-        api_ = new Api(game_state, opt.player);
-
-        // If we are a client, retrieves the functions from the champion
-        // library
-        if (!opt.champion_lib.empty())
-        {
-            champion_dll_ = new utils::DLL(opt.champion_lib);
-            champion_init_game =
-                champion_dll_->get<f_champion_init_game>("init_game");
-            champion_play_turn =
-                champion_dll_->get<f_champion_play_turn>("play_turn");
-            champion_end_game =
-                champion_dll_->get<f_champion_end_game>("end_game");
-        }
-
-        // Register the actions
-        api_->actions()->register_action(ID_ACTION_DROP,
-                []() -> rules::IAction* { return new ActionDrop(); });
-
-    }
-
-    Rules::~Rules()
-    {
-        delete champion_dll_;
-        delete api_;
-    }
 
 Then we can overload the functions defined in ``<rules/rules.hh>`` to satisfy
-our needs. For instance, we want to overload ``at_client_start``,
-``player_turn`` and ``at_client_end`` to execute the init_game and end_game
-client functions. To do so, we'll use the sandbox object::
+our needs. For instance, we want to overload ``at_player_start``,
+``player_turn`` and ``at_player_end`` to execute the ``init_game``,
+``play_turn`` and ``end_game`` client functions. To do so, we'll use the
+sandbox object::
 
-    void Rules::at_client_start()
+    void Rules::at_player_start(rules::ClientMessenger_sptr)
     {
-        sandbox_.execute(champion_partie_init);
+        try
+        {
+            sandbox_.execute(champion_init_game_);
+        }
+        catch (utils::SandboxTimeout)
+        {
+            FATAL("player_start: timeout");
+        }
     }
 
-We also have to implement ``get_actions``, ``apply_action`` and ``is_finished``
-as previously defined in ``rules.hh``::
-
-    rules::Actions* Rules::get_actions()
+    void Rules::player_turn()
     {
-        return api_->actions();
+        try
+        {
+            sandbox_.execute(champion_play_turn_);
+        }
+        catch (utils::SandboxTimeout)
+        {
+            FATAL("player_turn: timeout");
+        }
     }
 
-    void Rules::apply_action(const rules::IAction_sptr& action)
+    void Rules::at_player_end(rules::ClientMessenger_sptr)
     {
-        api_->game_state_set(action->apply(api_->game_state()));
+        try
+        {
+            sandbox_.execute(champion_end_game_);
+        }
+        catch (utils::SandboxTimeout)
+        {
+            FATAL("player_end: timeout");
+        }
     }
 
-At the end of each turn, we have to check if someone has won, by overloading
-``end_of_player_turn``, and doing the needful. Then, you can implement
-``is_finished``.
+
+We also need to implement functions such as ``start_of_player_turn``,
+``end_of_player_turn``, and ``is_finished`` that will call our gamestates
+functions::
+
+    void Rules::start_of_player_turn(unsigned int /* player_id */)
+    {
+        api_->game_state()->increment_turn();
+    }
+
+    void Rules::end_of_player_turn(unsigned int /* player_id */)
+    {
+        // Clear the list of game states at the end of each turn (half-round)
+        // We need the linked list of game states only for undo and history,
+        // therefore old states are not needed anymore after the turn ends.
+        api_->game_state()->clear_old_version();
+    }
+
+    bool Rules::is_finished()
+    {
+        const GameState* st = api_->game_state();
+        return st->winner() != -1;
+    }
+
+In stechec2, there is a difference between turns and round. A **round** is made
+up of 2 **turns**, one for each player. You can therefore overload the same
+functions but for round specific needs, such as ``start_of_round``,
+``end_of_round``, etc.
 
 And that's it!
