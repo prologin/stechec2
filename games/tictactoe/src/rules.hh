@@ -39,6 +39,8 @@ public:
     void start_of_player_turn(unsigned int player_id) override;
     void end_of_player_turn(unsigned int player_id) override;
 
+    GameState* get_game_state() const;
+
 protected:
     f_champion_init_game champion_init_game_;
     f_champion_play_turn champion_play_turn_;

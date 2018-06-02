@@ -122,3 +122,8 @@ bool Rules::is_finished()
             is_full = false;
     return st->winner() != st->NO_PLAYER || is_full;
 }
+
+GameState* Rules::get_game_state() const
+{
+    return api_->game_state();
+}
