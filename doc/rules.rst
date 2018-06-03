@@ -570,9 +570,8 @@ have to do this::
     {
         if (!game_state_->can_cancel())
             return false;
-
+        actions_.cancel();
         game_state_ = rules::cancel(game_state_);
-
         return true;
     }
 
