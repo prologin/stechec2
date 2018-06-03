@@ -1,44 +1,49 @@
 name: tictactoe
+rules_type: turnbased
 
 enum:
   -
     enum_name: error
-    enum_summary:
-      "Enumeration containing all possible error types that can be returned
-      by action functions"
+    enum_summary: "All possible error types that can be returned by action
+                   functions"
     enum_field:
       - [ok, "no error occurred"]
       - [out_of_bounds, "provided position is out of bounds"]
       - [already_occupied, "someone already played at the provided position"]
       - [already_played, "you already played this turn, you cheater!"]
 
+struct:
+  -
+    str_name: position
+    str_summary: Position on the TicTacToe board
+    str_tuple: yes
+    str_field:
+      - [x, int, "X coordinate"]
+      - [y, int, "Y coordinate"]
+
 function:
+  -
+    fct_name: play
+    fct_summary: Play at the given position
+    fct_ret_type: error
+    fct_action: yes
+    fct_arg:
+      - [pos, position, "Position at which to play"]
   -
     fct_name: my_team
     fct_summary: Returns your team number
     fct_ret_type: int
     fct_arg: []
-    fct_implem: my_team
   -
     fct_name: board
     fct_summary: Returns the TicTacToe board
     fct_ret_type: int array
     fct_arg: []
-    fct_implem: get_board
-  -
-    fct_name: play
-    fct_summary: Play at the given position
-    fct_ret_type: error
-    fct_arg:
-    - [x, int, x position at which to play]
-    - [y, int, y position at which to play]
-    fct_implem: play
   -
     fct_name: cancel
     fct_summary: Cancels the last played action
     fct_ret_type: bool
     fct_arg: []
-    fct_implem: cancel
 
 user_function:
   -

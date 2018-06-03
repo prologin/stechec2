@@ -7,16 +7,22 @@
 ** The complete GNU General Public Licence Notice can be found as the
 ** `NOTICE' file in the root directory.
 **
-** Copyright (C) 2012 Prologin
+** Copyright (C) 2018 Prologin
 */
 
 #include <cstdlib>
-#include <rules/options.hh>
+#include <memory>
 #include <rules/client-messenger.hh>
 #include <rules/server-messenger.hh>
 #include <utils/log.hh>
 
 #include "rules.hh"
+
+// Forward decls
+namespace rules
+{
+struct Options;
+}
 
 static Rules* rules_;
 
@@ -24,8 +30,7 @@ extern "C" {
 
 void rules_init(const rules::Options& opt)
 {
-    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
-
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel)opt.verbose;
     rules_ = new Rules(opt);
 }
 

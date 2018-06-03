@@ -3,11 +3,14 @@
 import glob
 import os.path
 
+
 def options(opt):
     pass
 
+
 def configure(cfg):
     pass
+
 
 def build(bld):
     bld.shlib(
@@ -16,8 +19,8 @@ def build(bld):
             src/entry.cc
             src/interface.cc
             src/api.cc
-            src/action-play.cc
-            src/game-state.cc
+            src/action_play.cc
+            src/game_state.cc
         ''',
         defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
         target = 'tictactoe',
@@ -45,5 +48,4 @@ def build(bld):
 
     bld.install_files('${PREFIX}/share/stechec2/tictactoe', [
         'tictactoe.yml',
-        'tictactoe.cfg',
     ])
