@@ -208,7 +208,6 @@ extern \"C\" void haskell_init(){
   static bool done = false;
   if(!done){
     hs_init(0, 0);
-    hs_add_root(__stginit_#{$conf['conf']['player_filename'].capitalize});
     done = true;
   }
 }
