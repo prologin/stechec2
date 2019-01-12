@@ -124,7 +124,7 @@ bool lang2cxx<PyObject*, bool>(PyObject* in)
 template <>
 std::string lang2cxx<PyObject*, std::string>(PyObject* in)
 {
-  char * out = PyUnicode_AsUTF8(in);
+  const char * out = PyUnicode_AsUTF8(in);
   if (PyErr_Occurred())
     {
       throw 42;
