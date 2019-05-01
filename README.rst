@@ -30,8 +30,7 @@ Requirements
 
 Arch Linux::
 
-  pacman --needed -S gcc zeromq gtest ruby python-yaml gflags
-  pacaur -S gcovr
+  pacman --needed -S gcc zeromq gtest ruby python-yaml gflags gcovr
 
 Debian/Ubuntu::
 
