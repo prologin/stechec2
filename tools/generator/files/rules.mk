@@ -249,6 +249,7 @@ list-run-reqs:
 
 %.o: %.rs
 	$(call cmd,rustc)
+	@ar d $@ clzsi2.o # HACK: https://github.com/rust-lang/rust/issues/58277
 
 %.class: %.java
 	$(call cmd,java)
