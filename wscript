@@ -53,8 +53,8 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-Wno-return-type-c-linkage'])
 
     # Check for C++0x
-    conf.check_cxx(cxxflags = '-std=c++14')
-    conf.env.append_value('CXXFLAGS', '-std=c++14')
+    conf.check_cxx(cxxflags = '-std=c++17')
+    conf.env.append_value('CXXFLAGS', '-std=c++17')
 
     # Debug / Release
     if conf.options.debug:

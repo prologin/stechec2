@@ -167,7 +167,7 @@ endef
 
 
 c_flags     = $(_CFLAGS) -MD -MP -MF $(@D)/.$(@F).d
-cxx_flags   = $(_CXXFLAGS) -std=c++14 -MD -MP -MF $(@D)/.$(@F).d
+cxx_flags   = $(_CXXFLAGS) -std=c++17 -MD -MP -MF $(@D)/.$(@F).d
 cpp_flags   = $(_CPPFLAGS)
 rustc_flags = $(_RUSTCFLAGS) -C relocation-model=pic -C panic=abort \
               --crate-type=staticlib --emit link,dep-info=$(@D)/.$(@F).d
