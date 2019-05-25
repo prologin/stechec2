@@ -226,7 +226,7 @@ class RustFileGenerator < FileGenerator
   def generate_ffi
     @f = File.open(@path + @ffi_file, 'w')
     print_banner "generator_rust.rb"
-    @f.puts "use api::{self,"
+    @f.puts "use super::api::{self,"
     for_each_enum do |x|
       @f.print "#{camel_case(x['enum_name'])},"
     end
@@ -335,7 +335,7 @@ def generate_api
     @f = File.open(@path + @api_file, 'w')
     @f.puts <<-EOF
 #![allow(unused)]
-use ffi::{self, ToAPI, ToFFI};
+use super::ffi::{self, ToAPI, ToFFI};
 use std::os::raw::{c_float, c_double, c_int, c_void};
 
 EOF
