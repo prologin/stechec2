@@ -161,14 +161,18 @@ EOF
   def build_vm_init_interface
     @f.puts <<-EOF
 struct ProloginJavaRunTime {
-  ProloginJavaRunTime();
+  ProloginJavaRunTime() = default;
   ~ProloginJavaRunTime();
+  void init();
   bool function_enter();
   void function_exit(bool attached);
 
   JavaVM* jvm;
   JNIEnv* env;
   jobject prologin;
+
+private:
+  bool is_init_ = false;
 };
 
 extern struct ProloginJavaRunTime jrt;
@@ -350,6 +354,7 @@ EOF
   # Assume jrt.prologin AND Prologin::class
   def build_user_function(fn)
     @f.puts cxx_proto(fn, '', 'extern "C"'), "{"
+    @f.puts "  jrt.init();"
     @f.puts "  bool attached = jrt.function_enter();"
     @f.puts "  jmethodID method = jrt.env->GetMethodID(Prologin::Class(), \"#{fn.name}\", \"#{get_fn_signature(fn)}\");"
     args = fn.args.map { |arg| get_lang2cxx(arg.type) + "(#{arg.name})"}.join(", ")
@@ -393,9 +398,20 @@ EOF
     @f.puts <<-EOF
 ProloginJavaRunTime jrt;
 
-ProloginJavaRunTime::ProloginJavaRunTime()
+ProloginJavaRunTime::~ProloginJavaRunTime()
 {
- std::string classpath = "-Djava.class.path=";
+  if (is_init_)
+    jvm->DestroyJavaVM();
+}
+
+void ProloginJavaRunTime::init()
+{
+  if (is_init_)
+   return;
+
+  is_init_ = true;
+
+  std::string classpath = "-Djava.class.path=";
   char* champion_path = getenv("CHAMPION_PATH");
   if (champion_path == NULL)
     champion_path = (char*)"./";
@@ -414,11 +430,6 @@ ProloginJavaRunTime::ProloginJavaRunTime()
   JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
   prologin = env->NewObject(Prologin::Class(), env->GetMethodID(Prologin::Class(), "<init>", "()V"));
   _register_native_methods(env);
-}
-
-ProloginJavaRunTime::~ProloginJavaRunTime()
-{
-  jvm->DestroyJavaVM();
 }
 
 bool ProloginJavaRunTime::function_enter()
