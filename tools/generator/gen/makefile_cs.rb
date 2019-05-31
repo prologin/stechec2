@@ -24,7 +24,7 @@ lib_TARGETS = #{target}
 #{target}-dists = interface.hh
 #{target}-srcs += api.cs interface.cc
 #{target}-cxxflags = -O2 -fPIC \
-    $(shell pkg-config --cflags glib-2.0 mono)
+    $(shell pkg-config --cflags glib-2.0 mono-2)
 #{target}-ldflags = -lm \
     $(shell pkg-config --libs glib-2.0 mono)
 #{target}-csflags = -target:library -nowarn:0169,0649
