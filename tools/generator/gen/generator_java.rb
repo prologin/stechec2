@@ -159,10 +159,15 @@ EOF
   end
 
   def build_vm_init_interface
+=begin
+  FIXME
+  see line commentary line 401
+
+  ~ProloginJavaRunTime();
+=end
     @f.puts <<-EOF
 struct ProloginJavaRunTime {
   ProloginJavaRunTime() = default;
-  ~ProloginJavaRunTime();
   void init();
   bool function_enter();
   void function_exit(bool attached);
@@ -395,14 +400,18 @@ EOF
     @f.puts "  env->RegisterNatives(Prologin::Class(), methods, sizeof(methods)/sizeof(methods[0]));", "}", ""
 
     # Initialize the runtime
-    @f.puts <<-EOF
-ProloginJavaRunTime jrt;
+=begin
+FIXME
+The call to `DestroyJavaVM` causes the program to crash on call to destructor
 
 ProloginJavaRunTime::~ProloginJavaRunTime()
 {
   if (is_init_)
     jvm->DestroyJavaVM();
 }
+=end
+    @f.puts <<-EOF
+ProloginJavaRunTime jrt;
 
 void ProloginJavaRunTime::init()
 {
