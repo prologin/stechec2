@@ -38,7 +38,7 @@ namespace std {
   template <typename T>
   struct hash<std::vector<T>>
   {
-    std::size_t operator()(const std::vector<T>& v)
+    std::size_t operator()(const std::vector<T>& v) const
     {
       std::size_t res = v.size();
       for (const auto& e : v)
@@ -90,7 +90,7 @@ namespace std {
   template <>
   struct hash<#{x['str_name']}>
   {
-    std::size_t operator()(const #{x['str_name']}& s)
+    std::size_t operator()(const #{x['str_name']}& s) const
     {
       std::size_t res = 0;
 EOF
