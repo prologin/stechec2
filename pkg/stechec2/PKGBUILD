@@ -1,12 +1,12 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
 _url=git@github.com/prologin
-_pkgver=prologin2018
+_pkgver=prologin2019
 pkgname=stechec2
 pkgrel=1
-pkgver=r654
+pkgver=r892
 pkgdesc="Stechec2 with ${pkgver} rules"
-arch=('i686' 'x86_64')
+arch=('x86_64')
 url="http://prologin.org/"
 license=('GPL')
 provides=('stechec2' $pkgver)
