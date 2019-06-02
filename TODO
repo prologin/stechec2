@@ -1,3 +1,0 @@
-* CLEAN THE CODE
-* write a doc
-* Better handling of timeouts (client should tell server if they SEGV or INT)
