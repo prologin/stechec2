@@ -3,7 +3,7 @@
 _url=git@github.com/prologin
 pkgname=stechec2
 pkgrel=1
-pkgver=606
+pkgver=git
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('x86_64')
 url="http://prologin.org/"
@@ -16,7 +16,7 @@ sha512sums=(SKIP)
 
 pkgver() {
     cd "$pkgname"
-    git rev-list --count HEAD
+    echo r$(git rev-list --count HEAD)
 }
 
 build() {
