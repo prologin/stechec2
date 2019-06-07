@@ -1,10 +1,9 @@
 # Maintainer: Prologin <serveur@prologin.org>
 
 _url=git@github.com/prologin
-_pkgver=prologin2019
 pkgname=stechec2
 pkgrel=1
-pkgver=r892
+pkgver=606
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('x86_64')
 url="http://prologin.org/"
@@ -12,28 +11,17 @@ license=('GPL')
 provides=('stechec2' $pkgver)
 depends=('gflags' 'zeromq' 'ocaml' 'python-yaml' 'ruby')
 makedepends=('git')
-source=("git+ssh://${_url}/stechec2"
-        "git+ssh://${_url}/${_pkgver}")
-sha512sums=(SKIP
-            SKIP)
+source=("git+ssh://${_url}/stechec2")
+sha512sums=(SKIP)
 
 pkgver() {
     cd "$pkgname"
-    stechec2_commits=$(git rev-list --count HEAD)
-    cd "../$_pkgver"
-    prologin_commits=$(git rev-list --count HEAD)
-    echo r$((stechec2_commits + prologin_commits))
-}
-
-prepare() {
-    cd stechec2
-    ln --force --symbolic "${srcdir}/${_pkgver}" games/
+    git rev-list --count HEAD
 }
 
 build() {
     cd stechec2
-    ./waf.py configure build --prefix=/usr --libdir=/usr/lib \
-                             --with-games=${_pkgver}
+    ./waf.py configure build --prefix=/usr --libdir=/usr/lib
 }
 
 package() {
