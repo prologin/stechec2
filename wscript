@@ -46,6 +46,11 @@ def options(opt):
                    default=False,
                    help='interpret warnings as errors',
                    dest='werror')
+    opt.add_option('--games-only',
+                   action='store_true',
+                   default=False,
+                   help='only build and install games',
+                   dest='games_only')
 
     opt.recurse('games')
     opt.recurse('tools')
@@ -129,6 +134,9 @@ def configure(conf):
         conf.check_cxx(cxxflags='-Werror')
         conf.env.append_value('CXXFLAGS', '-Werror')
 
+    # Games only?
+    conf.env.GAMES_ONLY = conf.options.games_only
+
     # Configure games
     conf.recurse('games')
 
@@ -138,11 +146,14 @@ def configure(conf):
 
 def build(bld):
     build_lib(bld)
-    build_client(bld)
-    build_server(bld)
 
     bld.recurse('games')
-    bld.recurse('tools')
+
+    if not bld.env.GAMES_ONLY:
+        build_client(bld)
+        build_server(bld)
+
+        bld.recurse('tools')
 
 
 def coverage(ctx):
@@ -181,7 +192,8 @@ def build_lib(bld):
               target='stechec2',
               use=['ZeroMQ', 'rt', 'gflags'],
               lib=([] if platform.system() == 'FreeBSD' else ['dl']),
-              export_includes='src/lib')
+              export_includes='src/lib',
+              install_path=None if bld.env.GAMES_ONLY else '${PREFIX}/bin')
 
     for test in []:
         bld.program(features='gtest',
