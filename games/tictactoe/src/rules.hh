@@ -22,7 +22,7 @@ class Rules : public rules::TurnBasedRules
 {
 public:
     explicit Rules(const rules::Options opt);
-    virtual ~Rules() {}
+    virtual ~Rules();
 
     rules::Actions* get_actions() override;
     void apply_action(const rules::IAction_sptr& action) override;

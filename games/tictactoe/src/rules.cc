@@ -22,6 +22,11 @@ Rules::Rules(const rules::Options opt)
     register_actions();
 }
 
+Rules::~Rules()
+{
+    delete api_->game_state();
+}
+
 void Rules::register_actions()
 {
     api_->actions()->register_action(

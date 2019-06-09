@@ -41,20 +41,19 @@ protected:
     {
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
         auto players_ptr = make_players(PLAYER_1, PLAYER_2);
-        st = new GameState(players_ptr);
         players[0].id = PLAYER_1;
-        players[0].api = new Api(st, players_ptr->players[0]);
+        players[0].api = new Api(new GameState(players_ptr), players_ptr->players[0]);
         players[1].id = PLAYER_2;
-        players[1].api = new Api(st, players_ptr->players[1]);
+        players[1].api = new Api(new GameState(players_ptr), players_ptr->players[1]);
     }
 
     virtual void TearDown()
     {
+        delete players[0].api->game_state();
         delete players[0].api;
+        delete players[1].api->game_state();
         delete players[1].api;
     }
-
-    GameState* st;
 
     struct Player
     {
@@ -74,10 +73,9 @@ protected:
     virtual void SetUp()
     {
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
-        auto players_ptr = make_players(PLAYER_1, PLAYER_2);
         rules::Options opt;
         opt.map_file = "";
-        opt.players = std::move(players_ptr);
+        opt.players = make_players(PLAYER_1, PLAYER_2);
         rules.reset(new Rules(opt));
     }
 
