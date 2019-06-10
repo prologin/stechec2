@@ -31,25 +31,14 @@ public:
             return 0;
     }
 
-    void handle_buffer(utils::Buffer&) override
-    {
-    }
+    void handle_buffer(utils::Buffer&) override {}
 
-    uint32_t player_id() const override
-    {
-        return 0;
-    }
+    uint32_t player_id() const override { return 0; }
 
-    uint32_t id() const override
-    {
-        return 0;
-    }
+    uint32_t id() const override { return 0; }
 
 private:
-    void apply_on(MyGameState* st) const override
-    {
-        st->x += 1;
-    }
+    void apply_on(MyGameState* st) const override { st->x += 1; }
 };
 
 class MyDecrAction : public Action<MyGameState>
@@ -65,25 +54,14 @@ public:
             return 0;
     }
 
-    void handle_buffer(utils::Buffer&) override
-    {
-    }
+    void handle_buffer(utils::Buffer&) override {}
 
-    uint32_t player_id() const override
-    {
-        return 0;
-    }
+    uint32_t player_id() const override { return 0; }
 
-    uint32_t id() const override
-    {
-        return 0;
-    }
+    uint32_t id() const override { return 0; }
 
 private:
-    void apply_on(MyGameState* st) const override
-    {
-        st->x -= 1;
-    }
+    void apply_on(MyGameState* st) const override { st->x -= 1; }
 };
 
 TEST(RulesAction, CheckApply)

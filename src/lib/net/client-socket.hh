@@ -1,11 +1,11 @@
 #ifndef LIB_NET_CLIENT_HH_
-# define LIB_NET_CLIENT_HH_
+#define LIB_NET_CLIENT_HH_
 
-# include <string>
-# include <memory>
-# include <utils/buffer.hh>
+#include <memory>
+#include <string>
+#include <utils/buffer.hh>
 
-# include <net/socket.hh>
+#include <net/socket.hh>
 
 namespace net {
 

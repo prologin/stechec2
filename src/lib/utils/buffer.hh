@@ -1,17 +1,17 @@
 #ifndef LIB_UTILS_BUFFER_HH_
-# define LIB_UTILS_BUFFER_HH_
+#define LIB_UTILS_BUFFER_HH_
 
-# include "log.hh"
+#include "log.hh"
 
-# include <cassert>
-# include <cstdint>
-# include <cstdlib>
-# include <cstring>
-# include <list>
-# include <stdexcept>
-# include <string>
-# include <vector>
+#include <cassert>
+#include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <list>
+#include <stdexcept>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace utils {
 
@@ -31,8 +31,9 @@ public:
     Buffer() : data_(), idx_(0), serialize_(true) {}
 
     // If a buffer is provided, it's unserialization
-    explicit Buffer(std::vector<uint8_t>  data)
-        : data_(std::move(data)), idx_(0), serialize_(false) {}
+    explicit Buffer(std::vector<uint8_t> data)
+        : data_(std::move(data)), idx_(0), serialize_(false)
+    {}
 
     // Allow access to the serialized data
     const uint8_t* data() const { return &data_[0]; }
@@ -94,14 +95,14 @@ public:
     template <typename T>
     void handle_array(T* arr, size_t count)
     {
-        handle_mem((char*)arr, count * sizeof (T));
+        handle_mem((char*)arr, count * sizeof(T));
     }
 
     // Handle integral and simple types
     template <typename T>
     void handle(T& x)
     {
-        handle_mem((char*)&x, sizeof (T));
+        handle_mem((char*)&x, sizeof(T));
     }
 
     Buffer& operator+=(const Buffer& b)

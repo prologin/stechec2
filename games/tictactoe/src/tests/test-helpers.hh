@@ -42,9 +42,11 @@ protected:
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
         auto players_ptr = make_players(PLAYER_1, PLAYER_2);
         players[0].id = PLAYER_1;
-        players[0].api = new Api(new GameState(players_ptr), players_ptr->players[0]);
+        players[0].api =
+            new Api(new GameState(players_ptr), players_ptr->players[0]);
         players[1].id = PLAYER_2;
-        players[1].api = new Api(new GameState(players_ptr), players_ptr->players[1]);
+        players[1].api =
+            new Api(new GameState(players_ptr), players_ptr->players[1]);
     }
 
     virtual void TearDown()

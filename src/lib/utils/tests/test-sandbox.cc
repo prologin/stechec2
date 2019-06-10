@@ -8,7 +8,10 @@ using namespace utils;
 TEST(UtilsSandbox, BasicBehavior)
 {
     std::function<int()> do_nothing = [] { return 0; };
-    std::function<int()> sleep_2 = [] { sleep(2); return 1; };
+    std::function<int()> sleep_2 = [] {
+        sleep(2);
+        return 1;
+    };
 
     Sandbox s;
 
@@ -18,7 +21,7 @@ TEST(UtilsSandbox, BasicBehavior)
 
 TEST(UtilsSandbox, ReturnValue)
 {
-    std::function<int(int,int)> add = [] (int x, int y) { return x + y; };
+    std::function<int(int, int)> add = [](int x, int y) { return x + y; };
 
     Sandbox s;
     ASSERT_EQ(7, s.execute(add, 3, 4));
@@ -26,7 +29,7 @@ TEST(UtilsSandbox, ReturnValue)
 
 TEST(UtilsSandbox, SuccessiveCalls)
 {
-    std::function<int(int,int)> add = [] (int x, int y) { return x + y; };
+    std::function<int(int, int)> add = [](int x, int y) { return x + y; };
 
     Sandbox s;
 
@@ -45,13 +48,11 @@ TEST(UtilsSandbox, CustomTimeout)
     ASSERT_THROW(s.execute(usleep, 1000000u), SandboxTimeout);
 }
 
-static void useless()
-{
-}
+static void useless() {}
 
 TEST(UtilsSandbox, VoidRet)
 {
-    std::function<void()> useless_lambda = [] { };
+    std::function<void()> useless_lambda = [] {};
 
     Sandbox s;
     s.execute(useless);

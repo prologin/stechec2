@@ -1,14 +1,14 @@
 #ifndef CLIENT_CLIENT_HH_
-# define CLIENT_CLIENT_HH_
+#define CLIENT_CLIENT_HH_
 
-# include <cstdint>
-# include <memory>
+#include <cstdint>
+#include <memory>
 
-# include <net/client-socket.hh>
-# include <rules/client-messenger.hh>
-# include <rules/types.hh>
-# include <rules/player.hh>
-# include <utils/dll.hh>
+#include <net/client-socket.hh>
+#include <rules/client-messenger.hh>
+#include <rules/player.hh>
+#include <rules/types.hh>
+#include <utils/dll.hh>
 
 class Client
 {

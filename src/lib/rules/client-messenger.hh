@@ -1,12 +1,12 @@
 #ifndef LIB_RULES_CLIENTMESSENGER_HH_
-# define LIB_RULES_CLIENTMESSENGER_HH_
+#define LIB_RULES_CLIENTMESSENGER_HH_
 
-# include <memory>
-# include <stdexcept>
+#include <memory>
+#include <stdexcept>
 
-# include <rules/messenger.hh>
-# include <net/client-socket.hh>
-# include <utils/buffer.hh>
+#include <net/client-socket.hh>
+#include <rules/messenger.hh>
+#include <utils/buffer.hh>
 
 namespace rules {
 

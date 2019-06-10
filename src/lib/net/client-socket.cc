@@ -9,8 +9,7 @@ namespace net {
 ClientSocket::ClientSocket(const std::string& sub_addr,
                            const std::string& req_addr)
     : Socket(sub_addr, req_addr, 1)
-{
-}
+{}
 
 void ClientSocket::init()
 {

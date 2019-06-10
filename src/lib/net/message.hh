@@ -1,23 +1,23 @@
 #ifndef LIB_NET_MESSAGE_HH_
-# define LIB_NET_MESSAGE_HH_
+#define LIB_NET_MESSAGE_HH_
 
-# include <cstdint>
-# include <iostream>
-# include <utils/buffer.hh>
+#include <cstdint>
+#include <iostream>
+#include <utils/buffer.hh>
 
 namespace net {
 
 // Message types of stechec2 (not the rules)
 enum MsgType
 {
-    MSG_ERR     = 0,
+    MSG_ERR = 0,
     MSG_CONNECT = 1,
-    MSG_RULES   = 2,
+    MSG_RULES = 2,
     MSG_IGNORED = 3,
     MSG_PLAYERS = 4,
     MSG_GAMESTART = 5,
-    MSG_ACK     = 6,
-    MSG_EXIT    = 7
+    MSG_ACK = 6,
+    MSG_EXIT = 7
 };
 
 struct Message

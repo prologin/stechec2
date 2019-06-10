@@ -24,7 +24,7 @@ TEST(UtilsBuffer, Serialize)
 {
     Buffer buf;
 
-    MyStruct s = { 42, "test", { 1, 2, 3 } };
+    MyStruct s = {42, "test", {1, 2, 3}};
     s.handle_buffer(buf);
 
     // Check if the size is as expected

@@ -1,14 +1,14 @@
 #ifndef SERVER_SERVER_HH_
-# define SERVER_SERVER_HH_
+#define SERVER_SERVER_HH_
 
-# include <cstdint>
-# include <list>
-# include <memory>
+#include <cstdint>
+#include <list>
+#include <memory>
 
-# include <net/server-socket.hh>
-# include <rules/server-messenger.hh>
-# include <rules/types.hh>
-# include <utils/dll.hh>
+#include <net/server-socket.hh>
+#include <rules/server-messenger.hh>
+#include <rules/types.hh>
+#include <utils/dll.hh>
 
 class Server
 {

@@ -1,8 +1,8 @@
 #include "log.hh"
 #include "sandbox.hh"
 
-#include <ctime>
 #include <cerrno>
+#include <ctime>
 #include <pthread.h>
 #include <string>
 #include <tuple>
@@ -25,8 +25,7 @@ struct apply_func
 {
     template <typename Ret, typename... ArgsF, typename... Args>
     static Ret apply(const std::function<Ret(ArgsF...)>& f,
-                     const std::tuple<ArgsF...>& t,
-                     Args... a)
+                     const std::tuple<ArgsF...>& t, Args... a)
     {
         return apply_func<N - 1>::apply(f, t, std::get<N - 1>(t), a...);
     }
@@ -36,8 +35,7 @@ struct apply_func<0>
 {
     template <typename Ret, typename... ArgsF, typename... Args>
     static Ret apply(const std::function<Ret(ArgsF...)>& f,
-                     const std::tuple<ArgsF...>&,
-                     Args... a)
+                     const std::tuple<ArgsF...>&, Args... a)
     {
         return f(a...);
     }
@@ -56,8 +54,7 @@ struct apply_void_func
 {
     template <typename... ArgsF, typename... Args>
     static void apply(const std::function<void(ArgsF...)>& f,
-                      const std::tuple<ArgsF...>& t,
-                      Args... a)
+                      const std::tuple<ArgsF...>& t, Args... a)
     {
         apply_void_func<N - 1>::apply(f, t, std::get<N - 1>(t), a...);
     }
@@ -67,8 +64,7 @@ struct apply_void_func<0>
 {
     template <typename... ArgsF, typename... Args>
     static void apply(const std::function<void(ArgsF...)>& f,
-                      const std::tuple<ArgsF...>&,
-                      Args... a)
+                      const std::tuple<ArgsF...>&, Args... a)
     {
         f(a...);
     }
@@ -76,7 +72,7 @@ struct apply_void_func<0>
 template <typename... Args>
 std::function<int(Args...)> wrap_void(const std::function<void(Args...)>& f)
 {
-    return [f] (Args... a) {
+    return [f](Args... a) {
         apply_void_func<sizeof...(Args)>::apply(f, std::make_tuple(a...));
         return 0;
     };
@@ -113,9 +109,8 @@ Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
     // Initialize the thread parameters object.
     std::tuple<Args...> args_t = std::make_tuple(args...);
     Ret retval;
-    sandbox_impl::ThreadParams<Ret, Args...> params {
-        this, func, args_t, &retval
-    };
+    sandbox_impl::ThreadParams<Ret, Args...> params{this, func, args_t,
+                                                    &retval};
 
     // Initialize the timeout struct.
     struct timespec ts;

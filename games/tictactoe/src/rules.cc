@@ -1,9 +1,7 @@
 #include "rules.hh"
 #include "actions.hh"
 
-Rules::Rules(const rules::Options opt)
-    : TurnBasedRules(opt)
-    , sandbox_(opt.time)
+Rules::Rules(const rules::Options opt) : TurnBasedRules(opt), sandbox_(opt.time)
 {
     if (!opt.champion_lib.empty())
     {

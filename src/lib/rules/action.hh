@@ -1,12 +1,12 @@
 #ifndef LIB_RULES_ACTION_HH_
-# define LIB_RULES_ACTION_HH_
+#define LIB_RULES_ACTION_HH_
 
-# include <memory>
-# include <list>
-# include <utils/buffer.hh>
+#include <list>
+#include <memory>
+#include <utils/buffer.hh>
 
-# include "game-state.hh"
-# include "player.hh"
+#include "game-state.hh"
+#include "player.hh"
 
 namespace rules {
 
