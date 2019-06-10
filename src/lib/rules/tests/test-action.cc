@@ -12,10 +12,8 @@ using namespace rules;
 class MyGameState : public GameState
 {
 public:
-    MyGameState() : GameState(), x(0) {}
-    MyGameState(const MyGameState& mgs) : GameState(), x(mgs.x) {}
-
-    GameState* copy() const override { return new MyGameState(*this); }
+    MyGameState() : x(0) {}
+    MyGameState(const MyGameState& mgs) : x(mgs.x) {}
 
     int x;
 };
@@ -25,22 +23,21 @@ class MyIncrAction : public Action<MyGameState>
 public:
     ~MyIncrAction() override {}
 
-    int check(const MyGameState* st) const override
+    int check(const MyGameState& st) const override
     {
-        if (st->x >= 3)
+        if (st.x >= 3)
             return 1;
         else
             return 0;
     }
+
+    void apply(MyGameState& st) const override { st.x += 1; }
 
     void handle_buffer(utils::Buffer&) override {}
 
     uint32_t player_id() const override { return 0; }
 
     uint32_t id() const override { return 0; }
-
-private:
-    void apply_on(MyGameState* st) const override { st->x += 1; }
 };
 
 class MyDecrAction : public Action<MyGameState>
@@ -48,47 +45,44 @@ class MyDecrAction : public Action<MyGameState>
 public:
     ~MyDecrAction() override {}
 
-    int check(const MyGameState* st) const override
+    int check(const MyGameState& st) const override
     {
-        if (st->x <= 0)
+        if (st.x <= 0)
             return 1;
         else
             return 0;
     }
+
+    void apply(MyGameState& st) const override { st.x -= 1; }
 
     void handle_buffer(utils::Buffer&) override {}
 
     uint32_t player_id() const override { return 0; }
 
     uint32_t id() const override { return 0; }
-
-private:
-    void apply_on(MyGameState* st) const override { st->x -= 1; }
 };
 
 TEST(RulesAction, CheckApply)
 {
-    auto mgs = new MyGameState();
-    EXPECT_EQ(0, mgs->x);
+    MyGameState mgs{};
+    EXPECT_EQ(0, mgs.x);
 
     MyIncrAction incr;
     MyDecrAction decr;
 
-    mgs = incr.apply(mgs);
-    EXPECT_EQ(1, mgs->x);
+    incr.apply(mgs);
+    EXPECT_EQ(1, mgs.x);
 
-    mgs = incr.apply(mgs);
-    EXPECT_EQ(2, mgs->x);
+    incr.apply(mgs);
+    EXPECT_EQ(2, mgs.x);
 
-    mgs = decr.apply(mgs);
-    EXPECT_EQ(1, mgs->x);
-
-    delete mgs;
+    decr.apply(mgs);
+    EXPECT_EQ(1, mgs.x);
 }
 
 TEST(RulesAction, CheckError)
 {
-    auto mgs = new MyGameState();
+    MyGameState mgs{};
 
     MyIncrAction incr;
     MyDecrAction decr;
@@ -96,24 +90,7 @@ TEST(RulesAction, CheckError)
     EXPECT_NE(0, decr.check(mgs));
 
     for (int i = 0; i < 3; ++i)
-        mgs = incr.apply(mgs);
+        incr.apply(mgs);
 
     EXPECT_NE(0, incr.check(mgs));
-
-    delete mgs;
-}
-
-TEST(RulesAction, CheckCancel)
-{
-    auto mgs = new MyGameState();
-
-    MyIncrAction incr;
-
-    EXPECT_EQ(0, mgs->x);
-    mgs = incr.apply(mgs);
-    EXPECT_EQ(1, mgs->x);
-    mgs = cancel(mgs);
-    EXPECT_EQ(0, mgs->x);
-
-    delete mgs;
 }

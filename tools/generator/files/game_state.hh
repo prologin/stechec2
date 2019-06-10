@@ -12,7 +12,6 @@ public:
     // additional parameters? for instance map
     GameState(rules::Players_sptr players);
     GameState(const GameState& st);
-    rules::GameState* copy() const override;
     ~GameState();
 
 private:

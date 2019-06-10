@@ -8,8 +8,8 @@
 // global used in interface.cc
 Api* api;
 
-Api::Api(GameState* game_state, rules::Player_sptr player)
-    : game_state_(game_state), player_(player)
+Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
+    : game_state_(std::move(game_state)), player_(player)
 {
     api = this;
 }

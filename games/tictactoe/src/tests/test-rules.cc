@@ -13,7 +13,7 @@ TEST_F(RulesTest, Rules_FinishWin)
         EXPECT_FALSE(rules->is_finished());
 
         rules->start_of_player_turn(PLAYER_2);
-        rules->get_game_state()->set_cell({0, cnt}, PLAYER_2);
+        rules->game_state().set_cell({0, cnt}, PLAYER_2);
         rules->end_of_player_turn(PLAYER_2);
 
         cnt++;
@@ -33,7 +33,7 @@ TEST_F(RulesTest, Rules_FinishDraw)
     while (!rules->is_finished())
     {
         rules->start_of_player_turn(PLAYER_1);
-        rules->get_game_state()->set_cell(to_play1[idx1++], PLAYER_1);
+        rules->game_state().set_cell(to_play1[idx1++], PLAYER_1);
         rules->end_of_player_turn(PLAYER_1);
 
         if (idx1 == to_play1.size())
@@ -43,7 +43,7 @@ TEST_F(RulesTest, Rules_FinishDraw)
 
         rules->start_of_player_turn(PLAYER_2);
         if (idx2 < to_play2.size())
-            rules->get_game_state()->set_cell(to_play2[idx2++], PLAYER_2);
+            rules->game_state().set_cell(to_play2[idx2++], PLAYER_2);
         rules->end_of_player_turn(PLAYER_2);
 
         if (idx1 == to_play1.size())

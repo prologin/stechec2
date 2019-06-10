@@ -19,15 +19,13 @@ typedef void (*f_champion_init_game)();
 typedef void (*f_champion_play_turn)();
 typedef void (*f_champion_end_game)();
 
-class Rules : public rules::TurnBasedRules
+class Rules final : public rules::TurnBasedRules
 {
 public:
     explicit Rules(const rules::Options opt);
-    virtual ~Rules();
 
     rules::Actions* get_actions() override;
     void apply_action(const rules::IAction_sptr& action) override;
-    bool is_finished() override;
 
     void at_player_start(rules::ClientMessenger_sptr) override;
     void at_spectator_start(rules::ClientMessenger_sptr) override;
@@ -40,7 +38,9 @@ public:
     void start_of_player_turn(unsigned int player_id) override;
     void end_of_player_turn(unsigned int player_id) override;
 
-    GameState* get_game_state() const;
+    bool is_finished() override;
+
+    GameState& game_state() const;
 
 protected:
     f_champion_init_game champion_init_game_;

@@ -8,8 +8,8 @@
 // global used in interface.cc
 Api* api;
 
-Api::Api(GameState* game_state, rules::Player_sptr player)
-    : game_state_(game_state), player_(player)
+Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
+    : game_state_(std::move(game_state)), player_(player)
 {
     api = this;
 }
@@ -17,14 +17,15 @@ Api::Api(GameState* game_state, rules::Player_sptr player)
 /// Play at the given position
 error Api::play(position pos)
 {
-    rules::IAction_sptr action(new ActionPlay(pos, player_->id));
+    auto action = std::make_shared<ActionPlay>(pos, player_->id);
 
     error err;
-    if ((err = static_cast<error>(action->check(game_state_))) != OK)
+    if ((err = static_cast<error>(action->check(*game_state_))) != OK)
         return err;
 
     actions_.add(action);
-    game_state_set(action->apply(game_state_));
+    game_state_.save();
+    action->apply(*game_state_);
     return OK;
 }
 
@@ -43,9 +44,9 @@ std::vector<int> Api::board()
 /// Cancels the last played action
 bool Api::cancel()
 {
-    if (!game_state_->can_cancel())
+    if (!game_state_.can_cancel())
         return false;
     actions_.cancel();
-    game_state_ = rules::cancel(game_state_);
+    game_state_.cancel();
     return true;
 }

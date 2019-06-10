@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (c) 2018 Association Prologin <association@prologin.org>
-#ifndef TEST_HELPERS_HH
-#define TEST_HELPERS_HH
+#pragma once
+
+#include <memory>
 
 #include <gtest/gtest.h>
 
@@ -25,12 +26,10 @@ protected:
     virtual void SetUp()
     {
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
-        st = new GameState(make_players(PLAYER_1, PLAYER_2));
+        st.reset(new GameState(make_players(PLAYER_1, PLAYER_2)));
     }
 
-    virtual void TearDown() { delete st; }
-
-    GameState* st;
+    std::unique_ptr<GameState> st;
 
     const int PLAYER_1 = 0;
     const int PLAYER_2 = 1;
@@ -44,25 +43,17 @@ protected:
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
         auto players_ptr = make_players(PLAYER_1, PLAYER_2);
         players[0].id = PLAYER_1;
-        players[0].api =
-            new Api(new GameState(players_ptr), players_ptr->players[0]);
+        players[0].api = std::make_unique<Api>(
+            std::make_unique<GameState>(players_ptr), players_ptr->players[0]);
         players[1].id = PLAYER_2;
-        players[1].api =
-            new Api(new GameState(players_ptr), players_ptr->players[1]);
-    }
-
-    virtual void TearDown()
-    {
-        delete players[0].api->game_state();
-        delete players[0].api;
-        delete players[1].api->game_state();
-        delete players[1].api;
+        players[1].api = std::make_unique<Api>(
+            std::make_unique<GameState>(players_ptr), players_ptr->players[1]);
     }
 
     struct Player
     {
         int id;
-        Api* api;
+        std::unique_ptr<Api> api;
     };
     std::array<Player, 2> players;
 
@@ -88,5 +79,3 @@ protected:
     const int PLAYER_1 = 3;
     const int PLAYER_2 = 7;
 };
-
-#endif
