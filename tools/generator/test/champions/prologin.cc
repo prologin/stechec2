@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2019 Association Prologin <association@prologin.org>
 ///
 // This file has been generated, if you wish to
 // modify it in a permanent way, please refer

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2019 Association Prologin <association@prologin.org>
 #pragma once
 
 // Implementation of a logger based on the one in the first version of Stechec.

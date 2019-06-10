@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2019 Association Prologin <association@prologin.org>
 #ifndef SERVER_SERVER_HH_
 #define SERVER_SERVER_HH_
 
