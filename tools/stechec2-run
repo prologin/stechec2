@@ -31,7 +31,7 @@ parser = argparse.ArgumentParser(
       - ./gui.so
     dump: dump.json
 
-Report bugs to <serveur@prologin.org>''',
+Report bugs to https://github.com/prologin/stechec2''',
     formatter_class=argparse.RawDescriptionHelpFormatter
 )
 parser.add_argument(
