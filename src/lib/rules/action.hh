@@ -6,7 +6,6 @@
 #include <utils/buffer.hh>
 
 #include "game-state.hh"
-#include "player.hh"
 
 namespace rules {
 
