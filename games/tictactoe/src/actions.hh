@@ -1,5 +1,5 @@
-#ifndef ACTIONS_HH
-#define ACTIONS_HH
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 enum action_id
 {
@@ -7,5 +7,3 @@ enum action_id
 };
 
 #include "action_play.hh"
-
-#endif // !ACTIONS_HH

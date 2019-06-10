@@ -1,11 +1,11 @@
-#ifndef LIB_NET_CLIENT_HH_
-#define LIB_NET_CLIENT_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <memory>
 #include <string>
-#include <utils/buffer.hh>
 
 #include <net/socket.hh>
+#include <utils/buffer.hh>
 
 namespace net {
 
@@ -26,5 +26,3 @@ public:
 typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;
 
 } // namespace net
-
-#endif // !LIB_NET_CLIENT_HH_

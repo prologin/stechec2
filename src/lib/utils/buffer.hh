@@ -1,5 +1,5 @@
-#ifndef LIB_UTILS_BUFFER_HH_
-#define LIB_UTILS_BUFFER_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include "log.hh"
 
@@ -123,5 +123,3 @@ private:
 };
 
 } // namespace utils
-
-#endif // !LIB_UTILS_BUFFER_HH_

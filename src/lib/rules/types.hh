@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_TYPES_HH_
-#define LIB_RULES_TYPES_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <rules/client-messenger.hh>
 #include <rules/options.hh>
@@ -14,5 +14,3 @@ typedef void (*f_client_loop)(ClientMessenger_sptr);
 typedef void (*f_server_loop)(ServerMessenger_sptr);
 
 } // namespace rules
-
-#endif // !LIB_RULES_TYPES_HH_

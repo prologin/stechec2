@@ -1,5 +1,5 @@
-#ifndef LIB_UTILS_DLL_HH_
-#define LIB_UTILS_DLL_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 // Dynamic library loader. Used to load rules modules, for example.
 
@@ -40,5 +40,3 @@ private:
 };
 
 } // namespace utils
-
-#endif

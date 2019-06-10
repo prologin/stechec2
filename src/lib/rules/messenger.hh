@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_MESSENGER_HH_
-#define LIB_RULES_MESSENGER_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <cstdint>
 #include <net/message.hh>
@@ -18,5 +18,3 @@ public:
 };
 
 } // namespace rules
-
-#endif // !LIB_RULES_MESSENGER_HH_

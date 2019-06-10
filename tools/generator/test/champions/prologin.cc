@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 ///
 // This file has been generated, if you wish to
 // modify it in a permanent way, please refer

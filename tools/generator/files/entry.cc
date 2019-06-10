@@ -1,15 +1,4 @@
-/*
-** Stechec project is free software; you can redistribute it and/or modify
-** it under the terms of the GNU General Public License as published by
-** the Free Software Foundation; either version 2 of the License, or
-** (at your option) any later version.
-**
-** The complete GNU General Public Licence Notice can be found as the
-** `NOTICE' file in the root directory.
-**
-** Copyright (C) !!year!! !!provider!!
-*/
-
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include <cstdlib>
 #include <memory>
 #include <rules/client-messenger.hh>
@@ -20,8 +9,7 @@
 
 // Forward decls
 namespace rules {
-    struct Options;
-
+struct Options;
 }
 
 static Rules* rules_;
@@ -30,7 +18,7 @@ extern "C" {
 
 void rules_init(const rules::Options& opt)
 {
-    utils::Logger::get().level() = (utils::Logger::DisplayLevel) opt.verbose;
+    utils::Logger::get().level() = (utils::Logger::DisplayLevel)opt.verbose;
     rules_ = new Rules(opt);
 }
 

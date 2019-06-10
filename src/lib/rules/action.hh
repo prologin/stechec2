@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_ACTION_HH_
-#define LIB_RULES_ACTION_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <list>
 #include <memory>
@@ -73,5 +73,3 @@ typedef std::list<IAction_sptr> IActionList;
 typedef IAction* (*f_action_factory)();
 
 } // namespace rules
-
-#endif // !LIB_RULES_ACTION_HH_

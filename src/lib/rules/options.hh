@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_OPTIONS_HH
-#define LIB_RULES_OPTIONS_HH
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <cstdint>
 #include <memory>
@@ -41,5 +41,3 @@ struct Options
 };
 
 } // namespace rules
-
-#endif // !LIB_RULES_OPTIONS_HH

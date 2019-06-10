@@ -1,5 +1,5 @@
-#ifndef PLAYER_ACTIONS_HH_
-#define PLAYER_ACTIONS_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <cstdint>
 #include <list>
@@ -45,5 +45,3 @@ private:
 };
 
 } // namespace rules
-
-#endif // !PLAYER_ACTIONS_HH_

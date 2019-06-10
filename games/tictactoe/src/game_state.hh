@@ -1,5 +1,5 @@
-#ifndef GAME_STATE_HH
-#define GAME_STATE_HH
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <rules/game-state.hh>
 #include <rules/player.hh>
@@ -35,5 +35,3 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& out, const GameState& gs);
-
-#endif /* !GAME_STATE_HH */

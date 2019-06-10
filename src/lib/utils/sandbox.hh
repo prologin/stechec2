@@ -1,5 +1,5 @@
-#ifndef LIB_UTILS_SANDBOX_HH_
-#define LIB_UTILS_SANDBOX_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 // Sandbox used to execute functions in a restricted environment. Currently
 // implements timeout only (no memory limit).
@@ -49,5 +49,3 @@ private:
 
 // Implementation of large templated member functions.
 #include "sandbox.inl"
-
-#endif // !LIB_UTILS_SANDBOX_HH_

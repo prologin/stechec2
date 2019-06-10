@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #ifndef SERVER_SERVER_HH_
 #define SERVER_SERVER_HH_
 

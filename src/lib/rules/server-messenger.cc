@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include "server-messenger.hh"
 
 #include <net/message.hh>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include "../game-state.hh"
 
 #include <gtest/gtest.h>

@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_STATE_HH_
-#define LIB_RULES_STATE_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <utils/log.hh>
 
@@ -69,5 +69,3 @@ T* cancel(T* current_version)
 }
 
 } // namespace rules
-
-#endif // !LIB_RULES_STATE_HH_

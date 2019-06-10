@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include "game_state.hh"
 
 GameState::GameState(rules::Players_sptr players)

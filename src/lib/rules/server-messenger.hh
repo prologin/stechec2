@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_SERVERMESSENGER_HH_
-#define LIB_RULES_SERVERMESSENGER_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <memory>
 #include <stdexcept>
@@ -47,5 +47,3 @@ private:
 typedef std::shared_ptr<ServerMessenger> ServerMessenger_sptr;
 
 } // namespace rules
-
-#endif // !LIB_RULES_SERVERMESSENGER_HH_

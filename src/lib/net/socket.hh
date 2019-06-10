@@ -1,10 +1,12 @@
-#ifndef LIB_NET_SOCKET_HH_
-#define LIB_NET_SOCKET_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <memory>
 #include <string>
-#include <utils/buffer.hh>
+
 #include <zmq.hpp>
+
+#include <utils/buffer.hh>
 
 namespace net {
 
@@ -49,5 +51,3 @@ protected:
 };
 
 } // namespace net
-
-#endif // !LIB_NETWORK_SOCKET_HH_

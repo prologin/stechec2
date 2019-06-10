@@ -1,5 +1,5 @@
-#ifndef ACTION_PLAY_HH
-#define ACTION_PLAY_HH
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <rules/action.hh>
 
@@ -30,5 +30,3 @@ private:
     position pos_;
     int player_id_;
 };
-
-#endif // !ACTION_PLAY_HH

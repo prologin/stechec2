@@ -1,5 +1,5 @@
-#ifndef RULES_RULES_HH_
-#define RULES_RULES_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <memory>
 
@@ -53,5 +53,3 @@ private:
     std::unique_ptr<Api> api_;
     utils::Sandbox sandbox_;
 };
-
-#endif // !RULES_RULES_HH_

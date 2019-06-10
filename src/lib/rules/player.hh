@@ -1,5 +1,5 @@
-#ifndef LIB_RULES_PLAYER_HH_
-#define LIB_RULES_PLAYER_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <cstdint>
 #include <memory>
@@ -83,5 +83,3 @@ static inline std::string playertype_str(PlayerType type)
 }
 
 } // namespace rules
-
-#endif // LIB_RULES_PLAYER_HH_

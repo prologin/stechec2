@@ -1,8 +1,9 @@
-#ifndef LIB_NET_MESSAGE_HH_
-#define LIB_NET_MESSAGE_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 #include <cstdint>
 #include <iostream>
+
 #include <utils/buffer.hh>
 
 namespace net {
@@ -44,5 +45,3 @@ struct Message
 } // namespace net
 
 std::ostream& operator<<(std::ostream& os, const net::Message& msg);
-
-#endif // !LIB_NET_MESSAGE_HH_

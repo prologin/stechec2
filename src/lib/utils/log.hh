@@ -1,12 +1,13 @@
-#ifndef LIB_UTILS_LOG_HH_
-#define LIB_UTILS_LOG_HH_
+// SPDX-License-Identifier: GPL-2.0-or-later
+#pragma once
 
 // Implementation of a logger based on the one in the first version of Stechec.
 
-#include <gflags/gflags.h>
+#include <cstdlib>
 #include <iostream>
 #include <ostream>
-#include <stdlib.h>
+
+#include <gflags/gflags.h>
 
 DECLARE_int32(verbose);
 
@@ -103,5 +104,3 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
     } while (0)
 
 } // namespace utils
-
-#endif // !LIB_UTILS_LOG_HH_

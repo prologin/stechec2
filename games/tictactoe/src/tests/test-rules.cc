@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 #include "test-helpers.hh"
 
 TEST_F(RulesTest, Rules_FinishWin)
