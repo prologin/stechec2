@@ -1,7 +1,7 @@
 #ifndef LIB_RULES_STATE_HH_
-# define LIB_RULES_STATE_HH_
+#define LIB_RULES_STATE_HH_
 
-# include <utils/log.hh>
+#include <utils/log.hh>
 
 namespace rules {
 

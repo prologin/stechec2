@@ -36,7 +36,7 @@ void Actions::handle_buffer(utils::Buffer& buf)
 }
 
 void Actions::register_action(uint32_t action_id,
-        f_action_factory action_factory)
+                              f_action_factory action_factory)
 {
     action_factory_[action_id] = action_factory;
 }

@@ -1,9 +1,9 @@
 #ifndef LIB_RULES_TYPES_HH_
-# define LIB_RULES_TYPES_HH_
+#define LIB_RULES_TYPES_HH_
 
-# include <rules/options.hh>
-# include <rules/client-messenger.hh>
-# include <rules/server-messenger.hh>
+#include <rules/client-messenger.hh>
+#include <rules/options.hh>
+#include <rules/server-messenger.hh>
 
 namespace rules {
 

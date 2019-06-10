@@ -1,22 +1,18 @@
 #ifndef LIB_RULES_PLAYER_HH_
-# define LIB_RULES_PLAYER_HH_
+#define LIB_RULES_PLAYER_HH_
 
-# include <cstdint>
-# include <memory>
-# include <vector>
-# include <string>
-# include <utils/buffer.hh>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <utils/buffer.hh>
+#include <vector>
 
 namespace rules {
 
 struct Player
 {
     Player(uint32_t id_, uint32_t type_)
-        : id(id_),
-          type(type_),
-          score(0),
-          nb_timeout(0),
-          name("anonymous")
+        : id(id_), type(type_), score(0), nb_timeout(0), name("anonymous")
     {}
 
     void handle_buffer(utils::Buffer& buf)
@@ -60,10 +56,7 @@ struct Players
         }
     }
 
-    size_t size() const
-    {
-        return players.size();
-    }
+    size_t size() const { return players.size(); }
 
     std::vector<Player_sptr> players;
 };
@@ -72,8 +65,8 @@ typedef std::shared_ptr<Players> Players_sptr;
 
 enum PlayerType
 {
-    PLAYER                      = 1,
-    SPECTATOR                   = 2
+    PLAYER = 1,
+    SPECTATOR = 2
 };
 const int MAX_PLAYER_TYPE = 3;
 

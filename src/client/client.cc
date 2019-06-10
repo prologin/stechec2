@@ -3,10 +3,10 @@
 #include <gflags/gflags.h>
 #include <net/message.hh>
 #include <rules/action.hh>
-#include <utils/buffer.hh>
-#include <utils/log.hh>
 #include <rules/options.hh>
 #include <rules/player.hh>
+#include <utils/buffer.hh>
+#include <utils/log.hh>
 
 DEFINE_string(name, "anonymous", "Client name (used for results)");
 DEFINE_string(req_addr, "tcp://0.0.0.0:42124",
@@ -48,7 +48,7 @@ void Client::run()
 
     // Create a messenger for sending rules messages
     msgr_ = rules::ClientMessenger_sptr(
-            new rules::ClientMessenger(sckt_, player_->id));
+        new rules::ClientMessenger(sckt_, player_->id));
 
     // Set the rules options
     rules::Options rules_opt;
@@ -78,7 +78,7 @@ void Client::run()
 void Client::sckt_init()
 {
     sckt_ = net::ClientSocket_sptr(
-            new net::ClientSocket(FLAGS_sub_addr, FLAGS_req_addr));
+        new net::ClientSocket(FLAGS_sub_addr, FLAGS_req_addr));
     sckt_->init();
 
     NOTICE("Requesting on %s", FLAGS_req_addr.c_str());
@@ -105,7 +105,7 @@ void Client::sckt_init()
     // Send the request
     utils::Buffer* buf_rep = nullptr;
     if (!sckt_->send(buf_req) || !(buf_rep = sckt_->recv()) ||
-            (msg.handle_buffer(*buf_rep), msg.client_id == 0))
+        (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
 
     player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));

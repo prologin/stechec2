@@ -19,8 +19,7 @@
 #include "rules.hh"
 
 // Forward decls
-namespace rules
-{
+namespace rules {
 struct Options;
 }
 

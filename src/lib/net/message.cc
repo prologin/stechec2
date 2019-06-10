@@ -1,16 +1,14 @@
 #include "message.hh"
 
-#include <sstream>
 #include <cstring>
 #include <ostream>
+#include <sstream>
 
 namespace net {
 
 Message::Message(uint32_t type_, uint32_t client_id_)
-    : type(type_),
-      client_id(client_id_)
-{
-}
+    : type(type_), client_id(client_id_)
+{}
 
 std::string Message::str() const
 {

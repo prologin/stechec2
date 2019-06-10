@@ -1,10 +1,10 @@
 #ifndef LIB_NET_SOCKET_HH_
-# define LIB_NET_SOCKET_HH_
+#define LIB_NET_SOCKET_HH_
 
-# include <string>
-# include <memory>
-# include <zmq.hpp>
-# include <utils/buffer.hh>
+#include <memory>
+#include <string>
+#include <utils/buffer.hh>
+#include <zmq.hpp>
 
 namespace net {
 
@@ -19,8 +19,7 @@ struct Message;
 class Socket // abstract
 {
 public:
-    Socket(const std::string& pubsub_addr,
-           const std::string& reqrep_addr,
+    Socket(const std::string& pubsub_addr, const std::string& reqrep_addr,
            int io_thread);
 
     virtual ~Socket() {}
@@ -33,7 +32,7 @@ public:
 
 protected:
     bool send_sckt(const utils::Buffer& buf,
-            std::shared_ptr<zmq::socket_t> sckt, int flags);
+                   std::shared_ptr<zmq::socket_t> sckt, int flags);
     // recv_sckt allocates a Message, it has to be deleted after its use
     utils::Buffer* recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
 

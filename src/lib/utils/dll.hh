@@ -1,10 +1,10 @@
 #ifndef LIB_UTILS_DLL_HH_
-# define LIB_UTILS_DLL_HH_
+#define LIB_UTILS_DLL_HH_
 
 // Dynamic library loader. Used to load rules modules, for example.
 
-# include <stdexcept>
-# include <string>
+#include <stdexcept>
+#include <string>
 
 namespace utils {
 

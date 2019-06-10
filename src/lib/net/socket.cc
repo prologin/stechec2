@@ -5,28 +5,27 @@
 #include <net/message.hh>
 #include <utils/log.hh>
 
-DEFINE_int32(socket_timeout, -1, "Timeout value to use for all sock ops, in ms.");
+DEFINE_int32(socket_timeout, -1,
+             "Timeout value to use for all sock ops, in ms.");
 
 namespace net {
 
-Socket::Socket(const std::string& pubsub_addr,
-               const std::string& reqrep_addr,
+Socket::Socket(const std::string& pubsub_addr, const std::string& reqrep_addr,
                int io_thread)
-    : pubsub_addr_(pubsub_addr),
-      reqrep_addr_(reqrep_addr),
-      ctx_(io_thread),
-      pubsub_sckt_(),
-      reqrep_sckt_()
-{
-}
+    : pubsub_addr_(pubsub_addr)
+    , reqrep_addr_(reqrep_addr)
+    , ctx_(io_thread)
+    , pubsub_sckt_()
+    , reqrep_sckt_()
+{}
 
 void Socket::shared_init()
 {
     int timeout = FLAGS_socket_timeout;
     if (timeout != -1)
     {
-        pubsub_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof (timeout));
-        reqrep_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof (timeout));
+        pubsub_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
+        reqrep_sckt_->setsockopt(ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
     }
 }
 
@@ -50,7 +49,7 @@ bool Socket::poll(long timeout)
 }
 
 bool Socket::send_sckt(const utils::Buffer& buf,
-        std::shared_ptr<zmq::socket_t> sckt, int flags)
+                       std::shared_ptr<zmq::socket_t> sckt, int flags)
 {
     try
     {
@@ -69,7 +68,7 @@ bool Socket::send_sckt(const utils::Buffer& buf,
             }
         return true;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         ERR("%s", e.what());
         return false;
@@ -103,7 +102,7 @@ utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
 
         return buf;
     }
-    catch(const std::exception& e)
+    catch (const std::exception& e)
     {
         ERR("%s", e.what());
         return nullptr;

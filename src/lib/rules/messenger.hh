@@ -1,10 +1,10 @@
 #ifndef LIB_RULES_MESSENGER_HH_
-# define LIB_RULES_MESSENGER_HH_
+#define LIB_RULES_MESSENGER_HH_
 
-# include <cstdint>
-# include <net/socket.hh>
-# include <net/message.hh>
-# include <utils/buffer.hh>
+#include <cstdint>
+#include <net/message.hh>
+#include <net/socket.hh>
+#include <utils/buffer.hh>
 
 namespace rules {
 

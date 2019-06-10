@@ -1,11 +1,11 @@
 #ifndef LIB_UTILS_SANDBOX_HH_
-# define LIB_UTILS_SANDBOX_HH_
+#define LIB_UTILS_SANDBOX_HH_
 
 // Sandbox used to execute functions in a restricted environment. Currently
 // implements timeout only (no memory limit).
 
-# include <functional>
-# include <stdexcept>
+#include <functional>
+#include <stdexcept>
 
 namespace utils {
 
@@ -19,9 +19,7 @@ class Sandbox
 {
 public:
     // Timeout in ms.
-    explicit Sandbox(unsigned int timeout = 1000) : timeout_(timeout)
-    {
-    }
+    explicit Sandbox(unsigned int timeout = 1000) : timeout_(timeout) {}
 
     ~Sandbox() {}
 
@@ -50,6 +48,6 @@ private:
 } // namespace utils
 
 // Implementation of large templated member functions.
-# include "sandbox.inl"
+#include "sandbox.inl"
 
 #endif // !LIB_UTILS_SANDBOX_HH_

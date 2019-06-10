@@ -5,8 +5,8 @@
 #include <sys/types.h>
 #include <zmq.hpp>
 
-#include <thread>
 #include <chrono>
+#include <thread>
 
 #include <utils/log.hh>
 
@@ -15,8 +15,7 @@ namespace net {
 ServerSocket::ServerSocket(const std::string& pub_addr,
                            const std::string& rep_addr)
     : Socket(pub_addr, rep_addr, 2)
-{
-}
+{}
 
 void ServerSocket::init()
 {

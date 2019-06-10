@@ -1,12 +1,12 @@
 #ifndef LIB_RULES_OPTIONS_HH
-# define LIB_RULES_OPTIONS_HH
+#define LIB_RULES_OPTIONS_HH
 
-# include <string>
-# include <cstdint>
-# include <ostream>
-# include <memory>
+#include <cstdint>
+#include <memory>
+#include <ostream>
+#include <string>
 
-# include "player.hh"
+#include "player.hh"
 
 namespace rules {
 

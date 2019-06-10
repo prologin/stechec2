@@ -18,8 +18,7 @@ DEFINE_string(map, "default.map", "Map file");
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(dump, "", "Game data dump output path");
 
-Server::Server()
-    : nb_players_(0)
+Server::Server() : nb_players_(0)
 {
     rules_lib_.reset(new utils::DLL(FLAGS_rules));
     // Get required functions from the rules library
@@ -60,8 +59,8 @@ void Server::run()
         std::shared_ptr<std::ofstream> dump_stream =
             std::make_shared<std::ofstream>(FLAGS_dump);
         if (!dump_stream->is_open())
-            ERR("Cannot open dump file for writing %s: %s",
-                    FLAGS_dump.c_str(), strerror(errno));
+            ERR("Cannot open dump file for writing %s: %s", FLAGS_dump.c_str(),
+                strerror(errno));
         else
             rules_opt.dump_stream = std::move(dump_stream);
     }
@@ -95,7 +94,7 @@ void Server::run()
 void Server::sckt_init()
 {
     sckt_ = net::ServerSocket_sptr(
-            new net::ServerSocket(FLAGS_pub_addr, FLAGS_rep_addr));
+        new net::ServerSocket(FLAGS_pub_addr, FLAGS_rep_addr));
     sckt_->init();
 
     NOTICE("Replying on %s", FLAGS_pub_addr.c_str());
@@ -124,7 +123,7 @@ void Server::wait_for_players()
     // Clients are players or spectators
 
     while (players_->size() + spectators_->size() <
-            static_cast<size_t>(FLAGS_nb_clients))
+           static_cast<size_t>(FLAGS_nb_clients))
     {
         utils::Buffer* buf_req = nullptr;
 
@@ -145,8 +144,8 @@ void Server::wait_for_players()
         // and the requested client identifier.
         int id_and_type = id_req.client_id;
         int player_id = id_and_type / rules::MAX_PLAYER_TYPE;
-        rules::PlayerType player_type =
-          static_cast<rules::PlayerType>(id_and_type % rules::MAX_PLAYER_TYPE);
+        rules::PlayerType player_type = static_cast<rules::PlayerType>(
+            id_and_type % rules::MAX_PLAYER_TYPE);
 
         ++nb_players_;
         if (player_id == 0)
@@ -156,15 +155,15 @@ void Server::wait_for_players()
                    player_id);
         }
 
-        if (used_identifier(player_id, players_)
-            || used_identifier(player_id, spectators_))
+        if (used_identifier(player_id, players_) ||
+            used_identifier(player_id, spectators_))
         {
             ERR("Client identifier %i is already used", player_id);
             player_id = 0; // Treated by client as invalid
         }
 
         rules::Player_sptr new_player =
-          rules::Player_sptr(new rules::Player(player_id, player_type));
+            rules::Player_sptr(new rules::Player(player_id, player_type));
         buf_req->handle(new_player->name);
 
         delete buf_req;
@@ -182,14 +181,15 @@ void Server::wait_for_players()
             players_->players.push_back(new_player);
 
         NOTICE("Client connected - id: %i - type: %s", new_player->id,
-                rules::playertype_str(
-                    static_cast<rules::PlayerType>(new_player->type)).c_str());
+               rules::playertype_str(
+                   static_cast<rules::PlayerType>(new_player->type))
+                   .c_str());
     }
 
     // Sort players by identifiers
     std::sort(players_->players.begin(), players_->players.end(),
-              [] (rules::Player_sptr const& a, rules::Player_sptr const& b) {
-                return a->id < b->id;
+              [](rules::Player_sptr const& a, rules::Player_sptr const& b) {
+                  return a->id < b->id;
               });
 
     // Then send players info to all clients

@@ -2,8 +2,6 @@
 
 namespace rules {
 
-Messenger::~Messenger()
-{
-}
+Messenger::~Messenger() {}
 
 } // namespace rules

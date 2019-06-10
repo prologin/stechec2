@@ -1,14 +1,14 @@
 #ifndef LIB_RULES_RULES_HH_
-# define LIB_RULES_RULES_HH_
+#define LIB_RULES_RULES_HH_
 
-# include <utils/log.hh>
+#include <utils/log.hh>
 
-# include "options.hh"
-# include "actions.hh"
-# include "player.hh"
-# include "action.hh"
-# include "server-messenger.hh"
-# include "client-messenger.hh"
+#include "action.hh"
+#include "actions.hh"
+#include "client-messenger.hh"
+#include "options.hh"
+#include "player.hh"
+#include "server-messenger.hh"
 
 namespace rules {
 
@@ -35,7 +35,6 @@ public:
 
     // Check whether the game is over
     virtual bool is_finished() = 0;
-
 
     /* Placeholders */
 

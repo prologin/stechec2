@@ -1,17 +1,16 @@
 #include "rules.hh"
 
-#include <unordered_set>
 #include <set>
+#include <unordered_set>
 
 namespace rules {
 
 Rules::Rules(const Options opt)
-    : opt_(opt),
-    players_(opt.players),
-    spectators_(opt.spectators),
-    timeout_(opt.time)
-{
-}
+    : opt_(opt)
+    , players_(opt.players)
+    , spectators_(opt.spectators)
+    , timeout_(opt.time)
+{}
 
 bool Rules::is_spectator(uint32_t id)
 {
@@ -22,14 +21,11 @@ bool Rules::is_spectator(uint32_t id)
     return false;
 }
 
- /*-----------------.
- | SynchronousRules |
- `-----------------*/
+/*-----------------.
+| SynchronousRules |
+`-----------------*/
 
-SynchronousRules::SynchronousRules(const Options opt)
-    : Rules(opt)
-{
-}
+SynchronousRules::SynchronousRules(const Options opt) : Rules(opt) {}
 
 void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 {
@@ -109,8 +105,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         players_ids.insert(spectator->id);
 
     std::set<uint32_t> players_timeouting;
-    unsigned int players_count = players_->players.size() +
-        spectators_->players.size();
+    unsigned int players_count =
+        players_->players.size() + spectators_->players.size();
 
     at_start();
     at_server_start(msgr);
@@ -139,7 +135,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             {
                 msgr->recv_actions(actions);
                 msgr->ack();
-            } while (players_ids.find(msgr->last_client_id()) == players_ids.end());
+            } while (players_ids.find(msgr->last_client_id()) ==
+                     players_ids.end());
 
             unsigned player_id = msgr->last_client_id();
             if (spectators_ids.find(player_id) != spectators_ids.end())
@@ -178,7 +175,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             spectators_count--;
         }
 
-        for (auto action: actions->actions())
+        for (auto action : actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
 
@@ -191,15 +188,11 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_server_end(msgr);
 }
 
+/*---------------.
+| TurnBasedRules |
+`---------------*/
 
- /*---------------.
- | TurnBasedRules |
- `---------------*/
-
-TurnBasedRules::TurnBasedRules(const Options opt)
-    : Rules(opt)
-{
-}
+TurnBasedRules::TurnBasedRules(const Options opt) : Rules(opt) {}
 
 void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 {
@@ -419,7 +412,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
-                    for (auto action: actions->actions())
+                    for (auto action : actions->actions())
                         apply_action(action);
                 }
             }
