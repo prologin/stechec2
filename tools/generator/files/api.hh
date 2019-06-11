@@ -6,9 +6,7 @@
 #include <vector>
 
 #include <rules/actions.hh>
-#include <rules/game-state.hh>
 #include <rules/player.hh>
-#include <utils/versioned_ptr.hh>
 
 #include "constant.hh"
 #include "game_state.hh"
@@ -23,20 +21,5 @@ public:
     Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player);
     virtual ~Api() {}
 
-    const rules::Player_sptr player() const { return player_; }
-    void player_set(rules::Player_sptr player) { player_ = player; }
-
-    rules::Actions* actions() { return &actions_; }
-
-    const GameState& game_state() const { return game_state_; }
-    GameState& game_state() { return game_state_; }
-    void clear_old_game_states() { game_state_.clear_old_versions(); }
-
-private:
-    utils::VersionedPtr<GameState> game_state_;
-    rules::Player_sptr player_;
-    rules::Actions actions_;
-
-public:
     // @@GEN_HERE@@
 };
