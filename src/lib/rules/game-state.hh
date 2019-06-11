@@ -2,15 +2,20 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #pragma once
 
-#include <utils/log.hh>
-#include <utils/versioned_ptr.hh>
-
 namespace rules {
 
 class GameState
 {
 public:
-    virtual ~GameState() {}
+    GameState() = default;
+    virtual ~GameState() = default;
+
+    // Explicit copy of the game state
+    virtual GameState* copy() const = 0;
+
+protected:
+    // Protected to be called by copy()
+    GameState(const GameState&) = default;
 };
 
 } // namespace rules

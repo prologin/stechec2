@@ -16,6 +16,7 @@ public:
     const int NO_PLAYER = -1;
 
     GameState(rules::Players_sptr players);
+    GameState* copy() const override;
 
     std::vector<int> get_board() const;
     bool is_valid_cell(position pos) const;

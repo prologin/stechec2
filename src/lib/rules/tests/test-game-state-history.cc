@@ -1,18 +1,21 @@
-#include "../versioned_ptr.hh"
+#include "../game-state-history.hh"
+#include "../game-state.hh"
 
 #include "gtest/gtest.h"
 
-class State
+using rules::GameStateHistory;
+
+class State final : public rules::GameState
 {
 public:
     State(int a) : a(a) {}
-
+    State* copy() const { return new State(*this); }
     int a;
 };
 
-TEST(VersionedPtr, save_cancel)
+TEST(GameStateHistory, save_cancel)
 {
-    auto v = utils::VersionedPtr<State>(std::make_unique<State>(42));
+    auto v = GameStateHistory<State>(std::make_unique<State>(42));
 
     EXPECT_EQ(v->a, 42);
 
@@ -29,20 +32,20 @@ TEST(VersionedPtr, save_cancel)
     EXPECT_EQ(v->a, 42);
 }
 
-TEST(VersionedPtr, clear)
+TEST(GameStateHistory, clear)
 {
-    auto v = utils::VersionedPtr<State>(std::make_unique<State>(42));
+    auto v = GameStateHistory<State>(std::make_unique<State>(42));
     v.save();
     v.save();
     v.save();
-    v.clear_old_version();
+    v.clear_old_versions();
     EXPECT_EQ(v->a, 42);
     EXPECT_FALSE(v.can_cancel());
 }
 
-TEST(VersionedPtr, multiple_cancel)
+TEST(GameStateHistory, multiple_cancel)
 {
-    auto v = utils::VersionedPtr<State>(std::make_unique<State>(42));
+    auto v = GameStateHistory<State>(std::make_unique<State>(42));
     v.save();    // a = 42, 1 save
     v->a = 1337; // mutate current
     v.save();    // a = 1337, 2 saves

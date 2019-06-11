@@ -12,9 +12,8 @@ using namespace rules;
 class MyGameState : public GameState
 {
 public:
-    MyGameState() : x(0) {}
-    MyGameState(const MyGameState& mgs) : x(mgs.x) {}
-
+    MyGameState() : GameState(), x(0) {}
+    MyGameState* copy() const { return new MyGameState(*this); }
     int x;
 };
 

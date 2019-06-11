@@ -13,6 +13,11 @@ GameState::GameState(rules::Players_sptr players)
             is_player_turn_.emplace(std::make_pair(player->id, false));
 }
 
+GameState* GameState::copy() const
+{
+    return new GameState(*this);
+}
+
 std::vector<int> GameState::get_board() const
 {
     return board_;

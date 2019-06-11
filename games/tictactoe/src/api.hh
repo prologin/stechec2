@@ -6,9 +6,9 @@
 #include <vector>
 
 #include <rules/actions.hh>
+#include <rules/game-state-history.hh>
 #include <rules/game-state.hh>
 #include <rules/player.hh>
-#include <utils/versioned_ptr.hh>
 
 #include "constant.hh"
 #include "game_state.hh"
@@ -34,7 +34,7 @@ public:
     void clear_old_game_states() { game_state_.clear_old_versions(); }
 
 private:
-    utils::VersionedPtr<GameState> game_state_;
+    rules::GameStateHistory<GameState> game_state_;
     rules::Player_sptr player_;
     rules::Actions actions_;
 

@@ -199,13 +199,13 @@ def build_lib(bld):
                     target='utils-test-%s' % test,
                     use=['stechec2'])
 
-    for test in ['buffer', 'sandbox', 'versioned_ptr']:
+    for test in ['buffer', 'sandbox']:
         bld.program(features='gtest',
                     source='src/lib/utils/tests/test-%s.cc' % test,
                     target='utils-test-%s' % test,
                     use=['stechec2'])
 
-    for test in ['action']:
+    for test in ['action', 'game-state-history']:
         bld.program(features='gtest',
                     source='src/lib/rules/tests/test-%s.cc' % test,
                     target='rules-test-%s' % test,
