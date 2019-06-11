@@ -2,17 +2,13 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #include <stdlib.h>
 
+#include <memory>
+
 #include "actions.hh"
 #include "api.hh"
 
 // global used in interface.cc
 Api* api;
-
-Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
-    : game_state_(std::move(game_state)), player_(player)
-{
-    api = this;
-}
 
 /// Play at the given position
 error Api::play(position pos)
@@ -20,12 +16,12 @@ error Api::play(position pos)
     auto action = std::make_shared<ActionPlay>(pos, player_->id);
 
     error err;
-    if ((err = static_cast<error>(action->check(*game_state_))) != OK)
+    if ((err = static_cast<error>(action->check(game_state()))) != OK)
         return err;
 
     actions_.add(action);
     game_state_.save();
-    action->apply(*game_state_);
+    action->apply(game_state());
     return OK;
 }
 
@@ -38,7 +34,7 @@ int Api::my_team()
 /// Returns the TicTacToe board
 std::vector<int> Api::board()
 {
-    return game_state_->get_board();
+    return game_state().get_board();
 }
 
 /// Cancels the last played action
