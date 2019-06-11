@@ -16,7 +16,7 @@ public:
     T* operator->() { return current_.get(); }
     const T* operator->() const { return current_.get(); }
 
-    void save() { versions_.push_front(std::unique_ptr<T>(new T(*current_))); }
+    void save() { versions_.emplace_front(new T(*current_)); }
     bool can_cancel() const { return versions_.cbegin() != versions_.cend(); }
     void cancel()
     {
