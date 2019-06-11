@@ -40,12 +40,12 @@ void Rules::apply_action(const rules::IAction_sptr& action)
     // client/server desynchronizations and make sure the gamestate is always
     // consistent across the clients and the server.
 
-    int err = action->check(api_->game_state());
+    int err = api_->game_state_check(action);
     if (err)
         FATAL("Synchronization error: received action %d from player %d, but "
               "check() on current gamestate returned %d.",
               action->id(), action->player_id(), err);
-    action->apply(api_->game_state());
+    api_->game_state_apply(action);
 }
 
 void Rules::at_player_start(rules::ClientMessenger_sptr)

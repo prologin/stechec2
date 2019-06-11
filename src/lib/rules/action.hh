@@ -12,6 +12,8 @@
 
 namespace rules {
 
+class GameState;
+
 // Interface to be implemented by all action types.
 class IAction
 {
