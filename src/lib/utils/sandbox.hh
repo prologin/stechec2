@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Copyright (c) 2019 Association Prologin <association@prologin.org>
+// Copyright (c) 2012 Association Prologin <association@prologin.org>
 #pragma once
 
 // Sandbox used to execute functions in a restricted environment. Currently
