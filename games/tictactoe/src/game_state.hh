@@ -28,11 +28,18 @@ public:
     bool is_finished() const;
     void compute_scores();
 
-    void set_player_turn(int player_id, bool state);
-    bool is_player_turn(int player_id) const;
+    void set_current_player(int player_id);
+    int get_current_player() const;
+
+    void set_player_can_play(int player_id, bool can_play);
+    bool player_can_play(int player_id) const;
 
 private:
-    std::unordered_map<int, bool> is_player_turn_;
+    static constexpr size_t PLAYER_COUNT = 2;
+    static constexpr int LAST_PLAYER = PLAYER_COUNT - 1;
+
+    int current_player_;
+    std::array<bool, PLAYER_COUNT> player_can_play_;
     std::vector<int> board_;
 };
 

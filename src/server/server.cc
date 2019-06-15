@@ -23,10 +23,11 @@ DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(dump, "", "Game data dump output path");
 DEFINE_string(replay, "", "Game replay output path");
 
-Server::Server() : nb_players_(0)
+Server::Server()
 {
     rules_lib_ = std::make_unique<utils::DLL>(FLAGS_rules);
     // Get required functions from the rules library
+    rules_config = rules_lib_->get<rules::f_rules_config>("rules_config");
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
@@ -39,9 +40,15 @@ void Server::run()
 
     INFO("Server Started");
 
+    // The rules configure the server
+    rules_config(&config_);
+    NOTICE("Game configuration:");
+    NOTICE("- name: %s", config_.name);
+    NOTICE("- %d players", config_.player_count);
+
     // We have to wait for the required number of clients specified in the
-    // config to be met
-    wait_for_players();
+    // command line
+    wait_for_clients();
 
     // Create a messenger for sending rules messages
     msgr_ = std::make_unique<rules::ServerMessenger>(sckt_.get());
@@ -119,13 +126,23 @@ bool used_identifier(uint32_t player_id, const rules::Players& players)
     return false;
 }
 
-void Server::wait_for_players()
+void Server::wait_for_clients()
 {
     if (FLAGS_nb_clients <= 0)
-        FATAL("Server started with nb_clients <= 0.");
+        FATAL("Server started with --nb_clients <= 0.");
+
+    int spectator_count = FLAGS_nb_clients - config_.player_count;
+    if (spectator_count < 0)
+        FATAL("Server must be started with at least --nb_clients %d",
+              config_.player_count);
+
+    NOTICE("Waiting for %d clients: %d players, %d spectators...",
+           FLAGS_nb_clients, config_.player_count, spectator_count);
 
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
+    // Player IDs must be in [0-NB_PLAYER[
+    // Spectator IDs must be in [NB_PLAYER-NB_CLIENTS[
 
     while (players_.size() + spectators_.size() <
            static_cast<size_t>(FLAGS_nb_clients))
@@ -134,6 +151,8 @@ void Server::wait_for_players()
 
         if (!buf_req)
             continue;
+
+        NOTICE("New client");
 
         net::Message id_req;
         id_req.handle_buffer(*buf_req);
@@ -144,52 +163,80 @@ void Server::wait_for_players()
             continue;
         }
 
-        // To avoid useless message, the client_id of the request corresponds
-        // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-        // and the requested client identifier.
-        int id_and_type = id_req.client_id;
-        int player_id = id_and_type / rules::MAX_PLAYER_TYPE;
-        rules::PlayerType player_type = static_cast<rules::PlayerType>(
-            id_and_type % rules::MAX_PLAYER_TYPE);
+        int32_t player_id = id_req.client_id;
+        uint32_t client_type;
+        buf_req->handle(client_type);
 
-        ++nb_players_;
-        if (player_id == 0)
+        rules::PlayerType player_type =
+            static_cast<rules::PlayerType>(client_type);
+
+        if (player_id == -1)
         {
-            player_id = nb_players_;
-            NOTICE("Client did not request an identifier, defaulting to %i",
+            // Client requests an ID from the server
+            if (player_type == rules::PLAYER)
+                player_id = players_.size();
+            else
+                player_id = config_.player_count + spectators_.size();
+
+            NOTICE("Client did not specify an identifier, picking %d",
                    player_id);
         }
 
         if (used_identifier(player_id, players_) ||
             used_identifier(player_id, spectators_))
         {
-            ERR("Client identifier %i is already used", player_id);
-            player_id = 0; // Treated by client as invalid
+            ERR("Client identifier %d is already used", player_id);
+            player_id = -1; // Treated by client as invalid
         }
 
-        auto new_player =
-            std::make_shared<rules::Player>(player_id, player_type);
-        buf_req->handle(new_player->name);
+        if (player_id < -1)
+        {
+            ERR("Client identifier %d is invalid", player_id);
+            player_id = -1; // Treated by client as invalid
+        }
+
+        if (player_type == rules::PLAYER && player_id >= config_.player_count)
+        {
+            ERR("Invalid player identifier %d > %d", player_id,
+                config_.player_count - 1);
+            player_id = -1; // Treated by client as invalid
+        }
+
+        if (player_type == rules::SPECTATOR &&
+            (player_id < config_.player_count || player_id >= FLAGS_nb_clients))
+        {
+            ERR("Spectator identifier %d invalid, expecting %d spectators",
+                player_id, spectator_count - spectators_.size());
+            player_id = -1; // Treated by client as invalid
+        }
 
         // Send the reply with a uid
-        net::Message id_rep(net::MSG_CONNECT, new_player->id);
+        net::Message id_rep(net::MSG_CONNECT, player_id);
         utils::Buffer buf_rep;
         id_rep.handle_buffer(buf_rep);
         sckt_->send(buf_rep);
 
-        // Add the player to the list
-        if (new_player->type == rules::SPECTATOR)
-            spectators_.add(new_player);
-        else
-            players_.add(new_player);
+        if (player_id == -1)
+            continue; // Do not add invalid clients
 
-        NOTICE("Client connected - id: %i - type: %s", new_player->id,
+        auto new_client = std::make_shared<rules::Player>(
+            static_cast<uint32_t>(player_id), client_type);
+        buf_req->handle(new_client->name);
+
+        // Add the player to the list
+        if (client_type == rules::SPECTATOR)
+            spectators_.add(new_client);
+        else
+            players_.add(new_client);
+
+        NOTICE("Client connected - id: %i - type: %s", new_client->id,
                rules::playertype_str(
-                   static_cast<rules::PlayerType>(new_player->type))
+                   static_cast<rules::PlayerType>(new_client->type))
                    .c_str());
     }
 
     players_.sort();
+    spectators_.sort();
 
     // Then send players info to all clients
     utils::Buffer buf_players;

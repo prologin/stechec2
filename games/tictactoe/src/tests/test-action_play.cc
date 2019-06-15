@@ -7,7 +7,7 @@
 
 TEST_F(ActionTest, ActionPlay_OutOfBounds)
 {
-    st->set_player_turn(PLAYER_1, true);
+    st->set_player_can_play(PLAYER_1, true);
 
     for (position pos : {(position){-1, 1}, {3, 1}, {0, 4}, {2, -7}})
     {
@@ -18,8 +18,8 @@ TEST_F(ActionTest, ActionPlay_OutOfBounds)
 
 TEST_F(ActionTest, ActionPlay_AlreadyOccupied)
 {
-    st->set_player_turn(PLAYER_1, true);
-    st->set_player_turn(PLAYER_2, true);
+    st->set_player_can_play(PLAYER_1, true);
+    st->set_player_can_play(PLAYER_2, true);
 
     position pos = {1, 1};
     ActionPlay act(pos, PLAYER_1);
@@ -39,7 +39,7 @@ TEST_F(ActionTest, ActionPlay_AlreadyOccupied)
 
 TEST_F(ActionTest, ActionPlay_AlreadyPlayed)
 {
-    st->set_player_turn(PLAYER_1, true);
+    st->set_player_can_play(PLAYER_1, true);
 
     ActionPlay act({0, 0}, PLAYER_1);
     EXPECT_EQ(OK, act.check(*st));
@@ -51,8 +51,8 @@ TEST_F(ActionTest, ActionPlay_AlreadyPlayed)
 
 TEST_F(ActionTest, ActionPlay_Ok)
 {
-    st->set_player_turn(PLAYER_1, true);
-    st->set_player_turn(PLAYER_2, true);
+    st->set_player_can_play(PLAYER_1, true);
+    st->set_player_can_play(PLAYER_2, true);
 
     ActionPlay act({0, 0}, PLAYER_1);
     EXPECT_EQ(OK, act.check(*st));

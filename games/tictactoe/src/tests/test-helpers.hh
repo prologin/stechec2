@@ -56,9 +56,8 @@ protected:
     };
     std::array<Player, 2> players;
 
-    // Players values are not 0 and 1, because that would be too simple
-    const int PLAYER_1 = 1337;
-    const int PLAYER_2 = 42;
+    const int PLAYER_1 = 0;
+    const int PLAYER_2 = 1;
 };
 
 class RulesTest : public ::testing::Test
@@ -75,6 +74,6 @@ protected:
 
     std::unique_ptr<Rules> rules;
 
-    const int PLAYER_1 = 3;
-    const int PLAYER_2 = 7;
+    const int PLAYER_1 = 0;
+    const int PLAYER_2 = 1;
 };

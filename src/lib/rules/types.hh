@@ -3,6 +3,7 @@
 #pragma once
 
 #include <rules/client-messenger.hh>
+#include <rules/config.hh>
 #include <rules/options.hh>
 #include <rules/replay-messenger.hh>
 #include <rules/server-messenger.hh>
@@ -10,6 +11,7 @@
 namespace rules {
 
 using f_rules_init = void (*)(const Options&);
+using f_rules_config = void (*)(Config*);
 using f_rules_result = void (*)();
 
 using f_client_loop = void (*)(ClientMessenger_sptr);

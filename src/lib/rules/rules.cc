@@ -448,7 +448,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
 
 void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 {
-    msgr->push_id(players_.back()->id);
+    msgr->push_id(players_.size());
 
     at_start();
     at_server_start(msgr);

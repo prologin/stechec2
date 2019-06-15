@@ -36,10 +36,10 @@ TEST_F(RulesTest, Rules_FinishDraw)
         rules->game_state().set_cell(to_play1[idx1++], PLAYER_1);
         rules->end_of_player_turn(PLAYER_1);
 
-        if (idx1 == to_play1.size())
-            EXPECT_TRUE(rules->is_finished());
-        else
-            EXPECT_FALSE(rules->is_finished());
+        // The game is finished only after player 2 has played. There is no
+        // support for finishing a game in the middle of a round in the server
+        // loop.
+        EXPECT_FALSE(rules->is_finished());
 
         rules->start_of_player_turn(PLAYER_2);
         if (idx2 < to_play2.size())

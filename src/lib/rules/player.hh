@@ -13,6 +13,7 @@
 
 namespace rules {
 
+// TODO: refactor rules::Player to rules::Client
 struct Player final
 {
     Player() = default;

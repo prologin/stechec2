@@ -18,7 +18,7 @@ TEST_F(ApiTest, Api_Board)
         std::vector<int> expected(9, player.api->game_state().NO_PLAYER);
         EXPECT_EQ(board, expected);
 
-        player.api->game_state().set_player_turn(player.id, true);
+        player.api->game_state().set_player_can_play(player.id, true);
         if (player.id == PLAYER_1)
         {
             EXPECT_EQ(OK, player.api->play(position{0, 0}));
@@ -39,7 +39,7 @@ TEST_F(ApiTest, Api_Cancel)
     for (auto& player : players)
     {
         EXPECT_FALSE(player.api->cancel());
-        player.api->game_state().set_player_turn(player.id, true);
+        player.api->game_state().set_player_can_play(player.id, true);
 
         EXPECT_EQ(OK, player.api->play(position{0, 0}));
         EXPECT_EQ(player.id, player.api->board()[0]);
