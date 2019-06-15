@@ -7,6 +7,7 @@
 #include <rules/api.hh>
 #include <rules/player.hh>
 
+#include "actions.hh"
 #include "constant.hh"
 #include "game_state.hh"
 
@@ -14,13 +15,13 @@
 ** The methods of this class are exported through 'interface.cc'
 ** to be called by the clients
 */
-class Api : public rules::Api<GameState>
+class Api final : public rules::Api<GameState, error>
 {
 public:
     Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player);
 
     /// Play at the given position
-    error play(position pos);
+    ApiActionFunc<ActionPlay> play;
 
     /// Returns your team number
     int my_team();

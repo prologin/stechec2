@@ -40,7 +40,8 @@ public:
 
     bool is_finished() override;
 
-    GameState& game_state() const;
+    GameState& game_state();
+    const GameState& game_state() const;
 
 protected:
     f_champion_init_game champion_init_game_;

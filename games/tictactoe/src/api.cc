@@ -11,24 +11,9 @@
 Api* api;
 
 Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
-    : rules::Api<GameState>(std::move(game_state), player)
+    : rules::Api<GameState, error>(std::move(game_state), player), play(this)
 {
     api = this;
-}
-
-/// Play at the given position
-error Api::play(position pos)
-{
-    auto action = std::make_shared<ActionPlay>(pos, player_->id);
-
-    error err;
-    if ((err = static_cast<error>(game_state_check(action))) != OK)
-        return err;
-
-    actions_.add(action);
-    game_state_save();
-    game_state_apply(action);
-    return OK;
 }
 
 /// Returns your team number
