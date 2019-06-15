@@ -1,0 +1,35 @@
+# Maintainer: Association Prologin <association@prologin.org>
+
+pkgname=tictactoe
+pkgrel=1
+pkgver=r616
+pkgdesc="Stechec2 game: ${pkgname}"
+arch=('x86_64')
+url="http://prologin.org/"
+license=('GPL')
+depends=('stechec2' 'gflags' 'zeromq' 'ocaml' 'python-yaml' 'ruby')
+makedepends=('git')
+source=("https://github.com/prologin/stechec2")
+sha512sums=(SKIP)
+
+pkgver() {
+    cd stechec2
+    echo r$(git rev-list --count HEAD)
+}
+
+build() {
+    cd stechec2
+    ./waf.py configure build --prefix=/usr --libdir=/usr/lib \
+                             --with-games="$pkgname" --games-only
+}
+
+package() {
+    cd stechec2
+    ./waf.py install --destdir="$pkgdir"
+
+    yaml_file="$srcdir/stechec2/games/$pkgname/$pkgname.yml"
+    stechec2-generator player "$yaml_file" \
+	"$pkgdir/usr/share/stechec2/$pkgname/player"
+    stechec2-generator server "$yaml_file" \
+	"$pkgdir/usr/share/stechec2/$pkgname/makefiles"
+}
