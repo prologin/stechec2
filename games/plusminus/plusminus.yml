@@ -1,5 +1,6 @@
 name: plusminus
 rules_type: synchronous
+player_count: 2
 
 enum:
   -

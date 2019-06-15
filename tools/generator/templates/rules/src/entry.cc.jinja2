@@ -19,6 +19,12 @@ static Rules* rules_;
 
 extern "C" {
 
+void rules_config(rules::Config* cfg)
+{
+    cfg->name = "{{ game.name }}";
+    cfg->player_count = {{ game.player_count }};
+}
+
 void rules_init(const rules::Options& opt)
 {
     utils::Logger::get().level() = (utils::Logger::DisplayLevel)opt.verbose;

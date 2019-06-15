@@ -19,7 +19,7 @@ DEFINE_string(sub_addr, "tcp://0.0.0.0:42125",
               "Set subscribe address binding (ZeroMQ)");
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(champion, "champion.so", "Champion library");
-DEFINE_int32(client_id, 0, "Champion order");
+DEFINE_int32(client_id, -1, "Champion id, -1 for auto allocation");
 DEFINE_string(map, "", "Map file");
 DEFINE_bool(spectator, false, "Set if the client is a spectator");
 DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
@@ -93,21 +93,18 @@ void Client::sckt_init()
     else
         client_type = rules::PLAYER;
 
-    // Send a message to get an ID from the server
-    // To avoid useless message, the client_id of the request corresponds
-    // to the type of the client connecting (PLAYER, SPECTATOR, ...)
-    // and its requested identifier.
-    int id_and_type = client_type + rules::MAX_PLAYER_TYPE * FLAGS_client_id;
+    // Send a message to announce or get an id from the server
     utils::Buffer buf_req;
-    net::Message msg(net::MSG_CONNECT, id_and_type);
+    net::Message msg(net::MSG_CONNECT, FLAGS_client_id);
 
     msg.handle_buffer(buf_req);
+    buf_req.handle(client_type);
     buf_req.handle(FLAGS_name);
 
     // Send the request
     std::unique_ptr<utils::Buffer> buf_rep;
     if (!sckt_->send(buf_req) || !(buf_rep = sckt_->recv()) ||
-        (msg.handle_buffer(*buf_rep), msg.client_id == 0))
+        (msg.handle_buffer(*buf_rep), msg.client_id == -1))
         FATAL("Unable to get an ID from the server");
 
     player_ = std::make_shared<rules::Player>(msg.client_id, client_type);

@@ -21,18 +21,19 @@ public:
 private:
     void sckt_init();
     void sckt_close();
-    void wait_for_players();
+    void wait_for_clients();
     std::shared_ptr<std::ostream> replay_init();
     void replay_save_results(std::shared_ptr<std::ostream> replay_stream);
 
+    rules::f_rules_config rules_config;
     rules::f_rules_init rules_init;
     rules::f_rules_result rules_result;
     rules::f_server_loop server_loop;
 
 private:
-    uint32_t nb_players_;
     std::unique_ptr<utils::DLL> rules_lib_;
 
+    rules::Config config_;
     rules::Players players_;
     rules::Players spectators_;
     rules::ServerMessenger_sptr msgr_;

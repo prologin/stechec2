@@ -8,11 +8,7 @@ GameState::GameState(const rules::Players& players)
     : rules::GameState(players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
               NO_PLAYER, NO_PLAYER, NO_PLAYER})
-{
-    for (const auto& player : players_)
-        if (player->type == rules::PLAYER)
-            is_player_turn_.emplace(std::make_pair(player->id, false));
-}
+{}
 
 GameState* GameState::copy() const
 {
@@ -84,7 +80,8 @@ bool GameState::is_board_full() const
 
 bool GameState::is_finished() const
 {
-    return is_board_full() || winner() != NO_PLAYER;
+    return current_player_ == LAST_PLAYER &&
+           (is_board_full() || winner() != NO_PLAYER);
 }
 
 void GameState::compute_scores()
@@ -96,22 +93,29 @@ void GameState::compute_scores()
     {
         if (player->id == (uint32_t)winner_id)
         {
-            player->score += 1;
+            player->score = 1;
             break;
         }
     }
 }
 
-void GameState::set_player_turn(int player_id, bool state)
+void GameState::set_current_player(int player_id)
 {
-    assert(is_player_turn_.count(player_id) != 0);
-    is_player_turn_.at(player_id) = state;
+    current_player_ = player_id;
 }
 
-bool GameState::is_player_turn(int player_id) const
+int GameState::get_current_player() const
 {
-    assert(is_player_turn_.count(player_id) != 0);
-    return is_player_turn_.at(player_id);
+    return current_player_;
+}
+
+void GameState::set_player_can_play(int player_id, bool can_play)
+{
+    player_can_play_.at(player_id) = can_play;
+}
+bool GameState::player_can_play(int player_id) const
+{
+    return player_can_play_.at(player_id);
 }
 
 std::ostream& operator<<(std::ostream& out, const GameState& gs)

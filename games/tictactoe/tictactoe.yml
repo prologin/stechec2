@@ -1,5 +1,6 @@
 name: tictactoe
 rules_type: turnbased
+player_count: 2
 
 constant:
   -

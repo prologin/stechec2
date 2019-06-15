@@ -234,18 +234,18 @@ def stechec2_run(args, options):
     # Start clients, then spectators
     client_id = 0
     for i, lib_so in enumerate(clients):
-        client_id += 1
         lib_so = os.path.expanduser(lib_so)
         try:
             name = client_names[i]
         except IndexError:
             name = 'client-{}'.format(i + 1)
         run_client(client_id, lib_so, name, False, args.isolate)
+        client_id += 1
 
     for i, lib_so in enumerate(spectators):
-        client_id += 1
         lib_so = os.path.expanduser(lib_so)
         run_client(client_id, lib_so, 'spectator-{}'.format(i + 1), True)
+        client_id += 1
 
     # Wait them all
     while poll:

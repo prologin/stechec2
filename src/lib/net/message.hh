@@ -40,7 +40,7 @@ struct Message
 
     // Id of the client that sent the message
     // Ignored for replies
-    uint32_t client_id;
+    int32_t client_id;
 };
 
 } // namespace net
