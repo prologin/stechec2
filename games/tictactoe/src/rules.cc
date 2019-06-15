@@ -123,7 +123,12 @@ bool Rules::is_finished()
     return st.winner() != st.NO_PLAYER || is_full;
 }
 
-GameState& Rules::game_state() const
+GameState& Rules::game_state()
+{
+    return api_->game_state();
+}
+
+const GameState& Rules::game_state() const
 {
     return api_->game_state();
 }

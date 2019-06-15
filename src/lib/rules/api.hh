@@ -10,9 +10,38 @@
 
 namespace rules {
 
-template <typename GameState>
+template <typename GameState, typename ApiError>
 class Api
 {
+protected:
+    // Functor template implementing the boilerplate of applying a champion's
+    // action to the game state.
+    template <typename Action>
+    class ApiActionFunc
+    {
+    public:
+        ApiActionFunc(Api* api) : api_(api) {}
+
+        template <typename... Args>
+        ApiError operator()(Args&&... args)
+        {
+            const auto action = std::make_shared<Action>(
+                std::forward<Args>(args)..., api_->player_->id);
+
+            ApiError err;
+            if ((err = api_->game_state_check(action)) != ApiError::OK)
+                return err;
+
+            api_->actions_.add(action);
+            api_->game_state_save();
+            api_->game_state_apply(action);
+            return ApiError::OK;
+        }
+
+    private:
+        Api* api_;
+    };
+
 public:
     Api(std::unique_ptr<GameState> game_state, Player_sptr player)
         : game_state_(std::move(game_state)), player_(player)
@@ -28,9 +57,9 @@ public:
     const GameState& game_state() const { return *game_state_; }
 
     // Checks action on GameState
-    int game_state_check(IAction_sptr action) const
+    ApiError game_state_check(IAction_sptr action) const
     {
-        return game_state_->check(action);
+        return static_cast<ApiError>(game_state_->check(action));
     }
 
     // Applies action to GameState
