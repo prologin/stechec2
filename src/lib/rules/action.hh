@@ -44,15 +44,18 @@ public:
 template <typename TState>
 class Action : public IAction
 {
+    static_assert(std::is_base_of<rules::GameState, TState>::value,
+                  "TState not derived from rules::GameState");
+
 public:
     virtual int check(const TState& st) const = 0;
     int check(const GameState& st) const override
     {
-        return check(dynamic_cast<const TState&>(st));
+        return check(static_cast<const TState&>(st));
     }
 
     virtual void apply_on(TState* st) const = 0;
-    void apply(GameState* st) const { apply_on(dynamic_cast<TState*>(st)); }
+    void apply(GameState* st) const { apply_on(static_cast<TState*>(st)); }
     void apply(std::unique_ptr<TState>& st) const { apply_on(st.get()); }
 };
 
