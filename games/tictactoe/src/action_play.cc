@@ -14,8 +14,8 @@ int ActionPlay::check(const GameState& st) const
     return OK;
 }
 
-void ActionPlay::apply(GameState& st) const
+void ActionPlay::apply_on(GameState* st) const
 {
-    st.set_cell(pos_, player_id_);
-    st.set_player_turn(player_id_, false);
+    st->set_cell(pos_, player_id_);
+    st->set_player_turn(player_id_, false);
 }
