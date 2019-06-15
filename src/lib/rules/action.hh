@@ -8,8 +8,6 @@
 
 #include <utils/buffer.hh>
 
-#include "game-state.hh"
-
 namespace rules {
 
 class GameState;
@@ -26,7 +24,7 @@ public:
     virtual int check(const GameState& st) const = 0;
 
     // Apply action to game state.
-    virtual void apply(GameState& st) const = 0;
+    virtual void apply(GameState* st) const = 0;
 
     // Handles serialization and deserialization of the Action object to a
     // buffer.
@@ -53,11 +51,9 @@ public:
         return check(dynamic_cast<const TState&>(st));
     }
 
-    virtual void apply(TState& st) const = 0;
-    void apply(GameState& st) const override
-    {
-        apply(dynamic_cast<TState&>(st));
-    }
+    virtual void apply_on(TState* st) const = 0;
+    void apply(GameState* st) const { apply_on(dynamic_cast<TState*>(st)); }
+    void apply(std::unique_ptr<TState>& st) const { apply_on(st.get()); }
 };
 
 using IAction_sptr = std::shared_ptr<IAction>;

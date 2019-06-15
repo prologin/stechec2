@@ -16,7 +16,7 @@ public:
     virtual GameState* copy() const = 0;
 
     int check(IAction_sptr action) const { return action->check(*this); }
-    void apply(IAction_sptr action) { action->apply(*this); }
+    void apply(IAction_sptr action) { action->apply(this); }
 
 protected:
     // Protected to be called by copy()

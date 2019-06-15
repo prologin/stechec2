@@ -30,7 +30,7 @@ public:
             return 0;
     }
 
-    void apply(MyGameState& st) const override { st.x += 1; }
+    void apply_on(MyGameState* st) const override { st->x += 1; }
 
     void handle_buffer(utils::Buffer&) override {}
 
@@ -52,7 +52,7 @@ public:
             return 0;
     }
 
-    void apply(MyGameState& st) const override { st.x -= 1; }
+    void apply_on(MyGameState* st) const override { st->x -= 1; }
 
     void handle_buffer(utils::Buffer&) override {}
 
@@ -69,13 +69,13 @@ TEST(RulesAction, CheckApply)
     MyIncrAction incr;
     MyDecrAction decr;
 
-    incr.apply(mgs);
+    incr.apply(&mgs);
     EXPECT_EQ(1, mgs.x);
 
-    incr.apply(mgs);
+    incr.apply(&mgs);
     EXPECT_EQ(2, mgs.x);
 
-    decr.apply(mgs);
+    decr.apply(&mgs);
     EXPECT_EQ(1, mgs.x);
 }
 
@@ -89,7 +89,7 @@ TEST(RulesAction, CheckError)
     EXPECT_NE(0, decr.check(mgs));
 
     for (int i = 0; i < 3; ++i)
-        incr.apply(mgs);
+        incr.apply(&mgs);
 
     EXPECT_NE(0, incr.check(mgs));
 }

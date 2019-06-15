@@ -25,7 +25,7 @@ TEST_F(ActionTest, ActionPlay_AlreadyOccupied)
     ActionPlay act(pos, PLAYER_1);
     EXPECT_EQ(OK, act.check(*st));
 
-    act.apply(*st);
+    act.apply(st);
     EXPECT_EQ(PLAYER_1, st->get_cell(pos));
 
     ActionPlay act2(pos, PLAYER_1);
@@ -43,7 +43,7 @@ TEST_F(ActionTest, ActionPlay_AlreadyPlayed)
 
     ActionPlay act({0, 0}, PLAYER_1);
     EXPECT_EQ(OK, act.check(*st));
-    act.apply(*st);
+    act.apply(st);
 
     ActionPlay act2({1, 1}, PLAYER_1);
     EXPECT_EQ(ALREADY_PLAYED, act2.check(*st));
@@ -57,12 +57,12 @@ TEST_F(ActionTest, ActionPlay_Ok)
     ActionPlay act({0, 0}, PLAYER_1);
     EXPECT_EQ(OK, act.check(*st));
     EXPECT_EQ(st->NO_PLAYER, st->get_cell({0, 0}));
-    act.apply(*st);
+    act.apply(st);
     EXPECT_EQ(PLAYER_1, st->get_cell({0, 0}));
 
     ActionPlay act2({2, 2}, PLAYER_2);
     EXPECT_EQ(OK, act2.check(*st));
     EXPECT_EQ(st->NO_PLAYER, st->get_cell({2, 2}));
-    act2.apply(*st);
+    act2.apply(st);
     EXPECT_EQ(PLAYER_2, st->get_cell({2, 2}));
 }

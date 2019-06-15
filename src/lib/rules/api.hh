@@ -6,6 +6,7 @@
 
 #include "actions.hh"
 #include "game-state-history.hh"
+#include "player.hh"
 
 namespace rules {
 
