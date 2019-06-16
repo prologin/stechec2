@@ -15,28 +15,47 @@ class Api
 {
 protected:
     // Functor template implementing the boilerplate of applying a champion's
-    // action to the game state.
-    template <typename Action>
+    // action to the game state. The T template parameter is the first argument
+    // of the Action's constructor. It is optional, but declaring it allows
+    // using brace-initializers to type T when calling operator().
+    template <typename Action, typename T = Action>
     class ApiActionFunc
     {
     public:
         ApiActionFunc(Api* api) : api_(api) {}
+        virtual ~ApiActionFunc() = default;
 
+        // Apply the champion's action to the game state
         template <typename... Args>
-        ApiError operator()(Args&&... args)
+        ApiError call(Args&&... args)
         {
+            // Build action object
             const auto action = std::make_shared<Action>(
                 std::forward<Args>(args)..., api_->player_->id);
 
+            // Check action
             ApiError err;
             if ((err = api_->game_state_check(action)) != ApiError::OK)
                 return err;
 
+            // Apply action
             api_->actions_.add(action);
             api_->game_state_save();
             api_->game_state_apply(action);
             return ApiError::OK;
         }
+
+        // Universal forward
+        template <typename... Args>
+        ApiError operator()(Args&&... args)
+        {
+            return call(std::forward<Args>(args)...);
+        }
+
+        // Explicity definining argument type to allow brace-initializing T,
+        // which is not otherwise usable with the universal forward defined
+        // above.
+        ApiError operator()(T arg) { return call(arg); }
 
     private:
         Api* api_;
