@@ -221,7 +221,7 @@ So, here are the observers we'll implement:
 * ``my_player``: returns the ID of the current player
 * ``get_column``: returns the column (a int array corresponding to the disks
   of a column and their owners (-1 for "free", the id of the player else).
-  The indice ``0`` of a column will represent its bottom.
+  The index ``0`` of a column will represent its bottom.
 * ``cell``: returns the owner of the specified cell (-1 for "free").
 
 The actions:
@@ -394,6 +394,7 @@ we just created are working well.
 
 Here's a template for ``test-gamestate.cc``::
 
+    #include <memory>
     #include <gtest/gtest.h>
     #include "../game_state.hh"
 
@@ -413,10 +414,10 @@ Here's a template for ``test-gamestate.cc``::
                     }
                 );
 
-                gamestate_ = new GameState(players);
+                gamestate_ = std::make_unique<GameState>(players);
             }
 
-            GameState* gamestate_;
+            std::unique_ptr<GameState> gamestate_;
     };
 
     TEST_F(GameStateTest, TestName)
@@ -518,16 +519,14 @@ The actions
 The actions are the only objects sent on the network. Let me expand on that
 part a bit. When you run a stechec2 match, you have a server and two clients.
 They load the same shared library that defines the rules of the game, and they
-create a local GameState (actually a linked list of gamestates, to allow a
-cancel() action that undoes actions). When a player wants to perform an action,
-the rules first check if the action can be made considering the current state
-of the game. If everything is okay, the stechec2 client "apply" the action to
-the gamestate and send the action over the network. The server then receives
-the action, and checks if it can be made too. If not, there's a big
-synchronisation problem (or possibly an attack), so the server disconnects the
-client. Else, the server applies the action locally to his gamestate and
-broadcast the action to the other players (so that they can do the same with
-their gamestates).
+create a local GameState. When a player wants to perform an action, the rules
+first check if the action can be made considering the current state of the
+game. If everything is okay, the stechec2 client "apply" the action to the
+gamestate and send the action over the network. The server then receives the
+action, and checks if it can be made too. If not, there's a big synchronisation
+problem (or possibly an attack), so the server disconnects the client. Else,
+the server applies the action locally to his gamestate and broadcast the action
+to the other players (so that they can do the same with their gamestates).
 
 An action must define five functions that will be used by the rules:
 
@@ -551,7 +550,7 @@ during the game. These functions are directly "translated" in the language from
 which they are calling them, so you just have to implement the behaviour as if
 everyone played in C++.
 
-The observers are a realy easy part, you just have to return some values from
+The observers are a really easy part, you just have to return some values from
 the GameState and the rules::Player objects. For instance with my_player::
 
     int Api::my_player()
@@ -568,17 +567,17 @@ have to do this::
 
     bool Api::cancel()
     {
-        if (!game_state_->can_cancel())
+        if (!game_state_.can_cancel())
             return false;
         actions_.cancel();
-        game_state_ = rules::cancel(game_state_);
+        game_state_.cancel();
         return true;
     }
 
-Internally, there's a linked list of gamestates. The ``rules::cancel`` function
-simply removes the current gamestate and returns the last.
+Internally, ``game_state_`` holds previous versions of the game state. The
+``cancel`` method restores the previous version as the current one.
 
-The actions in the API are already implemented. Each action, first calls the
+The actions in the API are already implemented. Each action first calls the
 appropriate ``check`` function, and if this returns OK, calls ``apply_on`` to
 update our gamestate, and add the action to the actions list.
 
@@ -586,12 +585,12 @@ update our gamestate, and add the action to the actions list.
 The rules object
 ----------------
 
-Let's typedef the function that will be called by the player as void*()'s in
+Let's declare the functions that will be called by the player as void*()'s in
 our rules.hh::
 
-    typedef void (*f_champion_init_game)();
-    typedef void (*f_champion_play_turn)();
-    typedef void (*f_champion_end_game)();
+    using f_champion_init_game = void (*)();
+    using f_champion_play_turn = void (*)();
+    using f_champion_end_game = void (*)();
 
 
 Then add these attributes to the Rules class::
@@ -602,7 +601,7 @@ Then add these attributes to the Rules class::
         f_champion_end_game champion_end_game;
 
 
-In the ``Rules`` constructor, we have to retrieve the champion library
+In the ``Rules`` constructor, we have to retrieve the champion library:
 
 .. code-block:: cpp
   :emphasize-lines: 8-13
@@ -622,8 +621,8 @@ In the ``Rules`` constructor, we have to retrieve the champion library
             champion_dll_->get<f_champion_end_game>("end_game");
       }
   
-      GameState* game_state = new GameState(opt.players);
-      api_ = std::make_unique<Api>(game_state, opt.player);
+      api_ = std::make_unique<Api>(
+          std::make_unique<GameState>(opt.players), opt.player);
       register_actions();
   }
 
@@ -677,21 +676,20 @@ functions::
 
     void Rules::start_of_player_turn(unsigned int /* player_id */)
     {
-        api_->game_state()->increment_turn();
+        api_->game_state().increment_turn();
     }
 
     void Rules::end_of_player_turn(unsigned int /* player_id */)
     {
-        // Clear the list of game states at the end of each turn (half-round)
-        // We need the linked list of game states only for undo and history,
-        // therefore old states are not needed anymore after the turn ends.
-        api_->game_state()->clear_old_version();
+        // Clear the previous game states at the end of each turn (half-round)
+        // We need the previous game states only for undo and history, therefore
+        // old states are not needed anymore after the turn ends.
+        api_->clear_old_game_states();
     }
 
     bool Rules::is_finished()
     {
-        const GameState* st = api_->game_state();
-        return st->winner() != -1;
+        return api_->game_state().winner() != -1;
     }
 
 In stechec2, there is a difference between turns and round. A **round** is made
