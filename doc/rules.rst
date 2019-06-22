@@ -545,10 +545,25 @@ The API
 -------
 
 In the bunch of files you've previously generated, there is a file called
-``api.cc`` that will describe what happens when the player calls a function
-during the game. These functions are directly "translated" in the language from
-which they are calling them, so you just have to implement the behaviour as if
-everyone played in C++.
+``api.cc`` that contains the ``Api`` class. It has two purposes:
+
+1. It describes what happens when the player calls a function during the game.
+   These functions are directly "translated" in the language from which they
+   are calling them, so you just have to implement the behaviour as if everyone
+   played in C++.
+2. The Api class also holds the state of the current player turn, that is, the
+   list of actions they have performed and the associated game state history.
+
+There are multiple kinds of methods defined in the Api class:
+
+#. Actions, which mutates the game state. The Api methods should not contain
+   the actual logic, but create and use the matching Action instance.
+#. Meta-actions, which mutate the list of actions. This is the ``cancel``
+   action, that cancels the last action and restores the previous game state.
+#. Observers, which return information about the current game state.
+#. Meta-observers, which return information about the modifications about the
+   game state, this is the ``history`` observer, which returns the list of
+   actions performed by the other players in the last round.
 
 The observers are a really easy part, you just have to return some values from
 the GameState and the rules::Player objects. For instance with my_player::
@@ -562,20 +577,10 @@ Implement all the other observers: ``get_column`` and ``get_cell``. In order to
 call our gamestate-specific functions, you need to use the ``game_state_``
 member.
 
-The ``cancel`` function is already implemented in stechec2. To call it you just
-have to do this::
-
-    bool Api::cancel()
-    {
-        if (!game_state_.can_cancel())
-            return false;
-        actions_.cancel();
-        game_state_.cancel();
-        return true;
-    }
-
-Internally, ``game_state_`` holds previous versions of the game state. The
-``cancel`` method restores the previous version as the current one.
+The ``cancel`` function is already implemented in ``rules::Api``. Internally,
+the Api class holds previous versions of the game state. The ``cancel`` method
+restores the previous version as the current one, and removes the last action
+from the action history.
 
 The actions in the API are already implemented. Each action first calls the
 appropriate ``check`` function, and if this returns OK, calls ``apply_on`` to
