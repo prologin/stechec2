@@ -2,10 +2,13 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include <rules/actions.hh>
 #include <rules/game-state.hh>
 #include <rules/player.hh>
-#include <vector>
+#include <utils/versioned_ptr.hh>
 
 #include "constant.hh"
 #include "game_state.hh"
@@ -16,9 +19,8 @@
 */
 class Api
 {
-
 public:
-    Api(GameState* game_state, rules::Player_sptr player);
+    Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player);
     virtual ~Api() {}
 
     const rules::Player_sptr player() const { return player_; }
@@ -26,15 +28,12 @@ public:
 
     rules::Actions* actions() { return &actions_; }
 
-    const GameState* game_state() const { return game_state_; }
-    GameState* game_state() { return game_state_; }
-    void game_state_set(rules::GameState* gs)
-    {
-        game_state_ = dynamic_cast<GameState*>(gs);
-    }
+    const GameState& game_state() const { return game_state_; }
+    GameState& game_state() { return game_state_; }
+    void clear_old_game_states() { game_state_.clear_old_versions(); }
 
 private:
-    GameState* game_state_;
+    utils::VersionedPtr<GameState> game_state_;
     rules::Player_sptr player_;
     rules::Actions actions_;
 

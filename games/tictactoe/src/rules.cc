@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
-#include "rules.hh"
 #include "actions.hh"
+#include "rules.hh"
 
 Rules::Rules(const rules::Options opt) : TurnBasedRules(opt), sandbox_(opt.time)
 {
@@ -17,14 +17,9 @@ Rules::Rules(const rules::Options opt) : TurnBasedRules(opt), sandbox_(opt.time)
             champion_dll_->get<f_champion_end_game>("end_game");
     }
 
-    GameState* game_state = new GameState(opt.players);
-    api_ = std::make_unique<Api>(game_state, opt.player);
+    auto game_state = std::make_unique<GameState>(opt.players);
+    api_ = std::make_unique<Api>(std::move(game_state), opt.player);
     register_actions();
-}
-
-Rules::~Rules()
-{
-    delete api_->game_state();
 }
 
 void Rules::register_actions()
@@ -50,7 +45,7 @@ void Rules::apply_action(const rules::IAction_sptr& action)
         FATAL("Synchronization error: received action %d from player %d, but "
               "check() on current gamestate returned %d.",
               action->id(), action->player_id(), err);
-    api_->game_state_set(action->apply(api_->game_state()));
+    action->apply(api_->game_state());
 }
 
 void Rules::at_player_start(rules::ClientMessenger_sptr)
@@ -106,7 +101,7 @@ void Rules::spectator_turn()
 
 void Rules::start_of_player_turn(unsigned int player_id)
 {
-    api_->game_state()->set_player_turn(player_id, true);
+    api_->game_state().set_player_turn(player_id, true);
 }
 
 void Rules::end_of_player_turn(unsigned int /* player_id */)
@@ -114,21 +109,21 @@ void Rules::end_of_player_turn(unsigned int /* player_id */)
     // Clear the list of game states at the end of each turn (half-round)
     // We need the linked list of game states only for undo and history,
     // therefore old states are not needed anymore after the turn ends.
-    api_->game_state()->clear_old_version();
+    api_->clear_old_game_states();
 }
 
 bool Rules::is_finished()
 {
-    const GameState* st = api_->game_state();
-    std::vector<int> board = st->get_board();
+    const auto& st = api_->game_state();
+    std::vector<int> board = st.get_board();
     bool is_full = true;
     for (int cell : board)
-        if (cell == st->NO_PLAYER)
+        if (cell == st.NO_PLAYER)
             is_full = false;
-    return st->winner() != st->NO_PLAYER || is_full;
+    return st.winner() != st.NO_PLAYER || is_full;
 }
 
-GameState* Rules::get_game_state() const
+GameState& Rules::game_state() const
 {
     return api_->game_state();
 }

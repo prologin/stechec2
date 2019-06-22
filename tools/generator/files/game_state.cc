@@ -15,11 +15,6 @@ GameState::GameState(const GameState& st)
     // FIXME
 }
 
-rules::GameState* GameState::copy() const
-{
-    return new GameState(*this);
-}
-
 GameState::~GameState()
 {
     // FIXME
