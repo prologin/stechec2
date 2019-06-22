@@ -74,6 +74,19 @@ int GameState::winner() const
     return NO_PLAYER;
 }
 
+bool GameState::is_board_full() const
+{
+    for (int cell : get_board())
+        if (cell == NO_PLAYER)
+            return false;
+    return true;
+}
+
+bool GameState::is_finished() const
+{
+    return is_board_full() || winner() != NO_PLAYER;
+}
+
 void GameState::compute_scores()
 {
     auto winner_id = winner();

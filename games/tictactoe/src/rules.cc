@@ -115,13 +115,7 @@ void Rules::end_of_player_turn(unsigned int /* player_id */)
 
 bool Rules::is_finished()
 {
-    const auto& st = api_->game_state();
-    std::vector<int> board = st.get_board();
-    bool is_full = true;
-    for (int cell : board)
-        if (cell == st.NO_PLAYER)
-            is_full = false;
-    return st.winner() != st.NO_PLAYER || is_full;
+    return api_->game_state().is_finished();
 }
 
 GameState& Rules::game_state()
