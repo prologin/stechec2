@@ -17,8 +17,6 @@ public:
 
     int check(const GameState& st) const override;
     void apply_on(GameState* st) const override;
-    // Unhide base class apply()
-    using rules::Action<GameState>::apply;
 
     void handle_buffer(utils::Buffer& buf) override
     {
