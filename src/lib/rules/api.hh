@@ -68,7 +68,6 @@ public:
     virtual ~Api() {}
 
     const Player_sptr player() const { return player_; }
-    void player_set(Player_sptr player) { player_ = player; }
 
     Actions* actions() { return &actions_; }
 
