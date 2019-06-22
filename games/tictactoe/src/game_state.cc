@@ -2,6 +2,8 @@
 // Copyright (c) 2018 Association Prologin <association@prologin.org>
 #include "game_state.hh"
 
+#include <algorithm>
+
 GameState::GameState(rules::Players_sptr players)
     : players_(players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
@@ -70,6 +72,21 @@ int GameState::winner() const
         return get_cell({0, 2});
 
     return NO_PLAYER;
+}
+
+void GameState::compute_scores()
+{
+    auto winner_id = winner();
+    if (winner_id == NO_PLAYER)
+        return;
+    for (auto player : players_->players)
+    {
+        if (player->id == (uint32_t)winner_id)
+        {
+            player->score += 1;
+            break;
+        }
+    }
 }
 
 void GameState::set_player_turn(int player_id, bool state)

@@ -110,6 +110,7 @@ void Rules::end_of_player_turn(unsigned int /* player_id */)
     // We need the linked list of game states only for undo and history,
     // therefore old states are not needed anymore after the turn ends.
     api_->clear_old_game_states();
+    api_->game_state().compute_scores();
 }
 
 bool Rules::is_finished()

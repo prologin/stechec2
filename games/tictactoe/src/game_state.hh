@@ -24,6 +24,7 @@ public:
     void set_cell(position pos, int player_id);
 
     int winner() const;
+    void compute_scores();
 
     void set_player_turn(int player_id, bool state);
     bool is_player_turn(int player_id) const;
