@@ -32,7 +32,7 @@ struct Player
     std::string name;
 };
 
-typedef std::shared_ptr<Player> Player_sptr;
+using Player_sptr = std::shared_ptr<Player>;
 
 struct Players
 {
@@ -62,7 +62,7 @@ struct Players
     std::vector<Player_sptr> players;
 };
 
-typedef std::shared_ptr<Players> Players_sptr;
+using Players_sptr = std::shared_ptr<Players>;
 
 enum PlayerType
 {

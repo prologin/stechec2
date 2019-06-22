@@ -24,6 +24,6 @@ public:
     utils::Buffer* pull(int flags = 0);
 };
 
-typedef std::shared_ptr<ClientSocket> ClientSocket_sptr;
+using ClientSocket_sptr = std::shared_ptr<ClientSocket>;
 
 } // namespace net

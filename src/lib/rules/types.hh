@@ -8,10 +8,10 @@
 
 namespace rules {
 
-typedef void (*f_rules_init)(const Options&);
-typedef void (*f_rules_result)();
+using f_rules_init = void (*)(const Options&);
+using f_rules_result = void (*)();
 
-typedef void (*f_client_loop)(ClientMessenger_sptr);
-typedef void (*f_server_loop)(ServerMessenger_sptr);
+using f_client_loop = void (*)(ClientMessenger_sptr);
+using f_server_loop = void (*)(ServerMessenger_sptr);
 
 } // namespace rules

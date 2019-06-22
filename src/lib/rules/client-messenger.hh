@@ -46,6 +46,6 @@ private:
     uint32_t client_id_;
 };
 
-typedef std::shared_ptr<ClientMessenger> ClientMessenger_sptr;
+using ClientMessenger_sptr = std::shared_ptr<ClientMessenger>;
 
 } // namespace rules
