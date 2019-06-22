@@ -191,7 +191,7 @@ def build_lib(bld):
               use=['ZeroMQ', 'rt', 'gflags'],
               lib=([] if platform.system() == 'FreeBSD' else ['dl']),
               export_includes='src/lib',
-              install_path=None if bld.env.GAMES_ONLY else '${PREFIX}/bin')
+              install_path=None if bld.env.GAMES_ONLY else '${PREFIX}/lib')
 
     for test in []:
         bld.program(features='gtest',
