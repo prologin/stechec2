@@ -6,18 +6,19 @@
 #include <list>
 #include <memory>
 #include <unordered_map>
+
 #include <utils/buffer.hh>
 #include <utils/log.hh>
 
 #include "action.hh"
-
-#define MAX_ACTIONS 1024
 
 namespace rules {
 
 class Actions
 {
 public:
+    static constexpr size_t MAX_ACTIONS = 1024;
+
     // To handle unserialization of multiple Actions, we have to be able to
     // instantiate the corresponding objects
     void register_action(uint32_t action_id, ActionFactory action_factory);
@@ -34,7 +35,7 @@ public:
 
     void cancel() { actions_.pop_back(); }
 
-    size_t size() { return actions_.size(); }
+    size_t size() const { return actions_.size(); }
 
     void clear() { actions_.clear(); }
 

@@ -8,7 +8,7 @@ void Actions::handle_buffer(utils::Buffer& buf)
 {
     if (buf.serialize())
     {
-        for (auto action : actions_)
+        for (const auto action : actions_)
         {
             // The id is needed to reconstruct the action when unserializing
             uint32_t action_id = action->id();

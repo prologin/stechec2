@@ -49,7 +49,7 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 
         /* Apply actions onto the gamestate */
         /* We should already have applied our actions */
-        for (auto action : actions->actions())
+        for (const auto action : actions->actions())
             if (action->player_id() != opt_.player->id)
                 apply_action(action);
 
@@ -83,7 +83,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             break;
 
         msgr->pull_actions(actions);
-        for (auto action : actions->actions())
+        for (const auto action : actions->actions())
             apply_action(action);
         actions->clear();
 
@@ -97,13 +97,13 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
     std::unordered_set<uint32_t> spectators_ids;
-    for (auto spectator : spectators_->players)
+    for (const auto spectator : spectators_->players)
         spectators_ids.insert(spectator->id);
 
     std::unordered_set<uint32_t> players_ids;
-    for (auto player : players_->players)
+    for (const auto player : players_->players)
         players_ids.insert(player->id);
-    for (auto spectator : spectators_->players)
+    for (const auto spectator : spectators_->players)
         players_ids.insert(spectator->id);
 
     std::set<uint32_t> players_timeouting;
@@ -124,7 +124,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         actions->clear();
 
         players_timeouting.clear();
-        for (auto player : players_->players)
+        for (const auto player : players_->players)
             players_timeouting.insert(player->id);
 
         for (unsigned int i = 0; i < players_count; ++i)
@@ -148,7 +148,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         }
 
         // Increase timeout count for players that did not answer in time
-        for (auto player_id : players_timeouting)
+        for (const auto player_id : players_timeouting)
         {
             uint32_t player_id_timeouting = 0;
             for (uint32_t i = 0; i < players_->players.size(); ++i)
@@ -177,7 +177,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             spectators_count--;
         }
 
-        for (auto action : actions->actions())
+        for (const auto action : actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
 
@@ -236,7 +236,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (auto action : actions->actions())
+            for (const auto action : actions->actions())
                 apply_action(action);
         }
         else /* Current player turn */
@@ -322,7 +322,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (auto action : actions->actions())
+            for (const auto action : actions->actions())
                 apply_action(action);
 
             end_of_player_turn(playing_id);
@@ -389,7 +389,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
     while (!is_finished())
     {
-        for (auto& p : players_->players)
+        for (const auto p : players_->players)
         {
             start_of_player_turn(p->id);
             start_of_turn(p->id);
@@ -414,7 +414,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
-                    for (auto action : actions->actions())
+                    for (const auto action : actions->actions())
                         apply_action(action);
                 }
             }
