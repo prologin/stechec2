@@ -35,6 +35,11 @@ public:
     explicit Buffer(std::vector<uint8_t> data)
         : data_(std::move(data)), idx_(0), serialize_(false)
     {}
+    explicit Buffer(Buffer&& buf)
+        : data_{std::move(buf.data_)}, idx_{0}, serialize_{false}
+    {}
+
+    Buffer& operator=(const Buffer& buf) = default;
 
     // Allow access to the serialized data
     const uint8_t* data() const { return &data_[0]; }
@@ -89,6 +94,28 @@ public:
                 handle(element);
                 l.push_back(element);
             }
+        }
+    }
+
+    // Handle size-wrapped buffers
+    void handle(Buffer& buf)
+    {
+        if (serialize_)
+        {
+            // Write buffer size
+            size_t buf_size = buf.size();
+            handle(buf_size);
+            // Write buffer data
+            handle_mem((char*)buf.data(), buf.size());
+        }
+        else
+        {
+            // Read buffer size
+            size_t buf_size;
+            handle(buf_size);
+            // Read buffer data
+            buf.handle_mem((char*)&data_[idx_], buf_size);
+            idx_ += buf_size;
         }
     }
 

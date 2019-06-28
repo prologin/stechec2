@@ -60,6 +60,61 @@ TEST(UtilsBuffer, Deserialize)
     EXPECT_EQ(1, s.arr[0]);
     EXPECT_EQ(2, s.arr[1]);
     EXPECT_EQ(3, s.arr[2]);
+    EXPECT_TRUE(buf.empty());
+}
+
+TEST(UtilsBuffer, SerializeBuf)
+{
+    Buffer container;
+    Buffer contained;
+
+    int val = 42;
+    contained.handle(val);
+    container.handle(contained);
+
+    EXPECT_EQ(sizeof(size_t) + sizeof(val), container.size());
+
+    container.handle(contained);
+
+    EXPECT_EQ((sizeof(size_t) + sizeof(val)) * 2, container.size());
+}
+
+TEST(UtilsBuffer, DeserializeBuf)
+{
+    char content[] = "\x04\x00\x00\x00\x00\x00\x00\x00" // size_t buf_size1
+                     "\x2a\x00\x00\x00"                 // int val1 = 42
+                     "\x04\x00\x00\x00\x00\x00\x00\x00" // size_t buf_size2
+                     "\x39\x05\x00\x00";                // int val2 = 1337
+    std::vector<uint8_t> v;
+    v.assign(content, content + sizeof(content) - 1);
+
+    // Init from vector
+    Buffer container{v};
+
+    // Deserialize first buffer
+    Buffer buf_ser;
+    container.handle(buf_ser);
+
+    // Deserialize value of first buffer
+    Buffer buf_des{std::move(buf_ser)};
+    int val_1;
+    buf_des.handle(val_1);
+
+    EXPECT_TRUE(buf_des.empty());
+    EXPECT_EQ(42, val_1);
+
+    // Deserialize second buffer
+    buf_ser = Buffer{};
+    container.handle(buf_ser);
+    buf_des = Buffer{std::move(buf_ser)};
+
+    // Deserialize value of second buffer
+    int val_2;
+    buf_des.handle(val_2);
+    EXPECT_TRUE(buf_des.empty());
+    EXPECT_EQ(1337, val_2);
+
+    EXPECT_TRUE(container.empty());
 }
 
 TEST(UtilsBuffer, DeserializeError)
