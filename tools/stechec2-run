@@ -32,6 +32,7 @@ parser = argparse.ArgumentParser(
     spectators:
       - ./gui.so
     dump: dump.json
+    replay: replay.stechec2
 
 Report bugs to https://github.com/prologin/stechec2''',
     formatter_class=argparse.RawDescriptionHelpFormatter
@@ -118,8 +119,8 @@ def stechec2_run(args, options):
 
     # Check options
     options_whitelist = ['server', 'client', 'rules', 'map', 'verbose',
-                         'clients', 'names', 'spectators', 'dump', 'time',
-                         'memory']
+                         'clients', 'names', 'spectators', 'dump', 'replay',
+                         'time', 'memory']
     for opt in options:
         if opt not in options_whitelist:
             sys.exit("Error in yaml config file, unknown option: " + opt)
@@ -161,7 +162,7 @@ def stechec2_run(args, options):
                  "in your yaml configuration?")
 
     server_opt += ['--nb_clients', str(clients_count)]
-    for i in ['dump']:
+    for i in ['dump', 'replay']:
         if i in options:
             server_opt += ['--' + i, str(options[i])]
 
