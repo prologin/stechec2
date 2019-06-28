@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <utils/buffer.hh>
 #include <utility>
@@ -59,6 +60,19 @@ struct Players final : utils::IBufferizable
                 players.push_back(player);
             }
         }
+    }
+
+    std::string scores_yaml() const
+    {
+        std::stringstream ss;
+        for (auto& player : players)
+        {
+            ss << "---" << std::endl
+               << "player: " << player->name.c_str() << std::endl
+               << "score: " << player->score << std::endl
+               << "nb_timeout: " << player->nb_timeout << std::endl;
+        }
+        return ss.str();
     }
 
     size_t size() const { return players.size(); }

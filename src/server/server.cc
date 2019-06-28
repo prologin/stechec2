@@ -3,9 +3,11 @@
 #include "server.hh"
 
 #include <fstream>
-#include <gflags/gflags.h>
 #include <iostream>
 #include <memory>
+
+#include <gflags/gflags.h>
+
 #include <net/message.hh>
 #include <rules/player.hh>
 #include <utils/log.hh>
@@ -19,6 +21,7 @@ DEFINE_int32(nb_clients, 2, "Number of players to expect");
 DEFINE_string(map, "", "Map file");
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(dump, "", "Game data dump output path");
+DEFINE_string(replay, "", "Game replay output path");
 
 Server::Server() : nb_players_(0)
 {
@@ -65,11 +68,13 @@ void Server::run()
         std::shared_ptr<std::ofstream> dump_stream =
             std::make_shared<std::ofstream>(FLAGS_dump);
         if (!dump_stream->is_open())
-            ERR("Cannot open dump file for writing %s: %s", FLAGS_dump.c_str(),
-                strerror(errno));
-        else
-            rules_opt.dump_stream = std::move(dump_stream);
+            FATAL("Cannot open dump file for writing %s: %s",
+                  FLAGS_dump.c_str(), strerror(errno));
+        rules_opt.dump_stream = std::move(dump_stream);
     }
+
+    // Create replay output stream
+    rules_opt.replay_stream = replay_init();
 
     // Rules specific initializations
     rules_init(rules_opt);
@@ -86,13 +91,11 @@ void Server::run()
     // Results
     rules_result();
 
-    for (auto player : players_->players)
-    {
-        std::cout << "---" << std::endl
-                  << "player: " << player->name.c_str() << std::endl
-                  << "score: " << player->score << std::endl
-                  << "nb_timeout: " << player->nb_timeout << std::endl;
-    }
+    // Print results
+    std::cout << players_->scores_yaml();
+
+    // Save results
+    replay_save_results(rules_opt.replay_stream);
 
     sckt_close();
 }
@@ -113,7 +116,7 @@ void Server::sckt_close()
 
 bool used_identifier(uint player_id, rules::Players_sptr ps)
 {
-    for (rules::Player_sptr p : ps->players)
+    for (const auto& p : ps->players)
         if (p->id == player_id)
             return true;
     return false;
@@ -212,4 +215,35 @@ void Server::wait_for_players()
     spectators_->handle_buffer(buf_spectators);
 
     sckt_->push(buf_spectators);
+}
+
+std::shared_ptr<std::ostream> Server::replay_init()
+{
+    if (FLAGS_replay.empty())
+        return {};
+
+    auto ofs = std::make_shared<std::ofstream>(FLAGS_replay, std::ios::binary);
+    if (!ofs->is_open())
+        FATAL("Cannot open replay file for writing %s: %s",
+              FLAGS_replay.c_str(), strerror(errno));
+
+    auto map_content = rules::read_map_from_path(FLAGS_map);
+
+    // Save state to replay file
+    utils::Buffer buf;
+    buf.handle(map_content);
+    buf.handle_bufferizable(players_.get());
+    buf.handle_bufferizable(spectators_.get());
+    *ofs << buf;
+
+    return ofs;
+}
+
+void Server::replay_save_results(std::shared_ptr<std::ostream> replay_stream)
+{
+    if (!replay_stream)
+        return;
+    utils::Buffer buf;
+    buf.handle_bufferizable(players_.get());
+    *replay_stream << buf;
 }

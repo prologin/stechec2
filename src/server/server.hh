@@ -22,6 +22,8 @@ private:
     void sckt_init();
     void sckt_close();
     void wait_for_players();
+    std::shared_ptr<std::ostream> replay_init();
+    void replay_save_results(std::shared_ptr<std::ostream> replay_stream);
 
     rules::f_rules_init rules_init;
     rules::f_rules_result rules_result;

@@ -15,6 +15,15 @@ Rules::Rules(const Options& opt)
     , timeout_(opt.time)
 {}
 
+void Rules::save_player_actions(Actions* actions)
+{
+    if (!opt_.replay_stream)
+        return;
+    utils::Buffer buf;
+    buf.handle_bufferizable(actions);
+    *opt_.replay_stream << buf;
+}
+
 bool Rules::is_spectator(uint32_t id)
 {
     return std::any_of(
@@ -57,6 +66,26 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_player_end(msgr);
+}
+
+void SynchronousRules::replay_loop(ReplayMessenger_sptr msgr)
+{
+    at_start();
+
+    auto actions = get_actions();
+    while (!is_finished())
+    {
+        start_of_round();
+
+        msgr->pull_actions(actions);
+        for (const auto& action : actions->actions())
+            apply_action(action);
+        actions->clear();
+
+        end_of_round();
+    }
+
+    at_end();
 }
 
 void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -176,6 +205,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             spectators_count--;
         }
 
+        save_player_actions(actions);
+
         for (const auto& action : actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
@@ -273,6 +304,53 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_player_end(msgr);
+}
+
+void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
+{
+    at_start();
+
+    auto actions = get_actions();
+    while (!is_finished())
+    {
+        start_of_round();
+        for (const auto& p : players_->players)
+        {
+            DEBUG("Turn for player: %d", p->id);
+
+            start_of_player_turn(p->id);
+            start_of_turn(p->id);
+
+            msgr->pull_actions(actions);
+            DEBUG("Pulled %d actions", actions->size());
+            for (const auto action : actions->actions())
+                apply_action(action);
+            actions->clear();
+
+            end_of_player_turn(p->id);
+            end_of_turn(p->id);
+
+            for (const auto& s : spectators_->players)
+            {
+                DEBUG("Turn for spectator %d", s->id);
+
+                start_of_spectator_turn(s->id);
+                start_of_turn(s->id);
+
+                msgr->pull_actions(actions);
+                DEBUG("Pulled %d actions", actions->size());
+                for (const auto action : actions->actions())
+                    apply_action(action);
+                actions->clear();
+
+                end_of_spectator_turn(s->id);
+                end_of_turn(s->id);
+            }
+        }
+        end_of_round();
+    }
+
+    at_end();
 }
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -419,6 +497,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 }
             }
 
+            save_player_actions(actions);
             msgr->push_actions(*actions);
 
             end_of_player_turn(player->id);
@@ -441,6 +520,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 msgr->recv_actions(actions);
                 DEBUG("Acknowledging...");
                 msgr->ack();
+
+                save_player_actions(actions);
 
                 end_of_spectator_turn(s->id);
                 end_of_turn(s->id);

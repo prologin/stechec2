@@ -42,6 +42,9 @@ struct Options
 
     // Game data dump output stream
     std::shared_ptr<std::ostream> dump_stream;
+
+    // Replay data dump output stream
+    std::shared_ptr<std::ostream> replay_stream;
 };
 
 std::string read_map_from_path(const std::string& path);
