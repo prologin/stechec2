@@ -703,3 +703,25 @@ functions but for round specific needs, such as ``start_of_round``,
 ``end_of_round``, etc.
 
 And that's it!
+
+Debugging
+=========
+
+Debugging or testing the rules require starting a server and multiple clients.
+This process is simplified by the ``stechec2-run`` utility, but it still
+require you to have the champions compiled locally. This setup is not
+straightforward and may not even reproduce a specific bug if the champions
+generate random actions.
+
+To create a standalone copy of a match, you can create a match replay file with
+the ``--replay`` command line argument of ``stechec2-server``::
+
+   stechec2-server --replay match.replay ...
+
+The replay file can be read by the ``stechec2-replay`` utility, which only
+requires the rules shared library to be present to replay a match::
+
+   stechec2-replay --replay match.replay --rules rules.so
+
+You can use this feature to replay a match that triggers a specific bug, or use
+the replay file a unit test.
