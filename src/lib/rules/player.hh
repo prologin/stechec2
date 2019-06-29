@@ -34,9 +34,12 @@ struct Player
 
 using Player_sptr = std::shared_ptr<Player>;
 
-struct Players
+struct Players final : utils::IBufferizable
 {
-    void handle_buffer(utils::Buffer& buf)
+    Players() = default;
+    Players(std::vector<Player_sptr> players) : players(players) {}
+
+    void handle_buffer(utils::Buffer& buf) override
     {
         if (buf.serialize())
         {
