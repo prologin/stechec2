@@ -18,6 +18,8 @@ import signal
 parser = argparse.ArgumentParser(
     description='Run stechec processes for a match',
     epilog='''Configuration file example:
+    server: ./stechec2-server
+    client: ./stechec2-client
     rules: libprologin2018.so
     map: ./simple.map
     verbose: 3
@@ -37,6 +39,10 @@ Report bugs to https://github.com/prologin/stechec2''',
 parser.add_argument(
     '-v', '--version', action='store_true',
     help='Display version information'
+)
+parser.add_argument(
+    '-q', '--quiet', action='store_true',
+    help='Do not print messages'
 )
 
 # Selection of the processes to spawn
@@ -89,8 +95,8 @@ def signal_message(signal: int) -> str:
 
 def stechec2_run(args, options):
     popt = {'stderr': sys.stderr, 'stdout': sys.stdout}
-    server_opt = [shutil.which('stechec2-server')]
-    client_opt = [shutil.which('stechec2-client')]
+    server_opt = []
+    client_opt = []
 
     poll = []
     isolate_boxes = []
@@ -111,8 +117,9 @@ def stechec2_run(args, options):
         sys.exit(2)
 
     # Check options
-    options_whitelist = ['rules', 'map', 'verbose', 'clients', 'names',
-                         'spectators', 'dump', 'time', 'memory']
+    options_whitelist = ['server', 'client', 'rules', 'map', 'verbose',
+                         'clients', 'names', 'spectators', 'dump', 'time',
+                         'memory']
     for opt in options:
         if opt not in options_whitelist:
             sys.exit("Error in yaml config file, unknown option: " + opt)
@@ -123,6 +130,9 @@ def stechec2_run(args, options):
     f_pubsub = socket_dir.name + '/pubsub'
     s_reqrep = 'ipc://' + f_reqrep
     s_pubsub = 'ipc://' + f_pubsub
+
+    server_opt += [options.get('server', shutil.which('stechec2-server'))]
+    client_opt += [options.get('client', shutil.which('stechec2-client'))]
 
     server_opt += ['--rep_addr', s_reqrep, '--pub_addr', s_pubsub]
     client_opt += ['--req_addr', s_reqrep, '--sub_addr', s_pubsub]
@@ -171,12 +181,14 @@ def stechec2_run(args, options):
             opts = shlex.split(args.debug_cmd) + opts
         cmd_line = ' '.join(opts)
         if to_start(p):
-            print('>>> Starting {}[P={}]:'.format(name, p))
-            print('    {}'.format(cmd_line))
+            if not args.quiet:
+                print('>>> Starting {}[P={}]:'.format(name, p))
+                print('    {}'.format(cmd_line))
             poll.append((name, subprocess.Popen(opts, **popt)))
         else:
-            print('>>> Not starting {}[P={}]:'.format(name, p))
-            print('    {}'.format(cmd_line))
+            if not args.quiet:
+                print('>>> Not starting {}[P={}]:'.format(name, p))
+                print('    {}'.format(cmd_line))
 
     # Start the server
     start_proc('server', server_opt, popt)
