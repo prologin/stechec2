@@ -263,7 +263,7 @@ if __name__ == '__main__':
     else:
         config_file = vars(args)['config-file']
         try:
-            c = yaml.load(open(config_file))
+            c = yaml.safe_load(open(config_file))
         except yaml.YAMLError as e:
             print('Parse error in {}: {}'.format(config_file, e))
             sys.exit(1)
