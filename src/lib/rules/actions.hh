@@ -14,7 +14,7 @@
 
 namespace rules {
 
-class Actions
+class Actions : public utils::IBufferizable
 {
 public:
     static constexpr size_t MAX_ACTIONS = 1024;
@@ -24,7 +24,7 @@ public:
     void register_action(uint32_t action_id, ActionFactory action_factory);
 
     // Serialization/Unserialization
-    void handle_buffer(utils::Buffer& buf);
+    void handle_buffer(utils::Buffer& buf) override;
 
     void add(IAction_sptr action)
     {

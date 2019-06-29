@@ -16,6 +16,13 @@
 
 namespace utils {
 
+class Buffer;
+
+struct IBufferizable
+{
+    virtual void handle_buffer(Buffer& buf) = 0;
+};
+
 // Exception raised when a deserialization fails. For example, when the buffer
 // is too small to be deserialized properly.
 struct DeserializationError : public std::runtime_error
@@ -131,6 +138,23 @@ public:
     void handle(T& x)
     {
         handle_mem((char*)&x, sizeof(T));
+    }
+
+    // Handle types of variable lengths
+    void handle_bufferizable(IBufferizable* obj)
+    {
+        utils::Buffer tmp;
+        if (serialize())
+        {
+            obj->handle_buffer(tmp);
+            handle(tmp);
+        }
+        else
+        {
+            handle(tmp);
+            utils::Buffer tmp_des{std::move(tmp)};
+            obj->handle_buffer(tmp_des);
+        }
     }
 
     Buffer& operator+=(const Buffer& b)

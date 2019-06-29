@@ -22,6 +22,13 @@ struct MyStruct
     }
 };
 
+struct MyBufferizable : IBufferizable
+{
+    int x;
+
+    void handle_buffer(Buffer& buf) override { buf.handle(x); };
+};
+
 TEST(UtilsBuffer, Serialize)
 {
     Buffer buf;
@@ -126,4 +133,20 @@ TEST(UtilsBuffer, DeserializeError)
     Buffer buf(v);
     MyStruct s;
     ASSERT_THROW(s.handle_buffer(buf), DeserializationError);
+}
+
+TEST(UtilsBuffer, IBufferizable)
+{
+    MyBufferizable obj;
+    obj.x = 42;
+    Buffer buf_ser;
+
+    buf_ser.handle_bufferizable(&obj);
+
+    EXPECT_EQ(buf_ser.data()[0], sizeof(obj.x));
+
+    MyBufferizable obj2;
+    Buffer buf_des{std::move(buf_ser)};
+    buf_des.handle_bufferizable(&obj2);
+    EXPECT_EQ(obj2.x, 42);
 }
