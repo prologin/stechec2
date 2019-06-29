@@ -175,3 +175,9 @@ private:
 };
 
 } // namespace utils
+
+inline std::ostream& operator<<(std::ostream& os, const utils::Buffer& buf)
+{
+    os.write((char*)buf.data(), buf.size());
+    return os;
+}
