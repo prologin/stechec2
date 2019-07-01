@@ -15,7 +15,7 @@ public:
     virtual ~Messenger();
 
     virtual void send(const utils::Buffer&) = 0;
-    virtual utils::Buffer* recv() = 0;
+    virtual std::unique_ptr<utils::Buffer> recv() = 0;
 };
 
 } // namespace rules

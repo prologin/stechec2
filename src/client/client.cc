@@ -105,15 +105,13 @@ void Client::sckt_init()
     buf_req.handle(FLAGS_name);
 
     // Send the request
-    utils::Buffer* buf_rep = nullptr;
+    std::unique_ptr<utils::Buffer> buf_rep;
     if (!sckt_->send(buf_req) || !(buf_rep = sckt_->recv()) ||
         (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
 
     player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));
     player_->name = FLAGS_name;
-
-    delete buf_rep;
 
     NOTICE("Connected - id: %i", player_->id);
 }
@@ -125,47 +123,40 @@ void Client::sckt_close()
 
 void Client::wait_for_players()
 {
-    utils::Buffer* buf = nullptr;
     net::Message msg;
 
     // Wait for players
     uint32_t msg_type = net::MSG_IGNORED;
     while (msg_type != net::MSG_PLAYERS)
     {
-        buf = sckt_->pull();
+        auto buf = sckt_->pull();
         msg.handle_buffer(*buf);
 
         if ((msg_type = msg.type) == net::MSG_PLAYERS)
             players_->handle_buffer(*buf);
-
-        delete buf;
     }
 
     // Wait for spectators
     msg_type = net::MSG_IGNORED;
     while (msg_type != net::MSG_PLAYERS)
     {
-        buf = sckt_->pull();
+        auto buf = sckt_->pull();
         msg.handle_buffer(*buf);
 
         if ((msg_type = msg.type) == net::MSG_PLAYERS)
             spectators_->handle_buffer(*buf);
-
-        delete buf;
     }
 }
 
 void Client::wait_for_game_start()
 {
-    utils::Buffer* buf = nullptr;
     net::Message msg;
     uint32_t msg_type = net::MSG_IGNORED;
 
     while (msg_type != net::MSG_GAMESTART)
     {
-        buf = sckt_->pull();
+        auto buf = sckt_->pull();
         msg.handle_buffer(*buf);
         msg_type = msg.type;
-        delete buf;
     }
 }

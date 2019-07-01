@@ -26,7 +26,7 @@ public:
 
     void send(const utils::Buffer&) override;
 
-    utils::Buffer* recv() override;
+    std::unique_ptr<utils::Buffer> recv() override;
     void recv_actions(Actions* actions);
 
     bool poll(long timeout);

@@ -21,7 +21,7 @@ public:
     void init() override;
     void close() override;
 
-    utils::Buffer* pull(int flags = 0);
+    std::unique_ptr<utils::Buffer> pull(int flags = 0);
 };
 
 using ClientSocket_sptr = std::shared_ptr<ClientSocket>;

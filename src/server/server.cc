@@ -127,9 +127,9 @@ void Server::wait_for_players()
     while (players_->size() + spectators_->size() <
            static_cast<size_t>(FLAGS_nb_clients))
     {
-        utils::Buffer* buf_req = nullptr;
+        auto buf_req = sckt_->recv();
 
-        if (!(buf_req = sckt_->recv()))
+        if (!buf_req)
             continue;
 
         net::Message id_req;
@@ -167,8 +167,6 @@ void Server::wait_for_players()
         rules::Player_sptr new_player =
             rules::Player_sptr(new rules::Player(player_id, player_type));
         buf_req->handle(new_player->name);
-
-        delete buf_req;
 
         // Send the reply with a uid
         net::Message id_rep(net::MSG_CONNECT, new_player->id);

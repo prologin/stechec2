@@ -62,7 +62,7 @@ void ClientSocket::close()
     }
 }
 
-utils::Buffer* ClientSocket::pull(int flags)
+std::unique_ptr<utils::Buffer> ClientSocket::pull(int flags)
 {
     return recv_sckt(pubsub_sckt_, flags);
 }

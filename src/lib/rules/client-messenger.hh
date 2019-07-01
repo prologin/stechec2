@@ -28,9 +28,9 @@ public:
     void send(const utils::Buffer&) override;
     void send_actions(Actions&);
 
-    utils::Buffer* recv() override;
+    std::unique_ptr<utils::Buffer> recv() override;
 
-    utils::Buffer* pull();
+    std::unique_ptr<utils::Buffer> pull();
     void pull_actions(Actions*);
     void pull_id(uint32_t*);
 
