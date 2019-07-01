@@ -32,9 +32,9 @@ void ClientMessenger::send_actions(Actions& actions)
     send(buf);
 }
 
-utils::Buffer* ClientMessenger::recv()
+std::unique_ptr<utils::Buffer> ClientMessenger::recv()
 {
-    utils::Buffer* buf = sckt_->recv();
+    auto buf = sckt_->recv();
     if (!buf)
         FATAL("Unable to receive message from server");
 
@@ -44,9 +44,9 @@ utils::Buffer* ClientMessenger::recv()
     return buf;
 }
 
-utils::Buffer* ClientMessenger::pull()
+std::unique_ptr<utils::Buffer> ClientMessenger::pull()
 {
-    utils::Buffer* buf = sckt_->pull();
+    auto buf = sckt_->pull();
 
     net::Message msg;
     msg.handle_buffer(*buf);
@@ -56,16 +56,12 @@ utils::Buffer* ClientMessenger::pull()
 
 void ClientMessenger::pull_actions(Actions* actions)
 {
-    utils::Buffer* buf = pull();
-    actions->handle_buffer(*buf);
-    delete buf;
+    actions->handle_buffer(*pull());
 }
 
 void ClientMessenger::pull_id(uint32_t* id)
 {
-    utils::Buffer* buf = pull();
-    buf->handle(*id);
-    delete buf;
+    pull()->handle(*id);
 }
 
 void ClientMessenger::ack()
@@ -81,7 +77,7 @@ void ClientMessenger::ack()
 
 void ClientMessenger::wait_for_ack()
 {
-    utils::Buffer* buf = sckt_->recv();
+    auto buf = sckt_->recv();
     if (!buf)
         FATAL("Unable to receive ack from server");
 

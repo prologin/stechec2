@@ -36,7 +36,7 @@ bool Socket::send(const utils::Buffer& msg, int flags)
     return send_sckt(msg, reqrep_sckt_, flags);
 }
 
-utils::Buffer* Socket::recv(int flags)
+std::unique_ptr<utils::Buffer> Socket::recv(int flags)
 {
     return recv_sckt(reqrep_sckt_, flags);
 }
@@ -77,7 +77,8 @@ bool Socket::send_sckt(const utils::Buffer& buf,
     }
 }
 
-utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
+std::unique_ptr<utils::Buffer>
+Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
 {
     try
     {
@@ -100,9 +101,7 @@ utils::Buffer* Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
         data.assign(reinterpret_cast<uint8_t*>(zmsg.data()),
                     reinterpret_cast<uint8_t*>(zmsg.data()) + zmsg.size());
 
-        utils::Buffer* buf = new utils::Buffer(data);
-
-        return buf;
+        return std::make_unique<utils::Buffer>(data);
     }
     catch (const std::exception& e)
     {

@@ -53,9 +53,9 @@ void ServerMessenger::push_id(uint32_t id)
     push(buf);
 }
 
-utils::Buffer* ServerMessenger::recv()
+std::unique_ptr<utils::Buffer> ServerMessenger::recv()
 {
-    utils::Buffer* buf = sckt_->recv();
+    auto buf = sckt_->recv();
     if (!buf)
         FATAL("Unable to receive data from client");
 
@@ -70,11 +70,7 @@ utils::Buffer* ServerMessenger::recv()
 
 void ServerMessenger::recv_actions(Actions* actions)
 {
-    utils::Buffer* buf = recv();
-
-    actions->handle_buffer(*buf);
-
-    delete buf;
+    actions->handle_buffer(*recv());
 }
 
 void ServerMessenger::ack()
@@ -90,7 +86,7 @@ void ServerMessenger::ack()
 
 void ServerMessenger::wait_for_ack()
 {
-    utils::Buffer* buf = sckt_->recv();
+    auto buf = sckt_->recv();
     if (!buf)
         FATAL("Unable to receive ack from client");
 

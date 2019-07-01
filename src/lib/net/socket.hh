@@ -29,15 +29,15 @@ public:
 
     virtual void init() { shared_init(); }
     virtual bool send(const utils::Buffer& msg, int flags = 0);
-    virtual utils::Buffer* recv(int flags = 0);
+    virtual std::unique_ptr<utils::Buffer> recv(int flags = 0);
     virtual bool poll(long timeout);
     virtual void close() = 0;
 
 protected:
     bool send_sckt(const utils::Buffer& buf,
                    std::shared_ptr<zmq::socket_t> sckt, int flags);
-    // recv_sckt allocates a Message, it has to be deleted after its use
-    utils::Buffer* recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
+    std::unique_ptr<utils::Buffer>
+    recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
 
 protected:
     // Must be called by subclasses after custom initialization.
