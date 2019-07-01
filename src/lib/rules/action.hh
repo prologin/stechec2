@@ -55,7 +55,10 @@ public:
     }
 
     virtual void apply_on(TState* st) const = 0;
-    void apply(GameState* st) const { apply_on(static_cast<TState*>(st)); }
+    void apply(GameState* st) const override
+    {
+        apply_on(static_cast<TState*>(st));
+    }
     void apply(std::unique_ptr<TState>& st) const { apply_on(st.get()); }
 };
 
