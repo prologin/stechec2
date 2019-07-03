@@ -37,10 +37,11 @@ class Buffer
 public:
     // If no buffer is provided, it's serialization
     Buffer() : data_(), idx_(0), serialize_(true) {}
+    Buffer(const utils::Buffer& other) = default;
 
     // If a buffer is provided, it's unserialization
     explicit Buffer(std::vector<uint8_t> data)
-        : data_(std::move(data)), idx_(0), serialize_(false)
+        : data_(data), idx_(0), serialize_(false)
     {}
     explicit Buffer(Buffer&& buf)
         : data_{std::move(buf.data_)}, idx_{0}, serialize_{false}
