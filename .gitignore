@@ -17,4 +17,5 @@ tools/generator/test/rust
 tools/generator/test/README
 games/*
 !games/tictactoe
+!games/plusminus
 .syntastic_cpp_config
