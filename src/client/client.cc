@@ -20,7 +20,6 @@ DEFINE_string(champion, "champion.so", "Champion library");
 DEFINE_int32(client_id, 0, "Champion order");
 DEFINE_string(map, "default.map", "Map file");
 DEFINE_bool(spectator, false, "Set if the client is a spectator");
-DEFINE_int32(memory, 42, "Max memory the client can use (in MiB)");
 DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
 
 Client::Client()
