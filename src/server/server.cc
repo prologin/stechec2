@@ -16,7 +16,7 @@ DEFINE_string(pub_addr, "tcp://0.0.0.0:42125",
               "Set publishing address binding (ZeroMQ)");
 DEFINE_int32(time, 10000, "Timeout for a player turn (in ms)");
 DEFINE_int32(nb_clients, 2, "Number of players to expect");
-DEFINE_string(map, "default.map", "Map file");
+DEFINE_string(map, "", "Map file");
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(dump, "", "Game data dump output path");
 
@@ -46,11 +46,15 @@ void Server::run()
     // Create a messenger for sending rules messages
     msgr_ = rules::ServerMessenger_sptr(new rules::ServerMessenger(sckt_));
 
+    // Load map, if given
+    auto map_content = rules::read_map_from_path(FLAGS_map);
+
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = "";
     rules_opt.time = FLAGS_time;
     rules_opt.map_file = FLAGS_map;
+    rules_opt.map_content = map_content;
     rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;
     rules_opt.spectators = spectators_;

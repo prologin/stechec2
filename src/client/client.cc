@@ -3,6 +3,7 @@
 #include "client.hh"
 
 #include <gflags/gflags.h>
+
 #include <net/message.hh>
 #include <rules/action.hh>
 #include <rules/options.hh>
@@ -18,7 +19,7 @@ DEFINE_string(sub_addr, "tcp://0.0.0.0:42125",
 DEFINE_string(rules, "rules.so", "Rules library");
 DEFINE_string(champion, "champion.so", "Champion library");
 DEFINE_int32(client_id, 0, "Champion order");
-DEFINE_string(map, "default.map", "Map file");
+DEFINE_string(map, "", "Map file");
 DEFINE_bool(spectator, false, "Set if the client is a spectator");
 DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
 
@@ -51,11 +52,15 @@ void Client::run()
     msgr_ = rules::ClientMessenger_sptr(
         new rules::ClientMessenger(sckt_, player_->id));
 
+    // Load map, if given
+    auto map_content = rules::read_map_from_path(FLAGS_map);
+
     // Set the rules options
     rules::Options rules_opt;
     rules_opt.champion_lib = FLAGS_champion;
     rules_opt.time = FLAGS_time;
     rules_opt.map_file = FLAGS_map;
+    rules_opt.map_content = map_content;
     rules_opt.player = player_;
     rules_opt.verbose = FLAGS_verbose;
     rules_opt.players = players_;

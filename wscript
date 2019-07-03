@@ -184,6 +184,7 @@ def build_lib(bld):
             src/lib/rules/client-messenger.cc
             src/lib/rules/server-messenger.cc
             src/lib/rules/rules.cc
+            src/lib/rules/options.cc
         ''',
               defines=['MODULE_COLOR=ANSI_COL_PURPLE', 'MODULE_NAME="lib"'],
               includes='src/lib',

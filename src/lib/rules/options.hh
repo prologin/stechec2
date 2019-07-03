@@ -16,8 +16,11 @@ struct Options
     // Path to the champion library
     std::string champion_lib;
 
-    // Map file name
+    // Map file name. Deprecated: use map_content.
     std::string map_file;
+
+    // Map content
+    std::string map_content;
 
     // Memory limit for the champion in MB
     uint32_t memory;
@@ -40,5 +43,7 @@ struct Options
     // Game data dump output stream
     std::shared_ptr<std::ostream> dump_stream;
 };
+
+std::string read_map_from_path(const std::string& path);
 
 } // namespace rules
