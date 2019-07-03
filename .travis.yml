@@ -32,7 +32,7 @@ matrix:
 
 install:
   # Setup stechec2 with tictactoe
-  - ./waf.py configure --with-games=tictactoe $CONFFLAGS || cat ./build/config.log
+  - ./waf.py configure --with-games=tictactoe,plusminus $CONFFLAGS || cat ./build/config.log
 
 script:
   - ./waf.py build --check
