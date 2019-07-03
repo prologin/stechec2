@@ -3,8 +3,8 @@
 #pragma once
 
 #include <functional>
-#include <list>
 #include <memory>
+#include <vector>
 
 #include <utils/buffer.hh>
 
@@ -63,7 +63,7 @@ public:
 };
 
 using IAction_sptr = std::shared_ptr<IAction>;
-using IActionList = std::list<IAction_sptr>;
+using ActionLog = std::vector<IAction_sptr>;
 using ActionFactory = std::function<IAction*()>;
 
 } // namespace rules

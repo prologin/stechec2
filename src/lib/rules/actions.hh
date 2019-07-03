@@ -3,8 +3,6 @@
 #pragma once
 
 #include <cstdint>
-#include <list>
-#include <memory>
 #include <unordered_map>
 
 #include <utils/buffer.hh>
@@ -39,10 +37,10 @@ public:
 
     void clear() { actions_.clear(); }
 
-    const IActionList& actions() const { return actions_; }
+    const ActionLog& actions() const { return actions_; }
 
 private:
-    IActionList actions_;
+    ActionLog actions_;
     std::unordered_map<uint32_t, ActionFactory> action_factory_;
 };
 
