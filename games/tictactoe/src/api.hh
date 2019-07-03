@@ -21,7 +21,7 @@ public:
     Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player);
 
     /// Play at the given position
-    ApiActionFunc<ActionPlay> play;
+    ApiActionFunc<ActionPlay> play{this};
 
     /// Returns your team number
     int my_team();
