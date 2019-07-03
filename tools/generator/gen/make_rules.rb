@@ -145,11 +145,12 @@ class CxxFileGenerator < CxxProto
     rules::IAction_sptr action(new #{class_name}(#{arg_list.join(", ")}));
 
     #{err_type_name} err;
-    if ((err = static_cast<#{err_type_name}>(action->check(game_state_))) != #{ok_val})
+    if ((err = static_cast<#{err_type_name}>(game_state_check(action))) != #{ok_val})
         return err;
 
     actions_.add(action);
-    game_state_set(action->apply(game_state_));
+    game_state_save();
+    game_state_apply(action);
     return OK;
 }
 EOF
@@ -373,7 +374,7 @@ public:
     #{constr_proto} : #{init_list} {}
     #{class_name}() {} // for register_action()
 
-    int check(const GameState* st) const override;
+    int check(const GameState& st) const override;
     void apply_on(GameState* st) const override;
 
     void handle_buffer(utils::Buffer& buf) override
@@ -485,12 +486,12 @@ void Rules::apply_action(const rules::IAction_sptr& action)
     // client/server desynchronizations and make sure the gamestate is always
     // consistent across the clients and the server.
 
-    int err = action->check(api_->game_state());
+    int err = api_->game_state_check(action);
     if (err)
         FATAL("Synchronization error: received action %d from player %d, but "
               "check() on current gamestate returned %d.",
               action->id(), action->player_id(), err);
-    api_->game_state_set(action->apply(api_->game_state()));
+    api_->game_state_apply(action);
 }
 
 bool Rules::is_finished()

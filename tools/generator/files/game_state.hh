@@ -5,7 +5,7 @@
 #include <rules/game-state.hh>
 #include <rules/player.hh>
 
-class GameState : public rules::GameState
+class GameState final : public rules::GameState
 {
 public:
     // FIXME
@@ -13,6 +13,8 @@ public:
     GameState(rules::Players_sptr players);
     GameState(const GameState& st);
     ~GameState();
+
+    GameState* copy() const override;
 
 private:
     rules::Players_sptr players_;

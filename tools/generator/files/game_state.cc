@@ -19,3 +19,8 @@ GameState::~GameState()
 {
     // FIXME
 }
+
+GameState* GameState::copy() const
+{
+    return new GameState(*this);
+}
