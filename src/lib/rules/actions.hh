@@ -14,6 +14,9 @@ namespace rules {
 
 class Actions : public utils::IBufferizable
 {
+    using ActionFactory = std::function<std::unique_ptr<IAction>()>;
+    using ActionLog = std::vector<std::unique_ptr<IAction>>;
+
 public:
     static constexpr size_t MAX_ACTIONS = 1024;
 
@@ -24,11 +27,11 @@ public:
     // Serialization/Unserialization
     void handle_buffer(utils::Buffer& buf) override;
 
-    void add(const IAction_sptr& action)
+    void add(std::unique_ptr<IAction> action)
     {
         if (actions_.size() >= MAX_ACTIONS)
             FATAL("Too many actions (>%d) sent during this turn.", MAX_ACTIONS);
-        actions_.push_back(action);
+        actions_.push_back(std::move(action));
     }
 
     void cancel() { actions_.pop_back(); }
@@ -37,7 +40,7 @@ public:
 
     void clear() { actions_.clear(); }
 
-    const ActionLog& actions() const { return actions_; }
+    const ActionLog& all() const { return actions_; }
 
 private:
     ActionLog actions_;

@@ -25,7 +25,7 @@ Rules::Rules(const rules::Options opt) : TurnBasedRules(opt), sandbox_(opt.time)
 void Rules::register_actions()
 {
     api_->actions()->register_action(
-        ID_ACTION_PLAY, []() -> rules::IAction* { return new ActionPlay(); });
+        ID_ACTION_PLAY, []() { return std::make_unique<ActionPlay>(); });
 }
 
 rules::Actions* Rules::get_actions()
@@ -33,7 +33,7 @@ rules::Actions* Rules::get_actions()
     return api_->actions();
 }
 
-void Rules::apply_action(const rules::IAction_sptr& action)
+void Rules::apply_action(const rules::IAction& action)
 {
     // When receiving an action, the API should have already checked that it
     // is valid. We recheck that for the current gamestate here to avoid weird
@@ -44,7 +44,7 @@ void Rules::apply_action(const rules::IAction_sptr& action)
     if (err)
         FATAL("Synchronization error: received action %d from player %d, but "
               "check() on current gamestate returned %d.",
-              action->id(), action->player_id(), err);
+              action.id(), action.player_id(), err);
     api_->game_state_apply(action);
 }
 

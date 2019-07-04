@@ -25,7 +25,7 @@ public:
     explicit Rules(const rules::Options opt);
 
     rules::Actions* get_actions() override;
-    void apply_action(const rules::IAction_sptr& action) override;
+    void apply_action(const rules::IAction& action) override;
 
     void at_player_start(rules::ClientMessenger_sptr) override;
     void at_spectator_start(rules::ClientMessenger_sptr) override;
