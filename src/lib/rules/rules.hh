@@ -85,8 +85,8 @@ protected:
 
     Options opt_;
 
-    Players_sptr players_;
-    Players_sptr spectators_;
+    Players players_;
+    Players spectators_;
 
     int timeout_;
 };

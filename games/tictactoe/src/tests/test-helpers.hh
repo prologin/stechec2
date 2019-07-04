@@ -10,14 +10,13 @@
 #include "../game_state.hh"
 #include "../rules.hh"
 
-static rules::Players_sptr make_players(int id1, int id2)
+static rules::Players make_players(int id1, int id2)
 {
     // Create two players (no spectator)
-    return rules::Players_sptr(
-        new rules::Players{std::vector<rules::Player_sptr>{
-            rules::Player_sptr(new rules::Player(id1, rules::PLAYER)),
-            rules::Player_sptr(new rules::Player(id2, rules::PLAYER)),
-        }});
+    rules::Players players;
+    players.add(std::make_shared<rules::Player>(id1, rules::PLAYER));
+    players.add(std::make_shared<rules::Player>(id2, rules::PLAYER));
+    return players;
 }
 
 class ActionTest : public ::testing::Test
@@ -41,13 +40,13 @@ protected:
     virtual void SetUp()
     {
         utils::Logger::get().level() = utils::Logger::DEBUG_LEVEL;
-        auto players_ptr = make_players(PLAYER_1, PLAYER_2);
+        auto rules_players = make_players(PLAYER_1, PLAYER_2);
         players[0].id = PLAYER_1;
         players[0].api = std::make_unique<Api>(
-            std::make_unique<GameState>(players_ptr), players_ptr->players[0]);
+            std::make_unique<GameState>(rules_players), rules_players.all()[0]);
         players[1].id = PLAYER_2;
         players[1].api = std::make_unique<Api>(
-            std::make_unique<GameState>(players_ptr), players_ptr->players[1]);
+            std::make_unique<GameState>(rules_players), rules_players.all()[1]);
     }
 
     struct Player

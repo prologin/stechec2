@@ -29,13 +29,13 @@ struct Options
     uint32_t time;
 
     // Player
-    Player_sptr player;
+    std::shared_ptr<Player> player;
 
     // Players
-    Players_sptr players;
+    Players players;
 
     // Spectators
-    Players_sptr spectators;
+    Players spectators;
 
     // Verbosity of the logs displayed/written
     unsigned verbose;

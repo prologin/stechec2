@@ -2,18 +2,20 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <memory>
 #include <sstream>
 #include <string>
-#include <utils/buffer.hh>
 #include <utility>
+#include <utils/buffer.hh>
 #include <vector>
 
 namespace rules {
 
-struct Player
+struct Player final
 {
+    Player() = default;
     Player(uint32_t id_, uint32_t type_)
         : id(id_), type(type_), score(0), nb_timeout(0), name("anonymous")
     {}
@@ -34,18 +36,19 @@ struct Player
     std::string name;
 };
 
-using Player_sptr = std::shared_ptr<Player>;
-
-struct Players final : utils::IBufferizable
+class Players final : public utils::IBufferizable
 {
+    using PlayersVector = std::vector<std::shared_ptr<Player>>;
+
+public:
     Players() = default;
-    explicit Players(std::vector<Player_sptr> players) : players(std::move(players)) {}
+    explicit Players(PlayersVector players) : players_{std::move(players)} {}
 
     void handle_buffer(utils::Buffer& buf) override
     {
         if (buf.serialize())
         {
-            for (auto& p : players)
+            for (const auto& p : players_)
                 p->handle_buffer(buf);
         }
         else
@@ -53,11 +56,12 @@ struct Players final : utils::IBufferizable
             while (!buf.empty())
             {
                 // Get a player
-                Player_sptr player = std::make_shared<Player>(0, 0);
+                auto player = std::make_shared<Player>(0, 0);
 
                 // And unserialize it
                 player->handle_buffer(buf);
-                players.push_back(player);
+
+                players_.push_back(player);
             }
         }
     }
@@ -65,7 +69,7 @@ struct Players final : utils::IBufferizable
     std::string scores_yaml() const
     {
         std::stringstream ss;
-        for (auto& player : players)
+        for (const auto& player : players_)
         {
             ss << "---" << std::endl
                << "player: " << player->name.c_str() << std::endl
@@ -75,12 +79,22 @@ struct Players final : utils::IBufferizable
         return ss.str();
     }
 
-    size_t size() const { return players.size(); }
+    void add(std::shared_ptr<Player> player) { players_.push_back(player); }
 
-    std::vector<Player_sptr> players;
+    // Sort players by identifiers
+    void sort()
+    {
+        std::sort(players_.begin(), players_.end(),
+                  [](const auto& a, const auto& b) { return a->id < b->id; });
+    }
+
+    size_t size() const { return players_.size(); }
+
+    const PlayersVector& all() const { return players_; }
+
+private:
+    PlayersVector players_;
 };
-
-using Players_sptr = std::shared_ptr<Players>;
 
 enum PlayerType
 {

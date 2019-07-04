@@ -36,9 +36,6 @@ Client::Client()
         client_loop = rules_lib_->get<rules::f_client_loop>("spectator_loop");
     else
         client_loop = rules_lib_->get<rules::f_client_loop>("player_loop");
-
-    players_ = rules::Players_sptr(new rules::Players());
-    spectators_ = rules::Players_sptr(new rules::Players());
 }
 
 void Client::run()
@@ -113,7 +110,7 @@ void Client::sckt_init()
         (msg.handle_buffer(*buf_rep), msg.client_id == 0))
         FATAL("Unable to get an ID from the server");
 
-    player_ = rules::Player_sptr(new rules::Player(msg.client_id, client_type));
+    player_ = std::make_shared<rules::Player>(msg.client_id, client_type);
     player_->name = FLAGS_name;
 
     NOTICE("Connected - id: %i", player_->id);
@@ -136,7 +133,7 @@ void Client::wait_for_players()
         msg.handle_buffer(*buf);
 
         if ((msg_type = msg.type) == net::MSG_PLAYERS)
-            players_->handle_buffer(*buf);
+            players_.handle_buffer(*buf);
     }
 
     // Wait for spectators
@@ -147,7 +144,7 @@ void Client::wait_for_players()
         msg.handle_buffer(*buf);
 
         if ((msg_type = msg.type) == net::MSG_PLAYERS)
-            spectators_->handle_buffer(*buf);
+            spectators_.handle_buffer(*buf);
     }
 }
 

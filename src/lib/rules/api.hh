@@ -62,12 +62,12 @@ protected:
     };
 
 public:
-    Api(std::unique_ptr<GameState> game_state, Player_sptr player)
+    Api(std::unique_ptr<GameState> game_state, std::shared_ptr<Player> player)
         : game_state_(std::move(game_state)), player_(player)
     {}
     virtual ~Api() {}
 
-    const Player_sptr player() const { return player_; }
+    const std::shared_ptr<Player> player() const { return player_; }
 
     Actions* actions() { return &actions_; }
 
@@ -98,7 +98,7 @@ public:
 
 protected:
     GameStateHistory<GameState> game_state_;
-    Player_sptr player_;
+    std::shared_ptr<Player> player_;
     Actions actions_;
 };
 

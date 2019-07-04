@@ -15,7 +15,7 @@ class GameState : public rules::GameState
 public:
     const int NO_PLAYER = -1;
 
-    GameState(rules::Players_sptr players);
+    GameState(const rules::Players& players);
     GameState* copy() const override;
 
     std::vector<int> get_board() const;
@@ -32,8 +32,6 @@ public:
     bool is_player_turn(int player_id) const;
 
 private:
-    rules::Players_sptr players_;
-
     std::unordered_map<int, bool> is_player_turn_;
     std::vector<int> board_;
 };

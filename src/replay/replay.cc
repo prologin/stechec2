@@ -46,13 +46,13 @@ void Replay::run()
         DEBUG("Read map of %d bytes", map_content.size());
 
     auto players = read_players(&replay);
-    DEBUG("Read %d players from replay", players->size());
+    DEBUG("Read %d players from replay", players.size());
 
     auto spectators = read_players(&replay);
-    if (spectators->size() == 0)
+    if (spectators.size() == 0)
         DEBUG("No spectator in replay");
     else
-        DEBUG("Read %d spectators from replay", spectators->size());
+        DEBUG("Read %d spectators from replay", spectators.size());
 
     // Set the rules options
     rules::Options rules_opt{};
@@ -74,15 +74,15 @@ void Replay::run()
         WARN("Replay contains %d extra bytes", replay.size());
 
     // Compare saved and replayed results
-    if (!compare_results(*replay_result, *players))
+    if (!compare_results(replay_result, players))
     {
         WARN("Match results mismatch!");
         WARN("Results saved in replay:");
-        std::cout << replay_result->scores_yaml();
+        std::cout << replay_result.scores_yaml();
         WARN("Computed results:");
     }
 
-    std::cout << players->scores_yaml();
+    std::cout << players.scores_yaml();
 }
 
 utils::Buffer Replay::read_replay(const std::string& replay_path)
@@ -102,14 +102,14 @@ std::string Replay::read_map(utils::Buffer* replay)
     return map;
 }
 
-rules::Players_sptr Replay::read_players(utils::Buffer* replay)
+rules::Players Replay::read_players(utils::Buffer* replay)
 {
-    auto players = std::make_shared<rules::Players>();
-    replay->handle_bufferizable(players.get());
+    rules::Players players;
+    replay->handle_bufferizable(&players);
     return players;
 }
 
-rules::Players_sptr Replay::read_result(utils::Buffer* replay)
+rules::Players Replay::read_result(utils::Buffer* replay)
 {
     // Final scores are extracted from the players save
     return read_players(replay);
@@ -122,8 +122,8 @@ bool Replay::compare_results(const rules::Players& ref,
         return false;
     for (size_t i = 0; i < ref.size(); ++i)
     {
-        const auto& player_ref = ref.players[i];
-        const auto& player_actual = actual.players[i];
+        const auto& player_ref = ref.all()[i];
+        const auto& player_actual = actual.all()[i];
         if (player_ref->id != player_actual->id)
             return false;
         if (player_ref->name != player_actual->name)

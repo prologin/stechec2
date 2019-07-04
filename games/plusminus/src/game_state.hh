@@ -10,7 +10,7 @@
 class GameState final : public rules::GameState
 {
 public:
-    GameState(const std::string& map_content, rules::Players_sptr players);
+    GameState(const std::string& map_content, const rules::Players& players);
     GameState(const GameState& st) = default;
     ~GameState() = default;
 
@@ -22,7 +22,4 @@ public:
     bool secret_number_found;
     int round;
     std::unordered_map<uint32_t, int> player_guess_map;
-
-private:
-    rules::Players_sptr players_;
 };

@@ -18,8 +18,8 @@ public:
 private:
     utils::Buffer read_replay(const std::string& replay_path);
     std::string read_map(utils::Buffer* replay);
-    rules::Players_sptr read_players(utils::Buffer* replay);
-    rules::Players_sptr read_result(utils::Buffer* replay);
+    rules::Players read_players(utils::Buffer* replay);
+    rules::Players read_result(utils::Buffer* replay);
 
     bool compare_results(const rules::Players& ref,
                          const rules::Players& actual) const;

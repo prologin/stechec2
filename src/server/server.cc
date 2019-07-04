@@ -30,9 +30,6 @@ Server::Server() : nb_players_(0)
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
     rules_result = rules_lib_->get<rules::f_rules_result>("rules_result");
-
-    players_ = rules::Players_sptr(new rules::Players());
-    spectators_ = rules::Players_sptr(new rules::Players());
 }
 
 void Server::run()
@@ -92,7 +89,7 @@ void Server::run()
     rules_result();
 
     // Print results
-    std::cout << players_->scores_yaml();
+    std::cout << players_.scores_yaml();
 
     // Save results
     replay_save_results(rules_opt.replay_stream);
@@ -114,9 +111,9 @@ void Server::sckt_close()
     sckt_->close();
 }
 
-bool used_identifier(uint player_id, rules::Players_sptr ps)
+bool used_identifier(uint32_t player_id, const rules::Players& players)
 {
-    for (const auto& p : ps->players)
+    for (const auto& p : players.all())
         if (p->id == player_id)
             return true;
     return false;
@@ -130,7 +127,7 @@ void Server::wait_for_players()
     // For each client connecting, we send back a unique id
     // Clients are players or spectators
 
-    while (players_->size() + spectators_->size() <
+    while (players_.size() + spectators_.size() <
            static_cast<size_t>(FLAGS_nb_clients))
     {
         auto buf_req = sckt_->recv();
@@ -170,8 +167,8 @@ void Server::wait_for_players()
             player_id = 0; // Treated by client as invalid
         }
 
-        rules::Player_sptr new_player =
-            rules::Player_sptr(new rules::Player(player_id, player_type));
+        auto new_player =
+            std::make_shared<rules::Player>(player_id, player_type);
         buf_req->handle(new_player->name);
 
         // Send the reply with a uid
@@ -182,9 +179,9 @@ void Server::wait_for_players()
 
         // Add the player to the list
         if (new_player->type == rules::SPECTATOR)
-            spectators_->players.push_back(new_player);
+            spectators_.add(new_player);
         else
-            players_->players.push_back(new_player);
+            players_.add(new_player);
 
         NOTICE("Client connected - id: %i - type: %s", new_player->id,
                rules::playertype_str(
@@ -192,18 +189,14 @@ void Server::wait_for_players()
                    .c_str());
     }
 
-    // Sort players by identifiers
-    std::sort(players_->players.begin(), players_->players.end(),
-              [](rules::Player_sptr const& a, rules::Player_sptr const& b) {
-                  return a->id < b->id;
-              });
+    players_.sort();
 
     // Then send players info to all clients
     utils::Buffer buf_players;
     net::Message msg_players(net::MSG_PLAYERS);
 
     msg_players.handle_buffer(buf_players);
-    players_->handle_buffer(buf_players);
+    players_.handle_buffer(buf_players);
 
     sckt_->push(buf_players, 0, 500);
 
@@ -212,7 +205,7 @@ void Server::wait_for_players()
     net::Message msg_spectators(net::MSG_PLAYERS);
 
     msg_spectators.handle_buffer(buf_spectators);
-    spectators_->handle_buffer(buf_spectators);
+    spectators_.handle_buffer(buf_spectators);
 
     sckt_->push(buf_spectators);
 }
@@ -232,8 +225,8 @@ std::shared_ptr<std::ostream> Server::replay_init()
     // Save state to replay file
     utils::Buffer buf;
     buf.handle(map_content);
-    buf.handle_bufferizable(players_.get());
-    buf.handle_bufferizable(spectators_.get());
+    buf.handle_bufferizable(&players_);
+    buf.handle_bufferizable(&spectators_);
     *ofs << buf;
 
     return ofs;
@@ -244,6 +237,6 @@ void Server::replay_save_results(std::shared_ptr<std::ostream> replay_stream)
     if (!replay_stream)
         return;
     utils::Buffer buf;
-    buf.handle_bufferizable(players_.get());
+    buf.handle_bufferizable(&players_);
     *replay_stream << buf;
 }
