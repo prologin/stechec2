@@ -1,6 +1,6 @@
 #include "actions.hh"
 
-int ActionGuess::check(const GameState& st) const
+int ActionGuess::check(const GameState& /* st */) const
 {
     if (guess_ < 0 || guess_ > 100)
         return OUT_OF_BOUNDS;
