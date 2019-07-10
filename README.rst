@@ -1,6 +1,9 @@
 Stechec2
 ========
 
+.. image:: https://travis-ci.org/prologin/stechec2.svg?branch=master
+    :target: https://travis-ci.org/prologin/stechec2
+
 What is Stechec2
 ----------------
 
