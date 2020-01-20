@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+
+#pragma once
+
+#include <memory>
+{#- The following two headers may not be necessary. They are only used if there
+is a std::string, or a std::vector in the generated function signatures.
+We could make the test here and add the includes only if necessary, but it does
+not cost must to include them in every cases. #}
+#include <string>
+#include <vector>
+
+#include <rules/api.hh>
+#include <rules/player.hh>
+
+#include "actions.hh"
+#include "constant.hh"
+#include "game_state.hh"
+
+/**
+ * The methods of this class are exported through 'interface.cc'
+ * to be called by the clients
+ */
+class Api final : public rules::Api<GameState, error>
+{
+public:
+    Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player);
+    ~Api() {}
+
+{#- Generate the C++ declaration for each API function -#}
+{% for func in yaml['function'] %}
+{# Since this is a header, generate the function documentation #}
+    {{ ("/// " + func["fct_summary"])|wordwrap(79, False, "\n    /// ") }}
+
+{%- if func['fct_action'] %}
+{#- Action functions are defined in their own cpp. Here we just use a wrapper
+    to bind them to the API #}
+{%- set camel_case = (func['fct_name']|replace('_',' ')|title|replace(' ', '')) %}
+    ApiActionFunc<Action{{ camel_case }}> {{ func['fct_name'] }}{this};
+{%- else %}
+{#- Other action are just declared here, their definition will be in api.cc #}
+    {{ func['fct_ret_type']|cxx_type }} {{ func['fct_name'] }}({{ func['fct_arg']|cxx_args }});
+{%- endif %}
+{%- endfor %}
+};
+

@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+
+#pragma once
+
+#include <rules/action.hh>
+
+#include "actions.hh"
+#include "constant.hh"
+#include "game_state.hh"
+
+{% set camel_case = (func['fct_name']|replace('_',' ')|title|replace(' ', '')) -%}
+{% set args = func['fct_arg'] + [['player_id', 'int', '']] -%}
+class Action{{ camel_case }} : public rules::Action<GameState>
+{
+public:
+    {%- set comma = joiner("    , ") %}
+    Action{{ camel_case}}({{ args|cxx_args }})
+        : {% for arg in args %}{{ comma() }}{{ arg[0] }}_({{ arg[0] }})
+    {% endfor -%}
+    {
+    }
+    Action{{ camel_case }}() {} // for register_action()
+
+    int check(const GameState& st) const override;
+    void apply_on(GameState* st) const override;
+
+    void handle_buffer(utils::Buffer& buf) override
+    {
+        {%- for arg in args %}
+        buf.handle({{ arg[0] }}_);
+        {%- endfor %}
+    }
+
+    uint32_t player_id() const override { return player_id_; };
+    uint32_t id() const override { return ID_ACTION_{{ func['fct_name']|upper}}; }
+
+private:
+    {%- for arg in args %}
+    {{ arg[1] }} {{ arg[0] }}_;
+    {%- endfor %}
+};
+
