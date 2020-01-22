@@ -23,7 +23,7 @@ public:
     Socket(const std::string& pubsub_addr, const std::string& reqrep_addr,
            int io_thread);
 
-    virtual ~Socket() {}
+    virtual ~Socket() = default;
 
     virtual void init() { shared_init(); }
     virtual bool send(const utils::Buffer& msg, int flags = 0);

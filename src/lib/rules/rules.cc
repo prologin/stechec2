@@ -2,12 +2,13 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #include "rules.hh"
 
+#include <algorithm>
 #include <set>
 #include <unordered_set>
 
 namespace rules {
 
-Rules::Rules(const Options opt)
+Rules::Rules(const Options& opt)
     : opt_(opt)
     , players_(opt.players)
     , spectators_(opt.spectators)
@@ -16,18 +17,16 @@ Rules::Rules(const Options opt)
 
 bool Rules::is_spectator(uint32_t id)
 {
-    for (Player_sptr spectator : spectators_->players)
-        if (spectator->id == id)
-            return true;
-
-    return false;
+    return std::any_of(
+        spectators_->players.cbegin(), spectators_->players.cend(),
+        [id](const Player_sptr& spectator) { return spectator->id == id; });
 }
 
 /*-----------------.
 | SynchronousRules |
 `-----------------*/
 
-SynchronousRules::SynchronousRules(const Options opt) : Rules(opt) {}
+SynchronousRules::SynchronousRules(const Options& opt) : Rules(opt) {}
 
 void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 {
@@ -49,7 +48,7 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 
         /* Apply actions onto the gamestate */
         /* We should already have applied our actions */
-        for (const auto action : actions->actions())
+        for (const auto& action : actions->actions())
             if (action->player_id() != opt_.player->id)
                 apply_action(action);
 
@@ -83,7 +82,7 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             break;
 
         msgr->pull_actions(actions);
-        for (const auto action : actions->actions())
+        for (const auto& action : actions->actions())
             apply_action(action);
         actions->clear();
 
@@ -97,17 +96,17 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 {
     std::unordered_set<uint32_t> spectators_ids;
-    for (const auto spectator : spectators_->players)
+    for (const auto& spectator : spectators_->players)
         spectators_ids.insert(spectator->id);
 
     std::unordered_set<uint32_t> players_ids;
-    for (const auto player : players_->players)
+    for (const auto& player : players_->players)
         players_ids.insert(player->id);
-    for (const auto spectator : spectators_->players)
+    for (const auto& spectator : spectators_->players)
         players_ids.insert(spectator->id);
 
     std::set<uint32_t> players_timeouting;
-    unsigned int players_count =
+    size_t players_count =
         players_->players.size() + spectators_->players.size();
 
     at_start();
@@ -117,17 +116,17 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 
     while (!is_finished())
     {
-        unsigned int spectators_count = spectators_->players.size();
+        size_t spectators_count = spectators_->players.size();
         start_of_round();
 
         Actions* actions = get_actions();
         actions->clear();
 
         players_timeouting.clear();
-        for (const auto player : players_->players)
+        for (const auto& player : players_->players)
             players_timeouting.insert(player->id);
 
-        for (unsigned int i = 0; i < players_count; ++i)
+        for (size_t i = 0; i < players_count; ++i)
         {
             if (!msgr->poll(timeout_ > 0 ? timeout_ : -1))
                 break;
@@ -177,7 +176,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             spectators_count--;
         }
 
-        for (const auto action : actions->actions())
+        for (const auto& action : actions->actions())
             apply_action(action);
         msgr->push_actions(*actions);
 
@@ -194,7 +193,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 | TurnBasedRules |
 `---------------*/
 
-TurnBasedRules::TurnBasedRules(const Options opt) : Rules(opt) {}
+TurnBasedRules::TurnBasedRules(const Options& opt) : Rules(opt) {}
 
 void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 {
@@ -236,7 +235,7 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (const auto action : actions->actions())
+            for (const auto& action : actions->actions())
                 apply_action(action);
         }
         else /* Current player turn */
@@ -322,7 +321,7 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (const auto action : actions->actions())
+            for (const auto& action : actions->actions())
                 apply_action(action);
 
             end_of_player_turn(playing_id);
@@ -389,22 +388,23 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
     while (!is_finished())
     {
-        for (const auto p : players_->players)
+        for (const auto& player : players_->players)
         {
-            start_of_player_turn(p->id);
-            start_of_turn(p->id);
+            start_of_player_turn(player->id);
+            start_of_turn(player->id);
 
-            DEBUG("Turn for player %d", p->id);
-            msgr->push_id(p->id);
+            DEBUG("Turn for player %d", player->id);
+            msgr->push_id(player->id);
             Actions* actions = get_actions();
             actions->clear();
 
-            if (p->nb_timeout < max_consecutive_timeout)
+            if (player->nb_timeout < max_consecutive_timeout)
             {
                 if (!msgr->poll(timeout_ > 0 ? timeout_ : -1))
                 {
-                    p->nb_timeout++;
-                    DEBUG("Timeout reached, never mind: %d", p->nb_timeout);
+                    player->nb_timeout++;
+                    DEBUG("Timeout reached, never mind: %d",
+                          player->nb_timeout);
                 }
                 else
                 {
@@ -414,15 +414,15 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
-                    for (const auto action : actions->actions())
+                    for (const auto& action : actions->actions())
                         apply_action(action);
                 }
             }
 
             msgr->push_actions(*actions);
 
-            end_of_player_turn(p->id);
-            end_of_turn(p->id);
+            end_of_player_turn(player->id);
+            end_of_turn(player->id);
 
             dump_state_stream();
 

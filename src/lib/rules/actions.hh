@@ -24,7 +24,7 @@ public:
     // Serialization/Unserialization
     void handle_buffer(utils::Buffer& buf) override;
 
-    void add(IAction_sptr action)
+    void add(const IAction_sptr& action)
     {
         if (actions_.size() >= MAX_ACTIONS)
             FATAL("Too many actions (>%d) sent during this turn.", MAX_ACTIONS);

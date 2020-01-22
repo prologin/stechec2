@@ -2,6 +2,7 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #include "client-socket.hh"
 
+#include <memory>
 #include <zmq.hpp>
 
 #include <utils/log.hh>

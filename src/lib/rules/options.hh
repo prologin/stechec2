@@ -34,7 +34,7 @@ struct Options
     // Players
     Players_sptr players;
 
-    // Spactators
+    // Spectators
     Players_sptr spectators;
 
     // Verbosity of the logs displayed/written

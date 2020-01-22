@@ -16,7 +16,7 @@ class GameState;
 class IAction
 {
 public:
-    virtual ~IAction() {}
+    virtual ~IAction() = default;
 
     // Check if the action can be applied to the state. Returns 0 if there is
     // no error, or a rule dependent error value if the action can't be

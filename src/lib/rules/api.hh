@@ -52,7 +52,7 @@ protected:
             return call(std::forward<Args>(args)...);
         }
 
-        // Explicity definining argument type to allow brace-initializing T,
+        // Explicitly defining argument type to allow brace-initializing T,
         // which is not otherwise usable with the universal forward defined
         // above.
         ApiError operator()(T arg) { return call(arg); }

@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <utils/buffer.hh>
+#include <utility>
 #include <vector>
 
 namespace rules {
@@ -37,7 +38,7 @@ using Player_sptr = std::shared_ptr<Player>;
 struct Players final : utils::IBufferizable
 {
     Players() = default;
-    Players(std::vector<Player_sptr> players) : players(players) {}
+    explicit Players(std::vector<Player_sptr> players) : players(std::move(players)) {}
 
     void handle_buffer(utils::Buffer& buf) override
     {
@@ -51,7 +52,7 @@ struct Players final : utils::IBufferizable
             while (!buf.empty())
             {
                 // Get a player
-                Player_sptr player = Player_sptr(new Player(0, 0));
+                Player_sptr player = std::make_shared<Player>(0, 0);
 
                 // And unserialize it
                 player->handle_buffer(buf);

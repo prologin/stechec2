@@ -19,8 +19,8 @@ const int max_consecutive_timeout = 3;
 class Rules
 {
 public:
-    explicit Rules(const Options opt);
-    virtual ~Rules() {}
+    explicit Rules(const Options& opt);
+    virtual ~Rules() = default;
 
     /* Pure virtual methods */
 
@@ -54,7 +54,7 @@ public:
     // Player's turn: call the champion within a sandbox
     virtual void player_turn() {}
 
-    // Spectator's turn: call the champion wihout any sandbox
+    // Spectator's turn: call the champion without any sandbox
     virtual void spectator_turn() {}
 
     // Called before / after every player has played
@@ -88,8 +88,8 @@ protected:
 class SynchronousRules : public Rules
 {
 public:
-    explicit SynchronousRules(const Options opt);
-    ~SynchronousRules() override {}
+    explicit SynchronousRules(const Options& opt);
+    ~SynchronousRules() override = default;
 
     void player_loop(ClientMessenger_sptr msgr) final;
     void spectator_loop(ClientMessenger_sptr msgr) final;
@@ -99,8 +99,8 @@ public:
 class TurnBasedRules : public Rules
 {
 public:
-    explicit TurnBasedRules(const Options opt);
-    ~TurnBasedRules() override {}
+    explicit TurnBasedRules(const Options& opt);
+    ~TurnBasedRules() override = default;
 
     // Called each time a client starts its turn
     virtual void start_of_turn(uint32_t) {}

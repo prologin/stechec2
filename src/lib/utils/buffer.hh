@@ -41,9 +41,9 @@ public:
 
     // If a buffer is provided, it's unserialization
     explicit Buffer(std::vector<uint8_t> data)
-        : data_(data), idx_(0), serialize_(false)
+        : data_(std::move(data)), idx_(0), serialize_(false)
     {}
-    explicit Buffer(Buffer&& buf)
+    Buffer(Buffer&& buf) noexcept
         : data_{std::move(buf.data_)}, idx_{0}, serialize_{false}
     {}
 
