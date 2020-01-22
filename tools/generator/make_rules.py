@@ -26,7 +26,7 @@ def camel_case(value: str) -> str:
 def cxx_comment(env, value: str, doc: bool, indent: int = 0) -> str:
     start = "/// " if doc else "// "
     newline = "\n" + indent * " " + start
-    return env.call_filter("wordwrap", start + value, [79, False, start])
+    return start + env.call_filter("wordwrap", value, [79 - indent - len(start), False, newline])
 
 
 def make_rules(yaml_path: str, install_path: str) -> None:
