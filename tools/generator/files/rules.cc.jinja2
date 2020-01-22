@@ -9,8 +9,8 @@
 #include "actions.hh"
 
 Rules::Rules(const rules::Options opt)
-    : {% if yaml.rules_type == 'turnbased' %}TurnBasedRules(opt)
-    , {% elif yaml.rules_type == 'synchronous' %}SynchronousRules(opt)
+    : {% if game.rules_type == 'turnbased' %}TurnBasedRules(opt)
+    , {% elif game.rules_type == 'synchronous' %}SynchronousRules(opt)
     , {% endif %}sandbox_(opt.time)
 {
     if (!opt.champion_lib.empty())
@@ -27,15 +27,15 @@ Rules::Rules(const rules::Options opt)
 
 void Rules::register_actions()
 {
-    {%- for func in yaml.function %}
+    {%- for func in game.function %}
         {%- if func.fct_action %}
     api_->actions()->register_action(ID_ACTION_{{ func.fct_name|upper }},
-                                     [] { return new Action{{ func.fct_name|snake_to_camel_case }}; });
+                                     [] { return new Action{{ func.fct_name|camel_case }}; });
         {%- endif %}
     {%- endfor %}
 }
 
-{% if not yaml.rules_type -%}
+{% if not game.rules_type -%}
 void Rules::player_loop(rules::ClientMessenger_sptr msgr)
 {
     // FIXME

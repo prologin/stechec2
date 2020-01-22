@@ -4,10 +4,6 @@
 #pragma once
 
 #include <memory>
-{#- The following two headers may not be necessary. They are only used if there
-is a std::string, or a std::vector in the generated function signatures.
-We could make the test here and add the includes only if necessary, but it does
-not cost must to include them in every cases. #}
 #include <string>
 #include <vector>
 
@@ -29,14 +25,14 @@ public:
     ~Api() {}
 
 {#- Generate the C++ declaration for each API function -#}
-{% for func in yaml.function %}
+{% for func in game.function %}
 {# Since this is a header, generate the function documentation #}
     {{ ("/// " + func.fct_summary)|wordwrap(79, False, "\n    /// ") }}
 
 {%- if func.fct_action %}
 {#- Action functions are defined in their own cpp. Here we just use a wrapper
     to bind them to the API #}
-    ApiActionFunc<Action{{ func.fct_name|snake_to_camel_case }}> {{ func.fct_name }}{this};
+    ApiActionFunc<Action{{ func.fct_name|camel_case }}> {{ func.fct_name }}{this};
 {%- else %}
 {#- Other action are just declared here, their definition will be in api.cc #}
     {{ func.fct_ret_type|cxx_type }} {{ func.fct_name }}({{ func.fct_arg|cxx_args }});

@@ -9,34 +9,34 @@
 #include "constant.hh"
 #include "game_state.hh"
 
-{% set args = func.fct_arg + [['player_id', 'int', '']] -%}
-class Action{{ func.fct_name|snake_to_camel_case }} : public rules::Action<GameState>
+{% set args = action.fct_arg + [['player_id', 'int', '']] -%}
+class Action{{ action.fct_name|camel_case }} : public rules::Action<GameState>
 {
 public:
     {%- set comma = joiner("    , ") %}
-    Action{{ func.fct_name|snake_to_camel_case }}({{ args|cxx_args }})
-        : {% for arg in args %}{{ comma() }}{{ arg[0] }}_({{ arg[0] }})
+    Action{{ action.fct_name|camel_case }}({{ args|cxx_args }})
+        : {% for arg_name, _, _ in args %}{{ comma() }}{{ arg_name }}_({{ arg_name }})
     {% endfor -%}
     {
     }
-    Action{{ func.fct_name|snake_to_camel_case }}() {} // for register_action()
+    Action{{ action.fct_name|camel_case }}() {} // for register_action()
 
     int check(const GameState& st) const override;
     void apply_on(GameState* st) const override;
 
     void handle_buffer(utils::Buffer& buf) override
     {
-        {%- for arg in args %}
-        buf.handle({{ arg[0] }}_);
+        {%- for arg_name, _, _ in args %}
+        buf.handle({{ arg_name }}_);
         {%- endfor %}
     }
 
     uint32_t player_id() const override { return player_id_; };
-    uint32_t id() const override { return ID_ACTION_{{ func.fct_name|upper }}; }
+    uint32_t id() const override { return ID_ACTION_{{ action.fct_name|upper }}; }
 
 private:
-    {%- for arg in args %}
-    {{ arg[1] }} {{ arg[0] }}_;
+    {%- for arg_name, arg_type, _ in args %}
+    {{ arg_type }} {{ arg_name }}_;
     {%- endfor %}
 };
 

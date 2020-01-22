@@ -17,20 +17,20 @@
 #include "api.hh"
 
 class Rules
-{%- if yaml.rules_type == 'turnbased' %} : public rules::TurnBasedRules
-{%- elif yaml.rules_type == 'synchronous' %} : public rules::SynchronousRules
+{%- if game.rules_type == 'turnbased' %} : public rules::TurnBasedRules
+{%- elif game.rules_type == 'synchronous' %} : public rules::SynchronousRules
 {%- endif %}
 {
 public:
     explicit Rules(const rules::Options opt);
     virtual ~Rules() {}
-{% if yaml.rules_type %}
+{% if game.rules_type %}
     rules::Actions* get_actions() override;
     void apply_action(const rules::IAction_sptr& action) override;
     bool is_finished() override;
 
 protected:
-    // FIXME: Override {{ yaml.rules_type }} methods here
+    // FIXME: Override {{ game.rules_type }} methods here
 {%- else %}
     void player_loop(rules::ClientMessenger_sptr msgr) override;
     void spectator_loop(rules::ClientMessenger_sptr msgr) override;

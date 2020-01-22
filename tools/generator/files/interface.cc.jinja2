@@ -25,7 +25,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
     return os;
 }
 
-{%- for func in yaml.function %}
+{%- for func in game.function %}
 
 extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
 {
@@ -34,7 +34,7 @@ extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_
 }
 {%- endfor %}
 
-{%- for enum in yaml.enum %}
+{%- for enum in game.enum %}
 std::ostream& operator<<(std::ostream& os, {{ enum.enum_name }} v)
 {
     switch (v)
@@ -54,7 +54,7 @@ extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
 }
 {% endfor %}
 
-{%- for struct in yaml.struct %}
+{%- for struct in game.struct %}
 std::ostream& operator<<(std::ostream& os, {{ struct.str_name }} v)
 {
     os << "{ ";
