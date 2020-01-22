@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <functional> // needed for std::hash
-
 {%- for constant in game.constant %}
 {{ constant.cst_comment|cxx_comment(doc=True) }}
 #define {{ constant.cst_name }} {{ constant.cst_val }}
@@ -15,9 +13,8 @@
 {{ enum.enum_summary|cxx_comment(doc=True) }}
 typedef enum {{ enum.enum_name }}
 {
-    {%- set padding = "%%-%ds"|format(enum.enum_field|map('first')|map('length')|max + 1) %}
     {%- for field_name, field_comment in enum.enum_field %}
-    {{ padding | format(field_name|upper + ",") }} ///< {{ field_comment }}
+    {{ field_name|upper }}, ///< {{ field_comment }}
     {%- endfor %}
 } {{ enum.enum_name }};
 {% endfor %}

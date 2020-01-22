@@ -39,9 +39,9 @@ std::ostream& operator<<(std::ostream& os, {{ enum.enum_name }} v)
 {
     switch (v)
     {
-    {%- for field in enum.enum_field %}
-    case {{ field[0]|upper }}:
-        os << "{{ field[0]|upper }}";
+    {%- for field_name, _ in enum.enum_field %}
+    case {{ field_name|upper }}:
+        os << "{{ field_name|upper }}";
         break;
     {%- endfor %}
     }
@@ -58,12 +58,12 @@ extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
 std::ostream& operator<<(std::ostream& os, {{ struct.str_name }} v)
 {
     os << "{ ";
-    {%- for field in struct.str_field %}
+    {%- for field_name, _, _ in struct.str_field %}
     {%- if not loop.first %}
     os << ", ";
     {%- endif %}
-    os << "{{ field[0] }}"
-       << "=" << v.{{ field[0] }};
+    os << "{{ field_name }}"
+       << "=" << v.{{ field_name }};
     {%- endfor %}
     os << " }";
     return os;

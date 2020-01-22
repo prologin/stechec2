@@ -34,7 +34,7 @@ public:
     to bind them to the API #}
     ApiActionFunc<Action{{ func.fct_name|camel_case }}> {{ func.fct_name }}{this};
 {%- else %}
-{#- Other action are just declared here, their definition will be in api.cc #}
+{#- Other API methods are just declared here, their definition will be in api.cc #}
     {{ func.fct_ret_type|cxx_type }} {{ func.fct_name }}({{ func.fct_arg|cxx_args }});
 {%- endif %}
 {%- endfor %}

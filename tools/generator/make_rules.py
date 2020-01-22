@@ -16,7 +16,7 @@ def cxx_type(value: str) -> str:
     return value
 
 def cxx_args(value) -> str:
-    return ", ".join("{} {}".format(cxx_type(i[1]), i[0]) for i in value)
+    return ", ".join("{} {}".format(cxx_type(type_), name) for [name, type_, _] in value)
 
 def camel_case(value: str) -> str:
     """Convert a snake case identifier to a upper camel case one"""
