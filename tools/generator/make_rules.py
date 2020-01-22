@@ -22,6 +22,12 @@ def camel_case(value: str) -> str:
     """Convert a snake case identifier to a upper camel case one"""
     return "".join(i.capitalize() for i in value.split("_"))
 
+@jinja2.environmentfilter
+def cxx_comment(env, value: str, doc: bool, indent: int = 0) -> str:
+    start = "/// " if doc else "// "
+    newline = "\n" + indent * " " + start
+    return env.call_filter("wordwrap", start + value, [79, False, start])
+
 
 def make_rules(yaml_path: str, install_path: str) -> None:
     """Generate the template to code a new stechec rules project"""
@@ -37,6 +43,7 @@ def make_rules(yaml_path: str, install_path: str) -> None:
     env.filters["cxx_type"] = cxx_type
     env.filters["cxx_args"] = cxx_args
     env.filters["camel_case"] = camel_case
+    env.filters["cxx_comment"] = cxx_comment
 
     for copy in ["entry.cc", "game_state.cc", "game_state.hh"]:
         copyfile(os.path.join(template_folder, copy), os.path.join(install_path, copy))

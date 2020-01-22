@@ -6,13 +6,13 @@
 #include <functional> // needed for std::hash
 
 {%- for constant in game.constant %}
-{{ ("/// " + constant.cst_comment)|wordwrap(79, False, '\n/// ') }}
+{{ constant.cst_comment|cxx_comment(doc=True) }}
 #define {{ constant.cst_name }} {{ constant.cst_val }}
 {% endfor %}
 
 {%- for enum in game.enum %}
 
-{{ ("/// " + enum.enum_summary)|wordwrap(79, False, '\n/// ') }}
+{{ enum.enum_summary|cxx_comment(doc=True) }}
 typedef enum {{ enum.enum_name }}
 {
     {%- set padding = "%%-%ds"|format(enum.enum_field|map('first')|map('length')|max + 1) %}
@@ -23,7 +23,7 @@ typedef enum {{ enum.enum_name }}
 {% endfor %}
 
 {%- for struct in game.struct %}
-{{ ("/// " + struct.str_summary)|wordwrap(79, False, '\n/// ') }}
+{{ struct.str_summary|cxx_comment(doc=True) }}
 typedef struct {{ struct.str_name }}
 {
     {%- for field_name, field_type, field_comment in struct.str_field %}

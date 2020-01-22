@@ -27,7 +27,7 @@ public:
 {#- Generate the C++ declaration for each API function -#}
 {% for func in game.function %}
 {# Since this is a header, generate the function documentation #}
-    {{ ("/// " + func.fct_summary)|wordwrap(79, False, "\n    /// ") }}
+    {{ func.fct_summary|cxx_comment(indent=4, doc=True) }}
 
 {%- if func.fct_action %}
 {#- Action functions are defined in their own cpp. Here we just use a wrapper
