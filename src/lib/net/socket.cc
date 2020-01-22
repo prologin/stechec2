@@ -31,12 +31,12 @@ void Socket::shared_init()
     }
 }
 
-bool Socket::send(const utils::Buffer& msg, int flags)
+bool Socket::send(const utils::Buffer& msg, zmq::send_flags flags)
 {
     return send_sckt(msg, reqrep_sckt_, flags);
 }
 
-std::unique_ptr<utils::Buffer> Socket::recv(int flags)
+std::unique_ptr<utils::Buffer> Socket::recv(zmq::recv_flags flags)
 {
     return recv_sckt(reqrep_sckt_, flags);
 }
@@ -51,14 +51,16 @@ bool Socket::poll(long timeout)
 }
 
 bool Socket::send_sckt(const utils::Buffer& buf,
-                       std::shared_ptr<zmq::socket_t> sckt, int flags)
+                       std::shared_ptr<zmq::socket_t> sckt,
+                       zmq::send_flags flags)
 {
     try
     {
         while (true)
             try
             {
-                if (!sckt->send(buf.data(), buf.size(), flags))
+                const zmq::const_buffer zmq_buf{buf.data(), buf.size()};
+                if (!sckt->send(zmq_buf, flags))
                     throw std::runtime_error("Could not send message");
                 break;
             }
@@ -78,7 +80,7 @@ bool Socket::send_sckt(const utils::Buffer& buf,
 }
 
 std::unique_ptr<utils::Buffer>
-Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
+Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, zmq::recv_flags flags)
 {
     try
     {
@@ -86,7 +88,7 @@ Socket::recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags)
         while (true)
             try
             {
-                if (!sckt->recv(&zmsg, flags))
+                if (!sckt->recv(zmsg, flags))
                     throw std::runtime_error("Could not get message");
                 break;
             }

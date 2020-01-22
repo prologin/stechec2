@@ -28,16 +28,18 @@ public:
     virtual ~Socket() {}
 
     virtual void init() { shared_init(); }
-    virtual bool send(const utils::Buffer& msg, int flags = 0);
-    virtual std::unique_ptr<utils::Buffer> recv(int flags = 0);
+    virtual bool send(const utils::Buffer& msg,
+                      zmq::send_flags flags = zmq::send_flags::none);
+    virtual std::unique_ptr<utils::Buffer>
+    recv(zmq::recv_flags flags = zmq::recv_flags::none);
     virtual bool poll(long timeout);
     virtual void close() = 0;
 
 protected:
     bool send_sckt(const utils::Buffer& buf,
-                   std::shared_ptr<zmq::socket_t> sckt, int flags);
+                   std::shared_ptr<zmq::socket_t> sckt, zmq::send_flags flags);
     std::unique_ptr<utils::Buffer>
-    recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
+    recv_sckt(std::shared_ptr<zmq::socket_t> sckt, zmq::recv_flags flags);
 
 protected:
     // Must be called by subclasses after custom initialization.

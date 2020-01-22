@@ -74,7 +74,8 @@ void ServerSocket::close()
     }
 }
 
-bool ServerSocket::push(const utils::Buffer& buf, int flags, size_t sleep)
+bool ServerSocket::push(const utils::Buffer& buf, zmq::send_flags flags,
+                        size_t sleep)
 {
     if (sleep)
         std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
