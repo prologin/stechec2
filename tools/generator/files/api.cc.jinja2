@@ -16,9 +16,9 @@ Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
 }
 
 {#- Generate the C++ definition for each API function #}
-{%- for func in yaml['function'] %}
-{%- if not func['fct_action'] %}
-{{ func['fct_ret_type']|cxx_type }} Api::{{ func['fct_name'] }}({{ func['fct_arg']|cxx_args }})
+{%- for func in yaml.function %}
+{%- if not func.fct_action %}
+{{ func.fct_ret_type|cxx_type }} Api::{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
 {
     // TODO
     abort();

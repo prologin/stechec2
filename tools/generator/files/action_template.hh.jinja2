@@ -9,18 +9,17 @@
 #include "constant.hh"
 #include "game_state.hh"
 
-{% set camel_case = (func['fct_name']|replace('_',' ')|title|replace(' ', '')) -%}
-{% set args = func['fct_arg'] + [['player_id', 'int', '']] -%}
-class Action{{ camel_case }} : public rules::Action<GameState>
+{% set args = func.fct_arg + [['player_id', 'int', '']] -%}
+class Action{{ func.fct_name|snake_to_camel_case }} : public rules::Action<GameState>
 {
 public:
     {%- set comma = joiner("    , ") %}
-    Action{{ camel_case}}({{ args|cxx_args }})
+    Action{{ func.fct_name|snake_to_camel_case }}({{ args|cxx_args }})
         : {% for arg in args %}{{ comma() }}{{ arg[0] }}_({{ arg[0] }})
     {% endfor -%}
     {
     }
-    Action{{ camel_case }}() {} // for register_action()
+    Action{{ func.fct_name|snake_to_camel_case }}() {} // for register_action()
 
     int check(const GameState& st) const override;
     void apply_on(GameState* st) const override;
@@ -33,7 +32,7 @@ public:
     }
 
     uint32_t player_id() const override { return player_id_; };
-    uint32_t id() const override { return ID_ACTION_{{ func['fct_name']|upper}}; }
+    uint32_t id() const override { return ID_ACTION_{{ func.fct_name|upper }}; }
 
 private:
     {%- for arg in args %}

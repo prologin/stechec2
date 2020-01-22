@@ -15,8 +15,12 @@ def cxx_type(value: str) -> str:
         return "std::vector<{}>".format(cxx_type(value[:-6]))
     return value
 
-def cxx_args(value):
+def cxx_args(value) -> str:
     return ", ".join("{} {}".format(cxx_type(i[1]), i[0]) for i in value)
+
+def snake_to_camel_case(value: str) -> str:
+    """Convert a snake case identifier to a upper camel case one"""
+    return "".join(i.capitalize() for i in value.split("_"))
 
 
 def make_rules(yaml_path: str, install_path: str) -> None:
@@ -32,6 +36,7 @@ def make_rules(yaml_path: str, install_path: str) -> None:
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(searchpath=template_folder))
     env.filters["cxx_type"] = cxx_type
     env.filters["cxx_args"] = cxx_args
+    env.filters["snake_to_camel_case"] = snake_to_camel_case
 
     for copy in ["entry.cc", "game_state.cc", "game_state.hh"]:
         copyfile(os.path.join(template_folder, copy), os.path.join(install_path, copy))

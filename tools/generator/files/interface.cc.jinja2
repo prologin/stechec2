@@ -25,21 +25,21 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
     return os;
 }
 
-{%- for func in yaml['function'] %}
+{%- for func in yaml.function %}
 
-extern "C" {{ func['fct_ret_type']|cxx_type }} api_{{ func['fct_name'] }}({{ func['fct_arg']|cxx_args }})
+extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
 {
-    {% if func['fct_ret_type'] != 'void' %}return {% endif -%}
-    api->{{ func['fct_name'] }}({{ func['fct_arg']|map('first')|join(', ') }});
+    {% if func.fct_ret_type != 'void' %}return {% endif -%}
+    api->{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
 }
 {%- endfor %}
 
-{%- for enum in yaml['enum'] %}
-std::ostream& operator<<(std::ostream& os, {{ enum['enum_name'] }} v)
+{%- for enum in yaml.enum %}
+std::ostream& operator<<(std::ostream& os, {{ enum.enum_name }} v)
 {
     switch (v)
     {
-    {%- for field in enum['enum_field'] %}
+    {%- for field in enum.enum_field %}
     case {{ field[0]|upper }}:
         os << "{{ field[0]|upper }}";
         break;
@@ -48,17 +48,17 @@ std::ostream& operator<<(std::ostream& os, {{ enum['enum_name'] }} v)
     return os;
 }
 
-extern "C" void api_afficher_{{ enum['enum_name'] }}({{ enum['enum_name'] }} v)
+extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
 {
     std::cerr << v << std::endl;
 }
 {% endfor %}
 
-{%- for struct in yaml['struct'] %}
-std::ostream& operator<<(std::ostream& os, {{ struct['str_name'] }} v)
+{%- for struct in yaml.struct %}
+std::ostream& operator<<(std::ostream& os, {{ struct.str_name }} v)
 {
     os << "{ ";
-    {%- for field in struct['str_field'] %}
+    {%- for field in struct.str_field %}
     {%- if not loop.first %}
     os << ", ";
     {%- endif %}
@@ -69,7 +69,7 @@ std::ostream& operator<<(std::ostream& os, {{ struct['str_name'] }} v)
     return os;
 }
 
-extern "C" void api_afficher_{{ struct['str_name'] }}({{ struct['str_name'] }} v)
+extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name }} v)
 {
     std::cerr << v << std::endl;
 }

@@ -5,29 +5,29 @@
 
 #include <functional> // needed for std::hash
 
-{%- for constant in yaml['constant'] %}
-{{ ("/// " + constant['cst_comment'])|wordwrap(79, False, '\n/// ') }}
-#define {{ constant['cst_name'] }} {{ constant['cst_val'] }}
+{%- for constant in yaml.constant %}
+{{ ("/// " + constant.cst_comment)|wordwrap(79, False, '\n/// ') }}
+#define {{ constant.cst_name }} {{ constant.cst_val }}
 {% endfor %}
 
-{%- for enum in yaml['enum'] %}
+{%- for enum in yaml.enum %}
 
-{{ ("/// " + enum['enum_summary'])|wordwrap(79, False, '\n/// ') }}
-typedef enum {{ enum['enum_name'] }}
+{{ ("/// " + enum.enum_summary)|wordwrap(79, False, '\n/// ') }}
+typedef enum {{ enum.enum_name }}
 {
-    {%- set padding = "%%-%ds"|format(enum['enum_field']|map('first')|map('length')|max + 1) %}
-    {%- for field in enum['enum_field'] %}
+    {%- set padding = "%%-%ds"|format(enum.enum_field|map('first')|map('length')|max + 1) %}
+    {%- for field in enum.enum_field %}
     {{ padding | format(field[0]|upper + ",") }} ///< {{ field[1] }}
     {%- endfor %}
-} {{ enum['enum_name'] }};
+} {{ enum.enum_name }};
 {% endfor %}
 
-{%- for struct in yaml['struct'] %}
-{{ ("/// " + struct['str_summary'])|wordwrap(79, False, '\n/// ') }}
-typedef struct {{ struct['str_name'] }}
+{%- for struct in yaml.struct %}
+{{ ("/// " + struct.str_summary)|wordwrap(79, False, '\n/// ') }}
+typedef struct {{ struct.str_name }}
 {
-    {%- for field in struct['str_field'] %}
+    {%- for field in struct.str_field %}
     {{ field[1]|cxx_type }} {{ field[0] }}; ///< {{ field[2] }}
     {%- endfor %}
-} {{ struct['str_name'] }};
+} {{ struct.str_name }};
 {% endfor %}

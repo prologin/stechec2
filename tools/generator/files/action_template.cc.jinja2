@@ -3,14 +3,13 @@
 
 #include "actions.hh"
 
-{% set camel_case = (func['fct_name']|replace('_',' ')|title|replace(' ', '')) -%}
-int Action{{ camel_case }}::check(const GameState& st) const
+int Action{{ func.fct_name|snake_to_camel_case }}::check(const GameState& st) const
 {
     // FIXME
     return 0;
 }
 
-void Action{{ camel_case }}::apply_on(GameState* st) const
+void Action{{ func.fct_name|snake_to_camel_case }}::apply_on(GameState* st) const
 {
     // FIXME
 }

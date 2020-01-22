@@ -5,16 +5,16 @@
 
 enum action_id
 {
-    {%- for func in yaml['function'] %}
-        {%- if func['fct_action'] %}
-    ID_ACTION_{{ func['fct_name']|upper }},
+    {%- for func in yaml.function %}
+        {%- if func.fct_action %}
+    ID_ACTION_{{ func.fct_name|upper }},
         {%- endif %}
     {%- endfor %}
 };
 
-{% for func in yaml['function'] %}
-    {%- if func['fct_action'] %}
-#include "action_{{ func['fct_name'] }}.hh"
+{% for func in yaml.function %}
+    {%- if func.fct_action %}
+#include "action_{{ func.fct_name }}.hh"
     {%- endif %}
 {%- endfor %}
 
