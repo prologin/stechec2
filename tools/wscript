@@ -2,14 +2,17 @@
 
 from waflib import Utils
 
+
 def options(opt):
     pass
+
 
 def configure(conf):
     pass
 
+
 def build(bld):
     bld.recurse('generator')
+    bld.recurse('rubygenerator')
     bld.install_files('${PREFIX}/bin',
-        ['stechec2-run'], chmod=Utils.O755)
-
+                      ['stechec2-run'], chmod=Utils.O755)

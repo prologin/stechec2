@@ -1,79 +1,40 @@
-#! /usr/bin/env python
+#!/usr/bin/env python3
 
-import os.path
 from waflib import Utils
 
 
 def build(bld):
-    bld(features='subst',
-        source='conf.rb.in',
-        target='conf.rb',
-        PREFIX=bld.env.PREFIX)
-
     bld(
         features='subst',
-        source='generator.in',
+        source='entrypoint.sh.in',
         target='stechec2-generator',
         chmod=Utils.O755,
-        RUBY=bld.env.RUBY,
-        GENERATOR_DIR='%s/lib/stechec2/generator' % bld.env.PREFIX,
     )
 
     bld.install_files('${PREFIX}/bin', ['stechec2-generator'],
                       chmod=Utils.O755)
 
+    # TODO: This is probably the worst possible way to install a Python
+    # package. If anyone knows how to just... use a setup.py or something,
+    # please tell me how.
+
     bld.install_files('${PREFIX}/lib/stechec2/generator', [
-        'conf.rb',
-        'generator.rb',
+        '__init__.py',
+        '__main__.py',
+        'rules.py',
     ])
 
-    bld.install_files('${PREFIX}/share/stechec2/files', [
-        'files/README',
-        'files/rules.mk',
-        'files/toposort.py',
-        'files/api.cc',
-        'files/api.hh',
-        'files/constant.hh',
-        'files/interface.cc',
-        'files/rules.cc',
-        'files/rules.hh',
-        'files/entry.cc',
-        'files/game_state.cc',
-        'files/game_state.hh',
-        'files/useapi.tex',
-    ])
-
-    bld.install_files('${PREFIX}/lib/stechec2/generator/gen', [
-        'gen/file_generator.rb',
-        'gen/make_tex.rb',
-        'gen/make_sphinx.rb',
-        'gen/make_rules.rb',
-        'gen/makefile_prolog.rb',
-        'gen/makefile_js.rb',
-        'gen/makefile_ruby.rb',
-        'gen/makefile_rust.rb',
-        'gen/makefile_python.rb',
-        'gen/makefile_cs.rb',
-        'gen/makefile_lua.rb',
-        'gen/makefile_java.rb',
-        'gen/makefile_caml.rb',
-        'gen/makefile_haskell.rb',
-        'gen/makefile_cxx.rb',
-        'gen/makefile_php.rb',
-        'gen/makefile_c.rb',
-        'gen/makefile_pascal.rb',
-        'gen/generator_lua.rb',
-        'gen/generator_python.rb',
-        'gen/generator_cs.rb',
-        'gen/generator_pascal.rb',
-        'gen/generator_js.rb',
-        'gen/generator_java.rb',
-        'gen/generator_php.rb',
-        'gen/generator_caml.rb',
-        'gen/generator_ruby.rb',
-        'gen/generator_rust.rb',
-        'gen/generator_prolog.rb',
-        'gen/generator_haskell.rb',
-        'gen/generator_c.rb',
-        'gen/generator_cxx.rb',
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
+        'templates/rules/action_template.cc.jinja2',
+        'templates/rules/action_template.hh.jinja2',
+        'templates/rules/actions.hh.jinja2',
+        'templates/rules/api.cc.jinja2',
+        'templates/rules/api.hh.jinja2',
+        'templates/rules/constant.hh.jinja2',
+        'templates/rules/entry.cc.jinja2',
+        'templates/rules/game_state.cc.jinja2',
+        'templates/rules/game_state.hh.jinja2',
+        'templates/rules/interface.cc.jinja2',
+        'templates/rules/rules.cc.jinja2',
+        'templates/rules/rules.hh.jinja2',
     ])

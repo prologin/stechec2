@@ -1,0 +1,3 @@
+#!/bin/bash
+
+PYTHONPATH="@PREFIX@/lib/stechec2" python3 -m generator $*
