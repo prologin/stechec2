@@ -21,7 +21,8 @@ public:
     void init() override;
     void close() override;
 
-    std::unique_ptr<utils::Buffer> pull(int flags = 0);
+    std::unique_ptr<utils::Buffer>
+    pull(zmq::recv_flags flags = zmq::recv_flags::none);
 };
 
 using ClientSocket_sptr = std::shared_ptr<ClientSocket>;

@@ -22,7 +22,8 @@ public:
     void init() override;
     void close() override;
 
-    bool push(const utils::Buffer& buf, int flags = 0, size_t sleep = 0);
+    bool push(const utils::Buffer& buf,
+              zmq::send_flags flags = zmq::send_flags::none, size_t sleep = 0);
 };
 
 using ServerSocket_sptr = std::shared_ptr<ServerSocket>;

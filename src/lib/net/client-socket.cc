@@ -62,7 +62,7 @@ void ClientSocket::close()
     }
 }
 
-std::unique_ptr<utils::Buffer> ClientSocket::pull(int flags)
+std::unique_ptr<utils::Buffer> ClientSocket::pull(zmq::recv_flags flags)
 {
     return recv_sckt(pubsub_sckt_, flags);
 }
