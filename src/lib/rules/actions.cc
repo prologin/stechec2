@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
+#include <utility>
+
 #include "actions.hh"
 
 namespace rules {
@@ -8,7 +10,7 @@ void Actions::handle_buffer(utils::Buffer& buf)
 {
     if (buf.serialize())
     {
-        for (const auto action : actions_)
+        for (const auto& action : actions_)
         {
             // The id is needed to reconstruct the action when unserializing
             uint32_t action_id = action->id();
@@ -39,7 +41,7 @@ void Actions::handle_buffer(utils::Buffer& buf)
 
 void Actions::register_action(uint32_t action_id, ActionFactory action_factory)
 {
-    action_factory_[action_id] = action_factory;
+    action_factory_[action_id] = std::move(action_factory);
 }
 
 } // namespace rules

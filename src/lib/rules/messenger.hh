@@ -12,7 +12,7 @@ namespace rules {
 class Messenger
 {
 public:
-    virtual ~Messenger();
+    virtual ~Messenger() = default;
 
     virtual void send(const utils::Buffer&) = 0;
     virtual std::unique_ptr<utils::Buffer> recv() = 0;

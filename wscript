@@ -180,7 +180,6 @@ def build_lib(bld):
             src/lib/net/message.cc
 
             src/lib/rules/actions.cc
-            src/lib/rules/messenger.cc
             src/lib/rules/client-messenger.cc
             src/lib/rules/server-messenger.cc
             src/lib/rules/rules.cc
