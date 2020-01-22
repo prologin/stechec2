@@ -41,6 +41,8 @@ public:
     void clear() { actions_.clear(); }
 
     const ActionLog& all() const { return actions_; }
+    // Deprecated: the action buffer should not be mutable.
+    ActionLog& all() { return actions_; }
 
 private:
     ActionLog actions_;
