@@ -1,0 +1,76 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+
+#include <iostream>
+#include <sstream>
+#include <vector>
+
+#include "api.hh"
+
+// from api.cc
+extern Api* api;
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
+{
+    os << "[";
+    typename std::vector<T>::const_iterator it;
+    for (it = arr.begin(); it != arr.end(); ++it)
+    {
+        if (it != arr.begin())
+            os << ", ";
+        os << *it;
+    }
+    os << "]";
+    return os;
+}
+
+{%- for func in game.function %}
+
+extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
+{
+    {% if func.fct_ret_type != 'void' %}return {% endif -%}
+    api->{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
+}
+{%- endfor %}
+
+{%- for enum in game.enum %}
+std::ostream& operator<<(std::ostream& os, {{ enum.enum_name }} v)
+{
+    switch (v)
+    {
+    {%- for field_name, _ in enum.enum_field %}
+    case {{ field_name|upper }}:
+        os << "{{ field_name|upper }}";
+        break;
+    {%- endfor %}
+    }
+    return os;
+}
+
+extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
+{
+    std::cerr << v << std::endl;
+}
+{% endfor %}
+
+{%- for struct in game.struct %}
+std::ostream& operator<<(std::ostream& os, {{ struct.str_name }} v)
+{
+    os << "{ ";
+    {%- for field_name, _, _ in struct.str_field %}
+    {%- if not loop.first %}
+    os << ", ";
+    {%- endif %}
+    os << "{{ field_name }}"
+       << "=" << v.{{ field_name }};
+    {%- endfor %}
+    os << " }";
+    return os;
+}
+
+extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name }} v)
+{
+    std::cerr << v << std::endl;
+}
+{% endfor %}

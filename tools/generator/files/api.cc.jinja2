@@ -1,0 +1,27 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+
+#include "api.hh"
+
+#include <memory>
+#include <utility>
+
+// global used in interface.cc
+Api* api;
+
+Api::Api(std::unique_ptr<GameState> game_state, rules::Player_sptr player)
+    : rules::Api<GameState, error>(std::move(game_state), player)
+{
+    api = this;
+}
+
+{#- Generate the C++ definition for each API function #}
+{%- for func in game.function %}
+{%- if not func.fct_action %}
+{{ func.fct_ret_type|cxx_type }} Api::{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
+{
+    // TODO
+    abort();
+}
+{%- endif %}
+{% endfor %}
