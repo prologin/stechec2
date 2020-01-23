@@ -211,7 +211,7 @@ def stechec2_run(args, options):
         )
         if isolate:
             prefix = os.path.realpath(os.path.dirname(client_opt[0]) + '/..')
-            isolate_base = ['isolate', '--cg', '--box-id', str(cid),
+            isolate_base = ['isolate', '--cg', '--box-id', str(client_id),
               '-d', os.path.realpath(os.path.dirname(socket_dir.name)) + ':rw',
               '-d', prefix,
               '-d', os.path.realpath('.'),
@@ -227,13 +227,13 @@ def stechec2_run(args, options):
                     '--processes',
                     '--run', '--',
                    ] + opts
-            isolate_boxes.append(cid)
+            isolate_boxes.append(client_id)
         start_proc(name, opts, client_popt)
 
     # Start clients, then spectators
     client_id = 0
     for i, lib_so in enumerate(clients):
-        client_id = client_id + 1
+        client_id += 1
         lib_so = os.path.expanduser(lib_so)
         try:
             name = client_names[i]
@@ -242,7 +242,7 @@ def stechec2_run(args, options):
         run_client(client_id, lib_so, name, False, args.isolate)
 
     for i, lib_so in enumerate(spectators):
-        client_id = client_id + 1
+        client_id += 1
         lib_so = os.path.expanduser(lib_so)
         run_client(client_id, lib_so, 'spectator-{}'.format(i + 1), True)
 
