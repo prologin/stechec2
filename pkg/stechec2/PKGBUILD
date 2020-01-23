@@ -3,13 +3,13 @@
 _url=git@github.com/prologin
 pkgname=stechec2
 pkgrel=1
-pkgver=git
+pkgver=r656
 pkgdesc="Stechec2 with ${pkgver} rules"
 arch=('x86_64')
 url="http://prologin.org/"
 license=('GPL')
 provides=('stechec2' $pkgver)
-depends=('gflags' 'zeromq' 'ocaml' 'python-yaml' 'ruby')
+depends=('gflags' 'zeromq' 'ocaml' 'python-yaml' 'python-jinja' 'ruby')
 makedepends=('git')
 source=("git+ssh://${_url}/stechec2")
 sha512sums=(SKIP)
