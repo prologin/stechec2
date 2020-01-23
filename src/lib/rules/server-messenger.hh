@@ -22,7 +22,7 @@ public:
 class ServerMessenger : public Messenger
 {
 public:
-    explicit ServerMessenger(net::ServerSocket_sptr sckt);
+    explicit ServerMessenger(net::ServerSocket* sckt);
 
     void send(const utils::Buffer&) override;
 
@@ -41,7 +41,7 @@ public:
     uint32_t last_client_id() { return last_client_id_; }
 
 private:
-    net::ServerSocket_sptr sckt_;
+    net::ServerSocket* sckt_; // Not owned.
     uint32_t last_client_id_;
 };
 
