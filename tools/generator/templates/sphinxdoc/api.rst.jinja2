@@ -1,0 +1,113 @@
+===
+API
+===
+
+..
+   {{ stechec2_generated }}
+
+Constantes
+==========
+
+{% for constant in game.constant %}
+{% if constant.cst_comment %}
+.. c:var:: {{ constant.cst_name }}
+
+  :Valeur: {{ constant.cst_val }}
+  :Description:
+    {{ constant.cst_comment }}
+
+{% endif %}
+{% endfor %}
+
+Énumérations
+============
+
+{% for enum in game.enum %}
+.. c:type:: {{ enum.enum_name }}
+
+  :Description:
+      {{ enum.enum_summary }}
+  :Valeurs:
+    {% for enum_name, enum_desc in enum.enum_field %}
+      :{{ enum_name|upper }}:
+        {{ enum_desc }}
+
+    {% endfor %}
+{% endfor %}
+
+Structures
+==========
+
+{% for struct in game.struct %}
+.. c:type:: {{ struct.str_name }}
+
+  .. code-block:: c
+
+    struct {{ struct.str_name }} {
+        {%- for field_name, field_type, field_desc in struct.str_field %}
+        {{ field_type }} {{ field_name }};
+        {%- endfor %}
+    };
+
+  :Description: {{ struct.str_summary }}
+
+  :Champs:
+    {% for field_name, field_type, field_desc in struct.str_field -%}
+    :{{ field_name }}: {{ field_desc }};
+    {%- endfor %}
+
+{% endfor %}
+
+Fonctions
+=========
+
+{% for func in game.function %}
+.. c:function:: {{ func|generic_prototype }}
+
+    {{ func.fct_summary }}
+
+    {% if func.fct_notice %}
+    :Remarques: {{ func.fct_notice }}
+    {% endif %}
+
+    {% if func.fct_arg_comment %}
+    {{ func.fct_arg_comment }}
+    {% endif %}
+
+    {% for arg_name, arg_type, arg_desc in func.fct_arg %}
+      {% if arg_desc %}
+    :param {{ arg_name }}: {{ arg_desc }}
+      {% endif %}
+    {% endfor %}
+
+    {% if func.fct_ret_comment %}
+    :rtype: {{ func.fct_ret_comment }}
+    {% endif %}
+{% endfor %}
+
+Fonctions utilisateur
+=====================
+
+{% for func in game.user_function %}
+.. c:function:: {{ func|generic_prototype }}
+
+    {{ func.fct_summary }}
+
+    {% if func.fct_notice %}
+    :Remarques: {{ func.fct_notice }}
+    {% endif %}
+
+    {% if func.fct_arg_comment %}
+    {{ func.fct_arg_comment }}
+    {% endif %}
+
+    {% for arg_name, arg_type, arg_desc in func.fct_arg %}
+      {% if arg_desc %}
+    :param {{ arg_name }}: {{ arg_desc }}
+      {% endif %}
+    {% endfor %}
+
+    {% if func.fct_ret_comment %}
+    :rtype: {{ func.fct_ret_comment }}
+    {% endif %}
+{% endfor %}

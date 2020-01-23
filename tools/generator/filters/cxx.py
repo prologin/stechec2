@@ -1,4 +1,6 @@
 import jinja2
+import functools
+from .common import generic_args, generic_prototype
 
 
 def cxx_type(value: str) -> str:
@@ -9,9 +11,8 @@ def cxx_type(value: str) -> str:
     return value
 
 
-def cxx_args(value) -> str:
-    return ", ".join("{} {}".format(cxx_type(type_), name)
-                     for [name, type_, _] in value)
+cxx_args = functools.partial(generic_args, type_mapper=cxx_type)
+cxx_prototype = functools.partial(generic_prototype, arg_mapper=cxx_args)
 
 
 @jinja2.environmentfilter

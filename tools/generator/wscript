@@ -21,8 +21,16 @@ def build(bld):
     bld.install_files('${PREFIX}/lib/stechec2/generator', [
         '__init__.py',
         '__main__.py',
+        'generator.py',
         'rules.py',
+        'sphinxdoc.py',
         'texdoc.py',
+    ])
+
+    bld.install_files('${PREFIX}/lib/stechec2/generator/filters', [
+        'filters/common.py',
+        'filters/c.py',
+        'filters/cxx.py',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
@@ -43,4 +51,8 @@ def build(bld):
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/texdoc', [
         'templates/texdoc/apidoc.tex.jinja2',
         'templates/texdoc/useapi.tex.jinja2',
+    ])
+
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/sphinxdoc', [
+        'templates/sphinxdoc/api.rst.jinja2',
     ])

@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .rules import make_rules
 from .texdoc import make_texdoc
+from .sphinxdoc import make_sphinxdoc
 
 
 def main():
@@ -39,6 +40,8 @@ def main():
         make_rules(game, args.out_dir)
     elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
+    elif args.command == 'sphinxdoc':
+        make_sphinxdoc(game, args.out_dir)
     else:
         subprocess.run(
             ['stechec2-ruby-generator', args.command, args.yaml_file,
