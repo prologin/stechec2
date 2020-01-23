@@ -23,7 +23,7 @@ def main():
     sp.add_parser('player', help="create player stubs for all languages")
     sp.add_parser('server', help="create special Makefiles for the workernode")
     sp.add_parser('rules', help="generate boilerplate for api rules")
-    sp.add_parser('apidoc', help="generate latex API doc of the game")
+    sp.add_parser('texdoc', help="generate latex API doc of the game")
     sp.add_parser('sphinxdoc', help="generate sphinx API doc of the game")
 
     parser.add_argument('yaml_file', help="The game YAML file")
@@ -37,7 +37,7 @@ def main():
 
     if args.command == 'rules':
         make_rules(game, args.out_dir)
-    elif args.command == 'apidoc':
+    elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
     else:
         subprocess.run(

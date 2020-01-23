@@ -1,31 +1,8 @@
 import jinja2
 import os
 
-
-def cxx_type(value: str) -> str:
-    if value == "string":
-        return "std::string"
-    if value.endswith(" array"):
-        return "std::vector<{}>".format(cxx_type(value[:-6]))
-    return value
-
-
-def cxx_args(value) -> str:
-    return ", ".join("{} {}".format(cxx_type(type_), name)
-                     for [name, type_, _] in value)
-
-
-def camel_case(value: str) -> str:
-    """Convert a snake case identifier to a upper camel case one"""
-    return "".join(i.capitalize() for i in value.split("_"))
-
-
-@jinja2.environmentfilter
-def cxx_comment(env, value: str, doc: bool, indent: int = 0) -> str:
-    start = "/// " if doc else "// "
-    newline = "\n" + indent * " " + start
-    return start + env.call_filter("wordwrap", value,
-                                   [79 - indent - len(start), False, newline])
+from filters.common import camel_case
+from filters.cxx import cxx_type, cxx_args, cxx_comment
 
 
 def make_rules(game, out_dir: str) -> None:

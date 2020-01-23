@@ -40,7 +40,7 @@ def build(bld):
         'templates/rules/rules.hh.jinja2',
     ])
 
-    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/apidoc', [
-        'templates/apidoc/apidoc.tex.jinja2',
-        'templates/apidoc/useapi.tex.jinja2',
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/texdoc', [
+        'templates/texdoc/apidoc.tex.jinja2',
+        'templates/texdoc/useapi.tex.jinja2',
     ])

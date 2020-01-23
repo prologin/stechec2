@@ -1,14 +1,7 @@
 import jinja2
 import os
 
-
-# TODO: refactor
-def cxx_type(value: str) -> str:
-    if value == "string":
-        return "std::string"
-    if value.endswith(" array"):
-        return "std::vector<{}>".format(cxx_type(value[:-6]))
-    return value
+from filters.cxx import cxx_type
 
 
 def tex_escape(s):
@@ -41,7 +34,7 @@ def make_texdoc(game, out_dir: str) -> None:
     """Generate the LaTeX documentation of a game"""
 
     template_folder = os.path.join(os.path.dirname(__file__),
-                                   'templates', 'apidoc')
+                                   'templates', 'texdoc')
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(searchpath=template_folder),
@@ -52,6 +45,15 @@ def make_texdoc(game, out_dir: str) -> None:
         comment_start_string='<#',
         comment_end_string='#>',
         finalize=tex_escape,
+
+        # Fix for Jinja2 < 2.11.0
+        # Autoescape should be disabled since it's only for HTML tags, but it
+        # fixes a bad behavior of the finalize callback which is passed
+        # static template data in versions < 2.11.0.
+        # Removing this tex-escapes the whole template instead of only the
+        # expressions in affected versions.
+        # https://github.com/pallets/jinja/pull/1080
+        # https://stackoverflow.com/questions/8001986
         autoescape=True,
     )
     env.filters["cxx_type"] = cxx_type
