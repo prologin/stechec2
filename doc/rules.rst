@@ -726,7 +726,7 @@ requires the rules shared library to be present to replay a match::
 The replay file contains the map, if the game uses one, the list of actions
 sent by the clients (champions and spectators) and the final score.  At the end
 of the replayed match, ``stechec2-replay`` checks if the obtained score matches
-the score save in the reply file.
+the score saved in the reply file.
 
 You can use this tool to replay a match that triggers a specific bug, or use
-the replay file a unit test.
+the replay file as a unit test.

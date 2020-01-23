@@ -11,7 +11,7 @@ class Actions;
 class ReplayMessenger
 {
 public:
-    ReplayMessenger(utils::Buffer* buf) : buf_(buf) {}
+    explicit ReplayMessenger(utils::Buffer* buf) : buf_(buf) {}
 
     void pull_id(uint32_t* player_id);
     void pull_actions(Actions* actions);
