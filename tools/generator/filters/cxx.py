@@ -1,8 +1,10 @@
 import jinja2
-import functools
-from .common import generic_args, generic_prototype
+
+from . import register_filter
+from .common import generic_args, generic_prototype, generic_comment
 
 
+@register_filter
 def cxx_type(value: str) -> str:
     if value == "string":
         return "std::string"
@@ -11,13 +13,18 @@ def cxx_type(value: str) -> str:
     return value
 
 
-cxx_args = functools.partial(generic_args, type_mapper=cxx_type)
-cxx_prototype = functools.partial(generic_prototype, arg_mapper=cxx_args)
+@register_filter
+def cxx_args(value):
+    return generic_args(value, type_mapper=cxx_type)
 
 
+@register_filter
+def cxx_prototype(value):
+    return generic_prototype(value, arg_mapper=cxx_args)
+
+
+@register_filter
 @jinja2.environmentfilter
-def cxx_comment(env, value: str, doc: bool, indent: int = 0) -> str:
+def cxx_comment(env, value, doc: bool = False, indent: int = 0):
     start = "/// " if doc else "// "
-    newline = "\n" + indent * " " + start
-    return start + env.call_filter("wordwrap", value,
-                                   [79 - indent - len(start), False, newline])
+    return generic_comment(env, value=value, start=start, indent=indent)

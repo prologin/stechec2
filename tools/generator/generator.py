@@ -1,6 +1,8 @@
 import jinja2
 import os
 
+from .filters import load_library
+
 
 class Generator:
     def __init__(self, template_namespace, game, out_dir, **kwargs):
@@ -25,19 +27,6 @@ class Generator:
         out.dump(os.path.join(self.out_dir, out_name))
 
     def register_filters(self):
-        # TODO: register these automatically
-        from .filters.common import camel_case, generic_args, generic_prototype
-        self.env.filters["camel_case"] = camel_case
-        self.env.filters["generic_args"] = generic_args
-        self.env.filters["generic_prototype"] = generic_prototype
-
-        from .filters.c import c_type, c_args, c_prototype
-        self.env.filters["c_type"] = c_type
-        self.env.filters["c_args"] = c_args
-        self.env.filters["c_prototype"] = c_prototype
-
-        from .filters.cxx import cxx_type, cxx_args, cxx_prototype, cxx_comment
-        self.env.filters["cxx_type"] = cxx_type
-        self.env.filters["cxx_args"] = cxx_args
-        self.env.filters["cxx_prototype"] = cxx_prototype
-        self.env.filters["cxx_comment"] = cxx_comment
+        filter_library = load_library()
+        for filter_name, filter in filter_library.items():
+            self.env.filters[filter_name] = filter
