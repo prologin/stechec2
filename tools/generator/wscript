@@ -22,6 +22,7 @@ def build(bld):
         '__init__.py',
         '__main__.py',
         'rules.py',
+        'texdoc.py',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
@@ -37,4 +38,9 @@ def build(bld):
         'templates/rules/interface.cc.jinja2',
         'templates/rules/rules.cc.jinja2',
         'templates/rules/rules.hh.jinja2',
+    ])
+
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/apidoc', [
+        'templates/apidoc/apidoc.tex.jinja2',
+        'templates/apidoc/useapi.tex.jinja2',
     ])

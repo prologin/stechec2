@@ -7,6 +7,7 @@ import yaml
 from pathlib import Path
 
 from .rules import make_rules
+from .texdoc import make_texdoc
 
 
 def main():
@@ -36,6 +37,8 @@ def main():
 
     if args.command == 'rules':
         make_rules(game, args.out_dir)
+    elif args.command == 'apidoc':
+        make_texdoc(game, args.out_dir)
     else:
         subprocess.run(
             ['stechec2-ruby-generator', args.command, args.yaml_file,
