@@ -24,6 +24,4 @@ public:
     std::unique_ptr<utils::Buffer> pull(int flags = 0);
 };
 
-using ClientSocket_sptr = std::shared_ptr<ClientSocket>;
-
 } // namespace net

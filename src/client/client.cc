@@ -4,6 +4,7 @@
 
 #include <gflags/gflags.h>
 
+#include <memory>
 #include <net/message.hh>
 #include <rules/action.hh>
 #include <rules/options.hh>
@@ -25,7 +26,7 @@ DEFINE_int32(time, 1000, "Max time the client can use (in ms)");
 
 Client::Client()
 {
-    rules_lib_.reset(new utils::DLL(FLAGS_rules));
+    rules_lib_ = std::make_unique<utils::DLL>(FLAGS_rules);
 
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
@@ -49,8 +50,7 @@ void Client::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    msgr_ = rules::ClientMessenger_sptr(
-        new rules::ClientMessenger(sckt_, player_->id));
+    msgr_ = std::make_unique<rules::ClientMessenger>(sckt_.get(), player_->id);
 
     // Load map, if given
     auto map_content = rules::read_map_from_path(FLAGS_map);
@@ -83,8 +83,7 @@ void Client::run()
 
 void Client::sckt_init()
 {
-    sckt_ = net::ClientSocket_sptr(
-        new net::ClientSocket(FLAGS_sub_addr, FLAGS_req_addr));
+    sckt_ = std::make_unique<net::ClientSocket>(FLAGS_sub_addr, FLAGS_req_addr);
     sckt_->init();
 
     NOTICE("Requesting on %s", FLAGS_req_addr.c_str());

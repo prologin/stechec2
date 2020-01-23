@@ -22,7 +22,7 @@ DEFINE_string(dump, "", "Game data dump output path");
 
 Server::Server() : nb_players_(0)
 {
-    rules_lib_.reset(new utils::DLL(FLAGS_rules));
+    rules_lib_ = std::make_unique<utils::DLL>(FLAGS_rules);
     // Get required functions from the rules library
     rules_init = rules_lib_->get<rules::f_rules_init>("rules_init");
     server_loop = rules_lib_->get<rules::f_server_loop>("server_loop");
@@ -44,7 +44,7 @@ void Server::run()
     wait_for_players();
 
     // Create a messenger for sending rules messages
-    msgr_ = rules::ServerMessenger_sptr(new rules::ServerMessenger(sckt_));
+    msgr_ = std::make_unique<rules::ServerMessenger>(sckt_.get());
 
     // Load map, if given
     auto map_content = rules::read_map_from_path(FLAGS_map);
@@ -99,8 +99,7 @@ void Server::run()
 
 void Server::sckt_init()
 {
-    sckt_ = net::ServerSocket_sptr(
-        new net::ServerSocket(FLAGS_pub_addr, FLAGS_rep_addr));
+    sckt_ = std::make_unique<net::ServerSocket>(FLAGS_pub_addr, FLAGS_rep_addr);
     sckt_->init();
 
     NOTICE("Replying on %s", FLAGS_pub_addr.c_str());

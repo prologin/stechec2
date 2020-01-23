@@ -24,7 +24,7 @@ enum MsgType
 
 struct Message
 {
-    explicit Message(uint32_t type_ = 0, uint32_t client_id_ = 0);
+    explicit Message(uint32_t type = 0, uint32_t client_id = 0);
 
     void handle_buffer(utils::Buffer& buf)
     {

@@ -8,8 +8,8 @@
 
 namespace net {
 
-Message::Message(uint32_t type_, uint32_t client_id_)
-    : type(type_), client_id(client_id_)
+Message::Message(uint32_t type, uint32_t client_id)
+    : type(type), client_id(client_id)
 {}
 
 std::string Message::str() const

@@ -11,8 +11,6 @@
 
 namespace net {
 
-const int SCKT_NOBLOCK = ZMQ_DONTWAIT;
-
 struct Message;
 
 // Socket is the common representation of the pair of ZeroMQ sockets Stechec
@@ -34,10 +32,8 @@ public:
     virtual void close() = 0;
 
 protected:
-    bool send_sckt(const utils::Buffer& buf,
-                   std::shared_ptr<zmq::socket_t> sckt, int flags);
-    std::unique_ptr<utils::Buffer>
-    recv_sckt(std::shared_ptr<zmq::socket_t> sckt, int flags);
+    bool send_sckt(const utils::Buffer& buf, zmq::socket_t* sckt, int flags);
+    std::unique_ptr<utils::Buffer> recv_sckt(zmq::socket_t* sckt, int flags);
 
 protected:
     // Must be called by subclasses after custom initialization.
@@ -47,8 +43,8 @@ protected:
     std::string reqrep_addr_;
 
     zmq::context_t ctx_;
-    std::shared_ptr<zmq::socket_t> pubsub_sckt_;
-    std::shared_ptr<zmq::socket_t> reqrep_sckt_;
+    std::unique_ptr<zmq::socket_t> pubsub_sckt_;
+    std::unique_ptr<zmq::socket_t> reqrep_sckt_;
 };
 
 } // namespace net

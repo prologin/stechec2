@@ -7,8 +7,8 @@
 
 namespace rules {
 
-ServerMessenger::ServerMessenger(net::ServerSocket_sptr sckt)
-    : sckt_(std::move(sckt)), last_client_id_(-1)
+ServerMessenger::ServerMessenger(net::ServerSocket* sckt)
+    : sckt_(sckt), last_client_id_(-1)
 {}
 
 void ServerMessenger::send(const utils::Buffer& buf)

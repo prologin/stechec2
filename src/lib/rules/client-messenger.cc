@@ -8,9 +8,9 @@
 
 namespace rules {
 
-ClientMessenger::ClientMessenger(net::ClientSocket_sptr sckt,
+ClientMessenger::ClientMessenger(net::ClientSocket* sckt,
                                  uint32_t client_id)
-    : sckt_(std::move(sckt)), client_id_(client_id)
+    : sckt_(sckt), client_id_(client_id)
 {}
 
 void ClientMessenger::send(const utils::Buffer& buf)

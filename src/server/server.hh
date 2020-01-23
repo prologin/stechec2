@@ -35,7 +35,7 @@ private:
     rules::Players_sptr spectators_;
     rules::ServerMessenger_sptr msgr_;
 
-    net::ServerSocket_sptr sckt_;
+    std::unique_ptr<net::ServerSocket> sckt_;
 };
 
 #endif // !SERVER_SERVER_HH_

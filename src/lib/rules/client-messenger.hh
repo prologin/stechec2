@@ -23,7 +23,7 @@ public:
 class ClientMessenger : public Messenger
 {
 public:
-    ClientMessenger(net::ClientSocket_sptr sckt, uint32_t client_id);
+    ClientMessenger(net::ClientSocket* sckt, uint32_t client_id);
 
     void send(const utils::Buffer&) override;
     void send_actions(Actions&);
@@ -42,7 +42,7 @@ public:
     bool wait_for_turn(uint32_t player_id, uint32_t* pulled_id);
 
 private:
-    net::ClientSocket_sptr sckt_;
+    net::ClientSocket* sckt_; // Not owned.
     uint32_t client_id_;
 };
 
