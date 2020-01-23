@@ -27,14 +27,14 @@ def main():
     sp.add_parser('texdoc', help="generate latex API doc of the game")
     sp.add_parser('sphinxdoc', help="generate sphinx API doc of the game")
 
-    parser.add_argument('yaml_file', help="The game YAML file")
-    parser.add_argument('out_dir', help="The output directory")
+    parser.add_argument('yaml_file', type=argparse.FileType('r'), help="The game YAML file")
+    parser.add_argument('out_dir', type=Path, help="The output directory")
     args = parser.parse_args()
 
     # TODO check that conf is valid
-    game = yaml.safe_load(open(args.yaml_file, "r"))
+    game = yaml.safe_load(args.yaml_file)
 
-    Path(args.out_dir).mkdir(parents=True, exist_ok=True)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.command == 'rules':
         make_rules(game, args.out_dir)
@@ -44,8 +44,8 @@ def main():
         make_sphinxdoc(game, args.out_dir)
     else:
         subprocess.run(
-            ['stechec2-ruby-generator', args.command, args.yaml_file,
-             args.out_dir],
+            ['stechec2-ruby-generator', args.command, args.yaml_file.name,
+             str(args.out_dir)],
             check=True
         )
 

@@ -1,7 +1,9 @@
+from pathlib import Path
+
 from .generator import Generator
 
 
-def make_rules(game, out_dir: str) -> None:
+def make_rules(game, out_dir: Path) -> None:
     """Generate the template to code a new stechec rules project"""
 
     gen = Generator('rules', game=game, out_dir=out_dir)

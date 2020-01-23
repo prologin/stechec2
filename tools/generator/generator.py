@@ -1,16 +1,15 @@
 import jinja2
-import os
+from pathlib import Path
 
 from .filters import load_library
 
 
 class Generator:
-    def __init__(self, template_namespace, game, out_dir, **kwargs):
+    def __init__(self, template_namespace: str, game, out_dir: Path, **kwargs):
         self.game = game
         self.out_dir = out_dir
-        template_folder = os.path.join(
-            os.path.dirname(__file__), 'templates', template_namespace,
-        )
+        template_folder = str(
+            Path(__file__).parent / 'templates' / template_namespace)
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(searchpath=template_folder),
             **kwargs
@@ -24,7 +23,7 @@ class Generator:
             out_name = name
         tpl = self.env.get_template(name + '.jinja2')
         out = tpl.stream(game=self.game, **params)
-        out.dump(os.path.join(self.out_dir, out_name))
+        out.dump((self.out_dir / out_name).open('w'))
 
     def register_filters(self):
         filter_library = load_library()

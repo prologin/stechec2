@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import jinja2
 from .generator import Generator
 
@@ -28,7 +30,7 @@ def tex_escape(s):
     return jinja2.Markup(s)
 
 
-def make_texdoc(game, out_dir: str) -> None:
+def make_texdoc(game, out_dir: Path) -> None:
     """Generate the LaTeX documentation of a game"""
 
     gen = Generator(
