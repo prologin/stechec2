@@ -35,18 +35,19 @@ def build(bld):
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
-        'templates/rules/action_template.cc.jinja2',
-        'templates/rules/action_template.hh.jinja2',
-        'templates/rules/actions.hh.jinja2',
-        'templates/rules/api.cc.jinja2',
-        'templates/rules/api.hh.jinja2',
-        'templates/rules/constant.hh.jinja2',
-        'templates/rules/entry.cc.jinja2',
-        'templates/rules/game_state.cc.jinja2',
-        'templates/rules/game_state.hh.jinja2',
-        'templates/rules/interface.cc.jinja2',
-        'templates/rules/rules.cc.jinja2',
-        'templates/rules/rules.hh.jinja2',
+        'templates/rules/src/action_template.cc.jinja2',
+        'templates/rules/src/action_template.hh.jinja2',
+        'templates/rules/src/actions.hh.jinja2',
+        'templates/rules/src/api.cc.jinja2',
+        'templates/rules/src/api.hh.jinja2',
+        'templates/rules/src/constant.hh.jinja2',
+        'templates/rules/src/entry.cc.jinja2',
+        'templates/rules/src/game_state.cc.jinja2',
+        'templates/rules/src/game_state.hh.jinja2',
+        'templates/rules/src/interface.cc.jinja2',
+        'templates/rules/src/rules.cc.jinja2',
+        'templates/rules/src/rules.hh.jinja2',
+        'templates/rules/wscript.jinja2',
     ])
 
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/texdoc', [

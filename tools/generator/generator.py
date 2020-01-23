@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+
 import jinja2
 from pathlib import Path
 
@@ -23,7 +26,9 @@ class Generator:
             out_name = name
         tpl = self.env.get_template(name + '.jinja2')
         out = tpl.stream(game=self.game, **params)
-        out.dump((self.out_dir / out_name).open('w'))
+        out_path = self.out_dir / out_name
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out.dump(out_path.open('w'))
 
     def register_filters(self):
         filter_library = load_library()

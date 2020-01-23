@@ -279,53 +279,23 @@ PATH:
 .. code-block:: bash
 
   $ stechec2-generator -h   # Display a lot of useful help
-  $ stechec2-generator rules ./connect4.yml gen
-  $ mv gen/connect4/rules src
-  $ rm -rf gen
+  $ stechec2-generator rules ./connect4.yml .
   $ ls src
   action_drop.cc  actions.hh  api.hh       entry.cc       game_state.hh rules.cc
   action_drop.hh  api.cc      constant.hh  game_state.cc  interface.cc  rules.hh
 
-You don't have to modify ``constant.hh``, ``entry.hh`` and ``interface.hh``.
-They are generated files that shouldn't be manually edited.
+You will have to complete some of these files: ``action_*.cc``, ``api.cc``,
+``game_state.cc``, ``game_state.hh``, ``rules.cc`` and ``rules.hh``.
 
 The wscript
 ===========
 
-Stechec2 uses the waf.py Makefile-like to build the games. We need to create a
-``wscript`` file in the root folder of our game, containing this:
+Stechec2 uses the waf.py Makefile-like to build the games. If you used the
+``stechec2-generator rules`` command, then a ``wscript`` file was created for
+you. It is alongside the ``src`` folder.
 
-.. code-block:: python
-
-  #! /usr/bin/env python
-
-  def options(opt):
-      pass
-
-  def configure(cfg):
-      pass
-
-  def build(bld):
-      bld.shlib(
-          source = '''
-              src/action_drop.cc
-              src/api.cc
-              src/entry.cc
-              src/game_state.cc
-              src/interface.cc
-              src/rules.cc
-          ''',
-          defines = ['MODULE_COLOR=ANSI_COL_BROWN', 'MODULE_NAME="rules"'],
-          target = 'connect4',
-          use = ['stechec2'],
-      )
-
-      bld.install_files('${PREFIX}/share/stechec2/connect4', [
-          'connect4.yml',
-      ])
-
-You can add source files to the ``source`` string. You don't need to change the
-rest for now.
+If you add new source files in ``src``, you will have to add them in the
+``source`` string of the ``wscript``.
 
 
 The rules
