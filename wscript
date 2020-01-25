@@ -151,6 +151,7 @@ def build(bld):
 
     if not bld.env.GAMES_ONLY:
         build_client(bld)
+        build_replay(bld)
         build_server(bld)
 
         bld.recurse('tools')
@@ -181,6 +182,7 @@ def build_lib(bld):
 
             src/lib/rules/actions.cc
             src/lib/rules/client-messenger.cc
+            src/lib/rules/replay-messenger.cc
             src/lib/rules/server-messenger.cc
             src/lib/rules/rules.cc
             src/lib/rules/options.cc
@@ -233,6 +235,19 @@ def build_server(bld):
                 target='stechec2-server',
                 defines=[
                     'MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="server"',
+                    'MODULE_VERSION="%s"' % VERSION
+                ],
+                use=['stechec2', 'gflags'])
+
+
+def build_replay(bld):
+    bld.program(source='''
+            src/replay/main.cc
+            src/replay/replay.cc
+        ''',
+                target='stechec2-replay',
+                defines=[
+                    'MODULE_COLOR=ANSI_COL_RED', 'MODULE_NAME="replay"',
                     'MODULE_VERSION="%s"' % VERSION
                 ],
                 use=['stechec2', 'gflags'])

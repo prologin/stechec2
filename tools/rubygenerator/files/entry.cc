@@ -2,7 +2,9 @@
 // Copyright (c) 2012 Association Prologin <association@prologin.org>
 #include <cstdlib>
 #include <memory>
+
 #include <rules/client-messenger.hh>
+#include <rules/replay-messenger.hh>
 #include <rules/server-messenger.hh>
 #include <utils/log.hh>
 
@@ -31,6 +33,11 @@ void rules_result()
 void player_loop(rules::ClientMessenger_sptr msgr)
 {
     rules_->player_loop(msgr);
+}
+
+void replay_loop(rules::ReplayMessenger_sptr msgr)
+{
+    rules_->replay_loop(msgr);
 }
 
 void server_loop(rules::ServerMessenger_sptr msgr)

@@ -4,6 +4,7 @@
 
 #include <rules/client-messenger.hh>
 #include <rules/options.hh>
+#include <rules/replay-messenger.hh>
 #include <rules/server-messenger.hh>
 
 namespace rules {
@@ -12,6 +13,7 @@ using f_rules_init = void (*)(const Options&);
 using f_rules_result = void (*)();
 
 using f_client_loop = void (*)(ClientMessenger_sptr);
+using f_replay_loop = void (*)(ReplayMessenger_sptr);
 using f_server_loop = void (*)(ServerMessenger_sptr);
 
 } // namespace rules

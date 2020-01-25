@@ -9,6 +9,7 @@
 #include "client-messenger.hh"
 #include "options.hh"
 #include "player.hh"
+#include "replay-messenger.hh"
 #include "server-messenger.hh"
 
 namespace rules {
@@ -25,6 +26,7 @@ public:
     /* Pure virtual methods */
 
     virtual void player_loop(ClientMessenger_sptr msgr) = 0;
+    virtual void replay_loop(ReplayMessenger_sptr msgr) = 0;
     virtual void spectator_loop(ClientMessenger_sptr msgr) = 0;
     virtual void server_loop(ServerMessenger_sptr msgr) = 0;
 
@@ -68,6 +70,10 @@ public:
               "but the server was launched with the `--dump` option.");
     }
 
+    // Called after every turn to save the actions of the player to the replay
+    // file
+    void save_player_actions(Actions* actions);
+
 protected:
     bool is_spectator(uint32_t id);
 
@@ -92,6 +98,7 @@ public:
     ~SynchronousRules() override = default;
 
     void player_loop(ClientMessenger_sptr msgr) final;
+    void replay_loop(ReplayMessenger_sptr msgr) final;
     void spectator_loop(ClientMessenger_sptr msgr) final;
     void server_loop(ServerMessenger_sptr msgr) final;
 };
@@ -113,6 +120,7 @@ public:
     virtual void end_of_spectator_turn(uint32_t) {}
 
     void player_loop(ClientMessenger_sptr msgr) final;
+    void replay_loop(ReplayMessenger_sptr msgr) final;
     void spectator_loop(ClientMessenger_sptr msgr) final;
     void server_loop(ServerMessenger_sptr msgr) final;
 };
