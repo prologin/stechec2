@@ -239,6 +239,7 @@ def build_server(bld):
                 ],
                 use=['stechec2', 'gflags'])
 
+
 def build_replay(bld):
     bld.program(source='''
             src/replay/main.cc
