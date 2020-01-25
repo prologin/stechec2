@@ -314,37 +314,37 @@ void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
     while (!is_finished())
     {
         start_of_round();
-        for (const auto& p : players_->players)
+        for (const auto& player : players_->players)
         {
-            DEBUG("Turn for player: %d", p->id);
+            DEBUG("Turn for player: %d", player->id);
 
-            start_of_player_turn(p->id);
-            start_of_turn(p->id);
+            start_of_player_turn(player->id);
+            start_of_turn(player->id);
 
             msgr->pull_actions(actions);
             DEBUG("Pulled %d actions", actions->size());
-            for (const auto action : actions->actions())
+            for (const auto& action : actions->actions())
                 apply_action(action);
             actions->clear();
 
-            end_of_player_turn(p->id);
-            end_of_turn(p->id);
+            end_of_player_turn(player->id);
+            end_of_turn(player->id);
 
-            for (const auto& s : spectators_->players)
+            for (const auto& spectator : spectators_->players)
             {
-                DEBUG("Turn for spectator %d", s->id);
+                DEBUG("Turn for spectator %d", spectator->id);
 
-                start_of_spectator_turn(s->id);
-                start_of_turn(s->id);
+                start_of_spectator_turn(spectator->id);
+                start_of_turn(spectator->id);
 
                 msgr->pull_actions(actions);
                 DEBUG("Pulled %d actions", actions->size());
-                for (const auto action : actions->actions())
+                for (const auto& action : actions->actions())
                     apply_action(action);
                 actions->clear();
 
-                end_of_spectator_turn(s->id);
-                end_of_turn(s->id);
+                end_of_spectator_turn(spectator->id);
+                end_of_turn(spectator->id);
             }
         }
         end_of_round();
