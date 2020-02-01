@@ -1,0 +1,8 @@
+#include "api.hh"
+{% for func in game.user_function %}
+{{ func.fct_summary|cxx_comment(doc=True) }}
+extern "C" {{ func.fct_ret_type|cxx_type }} {{ func.fct_name }}({{ func.fct_arg|cxx_args }})
+{
+    // TODO
+}
+{% endfor %}
