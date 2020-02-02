@@ -26,7 +26,7 @@ public:
     virtual ~Rules() {}
 {% if game.rules_type %}
     rules::Actions* get_actions() override;
-    void apply_action(const rules::IAction_sptr& action) override;
+    void apply_action(const rules::IAction& action) override;
     bool is_finished() override;
 
 protected:
