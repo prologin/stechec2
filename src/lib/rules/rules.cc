@@ -57,9 +57,9 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 
         /* Apply actions onto the gamestate */
         /* We should already have applied our actions */
-        for (const auto& action : actions->actions())
+        for (const auto& action : actions->all())
             if (action->player_id() != opt_.player->id)
-                apply_action(action);
+                apply_action(*action);
 
         end_of_round();
     }
@@ -78,8 +78,8 @@ void SynchronousRules::replay_loop(ReplayMessenger_sptr msgr)
         start_of_round();
 
         msgr->pull_actions(actions);
-        for (const auto& action : actions->actions())
-            apply_action(action);
+        for (const auto& action : actions->all())
+            apply_action(*action);
         actions->clear();
 
         end_of_round();
@@ -111,8 +111,8 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
             break;
 
         msgr->pull_actions(actions);
-        for (const auto& action : actions->actions())
-            apply_action(action);
+        for (const auto& action : actions->all())
+            apply_action(*action);
         actions->clear();
 
         end_of_round();
@@ -148,7 +148,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         size_t spectators_count = spectators_->players.size();
         start_of_round();
 
-        Actions* actions = get_actions();
+        auto actions = get_actions();
         actions->clear();
 
         players_timeouting.clear();
@@ -207,8 +207,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 
         save_player_actions(actions);
 
-        for (const auto& action : actions->actions())
-            apply_action(action);
+        for (const auto& action : actions->all())
+            apply_action(*action);
         msgr->push_actions(*actions);
 
         end_of_round();
@@ -266,8 +266,8 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (const auto& action : actions->actions())
-                apply_action(action);
+            for (const auto& action : actions->all())
+                apply_action(*action);
         }
         else /* Current player turn */
         {
@@ -323,8 +323,8 @@ void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
 
             msgr->pull_actions(actions);
             DEBUG("Pulled %d actions", actions->size());
-            for (const auto& action : actions->actions())
-                apply_action(action);
+            for (const auto& action : actions->all())
+                apply_action(*action);
             actions->clear();
 
             end_of_player_turn(player->id);
@@ -339,8 +339,8 @@ void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
 
                 msgr->pull_actions(actions);
                 DEBUG("Pulled %d actions", actions->size());
-                for (const auto& action : actions->actions())
-                    apply_action(action);
+                for (const auto& action : actions->all())
+                    apply_action(*action);
                 actions->clear();
 
                 end_of_spectator_turn(spectator->id);
@@ -399,8 +399,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
             DEBUG("Got %u actions", actions->size());
 
             /* Apply them onto the gamestate */
-            for (const auto& action : actions->actions())
-                apply_action(action);
+            for (const auto& action : actions->all())
+                apply_action(*action);
 
             end_of_player_turn(playing_id);
         }
@@ -492,8 +492,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
-                    for (const auto& action : actions->actions())
-                        apply_action(action);
+                    for (const auto& action : actions->all())
+                        apply_action(*action);
                 }
             }
 

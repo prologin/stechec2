@@ -26,7 +26,7 @@ public:
     ~Rules() = default;
 
     rules::Actions* get_actions() override;
-    void apply_action(const rules::IAction_sptr& action) override;
+    void apply_action(const rules::IAction& action) override;
 
     void at_player_start(rules::ClientMessenger_sptr) override;
     void at_player_end(rules::ClientMessenger_sptr) override;

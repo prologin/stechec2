@@ -34,7 +34,7 @@ public:
     virtual Actions* get_actions() = 0;
 
     // Apply an action to the game state
-    virtual void apply_action(const IAction_sptr& action) = 0;
+    virtual void apply_action(const IAction& action) = 0;
 
     // Check whether the game is over
     virtual bool is_finished() = 0;

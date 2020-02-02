@@ -62,8 +62,4 @@ public:
     void apply(std::unique_ptr<TState>& st) const { apply_on(st.get()); }
 };
 
-using IAction_sptr = std::shared_ptr<IAction>;
-using ActionLog = std::vector<IAction_sptr>;
-using ActionFactory = std::function<IAction*()>;
-
 } // namespace rules

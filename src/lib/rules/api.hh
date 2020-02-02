@@ -30,18 +30,18 @@ protected:
         ApiError call(Args&&... args)
         {
             // Build action object
-            const auto action = std::make_shared<Action>(
-                std::forward<Args>(args)..., api_->player_->id);
+            auto action = std::make_unique<Action>(std::forward<Args>(args)...,
+                                                   api_->player_->id);
 
             // Check action
             ApiError err;
-            if ((err = api_->game_state_check(action)) != ApiError::OK)
+            if ((err = api_->game_state_check(*action)) != ApiError::OK)
                 return err;
 
             // Apply action
-            api_->actions_.add(action);
             api_->game_state_save();
-            api_->game_state_apply(action);
+            api_->game_state_apply(*action);
+            api_->actions_.add(std::move(action));
             return ApiError::OK;
         }
 
@@ -75,13 +75,13 @@ public:
     const GameState& game_state() const { return *game_state_; }
 
     // Checks action on GameState
-    ApiError game_state_check(IAction_sptr action) const
+    ApiError game_state_check(const IAction& action) const
     {
         return static_cast<ApiError>(game_state_->check(action));
     }
 
     // Applies action to GameState
-    void game_state_apply(IAction_sptr action) { game_state_->apply(action); }
+    void game_state_apply(const IAction& action) { game_state_->apply(action); }
 
     void game_state_save() { game_state_.save(); }
     void clear_old_game_states() { game_state_.clear_old_versions(); }

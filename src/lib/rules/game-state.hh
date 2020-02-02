@@ -15,8 +15,8 @@ public:
     // Explicit copy of the game state
     virtual GameState* copy() const = 0;
 
-    int check(IAction_sptr action) const { return action->check(*this); }
-    void apply(IAction_sptr action) { action->apply(this); }
+    int check(const IAction& action) const { return action.check(*this); }
+    void apply(const IAction& action) { action.apply(this); }
 
 protected:
     // Protected to be called by copy()
