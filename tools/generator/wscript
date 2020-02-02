@@ -34,7 +34,7 @@ def build(bld):
         'filters/cxx.py',
     ])
 
-    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules/src', [
         'templates/rules/src/action_template.cc.jinja2',
         'templates/rules/src/action_template.hh.jinja2',
         'templates/rules/src/actions.hh.jinja2',
@@ -47,6 +47,8 @@ def build(bld):
         'templates/rules/src/interface.cc.jinja2',
         'templates/rules/src/rules.cc.jinja2',
         'templates/rules/src/rules.hh.jinja2',
+    ])
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/rules', [
         'templates/rules/wscript.jinja2',
     ])
 
