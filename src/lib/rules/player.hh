@@ -48,11 +48,14 @@ public:
     {
         if (buf.serialize())
         {
-            for (const auto& p : players_)
-                p->handle_buffer(buf);
+            for (const auto& player : players_)
+                player->handle_buffer(buf);
         }
         else
         {
+            // Reset
+            players_.clear();
+
             while (!buf.empty())
             {
                 // Get a player
@@ -90,7 +93,8 @@ public:
 
     size_t size() const { return players_.size(); }
 
-    const PlayersVector& all() const { return players_; }
+    auto begin() const { return players_.begin(); }
+    auto end() const { return players_.end(); }
 
 private:
     PlayersVector players_;
