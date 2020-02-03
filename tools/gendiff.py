@@ -28,10 +28,19 @@ which is particularly useful to test full rewrites of the generators:
 
     tools/gendiff.py --from-command=ruby-rules rules
 
-(5) All unknown options are passed directly to git-diff(1), so e.g you can
-ignore all whitespace changes by doing:
+(5) All unknown options are passed directly to git-diff(1), so e.g you can:
+
+* ignore all whitespace changes:
 
     tools/gendiff.py -w rules
+
+* do a color word-diff:
+
+    tools/gendiff.py rules --word-diff=color
+
+* only look at modified files (= filter out additions and removals):
+
+    tools/gendiff.py rules --diff-filter=M
 """
 
 import argparse
@@ -43,7 +52,7 @@ import tempfile
 from pathlib import Path
 
 REPO_PATH = Path(__file__).parent.parent
-GAME_YML_PATH = Path(__file__).parent.parent / 'games/tictactoe/tictactoe.yml'
+GAME_YML_PATH = REPO_PATH / 'games/tictactoe/tictactoe.yml'
 
 
 @contextlib.contextmanager
@@ -77,20 +86,18 @@ def main():
     ))
     parser.add_argument(
         '--from', default='HEAD', dest='from_',
-        help="Compare from this commit."
+        help="Diff using this commit as the source."
     )
     parser.add_argument(
         '--from-command',
-        help="Use this command for the commit compared from instead."
+        help="Run this command on the 'from' commit instead of 'command'."
     )
     parser.add_argument(
         '--to',
-        help="Compare against this commit. Defaults to current working tree."
+        help=("Diff against this destination commit. "
+              "Defaults to current working tree.")
     )
-    parser.add_argument(
-        'command',
-        help="Generator command to diff"
-    )
+    parser.add_argument('command', help="Generator command to diff")
     args, diff_args = parser.parse_known_args()
 
     with contextlib.ExitStack() as stack:
@@ -109,7 +116,7 @@ def main():
 
         subprocess.run(
             ['git', 'diff', '--find-renames', '--no-index', *diff_args,
-             gen_from, gen_to]
+             str(gen_from), str(gen_to)]
         )
 
 
