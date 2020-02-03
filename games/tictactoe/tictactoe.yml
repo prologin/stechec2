@@ -1,6 +1,12 @@
 name: tictactoe
 rules_type: turnbased
 
+constant:
+  -
+    cst_name: BOARD_SIDE_SIZE
+    cst_val: 3
+    cst_comment: Size of the board
+
 enum:
   -
     enum_name: error
