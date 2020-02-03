@@ -25,25 +25,26 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
     return os;
 }
 
-{%- for func in game.function %}
+{% for func in game.function %}
 
 extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
 {
-    {% if func.fct_ret_type != 'void' %}return {% endif -%}
+    {% if func.fct_ret_type != 'void' %}
+    return {% endif -%}
     api->{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
 }
-{%- endfor %}
+{% endfor %}
 
-{%- for enum in game.enum %}
+{% for enum in game.enum %}
 std::ostream& operator<<(std::ostream& os, {{ enum.enum_name }} v)
 {
     switch (v)
     {
-    {%- for field_name, _ in enum.enum_field %}
+    {% for field_name, _ in enum.enum_field %}
     case {{ field_name|upper }}:
         os << "{{ field_name|upper }}";
         break;
-    {%- endfor %}
+    {% endfor %}
     }
     return os;
 }
@@ -54,17 +55,17 @@ extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
 }
 {% endfor %}
 
-{%- for struct in game.struct %}
+{% for struct in game.struct %}
 std::ostream& operator<<(std::ostream& os, {{ struct.str_name }} v)
 {
     os << "{ ";
-    {%- for field_name, _, _ in struct.str_field %}
-    {%- if not loop.first %}
+    {% for field_name, _, _ in struct.str_field %}
+    {% if not loop.first %}
     os << ", ";
-    {%- endif %}
+    {% endif %}
     os << "{{ field_name }}"
        << "=" << v.{{ field_name }};
-    {%- endfor %}
+    {% endfor %}
     os << " }";
     return os;
 }

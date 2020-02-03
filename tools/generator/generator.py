@@ -15,6 +15,9 @@ class Generator:
             Path(__file__).parent / 'templates' / template_namespace)
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader(searchpath=template_folder),
+            lstrip_blocks=True,
+            trim_blocks=True,
+            keep_trailing_newline=True,
             **kwargs
         )
         self.env.globals['stechec2_generated'] = (

@@ -9,14 +9,14 @@
 #include "constant.hh"
 #include "game_state.hh"
 
-{% set args = action.fct_arg + [['player_id', 'int', '']] -%}
+{% set args = action.fct_arg + [['player_id', 'int', '']] %}
 class Action{{ action.fct_name|camel_case }} : public rules::Action<GameState>
 {
 public:
-    {%- set comma = joiner("    , ") %}
+    {% set comma = joiner("        , ") %}
     Action{{ action.fct_name|camel_case }}({{ args|cxx_args }})
         : {% for arg_name, _, _ in args %}{{ comma() }}{{ arg_name }}_({{ arg_name }})
-    {% endfor -%}
+    {% endfor %}
     {
     }
     Action{{ action.fct_name|camel_case }}() {} // for register_action()
@@ -26,17 +26,17 @@ public:
 
     void handle_buffer(utils::Buffer& buf) override
     {
-        {%- for arg_name, _, _ in args %}
+        {% for arg_name, _, _ in args %}
         buf.handle({{ arg_name }}_);
-        {%- endfor %}
+        {% endfor %}
     }
 
     uint32_t player_id() const override { return player_id_; };
     uint32_t id() const override { return ID_ACTION_{{ action.fct_name|upper }}; }
 
 private:
-    {%- for arg_name, arg_type, _ in args %}
+    {% for arg_name, arg_type, _ in args %}
     {{ arg_type }} {{ arg_name }}_;
-    {%- endfor %}
+    {% endfor %}
 };
 

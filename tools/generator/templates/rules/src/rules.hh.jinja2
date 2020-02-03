@@ -18,12 +18,13 @@
 
 class Rules
 {%- if game.rules_type == 'turnbased' %} : public rules::TurnBasedRules
-{%- elif game.rules_type == 'synchronous' %} : public rules::SynchronousRules
-{%- endif %}
+{% elif game.rules_type == 'synchronous' %} : public rules::SynchronousRules
+{% endif %}
 {
 public:
     explicit Rules(const rules::Options opt);
     virtual ~Rules() {}
+
 {% if game.rules_type %}
     rules::Actions* get_actions() override;
     void apply_action(const rules::IAction& action) override;
@@ -31,11 +32,11 @@ public:
 
 protected:
     // FIXME: Override {{ game.rules_type }} methods here
-{%- else %}
+{% else %}
     void player_loop(rules::ClientMessenger_sptr msgr) override;
     void spectator_loop(rules::ClientMessenger_sptr msgr) override;
     void server_loop(rules::ServerMessenger_sptr msgr) override;
-{%- endif %}
+{% endif %}
 
 private:
     void register_actions();
@@ -44,4 +45,3 @@ private:
     std::unique_ptr<Api> api_;
     utils::Sandbox sandbox_;
 };
-

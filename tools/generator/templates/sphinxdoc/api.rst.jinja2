@@ -15,7 +15,6 @@ Constantes
   :Valeur: {{ constant.cst_val }}
   :Description:
     {{ constant.cst_comment }}
-
 {% endif %}
 {% endfor %}
 
@@ -31,7 +30,6 @@ Constantes
     {% for enum_name, enum_desc in enum.enum_field %}
       :{{ enum_name|upper }}:
         {{ enum_desc }}
-
     {% endfor %}
 {% endfor %}
 
@@ -44,18 +42,17 @@ Structures
   .. code-block:: c
 
     struct {{ struct.str_name }} {
-        {%- for field_name, field_type, field_desc in struct.str_field %}
+        {% for field_name, field_type, field_desc in struct.str_field %}
         {{ field_type }} {{ field_name }};
-        {%- endfor %}
+        {% endfor %}
     };
 
   :Description: {{ struct.str_summary }}
 
   :Champs:
-    {% for field_name, field_type, field_desc in struct.str_field -%}
-    :{{ field_name }}: {{ field_desc }};
-    {%- endfor %}
-
+    {% for field_name, field_type, field_desc in struct.str_field %}
+    :{{ field_name }}: {{ field_desc }}
+    {% endfor %}
 {% endfor %}
 
 Fonctions
@@ -99,15 +96,15 @@ Fonctions utilisateur
 
     {% if func.fct_arg_comment %}
     {{ func.fct_arg_comment }}
-    {% endif %}
 
+    {% endif %}
     {% for arg_name, arg_type, arg_desc in func.fct_arg %}
       {% if arg_desc %}
     :param {{ arg_name }}: {{ arg_desc }}
       {% endif %}
     {% endfor %}
-
     {% if func.fct_ret_comment %}
+
     :rtype: {{ func.fct_ret_comment }}
     {% endif %}
 {% endfor %}

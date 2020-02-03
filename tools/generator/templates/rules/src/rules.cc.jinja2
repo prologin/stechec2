@@ -27,15 +27,15 @@ Rules::Rules(const rules::Options opt)
 
 void Rules::register_actions()
 {
-    {%- for func in game.function %}
-        {%- if func.fct_action %}
+    {% for func in game.function %}
+        {% if func.fct_action %}
     api_->actions()->register_action(ID_ACTION_{{ func.fct_name|upper }},
                                      [] { return std::make_unique<Action{{ func.fct_name|camel_case }}>(); });
-        {%- endif %}
-    {%- endfor %}
+        {% endif %}
+    {% endfor %}
 }
 
-{% if not game.rules_type -%}
+{% if not game.rules_type %}
 void Rules::player_loop(rules::ClientMessenger_sptr msgr)
 {
     // FIXME
@@ -50,7 +50,7 @@ void Rules::server_loop(rules::ServerMessenger_sptr msgr)
 {
     // FIXME
 }
-{% else -%}
+{% else %}
 rules::Actions* Rules::get_actions()
 {
     return api_->actions();

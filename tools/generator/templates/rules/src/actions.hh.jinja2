@@ -5,16 +5,15 @@
 
 enum action_id
 {
-    {%- for func in game.function %}
-        {%- if func.fct_action %}
+    {% for func in game.function %}
+        {% if func.fct_action %}
     ID_ACTION_{{ func.fct_name|upper }},
-        {%- endif %}
-    {%- endfor %}
+        {% endif %}
+    {% endfor %}
 };
 
 {% for func in game.function %}
-    {%- if func.fct_action %}
+    {% if func.fct_action %}
 #include "action_{{ func.fct_name }}.hh"
-    {%- endif %}
-{%- endfor %}
-
+    {% endif %}
+{% endfor %}
