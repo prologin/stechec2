@@ -6,6 +6,7 @@
 {% for constant in game.constant %}
 {{ constant.cst_comment|cxx_comment(doc=True) }}
 #define {{ constant.cst_name }} {{ constant.cst_val }}
+
 {% endfor %}
 
 {% for enum in game.enum %}
