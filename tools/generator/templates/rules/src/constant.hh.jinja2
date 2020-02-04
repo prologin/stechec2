@@ -6,16 +6,16 @@
 #pragma once
 
 {% for constant in game.constant %}
-{{ cxx.decl_constant(constant) }}
 
+{{ cxx.decl_constant(constant) }}
 {% endfor %}
 
 {% for enum in game.enum %}
-{{ cxx.decl_enum(enum) }}
 
+{{ cxx.decl_enum(enum) }}
 {% endfor %}
 
 {% for struct in game.struct %}
-{{ cxx.decl_struct(struct) }}
 
+{{ cxx.decl_struct(struct) }}
 {% endfor %}
