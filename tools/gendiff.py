@@ -30,16 +30,13 @@ which is particularly useful to test full rewrites of the generators:
 
 (5) All unknown options are passed directly to git-diff(1), so e.g you can:
 
-* ignore all whitespace changes:
-
+    # ignore all whitespace changes
     tools/gendiff.py -w rules
 
-* do a color word-diff:
-
+    # do a color word-diff:
     tools/gendiff.py rules --word-diff=color
 
-* only look at modified files (= filter out additions and removals):
-
+    # only look at modified files (= filter out additions and removals):
     tools/gendiff.py rules --diff-filter=M
 """
 
@@ -52,21 +49,23 @@ import tempfile
 from pathlib import Path
 
 REPO_PATH = Path(__file__).parent.parent
-GAME_YML_PATH = REPO_PATH / 'games/tictactoe/tictactoe.yml'
+DEFAULT_GAME_YML = REPO_PATH / 'games/tictactoe/tictactoe.yml'
 
 
 @contextlib.contextmanager
-def generate(base_path, command):
+def generate(base_path, command, game_config):
     generator_path = Path(base_path) / 'tools'
     with tempfile.TemporaryDirectory(prefix='stechec2-gendiff-gen-') as td:
         td = Path(td)
         subprocess.run(
-            ['python3', '-m', 'generator', command, GAME_YML_PATH, str(td)],
+            ['python3', '-m', 'generator', command, game_config, str(td)],
             env={**os.environ, 'PYTHONPATH': generator_path}
         )
         # Specialcase legacy ruby behavior to help diff track renames
         if command == 'ruby-rules':
-            (td / 'tictactoe/rules').rename(td / 'src')
+            rules = list(td.glob('*/rules'))
+            if rules:
+                rules[0].rename(td / 'src')
         yield td
 
 
@@ -80,10 +79,19 @@ def git_checkout(commit):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=(
-        "Show the diff between the generated output of different versions of "
-        "the generators."
-    ))
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawTextHelpFormatter,
+        description=(
+            "Show the diff between the generated output of different versions "
+            "of the generators.\n\n"
+            + __doc__
+        )
+    )
+    parser.add_argument(
+        '-g', '--game',
+        default=DEFAULT_GAME_YML,
+        help="Use this game config file."
+    )
     parser.add_argument(
         '--from', default='HEAD', dest='from_',
         help="Diff using this commit as the source."
@@ -111,8 +119,10 @@ def main():
             from_command = args.from_command
         else:
             from_command = args.command
-        gen_from = stack.enter_context(generate(path_from, from_command))
-        gen_to = stack.enter_context(generate(path_to, args.command))
+        gen_from = stack.enter_context(
+            generate(path_from, from_command, args.game))
+        gen_to = stack.enter_context(
+            generate(path_to, args.command, args.game))
 
         subprocess.run(
             ['git', 'diff', '--find-renames', '--no-index', *diff_args,
