@@ -9,7 +9,7 @@ def cxx_type(value: str) -> str:
     if value == "string":
         return "std::string"
     if value.endswith(" array"):
-        return "std::vector<{}>".format(cxx_type(value[:-6]))
+        return "std::vector<{}>".format(cxx_type(value[:-len(" array")]))
     return value
 
 

@@ -27,7 +27,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
 
 {% for func in game.function %}
 
-extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
+extern "C" {{ func|cxx_prototype(prefix='api_') }}
 {
     {%+ if func is returning %}return {% endif -%}
     api->{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
