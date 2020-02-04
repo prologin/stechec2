@@ -1,4 +1,5 @@
 import textwrap
+from functools import partial
 
 from . import register_filter, register_test
 
@@ -21,9 +22,10 @@ def generic_args(value, type_mapper=lambda x: x) -> str:
 
 
 @register_filter
-def generic_prototype(func, arg_mapper=generic_args) -> str:
-    return '{} {}({})'.format(
-        func['fct_ret_type'], func['fct_name'],
+def generic_prototype(func, prefix='', type_mapper=lambda x: x) -> str:
+    arg_mapper = partial(generic_args, type_mapper=type_mapper)
+    return '{} {}{}({})'.format(
+        type_mapper(func['fct_ret_type']), prefix, func['fct_name'],
         arg_mapper(func['fct_arg']))
 
 

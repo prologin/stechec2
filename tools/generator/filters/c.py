@@ -18,7 +18,7 @@ c_args = register_filter(
     name='c_args',
 )
 c_prototype = register_filter(
-    partial(generic_prototype, type_mapper=c_args),
+    partial(generic_prototype, type_mapper=c_type),
     name='c_prototype',
 )
 c_comment = register_filter(

@@ -18,7 +18,7 @@ cxx_args = register_filter(
     name='cxx_args',
 )
 cxx_prototype = register_filter(
-    partial(generic_prototype, type_mapper=cxx_args),
+    partial(generic_prototype, type_mapper=cxx_type),
     name='cxx_prototype',
 )
 
