@@ -11,16 +11,16 @@
 <% endfor %>
 
 <% for enum in game.enum %>
-\functitle{<< enum_name >>} \\
+\functitle{<< enum.enum_name >>} \\
 \noindent
 \begin{tabular}[t]{@{\extracolsep{0pt}}>{\bfseries}lp{10cm}}
-Description~: & << enum_summary >> \\
+Description~: & << enum.enum_summary >> \\
 Valeurs~: &
 \small
 \begin{tabular}[t]{@{\extracolsep{0pt}}lp{7cm}}
-    <%- for field_name, field_comment in enum.enum_field %>
+    <% for field_name, field_comment in enum.enum_field %>
     \textsl{<< field_name|upper >>}~: & << field_comment >> \\
-    <%- endfor %>
+    <% endfor %>
 \end{tabular} \\
 \end{tabular}
 
@@ -28,12 +28,12 @@ Valeurs~: &
 
 
 <% for struct in game.struct %>
-\functitle{<< struct.str_name >>} \\
+\functitle{<< struct.str_name >>}
 \begin{lst-c++}
 struct << struct.str_name >> {
-    <%- for field_name, field_type, field_comment in struct.str_field %>
-    << field_type >> << field_name >>;
-    <%- endfor %>
+    <% for field_name, field_type, field_comment in struct.str_field %>
+    << field_type|safe >> << field_name|safe >>;
+    <% endfor %>
 };
 \end{lst-c++}
 \noindent
@@ -42,11 +42,12 @@ Description~: & << struct.str_summary >> \\
 Champs~: &
 \small
 \begin{tabular}[t]{@{\extracolsep{0pt}}lp{7cm}}
-    <%- for field_name, field_type, field_comment in struct.str_field %>
+    <% for field_name, field_type, field_comment in struct.str_field %>
     \textsl{<< field_name >>}~: & << field_comment >> \\
-    <%- endfor %>
+    <% endfor %>
 \end{tabular} \\
 \end{tabular}
+
 <% endfor %>
 
 
@@ -54,7 +55,7 @@ Champs~: &
 \begin{minipage}{\linewidth}
 \functitle{<< func.fct_name >>}
 \begin{lst-c++}
-<< func|generic_prototype >>
+<< func|generic_prototype|safe >>
 \end{lst-c++}
 \noindent
 \begin{tabular}[t]{@{\extracolsep{0pt}}>{\bfseries}lp{10cm}}
@@ -64,20 +65,20 @@ Paramètres~: &
 \begin{tabular}[t]{@{\extracolsep{0pt}}ll}
     <% if func.fct_arg_comment -%>
     \multicolumn{2}{l}{\hspace{-\tabcolsep} << func.fct_arg_comment >> \\
-    <%- endif -%>
-    <%- for arg_name, arg_type, arg_comment in func.fct_arg -%>
-      <%- if arg_comment -%>
+    <% endif %>
+    <% for arg_name, arg_type, arg_comment in func.fct_arg -%>
+      <% if arg_comment %>
     \textsl{<< arg_name >>}~: & << arg_comment >> \\
-      <%- endif %>
-    <%- endfor %>
+      <% endif %>
+    <% endfor %>
   \end{tabular} \\
-<%- endif -%>
-<%- if func.fct_ret_comment -%>
+<% endif %>
+<% if func.fct_ret_comment %>
 Retour~: & << func.fct_ret_comment >> \\
-<%- endif -%>
-<%- if func.fct_notice -%>
+<% endif %>
+<% if func.fct_notice %>
 Remarques~: & << func.fct_notice >> \\
-<%- endif %>
+<% endif %>
 \end{tabular} \\[0.3cm]
 \end{minipage}
 
