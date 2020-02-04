@@ -1,12 +1,17 @@
 import jinja2
 
-from . import register_filter
+from . import register_filter, register_function
 
 
 @register_filter
 def camel_case(value: str) -> str:
     """Convert a snake case identifier to a upper camel case one"""
     return "".join(i.capitalize() for i in value.split("_"))
+
+
+@register_function
+def has_return(func) -> bool:
+    return func['fct_ret_type'] != 'void'
 
 
 @register_filter

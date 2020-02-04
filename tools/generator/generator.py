@@ -4,7 +4,7 @@
 import jinja2
 from pathlib import Path
 
-from .filters import load_library
+from .filters import load_library_in
 
 
 class Generator:
@@ -34,6 +34,4 @@ class Generator:
         out.dump(out_path.open('w'))
 
     def register_filters(self):
-        filter_library = load_library()
-        for filter_name, filter in filter_library.items():
-            self.env.filters[filter_name] = filter
+        load_library_in(self.env)
