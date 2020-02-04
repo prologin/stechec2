@@ -29,7 +29,7 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
 
 extern "C" {{ func.fct_ret_type|cxx_type }} api_{{ func.fct_name }}({{ func.fct_arg|cxx_args }})
 {
-    {%+ if has_return(func) %}return {% endif -%}
+    {%+ if func is returning %}return {% endif -%}
     api->{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
 }
 {% endfor %}

@@ -2,20 +2,26 @@ import functools
 
 FILTER_LIBRARY = {}
 FUNCTION_LIBRARY = {}
+TEST_LIBRARY = {}
+
+
+def _register(library, func=None, *, name=None):
+    if func is None:
+        return functools.partial(register_filter, name=name)
+    library[name if name is not None else func.__name__] = func
+    return func
 
 
 def register_filter(func=None, *, name=None):
-    if func is None:
-        return functools.partial(register_filter, name=name)
-    FILTER_LIBRARY[name if name is not None else func.__name__] = func
-    return func
+    return _register(FILTER_LIBRARY, func, name=name)
 
 
 def register_function(func=None, *, name=None):
-    if func is None:
-        return functools.partial(register_function, name=name)
-    FUNCTION_LIBRARY[name if name is not None else func.__name__] = func
-    return func
+    return _register(FUNCTION_LIBRARY, func, name=name)
+
+
+def register_test(func=None, *, name=None):
+    return _register(TEST_LIBRARY, func, name=name)
 
 
 def load_library_in(env):
@@ -26,5 +32,7 @@ def load_library_in(env):
     )
     for filter_name, filter in FILTER_LIBRARY.items():
         env.filters[filter_name] = filter
+    for test_name, test in TEST_LIBRARY.items():
+        env.tests[test_name] = test
     for function_name, function in FUNCTION_LIBRARY.items():
         env.globals[function_name] = function

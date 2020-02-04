@@ -1,6 +1,6 @@
 import textwrap
 
-from . import register_filter, register_function
+from . import register_filter, register_test
 
 
 @register_filter
@@ -9,8 +9,8 @@ def camel_case(value: str) -> str:
     return "".join(i.capitalize() for i in value.split("_"))
 
 
-@register_function
-def has_return(func) -> bool:
+@register_test
+def returning(func) -> bool:
     return func['fct_ret_type'] != 'void'
 
 
