@@ -1,4 +1,4 @@
-import jinja2
+from functools import partial
 
 from . import register_filter
 from .common import generic_args, generic_prototype, generic_comment
@@ -13,18 +13,17 @@ def cxx_type(value: str) -> str:
     return value
 
 
-@register_filter
-def cxx_args(value):
-    return generic_args(value, type_mapper=cxx_type)
+cxx_args = register_filter(
+    partial(generic_args, type_mapper=cxx_type),
+    name='cxx_args',
+)
+cxx_prototype = register_filter(
+    partial(generic_prototype, type_mapper=cxx_args),
+    name='cxx_prototype',
+)
 
 
 @register_filter
-def cxx_prototype(value):
-    return generic_prototype(value, arg_mapper=cxx_args)
-
-
-@register_filter
-@jinja2.environmentfilter
-def cxx_comment(env, value, doc: bool = False, indent: int = 0):
+def cxx_comment(*args, doc: bool = False, **kwargs):
     start = "/// " if doc else "// "
-    return generic_comment(env, value=value, start=start, indent=indent)
+    return generic_comment(*args, **kwargs, start=start)

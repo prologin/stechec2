@@ -1,4 +1,4 @@
-import jinja2
+import textwrap
 
 from . import register_filter, register_function
 
@@ -28,8 +28,12 @@ def generic_prototype(func, arg_mapper=generic_args) -> str:
 
 
 @register_filter
-@jinja2.environmentfilter
-def generic_comment(env, value: str, start: str, indent: int = 0) -> str:
+def generic_comment(value: str, start: str, indent: int = 0) -> str:
     newline = "\n" + indent * " " + start
-    return start + env.call_filter("wordwrap", value,
-                                   [79 - indent - len(start), False, newline])
+    return start + newline.join(textwrap.wrap(
+        value,
+        79 - indent - len(start),
+        expand_tabs=False,
+        break_long_words=False,
+        replace_whitespace=False
+    ))

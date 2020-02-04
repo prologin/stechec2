@@ -1,4 +1,5 @@
-import jinja2
+from functools import partial
+
 from . import register_filter
 from .common import generic_args, generic_prototype, generic_comment
 
@@ -12,17 +13,15 @@ def c_type(value: str) -> str:
     return value
 
 
-@register_filter
-def c_args(value):
-    return generic_args(value, type_mapper=c_type)
-
-
-@register_filter
-def c_prototype(value):
-    return generic_prototype(value, arg_mapper=c_args)
-
-
-@register_filter
-@jinja2.environmentfilter
-def c_comment(env, value, indent: int = 0):
-    return generic_comment(env, value=value, start='// ', indent=indent)
+c_args = register_filter(
+    partial(generic_args, type_mapper=c_type),
+    name='c_args',
+)
+c_prototype = register_filter(
+    partial(generic_prototype, type_mapper=c_args),
+    name='c_prototype',
+)
+c_comment = register_filter(
+    partial(generic_comment, start='//'),
+    name='c_comment',
+)
