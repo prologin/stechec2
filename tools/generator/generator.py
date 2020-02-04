@@ -11,10 +11,12 @@ class Generator:
     def __init__(self, template_namespace: str, game, out_dir: Path, **kwargs):
         self.game = game
         self.out_dir = out_dir
-        template_folder = str(
-            Path(__file__).parent / 'templates' / template_namespace)
+        base_folder = Path(__file__).parent
         self.env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader(searchpath=template_folder),
+            loader=jinja2.FileSystemLoader([
+                base_folder,   # to import macros in macros/
+                base_folder / 'templates' / template_namespace,
+            ]),
             lstrip_blocks=True,
             trim_blocks=True,
             keep_trailing_newline=True,
