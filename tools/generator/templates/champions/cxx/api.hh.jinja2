@@ -99,9 +99,9 @@ inline bool operator>(const {{ struct.str_name }}& a, const {{ struct.str_name }
 
 namespace std {
 template <>
-struct hash<position>
+struct hash<{{ struct.str_name }}>
 {
-    std::size_t operator()(const position& s) const
+    std::size_t operator()(const {{ struct.str_name }}& s) const
     {
         std::size_t res = 0;
         res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + std::hash<int>()(s.x);
