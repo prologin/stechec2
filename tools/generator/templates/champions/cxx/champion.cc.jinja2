@@ -1,7 +1,11 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+
 #include "api.hh"
 {% for func in game.user_function %}
+
 {{ func.fct_summary|cxx_comment(doc=True) }}
-extern "C" {{ func.fct_ret_type|cxx_type }} {{ func.fct_name }}({{ func.fct_arg|cxx_args }})
+extern "C" {{ func|cxx_prototype }}
 {
     // TODO
 }

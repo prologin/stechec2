@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
 
 // This file contains all the API functions for the C++ language, and all the
 // constants, enumerations and structures.
@@ -11,47 +12,34 @@
 
 #include <string>
 #include <vector>
+{% for constant in game.constant %}
 
-{%- for constant in game.constant %}
-{{ constant.cst_comment|cxx_comment(doc=True) }}
-#define {{ constant.cst_name }} {{ constant.cst_val }}
+{{ cxx.decl_constant(constant) }}
 {% endfor %}
+{% for enum in game.enum %}
 
-{%- for enum in game.enum %}
-
-{{ enum.enum_summary|cxx_comment(doc=True) }}
-typedef enum {{ enum.enum_name }}
-{
-    {%- for field_name, field_comment in enum.enum_field %}
-    {{ field_name|upper }}, ///< {{ field_comment }}
-    {%- endfor %}
-} {{ enum.enum_name }};
+{{ cxx.decl_enum(enum) }}
 {% endfor %}
+{% for struct in game.struct %}
 
-{%- for struct in game.struct %}
-{{ struct.str_summary|cxx_comment(doc=True) }}
-typedef struct {{ struct.str_name }}
-{
-    {%- for field_name, field_type, field_comment in struct.str_field %}
-    {{ field_type|cxx_type }} {{ field_name }}; ///< {{ field_comment }}
-    {%- endfor %}
-} {{ struct.str_name }};
+{{ cxx.decl_struct(struct) }}
 {% endfor %}
-
 {%- for func in game.function %}
-{{ func.fct_summary|cxx_comment(doc=True) }}
-{{ func.fct_ret_type|cxx_type }} {{ func.fct_name }}({{ func.fct_arg|cxx_args }});
-{% endfor %}
 
-{%- for enum in game.enum %}
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype }};
+{% endfor %}
+{% for enum in game.enum %}
+
 /// Affiche le contenu d'une enum de type {{ enum.enum_name }}
 void afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
 {% endfor %}
+{% for struct in game.struct %}
 
-{%- for struct in game.struct %}
 /// Affiche le contenu d'une struct de type {{ struct.str_name }}
 void afficher_{{ struct.str_name }}({{ struct.str_name }} v);
 {% endfor %}
+
 // -----
 // API ends here, you can stop reading now.
 // The rest of the file is generated operators for the structs defined above.
@@ -72,13 +60,13 @@ struct hash<std::vector<T>>
 };
 } // namespace std
 
-{% for struct in game.struct -%}
+{% for struct in game.struct %}
 inline bool operator==(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
 {
-    {%- for field_name, _, _ in struct.str_field %}
+    {% for field_name, _, _ in struct.str_field %}
     if (a.{{ field_name }} != b.{{ field_name }})
         return false;
-    {%- endfor %}
+    {% endfor %}
     return true;
 }
 
@@ -89,23 +77,23 @@ inline bool operator!=(const {{ struct.str_name }}& a, const {{ struct.str_name 
 
 inline bool operator<(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
 {
-    {%- for field_name, _, _ in struct.str_field %}
+    {% for field_name, _, _ in struct.str_field %}
     if (a.{{ field_name }} < b.{{ field_name }})
         return true;
     if (a.{{ field_name }} > b.{{ field_name }})
         return false;
-    {%- endfor %}
+    {% endfor %}
     return false;
 }
 
 inline bool operator>(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
 {
-    {%- for field_name, _, _ in struct.str_field %}
+    {% for field_name, _, _ in struct.str_field %}
     if (a.{{ field_name }} > b.{{ field_name }})
         return true;
     if (a.{{ field_name }} < b.{{ field_name }})
         return false;
-    {%- endfor %}
+    {% endfor %}
     return false;
 }
 
