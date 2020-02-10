@@ -8,7 +8,7 @@ import textwrap
 import yaml
 from pathlib import Path
 
-from .champions import make_champions
+from .player import make_player
 from .rules import make_rules
 from .texdoc import make_texdoc
 from .sphinxdoc import make_sphinxdoc
@@ -25,7 +25,6 @@ def main():
 
     sp = parser.add_subparsers(dest='command', help='Generator to use')
     sp.add_parser('player', help="create player stubs for all languages")
-    sp.add_parser('champions', help="create player stubs for all languages (experimental)")
     sp.add_parser('server', help="create special Makefiles for the workernode")
     sp.add_parser('rules', help="generate boilerplate for api rules")
     sp.add_parser('texdoc', help="generate latex API doc of the game")
@@ -49,8 +48,8 @@ def main():
 
     if args.command == 'rules':
         make_rules(game, args.out_dir)
-    elif args.command == 'champions':
-        make_champions(game, args.out_dir)
+    elif args.command == 'player':
+        make_player(game, args.out_dir)
     elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
     elif args.command == 'sphinxdoc':

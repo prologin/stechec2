@@ -9,7 +9,7 @@ CHAMPION_HEADERS =
 # ----
 # Do not modify the lines below
 
-CHAMPION_SOURCES += interface_cxx.cc
+CHAMPION_SOURCES += interface.cc
 CHAMPION_HEADERS += api.hh
 
 CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
@@ -40,4 +40,3 @@ tar: champion.tgz
 .PHONY: tar clean distclean
 
 -include $(deps)
-
