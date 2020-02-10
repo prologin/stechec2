@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
 
 import argparse
 import subprocess
@@ -6,6 +8,7 @@ import textwrap
 import yaml
 from pathlib import Path
 
+from .player import make_player
 from .rules import make_rules
 from .texdoc import make_texdoc
 from .sphinxdoc import make_sphinxdoc
@@ -45,6 +48,8 @@ def main():
 
     if args.command == 'rules':
         make_rules(game, args.out_dir)
+    elif args.command == 'player':
+        make_player(game, args.out_dir)
     elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
     elif args.command == 'sphinxdoc':

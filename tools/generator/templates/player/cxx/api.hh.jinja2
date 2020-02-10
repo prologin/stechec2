@@ -1,0 +1,112 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains all the API functions for the C++ language, and all the
+// constants, enumerations and structures.
+// It has been generated. You can modify the end of the file if you want, but
+// do not touch the part where constants, enums, structs, and api functions are
+// defined.
+
+#pragma once
+
+#include <string>
+#include <vector>
+{% for constant in game.constant %}
+
+{{ cxx.decl_constant(constant) }}
+{% endfor %}
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+{% endfor %}
+{%- for func in game.function %}
+
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype }};
+{% endfor %}
+{% for enum in game.enum %}
+
+/// Affiche le contenu d'une enum de type {{ enum.enum_name }}
+void afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
+{% endfor %}
+{% for struct in game.struct %}
+
+/// Affiche le contenu d'une struct de type {{ struct.str_name }}
+void afficher_{{ struct.str_name }}({{ struct.str_name }} v);
+{% endfor %}
+
+// -----
+// API ends here, you can stop reading now.
+// The rest of the file is generated operators for the structs defined above.
+// -----
+
+namespace std {
+template <typename T>
+struct hash<std::vector<T>>
+{
+    std::size_t operator()(const std::vector<T>& v) const
+    {
+        std::size_t res = v.size();
+        for (const auto& e : v)
+            res ^= std::hash<T>()(e) + 0x9e3779b9 + (res << 6) + (res >> 2);
+        return res;
+    }
+};
+} // namespace std
+
+{% for struct in game.struct %}
+inline bool operator==(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
+{
+    {% for field_name, _, _ in struct.str_field %}
+    if (a.{{ field_name }} != b.{{ field_name }})
+        return false;
+    {% endfor %}
+    return true;
+}
+
+inline bool operator!=(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
+{
+    return !(a == b);
+}
+
+inline bool operator<(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
+{
+    {% for field_name, _, _ in struct.str_field %}
+    if (a.{{ field_name }} < b.{{ field_name }})
+        return true;
+    if (a.{{ field_name }} > b.{{ field_name }})
+        return false;
+    {% endfor %}
+    return false;
+}
+
+inline bool operator>(const {{ struct.str_name }}& a, const {{ struct.str_name }}& b)
+{
+    {% for field_name, _, _ in struct.str_field %}
+    if (a.{{ field_name }} > b.{{ field_name }})
+        return true;
+    if (a.{{ field_name }} < b.{{ field_name }})
+        return false;
+    {% endfor %}
+    return false;
+}
+
+namespace std {
+template <>
+struct hash<{{ struct.str_name }}>
+{
+    std::size_t operator()(const {{ struct.str_name }}& s) const
+    {
+        std::size_t res = 0;
+        res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + std::hash<int>()(s.x);
+        res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + std::hash<int>()(s.y);
+        return res;
+    }
+};
+} // namespace std
+{% endfor %}

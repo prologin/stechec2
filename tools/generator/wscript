@@ -52,6 +52,13 @@ def build(bld):
         'templates/rules/wscript.jinja2',
     ])
 
+    bld.install_files('${PREFIX}/lib/stechec2/generator/templates/player/cxx', [
+        'templates/player/cxx/api.hh.jinja2',
+        'templates/player/cxx/champion.cc.jinja2',
+        'templates/player/cxx/interface.cc.jinja2',
+        'templates/player/cxx/Makefile.jinja2',
+    ])
+
     bld.install_files('${PREFIX}/lib/stechec2/generator/templates/texdoc', [
         'templates/texdoc/apidoc.tex.jinja2',
         'templates/texdoc/useapi.tex.jinja2',
