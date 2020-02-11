@@ -38,6 +38,11 @@ which is particularly useful to test full rewrites of the generators:
 
     # only look at modified files (= filter out additions and removals):
     tools/gendiff.py rules --diff-filter=M
+
+(6) You can restrict the diff to a specific directory prefix (useful for
+language directories):
+
+    tools/gendiff.py player cxx
 """
 
 import argparse
@@ -45,6 +50,7 @@ import contextlib
 import os
 import os.path
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -120,6 +126,8 @@ def main():
               "Defaults to current working tree.")
     )
     parser.add_argument('command', help="Generator command to diff")
+    parser.add_argument('prefix_path', nargs='?',
+                        help="Restrict diff to this path prefix")
     args, diff_args = parser.parse_known_args()
 
     with contextlib.ExitStack() as stack:
@@ -138,10 +146,20 @@ def main():
         gen_to = stack.enter_context(
             generate(path_to, args.command, args.game))
 
-        subprocess.run(
-            ['git', 'diff', '--find-renames', '--no-index', *diff_args,
-             str(gen_from), str(gen_to)]
-        )
+        if args.prefix_path:
+            gen_from = gen_from / args.prefix_path
+            gen_to = gen_to / args.prefix_path
+            if not gen_from.exists():
+                sys.exit("Directory {} not found in 'old' generated output"
+                         .format(args.prefix_path))
+            if not gen_to.exists():
+                sys.exit("Directory {} not found in 'new' generated output"
+                         .format(args.prefix_path))
+
+        subprocess.run([
+            'git', 'diff', '--find-renames', '--no-index', *diff_args,
+            gen_from, gen_to
+        ])
 
 
 if __name__ == '__main__':
