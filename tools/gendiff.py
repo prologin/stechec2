@@ -66,6 +66,20 @@ def generate(base_path, command, game_config):
             rules = list(td.glob('*/rules'))
             if rules:
                 rules[0].rename(td / 'src')
+        elif command == 'ruby-player':
+            # prologin.* -> champion.*
+            for f in td.glob('*/[pP]rologin.*'):
+                if f.suffix not in ['.h', '.hh']:
+                    name = 'Champion' if f.stem[0].isupper() else 'champion'
+                    f.rename(f.with_name(name + f.suffix))
+
+            # prologin.{h,hh} -> api.{h,hh}
+            for f in td.glob('*/[pP]rologin.*'):
+                if f.suffix in ['.h', '.hh']:
+                    f.rename(f.with_name('api' + f.suffix))
+
+            # java/Interface.java -> java/Api.java
+            (td / 'java/Interface.java').rename(td / 'java/Api.java')
         yield td
 
 
