@@ -54,7 +54,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-REPO_PATH = Path(__file__).parent.parent
+REPO_PATH = Path(__file__).resolve().parent.parent
 DEFAULT_GAME_YML = REPO_PATH / 'games/tictactoe/tictactoe.yml'
 
 
@@ -65,7 +65,7 @@ def generate(base_path, command, game_config):
         td = Path(td)
         subprocess.run(
             ['python3', '-m', 'generator', command, game_config, str(td)],
-            env={**os.environ, 'PYTHONPATH': generator_path}
+            env={**os.environ, 'PYTHONPATH': str(generator_path)}
         )
         # Specialcase legacy ruby behavior to help diff track renames
         if command == 'ruby-rules':
