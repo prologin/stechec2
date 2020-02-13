@@ -1,0 +1,20 @@
+{# A lot of these macros are just like C++, so we import them #}
+{% import 'macros/cxx.jinja2' as cxx %}
+
+{% macro decl_constant(constant) -%}
+{{ cxx.decl_constant(constant) }}
+{%- endmacro %}
+
+{% macro decl_enum(enum) -%}
+{{ cxx.decl_enum(enum) }}
+{%- endmacro %}
+
+{% macro decl_struct(struct) -%}
+{{ struct.str_summary|c_comment(doc=True) }}
+typedef struct {{ struct.str_name }}
+{
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    {{ field_type|c_type }} {{ field_name }}; ///< {{ field_comment }}
+    {% endfor %}
+} {{ struct.str_name }};
+{%- endmacro %}
