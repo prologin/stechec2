@@ -13,12 +13,16 @@ def c_type(value: str) -> str:
     return value
 
 
-c_args = register_filter(
-    partial(generic_args, type_mapper=c_type),
-    name='c_args',
-)
+@register_filter
+def c_args(value, type_mapper=lambda x: x) -> str:
+    if not value:
+        return 'void'
+    else:
+        return generic_args(value, type_mapper=c_type)
+
+
 c_prototype = register_filter(
-    partial(generic_prototype, type_mapper=c_type),
+    partial(generic_prototype, type_mapper=c_type, arg_mapper=c_args),
     name='c_prototype',
 )
 c_comment = register_filter(

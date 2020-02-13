@@ -22,8 +22,10 @@ def generic_args(value, type_mapper=lambda x: x) -> str:
 
 
 @register_filter
-def generic_prototype(func, prefix='', type_mapper=lambda x: x) -> str:
-    arg_mapper = partial(generic_args, type_mapper=type_mapper)
+def generic_prototype(func, prefix='', type_mapper=lambda x: x,
+                      arg_mapper=None) -> str:
+    if arg_mapper is None:
+        arg_mapper = partial(generic_args, type_mapper=type_mapper)
     return '{} {}{}({})'.format(
         type_mapper(func['fct_ret_type']), prefix, func['fct_name'],
         arg_mapper(func['fct_arg']))
