@@ -1,7 +1,10 @@
 import textwrap
 from functools import partial
+from jinja2 import contextfunction
 
-from . import register_filter, register_test
+from . import register_filter, register_test, register_function
+
+SIMPLE_TYPES = ('int', 'float', 'string')
 
 
 @register_filter
@@ -11,8 +14,23 @@ def camel_case(value: str) -> str:
 
 
 @register_test
-def returning(func) -> bool:
+def is_returning(func) -> bool:
     return func['fct_ret_type'] != 'void'
+
+
+@register_test
+def is_array(type) -> bool:
+    return type.endswith(' array')
+
+
+def is_struct_in(type, game) -> bool:
+    return any(type == s['str_name'] for s in game['struct'])
+
+
+@register_function
+@contextfunction
+def is_struct(ctx, type) -> bool:
+    return any(type == s['str_name'] for s in ctx['game']['struct'])
 
 
 @register_filter
@@ -41,3 +59,8 @@ def generic_comment(value: str, start: str, indent: int = 0) -> str:
         break_long_words=False,
         replace_whitespace=False
     ))
+
+
+@register_function
+def array_types(game):
+    return SIMPLE_TYPES + tuple([s['str_name'] for s in game['struct']])

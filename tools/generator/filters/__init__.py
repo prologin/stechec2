@@ -21,6 +21,8 @@ def register_function(func=None, *, name=None):
 
 
 def register_test(func=None, *, name=None):
+    if name is None and func.__name__.startswith('is_'):
+        name = func.__name__[len('is_'):]
     return _register(TEST_LIBRARY, func, name=name)
 
 
