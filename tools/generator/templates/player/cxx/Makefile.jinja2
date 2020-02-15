@@ -9,19 +9,17 @@ CHAMPION_HEADERS =
 # ----
 # Do not modify the lines below
 
-CHAMPION_SOURCES += interface.cc
-CHAMPION_HEADERS += api.hh
+INTERFACE_SOURCES = interface.cc
+INTERFACE_HEADERS = api.hh
 
+CPPFLAGS = -MMD -MP
 CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
 
-objs = $(CHAMPION_SOURCES:.cc=.o)
-deps = $(CHAMPION_SOURCES:.cc=.d)
+objs = $(CHAMPION_SOURCES:.cc=.o) $(INTERFACE_SOURCES:.cc=.o)
+deps = $(objs:.o=.d)
 
 champion.so: $(objs)
 	$(CXX) -o $@ $^ -shared
-
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
 clean:
 	@$(RM) _lang # In case the tar rule was interrupted
@@ -30,7 +28,7 @@ clean:
 distclean: clean
 	$(RM) champion.so champion.tgz
 
-champion.tgz: $(CHAMPION_SOURCES) $(CHAMPION_HEADERS)
+champion.tgz: $(CHAMPION_SOURCES) $(CHAMPION_HEADERS) $(INTERFACE_SOURCE) $(INTERFACE_HEADERS)
 	@echo "cxx" > _lang
 	tar czf $@ $^ _lang
 	@rm _lang

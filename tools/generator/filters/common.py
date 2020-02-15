@@ -4,7 +4,7 @@ from jinja2 import contextfunction
 
 from . import register_filter, register_test, register_function
 
-SIMPLE_TYPES = ('int', 'float', 'string')
+SIMPLE_TYPES = ('int', 'double', 'string')
 
 
 @register_filter

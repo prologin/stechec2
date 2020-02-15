@@ -42,32 +42,32 @@ def c_internal_cxx_type(ctx, value: str) -> str:
 
 @register_filter
 @contextfilter
-def c_lang2cxx(ctx, value: str) -> str:
+def c_to_cxx(ctx, value: str) -> str:
     ctype = c_type(value)
     cpptype = c_internal_cxx_type(ctx, value)
     if is_array(value):
-        return 'lang2cxx_array<{}, {}, {}>'.format(
+        return 'c_to_cxx_array<{}, {}, {}>'.format(
             ctype[:-len('_array')],
             cpptype,
             cpptype[len('std::vector<'):len('>')]
         )
     else:
-        return 'lang2cxx<{}, {}>'.format(ctype, cpptype)
+        return 'c_to_cxx<{}, {}>'.format(ctype, cpptype)
 
 
 @register_filter
 @contextfilter
-def c_cxx2lang(ctx, value: str) -> str:
+def cxx_to_c(ctx, value: str) -> str:
     ctype = c_type(value)
     cpptype = c_internal_cxx_type(ctx, value)
     if is_array(value):
-        return 'cxx2lang_array<{}, {}, {}>'.format(
+        return 'cxx_to_c_array<{}, {}, {}>'.format(
             ctype[:-len('_array')],
             ctype,
             cpptype[len('std::vector<'):-len('>')]
         )
     else:
-        return 'cxx2lang<{}, {}>'.format(ctype, cpptype)
+        return 'cxx_to_c<{}, {}>'.format(ctype, cpptype)
 
 
 @register_filter
