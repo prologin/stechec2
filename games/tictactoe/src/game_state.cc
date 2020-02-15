@@ -9,7 +9,7 @@ GameState::GameState(const rules::Players& players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
               NO_PLAYER, NO_PLAYER, NO_PLAYER})
 {
-    for (const auto& player : players_.all())
+    for (const auto& player : players_)
         if (player->type == rules::PLAYER)
             is_player_turn_.emplace(std::make_pair(player->id, false));
 }
@@ -92,7 +92,7 @@ void GameState::compute_scores()
     auto winner_id = winner();
     if (winner_id == NO_PLAYER)
         return;
-    for (const auto& player : players_.all())
+    for (const auto& player : players_)
     {
         if (player->id == (uint32_t)winner_id)
         {

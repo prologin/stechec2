@@ -43,10 +43,10 @@ protected:
         auto rules_players = make_players(PLAYER_1, PLAYER_2);
         players[0].id = PLAYER_1;
         players[0].api = std::make_unique<Api>(
-            std::make_unique<GameState>(rules_players), rules_players.all()[0]);
+            std::make_unique<GameState>(rules_players), rules_players[0]);
         players[1].id = PLAYER_2;
         players[1].api = std::make_unique<Api>(
-            std::make_unique<GameState>(rules_players), rules_players.all()[1]);
+            std::make_unique<GameState>(rules_players), rules_players[1]);
     }
 
     struct Player

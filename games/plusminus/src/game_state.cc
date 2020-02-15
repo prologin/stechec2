@@ -11,7 +11,7 @@ GameState::GameState(const std::string& map_content,
 {
     std::istringstream map_stream{map_content};
     map_stream >> secret_number;
-    for (const auto& p : players_.all())
+    for (const auto& p : players_)
         player_guess_map[p->id] = -2; // default value
 }
 

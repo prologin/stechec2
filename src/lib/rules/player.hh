@@ -96,6 +96,12 @@ public:
     auto begin() const { return players_.begin(); }
     auto end() const { return players_.end(); }
 
+    auto front() const { return players_.front(); }
+    auto back() const { return players_.back(); }
+
+    auto operator[](int i) { return players_[i]; }
+    auto operator[](int i) const { return players_[i]; }
+
 private:
     PlayersVector players_;
 };

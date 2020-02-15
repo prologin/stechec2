@@ -122,8 +122,8 @@ bool Replay::compare_results(const rules::Players& ref,
         return false;
     for (size_t i = 0; i < ref.size(); ++i)
     {
-        const auto& player_ref = ref.all()[i];
-        const auto& player_actual = actual.all()[i];
+        const auto& player_ref = ref[i];
+        const auto& player_actual = actual[i];
         if (player_ref->id != player_actual->id)
             return false;
         if (player_ref->name != player_actual->name)

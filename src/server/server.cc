@@ -113,8 +113,8 @@ void Server::sckt_close()
 
 bool used_identifier(uint32_t player_id, const rules::Players& players)
 {
-    for (const auto& p : players.all())
-        if (p->id == player_id)
+    for (const auto& player : players)
+        if (player->id == player_id)
             return true;
     return false;
 }
