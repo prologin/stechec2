@@ -28,7 +28,7 @@ std::vector<CxxType> c_to_cxx_array(CType_array in)
 {
   std::vector<CxxType> out(in.length);
   for (size_t i = 0; i < in.length; ++i)
-    out[i] = c_to_cxx<CType, CxxType>(in.datas[i]);
+    out[i] = c_to_cxx<CType, CxxType>(in.items[i]);
   return out;
 }
 
@@ -52,9 +52,9 @@ template<typename CType, typename CType_array, typename CxxType>
 CType_array cxx_to_c_array(const std::vector<CxxType>& in)
 {
   CType_array out = { NULL, in.size() };
-  out.datas = (CType *)malloc((out.length) * sizeof(CType));
+  out.items = (CType *)malloc((out.length) * sizeof(CType));
   for (size_t i = 0; i < out.length; ++i)
-    out.datas[i] = cxx_to_c<CType, CxxType>(in[i]);
+    out.items[i] = cxx_to_c<CType, CxxType>(in[i]);
   return out;
 }
 {% for struct in game.struct %}
