@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
+{% import 'macros/make.jinja2' as make %}
 
-# Add all your sources (must be suffixed by *.cc) in here, separated by spaces
+# Add all your sources (must be suffixed by *.c) in here, separated by spaces
 CHAMPION_SOURCES = champion.c
 # Add all other files, like your headers in here, separated by spaces
 CHAMPION_HEADERS =
@@ -9,11 +10,12 @@ CHAMPION_HEADERS =
 # ----
 # Do not modify the lines below
 
+CHAMPION_HEADERS += api.h
 INTERFACE_SOURCES = interface.cc
-INTERFACE_HEADERS = api.hh
+SOURCES = $(CHAMPION_SOURCES) $(CHAMPION_HEADERS) $(INTERFACE_SOURCES)
 
-CPPFLAGS = -MMD -MP
-CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
+CFLAGS = -ggdb3 -Wall -std=c11 -fPIC
+{{ make.common_flags() }}
 
 objs = $(CHAMPION_SOURCES:.c=.o) $(INTERFACE_SOURCES:.cc=.o)
 deps = $(objs:.o=.d)
@@ -21,20 +23,4 @@ deps = $(objs:.o=.d)
 champion.so: $(objs)
 	$(CXX) -o $@ $^ -shared
 
-clean:
-	@$(RM) _lang # In case the tar rule was interrupted
-	$(RM) $(objs) $(deps)
-
-distclean: clean
-	$(RM) champion.so champion.tgz
-
-champion.tgz: $(CHAMPION_SOURCES) $(CHAMPION_HEADERS) $(INTERFACE_SOURCE) $(INTERFACE_HEADERS)
-	@echo "c" > _lang
-	tar czf $@ $^ _lang
-	@rm _lang
-
-tar: champion.tgz
-
-.PHONY: tar clean distclean
-
--include $(deps)
+{{ make.common_rules('c') }}
