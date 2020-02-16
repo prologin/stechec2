@@ -26,7 +26,7 @@ struct {{ struct.str_name }};
 {% for type in array_types() %}
 
 typedef struct {{ type }}_array {
-    {%+ if is_struct(type) %}struct {% endif %}{{ type|c_type }}* datas;
+    {%+ if is_struct(type) %}struct {% endif %}{{ type|c_type }}* items;
     size_t length;
 } {{ type }}_array;
 {% endfor %}
