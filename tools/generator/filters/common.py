@@ -4,8 +4,6 @@ from jinja2 import contextfunction
 
 from . import register_filter, register_test, register_function
 
-SIMPLE_TYPES = ('int', 'double', 'string')
-
 
 @register_filter
 def camel_case(value: str) -> str:
@@ -61,6 +59,22 @@ def generic_comment(value: str, start: str, indent: int = 0) -> str:
     ))
 
 
+def game_types(game):
+    return {
+        *[s['enum_name'] for s in game['enum']],
+        *[s['str_name'] for s in game['struct']],
+        *[t for s in game['struct'] for _, t, _ in s['str_field']],
+        *[s['fct_ret_type']
+          for s in (game['function'] + game['user_function'])],
+        *[t for f in (game['function'] + game['user_function'])
+          for _, t, _ in f['fct_arg']],
+    }
+
+
 @register_function
-def array_types(game):
-    return SIMPLE_TYPES + tuple([s['str_name'] for s in game['struct']])
+@contextfunction
+def array_types(ctx):
+    return {
+        t[:-len(' array')]
+        for t in game_types(ctx['game']) if t.endswith(' array')
+    }
