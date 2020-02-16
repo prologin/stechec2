@@ -14,48 +14,49 @@ extern "C" {
 template<typename CType, typename CxxType>
 CxxType c_to_cxx(CType in)
 {
-  return in;
+    return in;
 }
 
 template<>
 std::string c_to_cxx<char*, std::string>(char* in)
 {
-  return in;
+    return in;
 }
 
 template<typename CType, typename CType_array, typename CxxType>
 std::vector<CxxType> c_to_cxx_array(CType_array in)
 {
-  std::vector<CxxType> out(in.length);
-  for (size_t i = 0; i < in.length; ++i)
-    out[i] = c_to_cxx<CType, CxxType>(in.items[i]);
-  return out;
+    std::vector<CxxType> out(in.length);
+    for (size_t i = 0; i < in.length; ++i)
+        out[i] = c_to_cxx<CType, CxxType>(in.items[i]);
+    return out;
 }
 
 template<typename CType, typename CxxType>
 CType cxx_to_c(CxxType in)
 {
-  return in;
+    return in;
 }
 
 template<>
 char* cxx_to_c<char*, std::string>(std::string in)
 {
-  size_t l = in.length();
-  char* out = (char *) malloc(l + 1);
-  for (size_t i = 0; i < l; i++) out[i] = in[i];
-  out[l] = 0;
-  return out;
+    size_t l = in.length();
+    char* out = (char *) malloc(l + 1);
+    for (size_t i = 0; i < l; i++)
+        out[i] = in[i];
+    out[l] = 0;
+    return out;
 }
 
 template<typename CType, typename CType_array, typename CxxType>
 CType_array cxx_to_c_array(const std::vector<CxxType>& in)
 {
-  CType_array out = { NULL, in.size() };
-  out.items = (CType *)malloc((out.length) * sizeof(CType));
-  for (size_t i = 0; i < out.length; ++i)
-    out.items[i] = cxx_to_c<CType, CxxType>(in[i]);
-  return out;
+    CType_array out = { NULL, in.size() };
+    out.items = (CType *)malloc((out.length) * sizeof(CType));
+    for (size_t i = 0; i < out.length; ++i)
+        out.items[i] = cxx_to_c<CType, CxxType>(in[i]);
+    return out;
 }
 {% for struct in game.struct %}
 {% set c_type = struct.str_name %}
