@@ -102,9 +102,9 @@ extern "C" {{ func|c_prototype }}
     {% if func is returning %}
     return {{ func.fct_ret_type|cxx_to_c }}({% endif -%}
     api_{{ func.fct_name }}(
-        {% for arg_name, arg_type, arg_comment in func.fct_arg %}
-        {{ arg_type|c_to_cxx }}({{ arg_name }}){% if not loop.last %},{% endif %}
-        {% endfor %}
+        {%- for arg_name, arg_type, arg_comment in func.fct_arg %}
+        {{- arg_type|c_to_cxx }}({{ arg_name }}){% if not loop.last %}, {% endif %}
+        {% endfor -%}
     ){% if func is returning %}){% endif %};
 }
 {% endfor %}
