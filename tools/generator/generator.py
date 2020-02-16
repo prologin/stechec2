@@ -14,7 +14,7 @@ class Generator:
         base_folder = Path(__file__).parent
         self.env = jinja2.Environment(
             loader=jinja2.FileSystemLoader([
-                base_folder,   # to import macros in macros/
+                base_folder / 'templates',   # to import macros in macros/
                 base_folder / 'templates' / template_namespace,
             ]),
             lstrip_blocks=True,
