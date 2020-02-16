@@ -93,13 +93,11 @@ def make_includes
   install_path.mkpath
 
   FileUtils.cp Pathname.new(PKGDATADIR) + 'files/README', 'README'
-  # copy rules.mk and toposort.py into includes.
+  # copy rules.mk into includes.
   if Pathname.new('files/rules.mk').exist?
     FileUtils.cp 'files/rules.mk', install_path.to_s
-    FileUtils.cp 'files/toposort.py', install_path.to_s
   else
     FileUtils.cp Pathname.new(PKGDATADIR) + 'files/rules.mk', install_path.to_s
-    FileUtils.cp Pathname.new(PKGDATADIR) + 'files/toposort.py', install_path.to_s
   end
 
   # these 7 are not needed anymore for client, it uses rules.mk
@@ -143,7 +141,6 @@ def make_server
   # JsMakefile.new.build_metaserver(install_path) TODO
   # copy some used files
   path = Pathname.new(PKGDATADIR) + "files"
-  FileUtils.cp((path + "toposort.py").to_s, install_path.to_s)
   FileUtils.cp((path + "rules.mk").to_s, install_path.to_s)
 end
 

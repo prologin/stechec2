@@ -29,7 +29,6 @@ def build(bld):
     bld.install_files('${PREFIX}/share/stechec2/files', [
         'files/README',
         'files/rules.mk',
-        'files/toposort.py',
         'files/api.cc',
         'files/api.hh',
         'files/constant.hh',
