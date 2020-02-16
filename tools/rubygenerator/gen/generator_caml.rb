@@ -312,7 +312,7 @@ static inline void _init_caml()
       @f.puts "  _init_caml();"
       @f.puts "  CAMLparam0();"
       @f.puts "  CAMLlocal1(_ret);"
-      @f.puts "  static value *closure = NULL;"
+      @f.puts "  static const value *closure = NULL;"
       @f.puts "  if (closure == NULL)"
       @f.puts "    closure = caml_named_value(\"ml_#{fn.name}\");"
       @f.puts "  _ret = callback(*closure, Val_unit);"
