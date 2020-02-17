@@ -60,7 +60,7 @@ def generic_comment(value: str, start: str, indent: int = 0) -> str:
 
 
 def game_types(game):
-    return {
+    return list(sorted({
         *[s['enum_name'] for s in game['enum']],
         *[s['str_name'] for s in game['struct']],
         *[t for s in game['struct'] for _, t, _ in s['str_field']],
@@ -68,13 +68,13 @@ def game_types(game):
           for s in (game['function'] + game['user_function'])],
         *[t for f in (game['function'] + game['user_function'])
           for _, t, _ in f['fct_arg']],
-    }
+    }))
 
 
 @register_function
 @contextfunction
 def array_types(ctx):
-    return {
+    return list(sorted({
         t[:-len(' array')]
         for t in game_types(ctx['game']) if t.endswith(' array')
-    }
+    }))
