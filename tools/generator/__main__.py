@@ -5,9 +5,9 @@
 import argparse
 import subprocess
 import textwrap
-import yaml
 from pathlib import Path
 
+from .game import Game
 from .player import make_player
 from .rules import make_rules
 from .texdoc import make_texdoc
@@ -41,9 +41,7 @@ def main():
     parser.add_argument('out_dir', type=Path, help="The output directory")
     args = parser.parse_args()
 
-    # TODO check that conf is valid
-    game = yaml.safe_load(args.yaml_file)
-
+    game = Game(args.yaml_file)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.command == 'rules':
