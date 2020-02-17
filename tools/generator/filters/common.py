@@ -28,7 +28,7 @@ def is_struct_in(type, game) -> bool:
 @register_function
 @contextfunction
 def is_struct(ctx, type) -> bool:
-    return any(type == s['str_name'] for s in ctx['game']['struct'])
+    return is_struct_in(type, ctx['game'])
 
 
 @register_filter
