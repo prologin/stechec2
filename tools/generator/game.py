@@ -266,9 +266,9 @@ def validate_schema(obj, schema):
 # -------------8<----------------
 
 
-IDENTIFIER = re.compile('[a-z_]+')
-CONSTANT = re.compile('[A-Z_]+')
-TYPE = re.compile('[a-z_]+( array)?')
+IDENTIFIER = re.compile(r'^[a-z][a-z0-9_]*$')
+CONSTANT = re.compile(r'^[A-Z][A-Z0-9_]+$')
+TYPE = re.compile(r'^[a-z][a-z0-9_]*( array)?$')
 
 GAME_SCHEMA = {
     'name': IDENTIFIER,
