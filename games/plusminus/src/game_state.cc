@@ -6,12 +6,12 @@
 #include <sstream>
 
 GameState::GameState(const std::string& map_content,
-                     rules::Players_sptr players)
-    : secret_number_found(false), round(0), players_(players)
+                     const rules::Players& players)
+    : rules::GameState(players), secret_number_found(false), round(0)
 {
     std::istringstream map_stream{map_content};
     map_stream >> secret_number;
-    for (const auto& p : players_->players)
+    for (const auto& p : players_)
         player_guess_map[p->id] = -2; // default value
 }
 

@@ -100,7 +100,7 @@ void Rules::end_of_round()
 
 void Rules::at_end()
 {
-    for (auto& p : players_->players)
+    for (const auto& p : players_)
     {
         auto guess = api_->game_state().player_guess_map[p->id];
         if (guess == 0)

@@ -3,14 +3,14 @@
 
 #include "game_state.hh"
 
-GameState::GameState(rules::Players_sptr players)
-    : rules::GameState(), players_(players)
+GameState::GameState(const rules::Players& players)
+    : rules::GameState(players)
 {
     // FIXME
 }
 
 GameState::GameState(const GameState& st)
-    : rules::GameState(st), players_(st.players_)
+    : rules::GameState(st)
 {
     // FIXME
 }

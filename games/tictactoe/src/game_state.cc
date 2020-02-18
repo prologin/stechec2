@@ -4,12 +4,12 @@
 
 #include <algorithm>
 
-GameState::GameState(rules::Players_sptr players)
-    : players_(players)
+GameState::GameState(const rules::Players& players)
+    : rules::GameState(players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
               NO_PLAYER, NO_PLAYER, NO_PLAYER})
 {
-    for (auto& player : players->players)
+    for (const auto& player : players_)
         if (player->type == rules::PLAYER)
             is_player_turn_.emplace(std::make_pair(player->id, false));
 }
@@ -92,7 +92,7 @@ void GameState::compute_scores()
     auto winner_id = winner();
     if (winner_id == NO_PLAYER)
         return;
-    for (auto player : players_->players)
+    for (const auto& player : players_)
     {
         if (player->id == (uint32_t)winner_id)
         {

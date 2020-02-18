@@ -31,9 +31,9 @@ private:
 private:
     std::unique_ptr<utils::DLL> rules_lib_;
 
-    rules::Player_sptr player_;
-    rules::Players_sptr players_;
-    rules::Players_sptr spectators_;
+    std::shared_ptr<rules::Player> player_;
+    rules::Players players_;
+    rules::Players spectators_;
     rules::ClientMessenger_sptr msgr_;
 
     std::unique_ptr<net::ClientSocket> sckt_;
