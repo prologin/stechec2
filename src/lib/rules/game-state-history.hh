@@ -8,12 +8,12 @@
 
 #include "game-state.hh"
 
-namespace rules {
+namespace rules
+{
 
 // GameStateHistory<GameState> holds a GameState instance, can save it to a
 // stack and allows restoring previous versions.
-template <typename GameState>
-class GameStateHistory
+template <typename GameState> class GameStateHistory
 {
     static_assert(std::is_base_of<rules::GameState, GameState>::value,
                   "GameState not derived from rules::GameState");
@@ -21,7 +21,8 @@ class GameStateHistory
 public:
     GameStateHistory(std::unique_ptr<GameState> current)
         : current_(std::move(current))
-    {}
+    {
+    }
 
     GameState& operator*() { return *current_.get(); }
     const GameState& operator*() const { return *current_.get(); }

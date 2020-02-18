@@ -7,7 +7,8 @@
 #include <stdexcept>
 #include <string>
 
-namespace utils {
+namespace utils
+{
 
 class DLLError : public std::runtime_error
 {
@@ -26,8 +27,7 @@ public:
 
     // Gets a symbol from the DLL and automatically casts it to the wanted
     // type. Most likely T will be a function pointer type.
-    template <typename T>
-    T get(const std::string& sym)
+    template <typename T> T get(const std::string& sym)
     {
         return reinterpret_cast<T>(get_untyped(sym));
     }

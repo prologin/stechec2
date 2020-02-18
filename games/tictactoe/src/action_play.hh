@@ -11,8 +11,11 @@
 class ActionPlay : public rules::Action<GameState>
 {
 public:
-    ActionPlay(position pos, int player_id) : pos_(pos), player_id_(player_id)
-    {}
+    ActionPlay(position pos, int player_id)
+        : pos_(pos)
+        , player_id_(player_id)
+    {
+    }
     ActionPlay() {} // for register_action()
 
     int check(const GameState& st) const override;

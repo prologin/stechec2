@@ -9,7 +9,8 @@
 
 #include <utils/buffer.hh>
 
-namespace net {
+namespace net
+{
 
 struct Message;
 

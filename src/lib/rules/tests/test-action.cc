@@ -12,7 +12,11 @@ using namespace rules;
 class MyGameState : public GameState
 {
 public:
-    MyGameState() : GameState(), x(0) {}
+    MyGameState()
+        : GameState()
+        , x(0)
+    {
+    }
     MyGameState* copy() const { return new MyGameState(*this); }
     int x;
 };

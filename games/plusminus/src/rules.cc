@@ -9,7 +9,8 @@
 #include "actions.hh"
 
 Rules::Rules(const rules::Options opt)
-    : SynchronousRules(opt), sandbox_(opt.time)
+    : SynchronousRules(opt)
+    , sandbox_(opt.time)
 {
     if (!opt.champion_lib.empty())
     {

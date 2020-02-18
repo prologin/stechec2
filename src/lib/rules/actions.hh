@@ -10,7 +10,8 @@
 
 #include "action.hh"
 
-namespace rules {
+namespace rules
+{
 
 class Actions : public utils::IBufferizable
 {

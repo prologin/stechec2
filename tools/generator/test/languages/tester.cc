@@ -8,142 +8,122 @@
 
 #include "cxx/api.hh"
 
-extern "C" {
-
-void test();
-void test_alert();
-
-void api_send_me_42(int n)
+extern "C"
 {
-    assert(n == 42);
-}
 
-void api_send_me_42_and_1337(int n1, int n2)
-{
-    assert(n1 == 42);
-    assert(n2 == 1337);
-}
+    void test();
+    void test_alert();
 
-void api_send_me_true(bool b)
-{
-    assert(b);
-}
+    void api_send_me_42(int n) { assert(n == 42); }
 
-void api_send_me_tau(double b)
-{
-    assert(b > 6.2831 && b < 6.2832);
-}
-
-void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
-                         int arg6, int arg7, int arg8, int arg9, int arg10,
-                         int arg11, int arg12, int arg13)
-{
-    assert(arg1 == 1);
-    assert(arg2 == 2);
-    assert(arg3 == 3);
-    assert(arg4 == 4);
-    assert(arg5 == 5);
-    assert(arg6 == 6);
-    assert(arg7 == 7);
-    assert(arg8 == 8);
-    assert(arg9 == 9);
-    assert(arg10 == 10);
-    assert(arg11 == 11);
-    assert(arg12 == 12);
-    assert(arg13 == 13);
-}
-
-int api_returns_42()
-{
-    return 42;
-}
-
-bool api_returns_true()
-{
-    return true;
-}
-
-double api_returns_tau()
-{
-    return 6.2831853;
-}
-
-test_enum api_returns_val1()
-{
-    return VAL1;
-}
-
-std::vector<int> api_returns_range(int m, int n)
-{
-    std::vector<int> v(n - m);
-    for (int i = m; i < n; ++i)
-        v[i - m] = i;
-    return v;
-}
-
-std::vector<int> api_returns_sorted(std::vector<int> l)
-{
-    std::sort(l.begin(), l.end());
-    return l;
-}
-
-std::vector<bool> api_returns_not(std::vector<bool> l)
-{
-    for (unsigned i = 0; i < l.size(); ++i)
-        l[i] = !l[i];
-    return l;
-}
-
-void api_send_me_simple(simple_struct s)
-{
-    assert(s.field_i == 42);
-    assert(s.field_bool);
-}
-
-void api_send_me_42s(struct_with_array s)
-{
-    assert(s.field_int == 42);
-    assert(s.field_int_arr.size() == 42);
-    for (auto i : s.field_int_arr)
-        assert(i == 42);
-    assert(s.field_str_arr.size() == 42);
-    for (auto& s2 : s.field_str_arr)
+    void api_send_me_42_and_1337(int n1, int n2)
     {
-        assert(s2.field_i == 42);
-        assert(s2.field_bool);
+        assert(n1 == 42);
+        assert(n2 == 1337);
     }
-}
 
-void api_send_me_test_enum(test_enum v1, test_enum v2)
-{
-    assert(v1 == VAL1);
-    assert(v2 == VAL2);
-}
+    void api_send_me_true(bool b) { assert(b); }
 
-std::vector<struct_with_array> api_send_me_struct_array(std::vector<struct_with_array> l)
-{
-    assert(l.size() == 42);
-    for (auto& s : l)
-        api_send_me_42s(s);
-    return l;
-}
+    void api_send_me_tau(double b) { assert(b > 6.2831 && b < 6.2832); }
 
+    void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
+                             int arg6, int arg7, int arg8, int arg9, int arg10,
+                             int arg11, int arg12, int arg13)
+    {
+        assert(arg1 == 1);
+        assert(arg2 == 2);
+        assert(arg3 == 3);
+        assert(arg4 == 4);
+        assert(arg5 == 5);
+        assert(arg6 == 6);
+        assert(arg7 == 7);
+        assert(arg8 == 8);
+        assert(arg9 == 9);
+        assert(arg10 == 10);
+        assert(arg11 == 11);
+        assert(arg12 == 12);
+        assert(arg13 == 13);
+    }
+
+    int api_returns_42() { return 42; }
+
+    bool api_returns_true() { return true; }
+
+    double api_returns_tau() { return 6.2831853; }
+
+    test_enum api_returns_val1() { return VAL1; }
+
+    std::vector<int> api_returns_range(int m, int n)
+    {
+        std::vector<int> v(n - m);
+        for (int i = m; i < n; ++i)
+            v[i - m] = i;
+        return v;
+    }
+
+    std::vector<int> api_returns_sorted(std::vector<int> l)
+    {
+        std::sort(l.begin(), l.end());
+        return l;
+    }
+
+    std::vector<bool> api_returns_not(std::vector<bool> l)
+    {
+        for (unsigned i = 0; i < l.size(); ++i)
+            l[i] = !l[i];
+        return l;
+    }
+
+    void api_send_me_simple(simple_struct s)
+    {
+        assert(s.field_i == 42);
+        assert(s.field_bool);
+    }
+
+    void api_send_me_42s(struct_with_array s)
+    {
+        assert(s.field_int == 42);
+        assert(s.field_int_arr.size() == 42);
+        for (auto i : s.field_int_arr)
+            assert(i == 42);
+        assert(s.field_str_arr.size() == 42);
+        for (auto& s2 : s.field_str_arr)
+        {
+            assert(s2.field_i == 42);
+            assert(s2.field_bool);
+        }
+    }
+
+    void api_send_me_test_enum(test_enum v1, test_enum v2)
+    {
+        assert(v1 == VAL1);
+        assert(v2 == VAL2);
+    }
+
+    std::vector<struct_with_array>
+    api_send_me_struct_array(std::vector<struct_with_array> l)
+    {
+        assert(l.size() == 42);
+        for (auto& s : l)
+            api_send_me_42s(s);
+        return l;
+    }
 }
 
 // Printers
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
 {
-  os << "[";
-  typename std::vector<T>::const_iterator it;
-  for (it = arr.begin(); it != arr.end(); ++it)
-  {
-    if (it != arr.begin())
-      os << ", ";
-    os << *it;
-  }
-  os << "]";
-  return os;
+    os << "[";
+    typename std::vector<T>::const_iterator it;
+    for (it = arr.begin(); it != arr.end(); ++it)
+    {
+        if (it != arr.begin())
+            os << ", ";
+        os << *it;
+    }
+    os << "]";
+    return os;
 }
 
 ///
@@ -151,15 +131,20 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
 //
 std::ostream& operator<<(std::ostream& os, test_enum v)
 {
-  switch (v) {
-  case VAL1: os << "VAL1"; break;
-  case VAL2: os << "VAL2"; break;
-  }
-  return os;
+    switch (v)
+    {
+    case VAL1:
+        os << "VAL1";
+        break;
+    case VAL2:
+        os << "VAL2";
+        break;
+    }
+    return os;
 }
 extern "C" void api_afficher_test_enum(test_enum v)
 {
-  std::cerr << v << std::endl;
+    std::cerr << v << std::endl;
 }
 
 ///
@@ -167,16 +152,18 @@ extern "C" void api_afficher_test_enum(test_enum v)
 //
 std::ostream& operator<<(std::ostream& os, simple_struct v)
 {
-  os << "{ ";
-  os << "field_i" << "=" << v.field_i;
-  os << ", ";
-  os << "field_bool" << "=" << v.field_bool;
-  os << " }";
-  return os;
+    os << "{ ";
+    os << "field_i"
+       << "=" << v.field_i;
+    os << ", ";
+    os << "field_bool"
+       << "=" << v.field_bool;
+    os << " }";
+    return os;
 }
 extern "C" void api_afficher_simple_struct(simple_struct v)
 {
-  std::cerr << v << std::endl;
+    std::cerr << v << std::endl;
 }
 
 ///
@@ -184,14 +171,17 @@ extern "C" void api_afficher_simple_struct(simple_struct v)
 //
 std::ostream& operator<<(std::ostream& os, struct_with_array v)
 {
-  os << "{ ";
-  os << "field_int" << "=" << v.field_int;
-  os << ", ";
-  os << "field_int_arr" << "=" << v.field_int_arr;
-  os << ", ";
-  os << "field_str_arr" << "=" << v.field_str_arr;
-  os << " }";
-  return os;
+    os << "{ ";
+    os << "field_int"
+       << "=" << v.field_int;
+    os << ", ";
+    os << "field_int_arr"
+       << "=" << v.field_int_arr;
+    os << ", ";
+    os << "field_str_arr"
+       << "=" << v.field_str_arr;
+    os << " }";
+    return os;
 }
 
 extern "C" void api_afficher_struct_with_array(struct_with_array v)
@@ -199,7 +189,7 @@ extern "C" void api_afficher_struct_with_array(struct_with_array v)
     std::cerr << v << std::endl;
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     int count = 100;
     if (argc > 1)

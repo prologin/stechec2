@@ -8,7 +8,8 @@
 
 #include <utils/buffer.hh>
 
-namespace rules {
+namespace rules
+{
 
 class GameState;
 
@@ -41,8 +42,7 @@ public:
 // A template that can be used to implement actions in an easier way without
 // dynamic_casts everywhere.
 // It's kind of ugly, but it allows a lot more genericity in the codebase.
-template <typename TState>
-class Action : public IAction
+template <typename TState> class Action : public IAction
 {
     static_assert(std::is_base_of<rules::GameState, TState>::value,
                   "TState not derived from rules::GameState");

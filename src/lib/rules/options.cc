@@ -3,7 +3,8 @@
 #include <fstream>
 #include <iterator>
 
-namespace rules {
+namespace rules
+{
 
 std::string read_map_from_path(const std::string& path)
 {

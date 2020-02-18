@@ -7,7 +7,8 @@
 #include <net/socket.hh>
 #include <utils/buffer.hh>
 
-namespace rules {
+namespace rules
+{
 
 class Messenger
 {

@@ -2,7 +2,8 @@
 
 #include "rules/actions.hh"
 
-namespace rules {
+namespace rules
+{
 
 void ReplayMessenger::pull_id(uint32_t* player_id)
 {

@@ -8,7 +8,8 @@
 #include <net/socket.hh>
 #include <utils/buffer.hh>
 
-namespace net {
+namespace net
+{
 
 // Because it inherits Socket, ClientSocket's field names are pubsub* and
 // reqrep* to be consistent with ServerSocket

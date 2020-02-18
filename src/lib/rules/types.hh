@@ -8,7 +8,8 @@
 #include <rules/replay-messenger.hh>
 #include <rules/server-messenger.hh>
 
-namespace rules {
+namespace rules
+{
 
 using f_rules_init = void (*)(const Options&);
 using f_rules_config = void (*)(Config*);

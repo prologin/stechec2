@@ -13,9 +13,9 @@ typedef enum error
     ALREADY_PLAYED,   /* <- you already played this turn, you cheater! */
 } error;
 // This is needed for old compilers
-namespace std {
-template <>
-struct hash<error>
+namespace std
+{
+template <> struct hash<error>
 {
     size_t operator()(const error& v) const
     {

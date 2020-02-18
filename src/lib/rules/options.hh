@@ -9,7 +9,8 @@
 
 #include "player.hh"
 
-namespace rules {
+namespace rules
+{
 
 struct Options
 {

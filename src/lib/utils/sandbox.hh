@@ -8,19 +8,26 @@
 #include <functional>
 #include <stdexcept>
 
-namespace utils {
+namespace utils
+{
 
 class SandboxTimeout : public std::runtime_error
 {
 public:
-    SandboxTimeout() : std::runtime_error("Sandbox call timed out") {}
+    SandboxTimeout()
+        : std::runtime_error("Sandbox call timed out")
+    {
+    }
 };
 
 class Sandbox
 {
 public:
     // Timeout in ms.
-    explicit Sandbox(unsigned int timeout = 1000) : timeout_(timeout) {}
+    explicit Sandbox(unsigned int timeout = 1000)
+        : timeout_(timeout)
+    {
+    }
 
     ~Sandbox() {}
 

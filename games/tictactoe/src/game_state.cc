@@ -8,7 +8,8 @@ GameState::GameState(const rules::Players& players)
     : rules::GameState(players)
     , board_({NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER, NO_PLAYER,
               NO_PLAYER, NO_PLAYER, NO_PLAYER})
-{}
+{
+}
 
 GameState* GameState::copy() const
 {

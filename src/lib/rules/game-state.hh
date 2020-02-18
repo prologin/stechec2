@@ -5,13 +5,20 @@
 #include "action.hh"
 #include "player.hh"
 
-namespace rules {
+namespace rules
+{
 
 class GameState
 {
 public:
-    GameState() : players_{} {}
-    GameState(const Players players) : players_{players} {}
+    GameState()
+        : players_{}
+    {
+    }
+    GameState(const Players players)
+        : players_{players}
+    {
+    }
     virtual ~GameState() = default;
 
     // Explicit copy of the game state

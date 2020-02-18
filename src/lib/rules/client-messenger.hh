@@ -9,7 +9,8 @@
 #include <rules/messenger.hh>
 #include <utils/buffer.hh>
 
-namespace rules {
+namespace rules
+{
 
 // Forward decls
 class Actions;
@@ -17,7 +18,10 @@ class Actions;
 class ClientMessengerError : public std::runtime_error
 {
 public:
-    ClientMessengerError() : std::runtime_error("Client messenger error") {}
+    ClientMessengerError()
+        : std::runtime_error("Client messenger error")
+    {
+    }
 };
 
 class ClientMessenger : public Messenger

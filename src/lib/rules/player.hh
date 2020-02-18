@@ -11,15 +11,21 @@
 #include <utils/buffer.hh>
 #include <vector>
 
-namespace rules {
+namespace rules
+{
 
 // TODO: refactor rules::Player to rules::Client
 struct Player final
 {
     Player() = default;
     Player(uint32_t id_, uint32_t type_)
-        : id(id_), type(type_), score(0), nb_timeout(0), name("anonymous")
-    {}
+        : id(id_)
+        , type(type_)
+        , score(0)
+        , nb_timeout(0)
+        , name("anonymous")
+    {
+    }
 
     void handle_buffer(utils::Buffer& buf)
     {
@@ -43,7 +49,10 @@ class Players final : public utils::IBufferizable
 
 public:
     Players() = default;
-    explicit Players(PlayersVector players) : players_{std::move(players)} {}
+    explicit Players(PlayersVector players)
+        : players_{std::move(players)}
+    {
+    }
 
     void handle_buffer(utils::Buffer& buf) override
     {

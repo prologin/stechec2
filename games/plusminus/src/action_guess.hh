@@ -10,8 +10,11 @@
 class ActionGuess : public rules::Action<GameState>
 {
 public:
-    ActionGuess(int guess, int player_id) : guess_(guess), player_id_(player_id)
-    {}
+    ActionGuess(int guess, int player_id)
+        : guess_(guess)
+        , player_id_(player_id)
+    {
+    }
     ActionGuess() {} // for register_action()
 
     int check(const GameState& st) const override;
