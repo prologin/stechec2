@@ -22,7 +22,6 @@ def main():
             rules boilerplate, player code stubs and makefiles for a game based
             on its YAML description file.
             """))
-
     sp = parser.add_subparsers(dest='command', help='Generator to use')
     sp.add_parser('player', help="create player stubs for all languages")
     sp.add_parser('server', help="create special Makefiles for the workernode")

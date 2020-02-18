@@ -33,6 +33,7 @@ class Game:
         validate_schema(self.game, GAME_SCHEMA)
         self.load_base_types()
         self.load_used_types()
+        self.load_funcs()
         self.check()
 
     def load_base_types(self):
@@ -84,12 +85,22 @@ class Game:
             t[:-len(' array')] for t in self.used_types if t.endswith(' array')
         }))
 
+    def load_funcs(self):
+        defined_funcs = set()  # TODO: store in self
+        for f in (self.game['function'] + self.game['user_function']):
+            if f['fct_name'] in defined_funcs:
+                raise GameError("Function '{}' was defined twice."
+                                .format(f['fct_name']))
+            defined_funcs.add(f['fct_name'])
+        # TODO: add display_* functions
+
     def check(self):
         '''Perform various integrity checks on the game objects'''
         for s in self.game['struct']:
             self.check_struct(s)
         for f in (self.game['function'] + self.game['user_function']):
             self.check_func(f)
+        self.check_field_unicity()
 
     def check_struct(self, struct):
         field_names = set()
@@ -106,18 +117,47 @@ class Game:
             field_names.add(field_name)
 
     def check_func(self, func):
+        if func['fct_name'] in self.types:
+            raise GameError(
+                "Function '{}': name conflicts with a type name."
+                .format(func['fct_name']))
         arg_names = set()
         for arg_name, arg_type, arg_comment in func['fct_arg']:
             if arg_name in self.types:
                 raise GameError(
-                    "Function '{}': Argument '{}' conflicts with a type name "
-                    "(C code will not compile)."
+                    "Function '{}': Argument '{}' conflicts with a type name."
                     .format(func['fct_name'], arg_name))
             if arg_name in arg_names:
                 raise GameError(
                     "Function '{}': Argument '{}' was defined twice."
                     .format(func['fct_name'], arg_name))
             arg_names.add(arg_name)
+
+    def check_field_unicity(self):
+        '''
+        Check that the enum and struct field names are unique.
+
+        Some languages like OCaml infer types from the name of the enum and
+        struct fields, and thus require them to be unique *across* different
+        types. This rejects types that share a common field name.
+        '''
+        merged_types = [
+            *[('enum', e['enum_name'], [fn for fn, _ in e['enum_field']])
+              for e in self.game['enum']],
+            *[('struct', e['str_name'], [fn for fn, _, _ in e['str_field']])
+              for e in self.game['struct']]
+        ]
+
+        used_field_names = {}  # field_name -> origin type
+        for origin_type, origin, field_names in merged_types:
+            for name in field_names:
+                if name in used_field_names:
+                    def_type, def_name = used_field_names[name]
+                    raise GameError(
+                        "{} '{}': Field name '{}' already used in {} '{}'. "
+                        "This will confuse some type inferrers."
+                        .format(origin_type, origin, name, def_type, def_name))
+                used_field_names[name] = (origin_type, origin)
 
 
 # Adapted from camisole/schema.py
