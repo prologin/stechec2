@@ -226,7 +226,6 @@ def validate_schema(obj, schema):
                 for i, item in enumerate(obj):
                     explore(item, subtype, f'{path}[{i}]')
             except TypeError:
-                raise
                 raise GameSchemaError(
                     path, f"expected a list, got {htn(obj.__class__)}")
 
@@ -245,7 +244,6 @@ def validate_schema(obj, schema):
             except GameSchemaError:
                 raise
             except Exception:
-                raise
                 raise GameSchemaError(
                     path, f"expected a mapping, got {htn(obj.__class__)}")
 
