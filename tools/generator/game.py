@@ -1,4 +1,5 @@
 import yaml
+import re
 
 
 class GameError(ValueError):
@@ -29,6 +30,7 @@ class Game:
         self.game['function'] = self.game.get('function', [])
         self.game['user_function'] = self.game.get('user_function', [])
 
+        validate_schema(self.game, GAME_SCHEMA)
         self.load_base_types()
         self.load_used_types()
         self.check()
@@ -116,3 +118,157 @@ class Game:
                     "Function '{}': Argument '{}' was defined twice."
                     .format(func['fct_name'], arg_name))
             arg_names.add(arg_name)
+
+
+# Adapted from camisole/schema.py
+# ------------->8----------------
+
+class GameSchemaError(GameError):
+    def __init__(self, path, msg):
+        self.path = path
+        self.msg = msg
+        super().__init__(str(self))
+
+    def __str__(self):
+        return f"{self.path}: {self.msg}"
+
+
+class O:  # noqa: E742
+    """Optional."""
+
+    def __init__(self, wrapped):
+        self.wrapped = wrapped
+
+    def __repr__(self):
+        return f"O[{self.wrapped}]"
+
+
+class Union:
+    """Any of."""
+
+    def __init__(self, *wrapped):
+        self.wrapped = wrapped
+
+    def __repr__(self):
+        return f"Union[{self.wrapped}]"
+
+
+def validate_schema(obj, schema):
+    def htn(cls):
+        return {
+            bytes: "binary data",
+            int: "an integer",
+            str: "a string",
+            type(None): "nothing",
+        }.get(cls, f"a {cls.__name__}")
+
+    def explore(obj, schema, path):
+        if isinstance(schema, O):
+            if obj is None:
+                return
+            explore(obj, schema.wrapped, path)
+
+        elif isinstance(schema, Union):
+            for subtype in schema.wrapped:
+                try:
+                    explore(obj, subtype, path)
+                    # one of the types is OK, early stop
+                    return
+                except GameSchemaError:
+                    pass
+            expected = ' or '.join(htn(s) for s in schema.wrapped)
+            raise GameSchemaError(
+                path, f"{path}: expected {expected}, got {htn(obj.__class__)}")
+
+        elif isinstance(schema, list):
+            subtype, = schema
+            try:
+                for i, item in enumerate(obj):
+                    explore(item, subtype, f'{path}[{i}]')
+            except TypeError:
+                raise
+                raise GameSchemaError(
+                    path, f"expected a list, got {htn(obj.__class__)}")
+
+        elif isinstance(schema, tuple):
+            try:
+                for i, item in enumerate(obj):
+                    explore(item, schema[i], f'{path}[{i}]')
+            except TypeError:
+                raise GameSchemaError(
+                    path, f"expected a list, got {htn(obj.__class__)}")
+
+        elif isinstance(schema, dict):
+            try:
+                for key, subtype in schema.items():
+                    explore(obj.get(key), subtype, f'{path}.{key}')
+            except GameSchemaError:
+                raise
+            except Exception:
+                raise
+                raise GameSchemaError(
+                    path, f"expected a mapping, got {htn(obj.__class__)}")
+
+        elif isinstance(schema, re.Pattern):
+            if not isinstance(obj, str):
+                raise GameSchemaError(
+                    path, f"expected {htn(str)}, got {htn(obj.__class__)}")
+            if not schema.match(obj):
+                raise GameSchemaError(
+                    path, f"{obj} does not match '{schema.pattern}'")
+
+        elif not isinstance(obj, schema):
+            raise GameSchemaError(
+                path, f"expected {htn(schema)}, got {htn(obj.__class__)}")
+
+    explore(obj, schema, '')
+
+# -------------8<----------------
+
+
+IDENTIFIER = re.compile('[a-z_]+')
+CONSTANT = re.compile('[A-Z_]+')
+TYPE = re.compile('[a-z_]+( array)?')
+
+GAME_SCHEMA = {
+    'name': IDENTIFIER,
+    'rules_type': O(re.compile('(turnbased|synchronous)')),
+    'constant': [
+        {
+            'cst_name': CONSTANT,
+            'cst_val': int,
+            'cst_comment': str,
+        }
+    ],
+    'enum': [
+        {
+            'enum_name': IDENTIFIER,
+            'enum_summary': str,
+            'enum_field': [(IDENTIFIER, str)],
+        }
+    ],
+    'struct': [
+        {
+            'str_name': IDENTIFIER,
+            'str_summary': str,
+            'str_tuple': O(bool),
+            'str_field': [(IDENTIFIER, TYPE, str)],
+        }
+    ],
+    'function': [
+        {
+            'fct_name': IDENTIFIER,
+            'fct_summary': str,
+            'fct_ret_type': TYPE,
+            'fct_arg': [(IDENTIFIER, TYPE, str)],
+        }
+    ],
+    'user_function': [
+        {
+            'fct_name': IDENTIFIER,
+            'fct_summary': str,
+            'fct_ret_type': TYPE,
+            'fct_arg': [(IDENTIFIER, TYPE, str)],
+        }
+    ],
+}
