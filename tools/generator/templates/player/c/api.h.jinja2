@@ -23,7 +23,7 @@
 {% for struct in game.struct %}
 struct {{ struct.str_name }};
 {% endfor %}
-{% for type in array_types() %}
+{% for type in game.used_array_types() %}
 
 typedef struct {{ type }}_array {
     {%+ if is_struct(type) %}struct {% endif %}{{ type|c_type }}* items;
