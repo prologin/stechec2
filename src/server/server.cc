@@ -129,11 +129,11 @@ bool used_identifier(uint32_t player_id, const rules::Players& players)
 void Server::wait_for_clients()
 {
     if (FLAGS_nb_clients <= 0)
-        FATAL("Server started with nb_clients <= 0.");
+        FATAL("Server started with --nb_clients <= 0.");
 
     int spectator_count = FLAGS_nb_clients - config_.player_count;
     if (spectator_count < 0)
-        FATAL("Server must be started with at least -nb_clients %d",
+        FATAL("Server must be started with at least --nb_clients %d",
               config_.player_count);
 
     NOTICE("Waiting for %d clients: %d players, %d spectators...",
