@@ -15,7 +15,7 @@ TEST_F(ApiTest, Api_Board)
     for (auto& player : players)
     {
         std::vector<int> board = player.api->board();
-        std::vector<int> expected(9, GameState::NO_PLAYER);
+        std::vector<int> expected(9, player.api->game_state().NO_PLAYER);
         EXPECT_EQ(board, expected);
 
         player.api->game_state().set_player_can_play(player.id, true);

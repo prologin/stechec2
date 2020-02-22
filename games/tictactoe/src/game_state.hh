@@ -13,7 +13,7 @@
 class GameState : public rules::GameState
 {
 public:
-    static constexpr int NO_PLAYER = -1;
+    const int NO_PLAYER = -1;
 
     GameState(const rules::Players& players);
     GameState* copy() const override;

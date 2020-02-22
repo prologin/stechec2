@@ -30,8 +30,8 @@ protected:
 
     std::unique_ptr<GameState> st;
 
-    static constexpr int PLAYER_1 = 0;
-    static constexpr int PLAYER_2 = 1;
+    const int PLAYER_1 = 0;
+    const int PLAYER_2 = 1;
 };
 
 class ApiTest : public ::testing::Test
@@ -56,8 +56,8 @@ protected:
     };
     std::array<Player, 2> players;
 
-    static constexpr int PLAYER_1 = 0;
-    static constexpr int PLAYER_2 = 1;
+    const int PLAYER_1 = 0;
+    const int PLAYER_2 = 1;
 };
 
 class RulesTest : public ::testing::Test
@@ -74,6 +74,6 @@ protected:
 
     std::unique_ptr<Rules> rules;
 
-    static constexpr int PLAYER_1 = 0;
-    static constexpr int PLAYER_2 = 1;
+    const int PLAYER_1 = 0;
+    const int PLAYER_2 = 1;
 };
