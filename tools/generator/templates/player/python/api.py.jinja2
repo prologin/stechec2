@@ -1,0 +1,40 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+# {{ stechec2_generated }}
+
+from enum import IntEnum
+from collections import namedtuple
+
+from _api import *
+
+{# Constants #}
+{% for constant in game.constant %}
+
+{{ constant.cst_comment|python_comment }}
+{{ constant.cst_name }} = {{ constant.cst_val }}
+{% endfor %}
+
+
+{# Enums #}
+{% for enum in game.enum %}
+{{ enum.enum_summary|python_comment }}
+class {{ enum.enum_name }}(IntEnum):
+    {% for field_name, field_comment in enum.enum_field %}
+    {{ field_name|upper }} = {{ loop.index0 }}  # <- {{ field_comment }}
+    {% endfor %}
+
+
+{% endfor %}
+{# Structs #}
+{% for struct in game.struct %}
+    {% if not struct.str_tuple %}
+{{ struct.str_summary|python_comment }}
+{{ struct.str_name }} = namedtuple('{{ struct.str_name }}', [
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    '{{ field_name }}',  # {{ field_comment }}
+    {% endfor %}
+])
+
+
+    {% endif %}
+{% endfor %}
