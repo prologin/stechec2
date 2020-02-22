@@ -39,6 +39,7 @@ First, we must write some config boilerplate at the top of the file::
 
   name: connect4  # The name of the game
   rules_type: turnbased # The type of rules to follow
+  player_count: 2 # The number of players
 
   constant:
     # Place your constants here
