@@ -1,0 +1,363 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains the code to call the API functions from the Python
+// language.
+// {{ stechec2_generated }}
+
+#include <Python.h>
+#include <vector>
+#include <string>
+
+static PyObject* py_module;
+static PyObject* champ_module;
+
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+{% endfor %}
+
+extern "C" {
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype(prefix='api_') }};
+{% endfor %}
+}
+
+template <typename Lang, typename Cxx>
+Lang cxx2lang(Cxx in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template <>
+PyObject* cxx2lang<PyObject*, int>(int in)
+{
+    return PyLong_FromLong(in);
+}
+
+
+template <>
+PyObject* cxx2lang<PyObject*, double>(double in)
+{
+    return PyFloat_FromDouble(in);
+}
+
+
+template <>
+PyObject* cxx2lang<PyObject*, std::string>(std::string in)
+{
+    return PyUnicode_FromString(in.c_str());
+}
+
+
+template <>
+PyObject* cxx2lang<PyObject*, bool>(bool in)
+{
+    return PyBool_FromLong(in);
+}
+
+template <typename Cxx>
+PyObject* cxx2lang_array(const std::vector<Cxx>& in)
+{
+    size_t size = in.size();
+    PyObject* out = PyList_New(size);
+
+    for (unsigned int i = 0; i < size; ++i)
+        PyList_SET_ITEM(out, i, (cxx2lang<PyObject*, Cxx>(in[i])));
+
+    return out;
+}
+
+template <typename Lang, typename Cxx>
+Cxx lang2cxx(Lang in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template <>
+int lang2cxx<PyObject*, int>(PyObject* in)
+{
+    long out = PyLong_AsLong(in);
+    if (PyErr_Occurred())
+        throw 42;
+    return out;
+}
+
+template <>
+double lang2cxx<PyObject*, double>(PyObject* in)
+{
+    double out = PyFloat_AsDouble(in);
+    if (PyErr_Occurred())
+        throw 42;
+    return out;
+}
+
+template <>
+bool lang2cxx<PyObject*, bool>(PyObject* in)
+{
+    return (bool) lang2cxx<PyObject*, int>(in);
+}
+
+template <>
+std::string lang2cxx<PyObject*, std::string>(PyObject* in)
+{
+    const char * out = PyUnicode_AsUTF8(in);
+    if (PyErr_Occurred())
+        throw 42;
+    return out;
+}
+
+template <typename Cxx>
+std::vector<Cxx> lang2cxx_array(PyObject* in)
+{
+    if (!PyList_Check(in))
+    {
+        PyErr_SetString(PyExc_TypeError, "a list is required");
+        throw 42;
+    }
+
+    std::vector<Cxx> out;
+    unsigned int size = PyList_Size(in);
+
+    for (unsigned int i = 0; i < size; ++i)
+        out.push_back(lang2cxx<PyObject*, Cxx>(PyList_GET_ITEM(in, i)));
+
+    return out;
+}
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|cxx_comment }}
+
+template<>
+PyObject* cxx2lang<PyObject*, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+{
+    PyObject* name = PyUnicode_FromString("{{ enum.enum_name }}");
+    PyObject* enm = PyObject_GetAttr(py_module, name);
+    if (enm == NULL)
+        throw 42;
+    PyObject* arglist = Py_BuildValue("(i)", (int) in);
+    PyObject* ret = PyObject_CallObject(enm, arglist);
+    Py_DECREF(name);
+    Py_DECREF(arglist);
+    Py_DECREF(enm);
+    return ret;
+}
+
+template <>
+{{ enum.enum_name }} lang2cxx<PyObject*, {{ enum.enum_name }}>(PyObject* in)
+{
+  return ({{ enum.enum_name }}) lang2cxx<PyObject*, int>(in);
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ struct.str_summary|cxx_comment }}
+
+template <>
+PyObject* cxx2lang<PyObject*, {{ struct.str_name }}>({{ struct.str_name }} in)
+{
+    PyObject* tuple = PyTuple_New({{ struct.str_field|length }});
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    PyTuple_SET_ITEM(tuple, {{ loop.index0 }}, ({{ field_type|cxx_to_python }}(in.{{ field_name }})));
+    {% endfor %}
+    {% if struct.str_tuple %}
+    return tuple;
+    {% else %}
+    PyObject* name = PyUnicode_FromString("{{ struct.str_name }}");
+    PyObject* cstr = PyObject_GetAttr(py_module, name);
+    Py_DECREF(name);
+    if (cstr == NULL)
+        throw 42;
+    PyObject* ret = PyObject_CallObject(cstr, tuple);
+    Py_DECREF(cstr);
+    Py_DECREF(tuple);
+    if (ret == NULL)
+        throw 42;
+    return ret;
+    {% endif %}
+}
+
+template <>
+{{ struct.str_name }} lang2cxx<PyObject*, {{ struct.str_name }}>(PyObject* in)
+{
+    {{ struct.str_name }} out;
+    PyObject* i;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+
+    {{ field_comment|cxx_comment }}
+        {% if struct.str_tuple %}
+    i = PyTuple_GetItem(in, {{ loop.index0 }});
+        {% else %}
+    i = cxx2lang<PyObject*, int>({{ loop.index0 }});
+    i = PyObject_GetItem(in, i);
+        {% endif %}
+    if (i == NULL)
+        throw 42;
+    out.{{ field_name }} = {{ field_type|python_to_cxx }}(i);
+        {% if not struct.str_tuple %}
+    Py_DECREF(i);
+        {% endif %}
+    {% endfor %}
+
+    return out;
+}
+{% endfor %}
+
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment }}
+static PyObject* p_{{ func.fct_name }}(PyObject* self, PyObject* args)
+{
+    (void) self;
+    {% for arg_name, _, _ in func.fct_arg %}
+    PyObject* arg_{{ arg_name }};
+    {% endfor %}
+    if (!PyArg_ParseTuple(args, "{{ 'O' * (func.fct_arg|length) }}"
+        {%- for arg_name, _, _ in func.fct_arg -%}
+        , &arg_{{ arg_name }}
+        {%- endfor %}))
+    {
+        return NULL;
+    }
+
+    try {
+        {%+ if func is returning %}return {% endif -%}
+        {{ func.fct_ret_type|cxx_to_python }}(api_{{ func.fct_name }}(
+        {%- set comma = joiner(', ') -%}
+        {%- for arg_name, arg_type, _ in func.fct_arg -%}
+        {{ comma() }}{{ arg_type|python_to_cxx }}(arg_{{ arg_name }})
+        {%- endfor %}));
+        {% if not func is returning %}
+        Py_RETURN_NONE;
+        {% endif %}
+    } catch (...) {
+        return NULL;
+    }
+}
+{% endfor %}
+
+// API function to register.
+static PyMethodDef api_callback[] = {
+    {% for func in game.function %}
+    {"{{ func.fct_name }}", p_{{ func.fct_name }}, METH_VARARGS, "{{ func.fct_name }}"},
+    {% endfor %}
+    {NULL, NULL, 0, NULL}
+};
+
+// Initialize C module
+PyMODINIT_FUNC PyInit__api()
+{
+    static struct PyModuleDef apimoduledef = {
+        PyModuleDef_HEAD_INIT,
+        "_api",
+        "API module",
+        -1,
+        api_callback,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    };
+    return PyModule_Create(&apimoduledef);
+}
+
+// Load a Python module
+static PyObject* _import_module(const char* m)
+{
+    PyObject* name = PyUnicode_FromString(m);
+    PyObject* mod = PyImport_Import(name);
+    Py_DECREF(name);
+    if (mod == NULL)
+        if (PyErr_Occurred())
+        {
+            PyErr_Print();
+            abort();
+        }
+    return mod;
+}
+
+// Inititialize python, register API functions, and load .py file
+static void _init_python()
+{
+    static wchar_t empty_string[] = L"";
+    static wchar_t *argv[] = { (wchar_t *) &empty_string, NULL };
+
+    const char* champion_path;
+
+    champion_path = getenv("CHAMPION_PATH");
+    if (champion_path == NULL)
+        champion_path = ".";
+
+    setenv("PYTHONPATH", champion_path, 1);
+
+    static wchar_t program_name[] = L"stechec";
+    Py_SetProgramName(program_name);
+
+    PyImport_AppendInittab("_api", PyInit__api);
+    Py_Initialize();
+    PySys_SetArgvEx(1, argv, 0);
+
+    champ_module = _import_module("champion");
+    py_module = _import_module("api");
+}
+
+// Run a Python function
+static PyObject* _call_python_function(const char* name)
+{
+    static bool initialized = false;
+
+    if (!initialized)
+    {
+        initialized = true;
+        _init_python();
+    }
+
+    PyObject *arglist, *func;
+    PyObject *result = NULL;
+
+    func = PyObject_GetAttrString(champ_module, (char*)name);
+    if (func && PyCallable_Check(func))
+    {
+        arglist = Py_BuildValue("()");
+        result = PyEval_CallObject(func, arglist);
+        Py_XDECREF(arglist);
+        Py_DECREF(func);
+    }
+    if (result == NULL && PyErr_Occurred())
+        PyErr_Print();
+
+    return result;
+}
+
+
+// Functions called from Stechec to Python
+{% for func in game.user_function %}
+
+extern "C" {{ func|cxx_prototype }}
+{
+    PyObject* _retval = _call_python_function("{{ func.fct_name }}");
+    if (!_retval && PyErr_Occurred()) {
+        PyErr_Print();
+        abort();
+    }
+    try {
+        {% if func is returning %}
+        {{ func.fct_ret_type|cxx_type }} ret = {{ func.fct_ret_type|python_to_cxx }}(_retval);
+        {% endif %}
+        Py_XDECREF(_retval);
+        {% if func is returning %}
+        return ret;
+        {% endif %}
+    } catch (...) {
+        PyErr_Print();
+        abort();
+    }
+}
+{% endfor %}

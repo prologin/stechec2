@@ -1,0 +1,12 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+
+from api import *
+{% for func in game.user_function %}
+
+
+{{ func.fct_summary|python_comment }}
+{{ func|python_prototype }}
+    # TODO
+    pass
+{% endfor %}
