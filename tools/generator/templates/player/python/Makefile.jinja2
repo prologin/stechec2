@@ -20,6 +20,6 @@ objs = $(INTERFACE_SOURCES:.cc=.o)
 deps = $(objs:.o=.d)
 
 champion.so: $(objs)
-	$(CXX) -o $@ $^ -shared
+	$(CXX) -o $@ $^ -shared $(LDFLAGS)
 
 {{ make.common_rules('python') }}
