@@ -31,6 +31,7 @@ def load_library_in(env):
         common,
         c,
         cxx,
+        php,
         python
     )
     for filter_name, filter in FILTER_LIBRARY.items():

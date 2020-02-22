@@ -1,0 +1,14 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+<?php
+
+require('api.php');
+
+{% for func in game.user_function %}
+
+{{ func.fct_summary|php_comment }}
+{{ func|php_prototype }}
+{
+    // TODO
+}
+{% endfor %}

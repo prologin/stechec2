@@ -1,0 +1,21 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+<?php
+// {{ stechec2_generated }}
+
+{# Constants #}
+{% for constant in game.constant %}
+
+{{ constant.cst_comment|php_comment }}
+define('{{ constant.cst_name|upper }}', {{ constant.cst_val }});
+{% endfor %}
+
+
+{# Enums #}
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|php_comment }}
+{% for field_name, field_comment in enum.enum_field %}
+define('{{ field_name|upper }}', {{ loop.index0 }});  // {{ field_comment }}
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,324 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains the code to call the API functions from the PHP
+// language.
+// {{ stechec2_generated }}
+
+#include <cstdlib>
+#include <sapi/embed/php_embed.h>
+#include <vector>
+#include <string>
+
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+{% endfor %}
+
+extern "C" {
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype(prefix='api_') }};
+{% endfor %}
+}
+
+template <typename Lang, typename Cxx>
+Lang cxx2lang(Cxx in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template <>
+zval cxx2lang<zval, int>(int in)
+{
+    zval x;
+    ZVAL_LONG(&x, (long) in);
+    return x;
+}
+
+template <>
+zval cxx2lang<zval, bool>(bool in)
+{
+    zval x;
+    ZVAL_BOOL(&x, in);
+    return x;
+}
+
+template <>
+zval cxx2lang<zval, double>(double in)
+{
+    zval x;
+    ZVAL_DOUBLE(&x, in);
+    return x;
+}
+
+template <>
+zval cxx2lang<zval, std::string>(std::string in)
+{
+    zval x;
+    ZVAL_STRINGL(&x, in.c_str(), in.length());
+    return x;
+}
+
+template <typename Cxx>
+zval cxx2lang_array(const std::vector<Cxx>& in)
+{
+    zval x;
+    array_init(&x);
+
+    size_t s = in.size();
+
+    for (size_t i = 0; i < s; ++i) {
+        zval tmp = cxx2lang<zval, Cxx>(in[i]);
+        add_next_index_zval(&x, &tmp);
+    }
+
+    return x;
+}
+
+template <typename Lang, typename Cxx>
+Cxx lang2cxx(Lang in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template <>
+int lang2cxx<zval*, int>(zval* in)
+{
+    if (Z_TYPE_P(in) != IS_LONG) {
+        zend_error(E_WARNING, "parameter should be an int");
+        throw 42;
+    }
+    return (int) Z_LVAL_P(in);
+}
+
+template <>
+double lang2cxx<zval*, double>(zval* in)
+{
+    if (Z_TYPE_P(in) != IS_DOUBLE) {
+        zend_error(E_WARNING, "parameter should be a double");
+        throw 42;
+    }
+    return (double) Z_DVAL_P(in);
+}
+
+template <>
+bool lang2cxx<zval*, bool>(zval* in)
+{
+    if (Z_TYPE_P(in) != IS_TRUE && Z_TYPE_P(in) != IS_FALSE) {
+        zend_error(E_WARNING, "parameter should be a boolean");
+        throw 42;
+    }
+    return (bool) (Z_TYPE_P(in) == IS_TRUE);
+}
+
+template <>
+std::string lang2cxx<zval*, std::string>(zval* in)
+{
+    if (Z_TYPE_P(in) != IS_STRING) {
+        zend_error(E_WARNING, "parameter should be a string");
+        throw 42;
+    }
+    return Z_STRVAL_P(in);
+}
+
+template <typename Cxx>
+std::vector<Cxx> lang2cxx_array(zval* in)
+{
+    if (Z_TYPE_P(in) != IS_ARRAY) {
+        zend_error(E_WARNING, "parameter should be an array");
+        throw 42;
+    }
+
+    HashTable* ht = Z_ARRVAL_P(in);
+    std::vector<Cxx> out;
+    size_t s = zend_hash_num_elements(ht);
+
+    for (size_t i = 0; i < s; ++i)
+    {
+        zval* v = zend_hash_index_find(ht, i);
+        out.push_back(lang2cxx<zval*, Cxx>(v));
+    }
+
+    return out;
+}
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|cxx_comment }}
+
+template <>
+zval cxx2lang<zval, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+{
+    return cxx2lang<zval, int>((int) in);
+}
+
+template <>
+{{ enum.enum_name }} lang2cxx<zval*, {{ enum.enum_name }}>(zval* in)
+{
+    return ({{ enum.enum_name }}) lang2cxx<zval*, int>(in);
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ struct.str_summary|cxx_comment }}
+
+template <>
+zval cxx2lang<zval, {{ struct.str_name }}>({{ struct.str_name }} in)
+{
+    zval ret;
+    zval tmp;
+    array_init(&ret);
+    {% for field_name, field_type, field_comment in struct.str_field %}
+
+    // {{ field_name }}
+    tmp = {{ field_type|cxx_to_php }}(in.{{ field_name }});
+    add_assoc_zval(&ret, "{{ field_name }}", &tmp);
+    {% endfor %}
+
+    return ret;
+}
+
+template <>
+{{ struct.str_name }} lang2cxx<zval*, {{ struct.str_name }}>(zval* in)
+{
+    {{ struct.str_name }} out;
+    if (Z_TYPE_P(in) != IS_ARRAY) {
+        zend_error(E_WARNING, "parameter is not a structure");
+        throw 42;
+    }
+    HashTable* ht = Z_ARRVAL_P(in);
+    zval* tmp = NULL;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+
+    // {{ field_name }}
+    tmp = zend_hash_str_find(ht, "{{ field_name }}", {{ field_name|length }});
+    if (tmp == NULL) {
+        zend_error(E_WARNING,
+            "field \"{{ field_name }}\" of struct "
+            "\"{{ struct.str_name }}\" not found");
+        throw 42;
+    }
+    out.{{ field_name }} = {{ field_type|php_to_cxx }}(tmp);
+    {% endfor %}
+
+    return out;
+}
+{% endfor %}
+
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment }}
+PHP_FUNCTION(php_api_{{ func.fct_name }})
+{
+    (void) execute_data;
+    {% for arg_name, _, _ in func.fct_arg %}
+    zval* arg_{{ arg_name }};
+    {% endfor %}
+    {% if func.fct_arg %}
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "{{ 'z' * (func.fct_arg|length) }}"
+        {%- for arg_name, _, _ in func.fct_arg -%}
+        , &arg_{{ arg_name }}
+        {%- endfor %}) == FAILURE)
+    {
+        RETURN_NULL();
+    }
+
+    {% endif %}
+    try {
+        {%+ if func is returning -%}
+        zval ret = {{ func.fct_ret_type|cxx_to_php }}
+        {%- endif -%}
+        (api_{{ func.fct_name }}(
+        {%- set comma = joiner(', ') -%}
+        {%- for arg_name, arg_type, _ in func.fct_arg -%}
+        {{ comma() }}{{ arg_type|php_to_cxx }}(arg_{{ arg_name }})
+        {%- endfor %}));
+        {% if func is returning %}
+        RETURN_ZVAL(&ret, 0, 0);
+        {% else %}
+        RETURN_NULL();
+        {% endif %}
+    } catch (...) {
+        RETURN_NULL();
+    }
+}
+{% endfor %}
+
+// API function to register.
+static zend_function_entry api_callback[] = {
+    {% for func in game.function %}
+    PHP_FALIAS({{ func.fct_name }}, php_api_{{ func.fct_name }}, NULL)
+    {% endfor %}
+    {NULL, NULL, NULL, 0, 0}
+};
+
+static zend_module_entry api_module_entry = {
+    STANDARD_MODULE_HEADER,
+    "api",
+    api_callback,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    "1.0",
+    STANDARD_MODULE_PROPERTIES
+};
+
+static void _init_php()
+{
+    static int initialized = 0;
+    if (initialized)
+        return;
+    initialized = 1;
+
+    const char* path;
+    path = getenv("CHAMPION_PATH");
+    if (!path)
+        path = ".";
+
+    char buffer[1024];
+    snprintf(buffer, 1024, "include('%s/%s.php');", path, "champion");
+
+    char champion_name[32] = "champion";
+    char* argv[] = { champion_name, NULL };
+    php_embed_init(1, argv);
+    zend_startup_module(&api_module_entry);
+
+    char string_name[32] = "PHP to Stechec interface";
+    zend_eval_string(buffer, NULL, string_name);
+}
+
+
+// Functions called from Stechec to PHP
+{% for func in game.user_function %}
+
+extern "C" {{ func|cxx_prototype }}
+{
+    zval ret;
+    zval fname;
+    {% if func.fct_arg %}
+    zval params[{{ func.fct_arg|length }}];
+    {% endif %}
+    _init_php();
+
+    ZVAL_STRING(&fname, "{{ func.fct_name }}");
+    {% for arg_name, arg_type, _ in func.fct_arg %}
+    params[{{ loop.index0 }}] = {{ arg_type|cxx_to_php }}({{ arg_name }})
+    {% endfor %}
+
+    if (call_user_function(EG(function_table), NULL, &fname, &ret, {{ func.fct_arg|length }}, {% if func.fct_arg %}params{% else %}NULL{% endif %}) == FAILURE)
+        abort();
+
+    {% if func is returning %}
+    return {{ func.fct_ret_type|php_to_cxx }}(cxxret);
+    {% endif %}
+}
+{% endfor %}
