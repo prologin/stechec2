@@ -21,14 +21,14 @@ python_comment = register_filter(
 @register_filter
 def cxx_to_python(value: str) -> str:
     if is_array(value):
-        return 'cxx2lang_array'
+        return 'cxx_to_python_array'
     else:
-        return 'cxx2lang<PyObject*, {}>'.format(value)
+        return 'cxx_to_python<PyObject*, {}>'.format(value)
 
 
 @register_filter
 def python_to_cxx(value: str) -> str:
     if is_array(value):
-        return 'lang2cxx_array<{}>'.format(value[:-len(' array')])
+        return 'python_to_cxx_array<{}>'.format(value[:-len(' array')])
     else:
-        return 'lang2cxx<PyObject*, {}>'.format(value)
+        return 'python_to_cxx<PyObject*, {}>'.format(value)
