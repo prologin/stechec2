@@ -65,7 +65,8 @@ def generate(base_path, command, game_config):
         td = Path(td)
         subprocess.run(
             ['python3', '-m', 'generator', command, game_config, str(td)],
-            env={**os.environ, 'PYTHONPATH': str(generator_path)}
+            env={**os.environ, 'PYTHONPATH': str(generator_path)},
+            cwd=REPO_PATH,
         )
         # Specialcase legacy ruby behavior to help diff track renames
         if command == 'ruby-rules':
