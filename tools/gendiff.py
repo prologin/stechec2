@@ -94,7 +94,7 @@ def generate(base_path, command, game_config):
 def git_checkout(commit):
     with tempfile.TemporaryDirectory(prefix='stechec2-gendiff-rev-') as td:
         subprocess.run(
-            ['git', '--work-tree', td, 'checkout', commit, '--', 'tools']
+            ['git', 'worktree', 'add', td, commit]
         )
         yield td
 
