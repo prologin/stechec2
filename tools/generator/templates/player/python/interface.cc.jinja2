@@ -304,7 +304,9 @@ static void _init_python()
     Py_Initialize();
     PySys_SetArgvEx(1, argv, 0);
 
-    champ_module = _import_module("champion");
+    // Import a Champion module with an uppercase letter to avoid conflict with
+    // champion.so
+    champ_module = _import_module("Champion");
     py_module = _import_module("api");
 }
 

@@ -23,4 +23,4 @@ def make_player(game, out_dir: Path) -> None:
     gen_lang(game, out_dir, 'c',
              ['api.h', 'champion.c', 'interface.cc', 'Makefile'])
     gen_lang(game, out_dir, 'python',
-             ['api.py', 'champion.py', 'interface.cc', 'Makefile'])
+             ['api.py', 'Champion.py', 'interface.cc', 'Makefile'])
