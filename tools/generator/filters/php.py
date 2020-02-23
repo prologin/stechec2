@@ -21,14 +21,14 @@ php_comment = register_filter(
 @register_filter
 def cxx_to_php(value: str) -> str:
     if is_array(value):
-        return 'cxx2lang_array'
+        return 'cxx_to_php_array'
     else:
-        return 'cxx2lang<zval, {}>'.format(value)
+        return 'cxx_to_php<zval, {}>'.format(value)
 
 
 @register_filter
 def php_to_cxx(value: str) -> str:
     if is_array(value):
-        return 'lang2cxx_array<{}>'.format(value[:-len(' array')])
+        return 'php_to_cxx_array<{}>'.format(value[:-len(' array')])
     else:
-        return 'lang2cxx<zval*, {}>'.format(value)
+        return 'php_to_cxx<zval*, {}>'.format(value)
