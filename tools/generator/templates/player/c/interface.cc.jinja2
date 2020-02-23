@@ -77,7 +77,7 @@ template<>
 {
     {{ cxx_type }} out;
     {% for field_name, field_type, field_comment in struct.str_field %}
-    out.{{ field_name }} = {{ field_type|cxx_to_c }}(in.{{ field_name }});
+    out.{{ field_name }} = {{ field_type|c_to_cxx }}(in.{{ field_name }});
     {% endfor %}
     return out;
 }
@@ -87,7 +87,7 @@ template<>
 {
     {{ c_type }} out;
     {% for field_name, field_type, field_comment in struct.str_field %}
-    out.{{ field_name }} = {{ field_type|c_to_cxx }}(in.{{ field_name }});
+    out.{{ field_name }} = {{ field_type|cxx_to_c }}(in.{{ field_name }});
     {% endfor %}
     return out;
 }

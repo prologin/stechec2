@@ -48,8 +48,8 @@ def c_to_cxx(ctx, value: str) -> str:
     if is_array(value):
         return 'c_to_cxx_array<{}, {}, {}>'.format(
             ctype[:-len('_array')],
-            cpptype,
-            cpptype[len('std::vector<'):len('>')]
+            ctype,
+            cpptype[len('std::vector<'):-len('>')]
         )
     else:
         return 'c_to_cxx<{}, {}>'.format(ctype, cpptype)
