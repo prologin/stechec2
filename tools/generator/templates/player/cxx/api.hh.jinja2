@@ -109,3 +109,10 @@ struct hash<{{ struct.str_name }}>
 };
 } // namespace std
 {% endfor %}
+
+{# Demangle user functions #}
+extern "C" {
+{% for func in game.user_function %}
+extern "C" {{ func|cxx_prototype }};
+{% endfor %}
+}

@@ -5,7 +5,7 @@
 {% for func in game.user_function %}
 
 {{ func.fct_summary|cxx_comment(doc=True) }}
-extern "C" {{ func|cxx_prototype }}
+{{ func|cxx_prototype }}
 {
     // TODO
 }
