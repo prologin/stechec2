@@ -28,14 +28,14 @@ extern "C" {
 {% endfor %}
 }
 
-template <typename Lang, typename Cxx>
-Lang cxx2lang(Cxx in)
+template <typename PhpType, typename CxxType>
+PhpType cxx_to_php(CxxType in)
 {
     return in.__if_that_triggers_an_error_there_is_a_problem;
 }
 
 template <>
-zval cxx2lang<zval, int>(int in)
+zval cxx_to_php<zval, int>(int in)
 {
     zval x;
     ZVAL_LONG(&x, (long) in);
@@ -43,7 +43,7 @@ zval cxx2lang<zval, int>(int in)
 }
 
 template <>
-zval cxx2lang<zval, bool>(bool in)
+zval cxx_to_php<zval, bool>(bool in)
 {
     zval x;
     ZVAL_BOOL(&x, in);
@@ -51,7 +51,7 @@ zval cxx2lang<zval, bool>(bool in)
 }
 
 template <>
-zval cxx2lang<zval, double>(double in)
+zval cxx_to_php<zval, double>(double in)
 {
     zval x;
     ZVAL_DOUBLE(&x, in);
@@ -59,15 +59,15 @@ zval cxx2lang<zval, double>(double in)
 }
 
 template <>
-zval cxx2lang<zval, std::string>(std::string in)
+zval cxx_to_php<zval, std::string>(std::string in)
 {
     zval x;
     ZVAL_STRINGL(&x, in.c_str(), in.length());
     return x;
 }
 
-template <typename Cxx>
-zval cxx2lang_array(const std::vector<Cxx>& in)
+template <typename CxxType>
+zval cxx_to_php_array(const std::vector<CxxType>& in)
 {
     zval x;
     array_init(&x);
@@ -75,21 +75,21 @@ zval cxx2lang_array(const std::vector<Cxx>& in)
     size_t s = in.size();
 
     for (size_t i = 0; i < s; ++i) {
-        zval tmp = cxx2lang<zval, Cxx>(in[i]);
+        zval tmp = cxx_to_php<zval, CxxType>(in[i]);
         add_next_index_zval(&x, &tmp);
     }
 
     return x;
 }
 
-template <typename Lang, typename Cxx>
-Cxx lang2cxx(Lang in)
+template <typename PhpType, typename CxxType>
+CxxType php_to_cxx(PhpType in)
 {
     return in.__if_that_triggers_an_error_there_is_a_problem;
 }
 
 template <>
-int lang2cxx<zval*, int>(zval* in)
+int php_to_cxx<zval*, int>(zval* in)
 {
     if (Z_TYPE_P(in) != IS_LONG) {
         zend_error(E_WARNING, "parameter should be an int");
@@ -99,7 +99,7 @@ int lang2cxx<zval*, int>(zval* in)
 }
 
 template <>
-double lang2cxx<zval*, double>(zval* in)
+double php_to_cxx<zval*, double>(zval* in)
 {
     if (Z_TYPE_P(in) != IS_DOUBLE) {
         zend_error(E_WARNING, "parameter should be a double");
@@ -109,7 +109,7 @@ double lang2cxx<zval*, double>(zval* in)
 }
 
 template <>
-bool lang2cxx<zval*, bool>(zval* in)
+bool php_to_cxx<zval*, bool>(zval* in)
 {
     if (Z_TYPE_P(in) != IS_TRUE && Z_TYPE_P(in) != IS_FALSE) {
         zend_error(E_WARNING, "parameter should be a boolean");
@@ -119,7 +119,7 @@ bool lang2cxx<zval*, bool>(zval* in)
 }
 
 template <>
-std::string lang2cxx<zval*, std::string>(zval* in)
+std::string php_to_cxx<zval*, std::string>(zval* in)
 {
     if (Z_TYPE_P(in) != IS_STRING) {
         zend_error(E_WARNING, "parameter should be a string");
@@ -128,8 +128,8 @@ std::string lang2cxx<zval*, std::string>(zval* in)
     return Z_STRVAL_P(in);
 }
 
-template <typename Cxx>
-std::vector<Cxx> lang2cxx_array(zval* in)
+template <typename CxxType>
+std::vector<CxxType> php_to_cxx_array(zval* in)
 {
     if (Z_TYPE_P(in) != IS_ARRAY) {
         zend_error(E_WARNING, "parameter should be an array");
@@ -137,13 +137,13 @@ std::vector<Cxx> lang2cxx_array(zval* in)
     }
 
     HashTable* ht = Z_ARRVAL_P(in);
-    std::vector<Cxx> out;
+    std::vector<CxxType> out;
     size_t s = zend_hash_num_elements(ht);
 
     for (size_t i = 0; i < s; ++i)
     {
         zval* v = zend_hash_index_find(ht, i);
-        out.push_back(lang2cxx<zval*, Cxx>(v));
+        out.push_back(php_to_cxx<zval*, CxxType>(v));
     }
 
     return out;
@@ -153,15 +153,15 @@ std::vector<Cxx> lang2cxx_array(zval* in)
 {{ enum.enum_summary|cxx_comment }}
 
 template <>
-zval cxx2lang<zval, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+zval cxx_to_php<zval, {{ enum.enum_name }}>({{ enum.enum_name }} in)
 {
-    return cxx2lang<zval, int>((int) in);
+    return cxx_to_php<zval, int>((int) in);
 }
 
 template <>
-{{ enum.enum_name }} lang2cxx<zval*, {{ enum.enum_name }}>(zval* in)
+{{ enum.enum_name }} php_to_cxx<zval*, {{ enum.enum_name }}>(zval* in)
 {
-    return ({{ enum.enum_name }}) lang2cxx<zval*, int>(in);
+    return ({{ enum.enum_name }}) php_to_cxx<zval*, int>(in);
 }
 {% endfor %}
 {% for struct in game.struct %}
@@ -169,7 +169,7 @@ template <>
 {{ struct.str_summary|cxx_comment }}
 
 template <>
-zval cxx2lang<zval, {{ struct.str_name }}>({{ struct.str_name }} in)
+zval cxx_to_php<zval, {{ struct.str_name }}>({{ struct.str_name }} in)
 {
     zval ret;
     zval tmp;
@@ -185,7 +185,7 @@ zval cxx2lang<zval, {{ struct.str_name }}>({{ struct.str_name }} in)
 }
 
 template <>
-{{ struct.str_name }} lang2cxx<zval*, {{ struct.str_name }}>(zval* in)
+{{ struct.str_name }} php_to_cxx<zval*, {{ struct.str_name }}>(zval* in)
 {
     {{ struct.str_name }} out;
     if (Z_TYPE_P(in) != IS_ARRAY) {
