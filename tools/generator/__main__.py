@@ -7,7 +7,7 @@ import subprocess
 import textwrap
 from pathlib import Path
 
-from .game import Game
+from .game import load_game
 from .player import make_player
 from .rules import make_rules
 from .texdoc import make_texdoc
@@ -40,7 +40,7 @@ def main():
     parser.add_argument('out_dir', type=Path, help="The output directory")
     args = parser.parse_args()
 
-    game = Game(args.yaml_file)
+    game = load_game(args.yaml_file)
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
     if args.command == 'rules':
