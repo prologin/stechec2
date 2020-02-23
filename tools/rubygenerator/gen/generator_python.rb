@@ -503,8 +503,8 @@ lib_TARGETS = #{target}
 #{target}-dists += api.py interface.hh
 #{target}-srcs = interface.cc
 
-#{target}-cxxflags = -fPIC $(shell python3-config --includes)
-#{target}-ldflags = -s $(shell python3-config --ldflags)
+#{target}-cxxflags = -fPIC $(shell python3-config --embed --includes)
+#{target}-ldflags = -s $(shell python3-config --embed --ldflags)
 
 STECHEC_LANG=python
 include ../includes/rules.mk
