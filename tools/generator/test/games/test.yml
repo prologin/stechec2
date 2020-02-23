@@ -1,0 +1,133 @@
+# TODO: test strings
+#
+name: test
+
+constant:
+  -
+    cst_name: CONST_VAL
+    cst_val: 42
+    cst_comment: Constant value
+  -
+    cst_name: CONST_DOUBLE
+    cst_val: 42.42
+    cst_type: double
+    cst_comment: Floating point constant
+
+enum:
+  -
+    enum_name: test_enum
+    enum_summary:
+      "Enumeration containing several values to test for."
+    enum_field:
+      - [val1, "value 1"]
+      - [val2, "value 2"]
+
+struct:
+  -
+    str_name: simple_struct
+    str_summary: Simple structure with nothing special.
+    str_tuple: no
+    str_field:
+      - [field_i, int, "Integer field"]
+      - [field_bool, bool, "Bool field"]
+      - [field_double, double, "Double field"]
+  -
+    str_name: struct_with_array
+    str_summary: Structure which contains an array.
+    str_tuple: no
+    str_field:
+      - [field_int, int, "Integer field"]
+      - [field_int_arr, int array, "Integer array field"]
+      - [field_str_arr, simple_struct array, "Structure array field"]
+
+function:
+  -
+    fct_name: send_me_42
+    fct_summary: Send me the integer 42
+    fct_ret_type: void
+    fct_arg:
+      - [n, int, an integer]
+  -
+    fct_name: send_me_42_and_1337
+    fct_summary: Send me the integers 42 and 1337
+    fct_ret_type: void
+    fct_arg:
+      - [n1, int, an integer]
+      - [n2, int, another integer]
+  -
+    fct_name: send_me_true
+    fct_summary: Send me the boolean true.
+    fct_ret_type: void
+    fct_arg:
+      - [b, bool, a boolean]
+  -
+    fct_name: send_me_tau
+    fct_summary: Send me a double approximating tau
+    fct_ret_type: void
+    fct_arg:
+      - [t, double, a double approximating tau]
+  -
+    fct_name: returns_42
+    fct_summary: Returns 42
+    fct_ret_type: int
+    fct_arg: []
+  -
+    fct_name: returns_true
+    fct_summary: Returns true
+    fct_ret_type: bool
+    fct_arg: []
+  -
+    fct_name: returns_tau
+    fct_summary: Returns a double approximating tau
+    fct_ret_type: double
+    fct_arg: []
+  -
+    fct_name: returns_val1
+    fct_summary: Returns VAL1
+    fct_ret_type: test_enum
+    fct_arg: []
+  -
+    fct_name: returns_range
+    fct_summary: Returns a range of integer [m;n[
+    fct_ret_type: int array
+    fct_arg:
+      - [m, int, lower bound]
+      - [n, int, upper bound]
+  -
+    fct_name: returns_sorted
+    fct_summary: Sorts a list of integers.
+    fct_ret_type: int array
+    fct_arg:
+      - [l, int array, the list]
+  -
+    fct_name: send_me_simple
+    fct_summary: Send me a simple struct
+    fct_ret_type: void
+    fct_arg:
+      - [s, simple_struct, the struct]
+  -
+    fct_name: send_me_42s
+    fct_summary: Send me this struct filled with 42s and a list of 42 elems.
+    fct_ret_type: void
+    fct_arg:
+      - [s, struct_with_array, the struct]
+  -
+    fct_name: send_me_test_enum
+    fct_summary: Send me the two test values of the enum
+    fct_ret_type: void
+    fct_arg:
+      - [v1, test_enum, first value]
+      - [v2, test_enum, second value]
+  -
+    fct_name: send_me_struct_array
+    fct_summary: The ultimate test, send me a list of 42 structs filled with 42s, and I'll return it to you.
+    fct_ret_type: struct_with_array array
+    fct_arg:
+      - [l, struct_with_array array, the list]
+
+user_function:
+  -
+    fct_name: test
+    fct_summary: Called 10K times to test if things work well.
+    fct_ret_type: void
+    fct_arg: []

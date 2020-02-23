@@ -18,5 +18,5 @@ def load_test_game(game_name):
 def generate_player(game_name):
     with tempfile.TemporaryDirectory(prefix='stechec2-generator-test-') as td:
         game = load_test_game(game_name)
-        make_player(game, td)
+        make_player(game, pathlib.Path(td))
         yield pathlib.Path(td)
