@@ -12,8 +12,8 @@ class GameError(ValueError):
 
 
 class Game:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, game_config):
+        self.game = game_config
         self.load()
 
     def __getitem__(self, name):

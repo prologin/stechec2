@@ -55,8 +55,8 @@ class TestYamlErrors(unittest.TestCase):
             }))
 
     def test_error_struct_field_typename(self):
-        expected = (r"Struct structtype: Field 'conflict' conflicts with a "
-                    r"type name \(C code will not compile\).")
+        expected = ("Struct structtype: Field 'conflict' conflicts with a "
+                    "type name")
         with self.assertRaisesRegex(GameError, expected):
             Game(test_game_config({
                 'enum': [{
