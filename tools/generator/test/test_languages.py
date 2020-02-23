@@ -19,6 +19,9 @@ class TestLanguages(unittest.TestCase):
     def test_cxx(self):
         self.run_language_tests('cxx', 'champion.cc')
 
+    def test_python(self):
+        self.run_language_tests('python', 'champion.py')
+
     def run_language_tests(self, language, champion_file_name):
         language_dir = self.player_path / language
         self.compile_language(language, champion_file_name)
@@ -30,8 +33,6 @@ class TestLanguages(unittest.TestCase):
                 cwd=language_dir,
             )
         except subprocess.CalledProcessError as e:
-            print(language_dir)
-            input()
             self.fail("Test failed with output:\n" + e.output)
 
     def compile_language(self, language, champion_file_name):
@@ -49,8 +50,6 @@ class TestLanguages(unittest.TestCase):
                 cwd=language_dir,
             )
         except subprocess.CalledProcessError as e:
-            print(language_dir)
-            input()
             self.fail("Champion compilation failed with output:\n" + e.output)
 
         # Compile tester
