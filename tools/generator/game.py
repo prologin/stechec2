@@ -2,13 +2,18 @@ import yaml
 import re
 
 
+def load_game(game_file):
+    game = yaml.safe_load(game_file)
+    return Game(game)
+
+
 class GameError(ValueError):
     pass
 
 
 class Game:
-    def __init__(self, game_file):
-        self.game = yaml.safe_load(game_file)
+    def __init__(self, game):
+        self.game = game
         self.load()
 
     def __getitem__(self, name):
