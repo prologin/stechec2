@@ -1,9 +1,7 @@
 <?php
-/*
- * This file has been generated, if you wish to
- * modify it in a permanent way, please refer
- * to the script file : gen/generator_php.rb
- */
+
+ini_set('zend.assertions', 1);
+ini_set('assert.exception', 1);
 
 require('api.php');
 
@@ -17,10 +15,6 @@ function test_alert()
  */
 function test()
 {
-    if (ini_get('zend.assertions') !== '1') {
-        die("Assertions are not enabled, set zend.assertions = 1 in php.ini.");
-    }
-
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
@@ -57,5 +51,3 @@ function test()
 
     assert('$l1 == $l2');
 }
-
-?>
