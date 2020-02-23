@@ -279,7 +279,7 @@ GAME_SCHEMA = {
     'constant': [
         {
             'cst_name': CONSTANT,
-            'cst_val': int,
+            'cst_val': Union(int, float),
             'cst_comment': str,
         }
     ],
