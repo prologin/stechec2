@@ -35,7 +35,10 @@ c_comment = register_filter(cxx_comment, name='c_comment')
 @register_filter
 @contextfilter
 def c_internal_cxx_type(ctx, value: str) -> str:
-    if is_struct_in(value, ctx['game']):
+    if is_array(value):
+        base_type = value[:-len(' array')]
+        return 'std::vector<{}>'.format(c_internal_cxx_type(ctx, base_type))
+    elif is_struct_in(value, ctx['game']):
         return '__internal__cxx__' + value
     return cxx_type(value)
 
@@ -43,30 +46,32 @@ def c_internal_cxx_type(ctx, value: str) -> str:
 @register_filter
 @contextfilter
 def c_to_cxx(ctx, value: str) -> str:
-    ctype = c_type(value)
-    cpptype = c_internal_cxx_type(ctx, value)
     if is_array(value):
+        base_type = value[:-len(' array')]
         return 'c_to_cxx_array<{}, {}, {}>'.format(
-            ctype[:-len('_array')],
-            ctype,
-            cpptype[len('std::vector<'):-len('>')]
+            c_type(base_type),
+            c_type(value),
+            c_internal_cxx_type(ctx, base_type)
         )
     else:
+        ctype = c_type(value)
+        cpptype = c_internal_cxx_type(ctx, value)
         return 'c_to_cxx<{}, {}>'.format(ctype, cpptype)
 
 
 @register_filter
 @contextfilter
 def cxx_to_c(ctx, value: str) -> str:
-    ctype = c_type(value)
-    cpptype = c_internal_cxx_type(ctx, value)
     if is_array(value):
+        base_type = value[:-len(' array')]
         return 'cxx_to_c_array<{}, {}, {}>'.format(
-            ctype[:-len('_array')],
-            ctype,
-            cpptype[len('std::vector<'):-len('>')]
+            c_type(base_type),
+            c_type(value),
+            c_internal_cxx_type(ctx, base_type),
         )
     else:
+        ctype = c_type(value)
+        cpptype = c_internal_cxx_type(ctx, value)
         return 'cxx_to_c<{}, {}>'.format(ctype, cpptype)
 
 
