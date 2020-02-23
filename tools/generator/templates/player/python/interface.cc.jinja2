@@ -228,8 +228,8 @@ static PyObject* p_{{ func.fct_name }}(PyObject* self, PyObject* args)
     }
 
     try {
-        {%+ if func is returning %}return {% endif -%}
-        {{ func.fct_ret_type|cxx_to_python }}(api_{{ func.fct_name }}(
+        {%+ if func is returning %}return {{ func.fct_ret_type|cxx_to_python }}{% endif -%}
+        (api_{{ func.fct_name }}(
         {%- set comma = joiner(', ') -%}
         {%- for arg_name, arg_type, _ in func.fct_arg -%}
         {{ comma() }}{{ arg_type|python_to_cxx }}(arg_{{ arg_name }})
