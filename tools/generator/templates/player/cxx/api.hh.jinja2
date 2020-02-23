@@ -101,8 +101,8 @@ struct hash<{{ struct.str_name }}>
     std::size_t operator()(const {{ struct.str_name }}& s) const
     {
         std::size_t res = 0;
-        {% for field_name, _, _ in struct.str_field %}
-        res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + std::hash<int>()(s.{{ field_name }});
+        {% for field_name, field_type, _ in struct.str_field %}
+        res ^= 0x9e3779b9 + (res << 6) + (res >> 2) + std::hash<{{ field_type|cxx_type }}>()(s.{{ field_name }});
         {% endfor %}
         return res;
     }
