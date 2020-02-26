@@ -1,0 +1,71 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+//
+// This file contains all the API functions for the Rust language, and all the
+// constants, enumerations and structures.
+//
+// It has been generated. You can modify the end of the file if you want, but
+// do not touch the part where constants, enums, structs, and api functions are
+// defined.
+
+/// Rust API for {{ game.name }}
+#![allow(unused_imports)]
+
+mod ffi;
+
+use crate::api::ffi::{ToAPI, ToFFI};
+
+use std::cell::UnsafeCell;
+
+{% for constant in game.constant %}
+{{ constant.cst_comment|cxx_comment(doc=True) }}
+pub const {{ constant.cst_name }}: {{ (constant.cst_type or 'int')|rust_api_output_type }} = {{ constant.cst_val }};
+
+{% endfor %}
+{% for enum in game.enum %}
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
+pub enum {{ enum.enum_name|camel_case }} {
+    {% for field_name, field_comment in enum.enum_field %}
+    /// {{ field_comment }}
+    {{ field_name|camel_case }},
+    {% endfor %}
+}
+
+{% endfor %}
+{% for struct in game.struct if not struct.str_tuple %}
+{% if struct.str_name|is_containing_double %}
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+{% else %}
+#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
+{% endif %}
+pub struct {{ struct.str_name|camel_case }} {
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    /// {{ field_comment }}
+    pub {{ field_name }}: {{ field_type|rust_api_output_type }},
+    {% endfor %}
+}
+
+{% endfor %}
+{%- for func in game.function %}
+
+{{ func.fct_summary|rust_comment(doc=True) }}
+{% if func.fct_arg %}
+///
+/// ### Parameters
+{% for name, _, comment in func.fct_arg %}
+///  - `{{ name }}`: {{ comment }}
+{% endfor %}
+{% endif %}
+pub {{ func|rust_prototype }} {
+    unsafe {
+        {% for arg, type, _ in func.fct_arg %}
+        {% if type|rust_is_copy %}
+        let {{ arg }} = {{ arg }}.to_ffi();
+        {% else %}
+        let {{ arg }} = UnsafeCell::new({{ arg }}.to_ffi());
+        {% endif %}
+        {% endfor %}
+        ffi::{{ func|rust_ffi_call }}.to_api()
+    }
+}
+{% endfor %}

@@ -165,6 +165,18 @@ class Game:
                         .format(origin_type, origin, name, def_type, def_name))
                 used_field_names[name] = (origin_type, origin)
 
+    def get_struct(self, struct_name):
+        '''Get a struct by name, None if it does not exist'''
+        return next(
+            (
+                struct
+                for struct in self.game['struct']
+                if struct['str_name'] == struct_name
+            ),
+            None
+        )
+
+
 
 # Adapted from camisole/schema.py
 # ------------->8----------------

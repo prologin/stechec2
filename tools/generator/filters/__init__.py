@@ -33,7 +33,8 @@ def load_library_in(env):
         caml,
         cxx,
         php,
-        python
+        python,
+        rust,
     )
     for filter_name, filter in FILTER_LIBRARY.items():
         env.filters[filter_name] = filter

@@ -1,0 +1,270 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
+
+use crate::api;
+
+use std::ffi::{CStr, CString};
+use std::os::raw::{c_char, c_double, c_int, c_void};
+use std::{mem::{drop, size_of}, ptr, slice};
+
+#[allow(non_camel_case_types)]
+pub type c_bool = bool;
+
+/// Stechec2-specific array type.
+#[repr(C)]
+pub struct Array<T> {
+    ptr: *mut T,
+    len: usize,
+}
+
+impl<T> Drop for Array<T> {
+    fn drop(&mut self) {
+        unsafe {
+            slice::from_raw_parts_mut(self.ptr, self.len)
+                .iter_mut()
+                .for_each(drop);
+            free(self.ptr as _);
+        }
+    }
+}
+
+/// Represents an owned C string that was created by a foreign function using
+/// malloc. This means that this string must be deallocated using free.
+#[repr(C)]
+pub struct RawString {
+    ptr: *mut c_char
+}
+
+impl Drop for RawString {
+    fn drop(&mut self) {
+        unsafe {
+            free(self.ptr as _);
+        }
+    }
+}
+
+// Enums
+
+{% for enum in game.enum %}
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub enum {{ enum.enum_name|camel_case }} {
+    {% for field_name, _ in enum.enum_field %}
+    {{ field_name|camel_case }},
+    {% endfor %}
+}
+
+{% endfor -%}
+
+// Structures
+
+{% for struct in game.struct %}
+#[repr(C)]
+pub struct {{ struct.str_name|camel_case }} {
+    {% for field_name, field_type, _ in struct.str_field %}
+    {{ field_name }}: {{ field_type|rust_ffi_type }},
+    {% endfor %}
+}
+
+{% endfor -%}
+
+// Conversion traits
+
+pub trait ToAPI<T> {
+    /// Convert from a C-compatible type.
+    ///
+    /// As there can't be a clear ownership through the ffi, you need to make
+    /// sure that foreign code assumes that you will drop provided values.
+    unsafe fn to_api(self) -> T;
+}
+
+pub trait ToFFI<T> {
+    /// Convert to a C-compatible type.
+    ///
+    /// As there can't be a clear ownership through the ffi, you need to make
+    /// sure that foreign code assumes that you will drop provided values.
+    unsafe fn to_ffi(&self) -> T;
+}
+
+{% for type in ['bool', 'double', 'int', 'void'] %}
+{% with ffi_type=type|rust_ffi_type, api_type=type|rust_api_output_type %}
+// Conversions for {{ type }}
+
+impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_api(self) -> {{ api_type }} {
+        self
+    }
+}
+
+impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_ffi(&self) -> {{ ffi_type }} {
+        *self
+    }
+}
+
+{% endwith %}
+{% endfor -%}
+
+// Conversions for string
+
+impl ToAPI<String> for RawString {
+    unsafe fn to_api(self) -> String {
+        {# NOTE: maybe we prefer never panicking by using the behaviour of
+         #       String::from_utf8_lossy?
+         #}
+        CStr::from_ptr((&self).ptr)
+            .to_owned()
+            .into_string()
+            .expect("API provided invalid UTF-8")
+    }
+}
+
+impl<S> ToFFI<RawString> for S
+where
+    S: AsRef<str>,
+{
+    unsafe fn to_ffi(&self) -> RawString {
+        let c_string = CString::new(self.as_ref().to_string())
+            .expect("string provided to the API contains a null character");
+        let len = c_string.as_bytes().len();
+
+        let ptr = malloc(len * size_of::<c_char>()) as *mut c_char;
+        c_string.as_c_str().as_ptr().copy_to(ptr, len);
+        RawString { ptr }
+    }
+}
+
+// Conversions for array
+
+impl<T, U> ToAPI<Vec<U>> for Array<T>
+where
+    T: ToAPI<U>,
+{
+    unsafe fn to_api(self) -> Vec<U> {
+        (0..self.len)
+            .map(|i| self.ptr.add(i).read())
+            .map(|item| item.to_api())
+            .collect()
+    }
+}
+
+impl<T, U> ToFFI<Array<U>> for [T]
+where
+    T: ToFFI<U>,
+{
+    unsafe fn to_ffi(&self) -> Array<U> {
+        let ptr = malloc(self.len() * size_of::<U>()) as *mut U;
+
+        for (i, item) in self.iter().enumerate() {
+            ptr::write(ptr.add(i), item.to_ffi());
+        }
+
+        Array { ptr, len: self.len() }
+    }
+}
+
+impl<T, U> ToFFI<Array<U>> for Vec<T>
+where
+    T: ToFFI<U>,
+{
+    unsafe fn to_ffi(&self) -> Array<U> {
+        self[..].to_ffi()
+    }
+}
+
+{% for enum in game.enum %}
+{% with name=enum.enum_name|camel_case %}
+// Conversions for {{ enum.enum_name }}
+
+impl ToAPI<api::{{ name }}> for {{ name }} {
+    unsafe fn to_api(self) -> api::{{ name }} {
+        match self {
+            {% for field_name, _ in enum.enum_field %}
+            {{ name }}::{{ field_name|camel_case }} => api::{{ name }}::{{ field_name|camel_case }},
+            {% endfor %}
+        }
+    }
+}
+
+impl ToFFI<{{ name }}> for api::{{ name }} {
+    unsafe fn to_ffi(&self) -> {{ name }} {
+        match self {
+            {% for field_name, _ in enum.enum_field %}
+            api::{{ name }}::{{ field_name|camel_case }} => {{ name }}::{{ field_name|camel_case }},
+            {% endfor %}
+        }
+    }
+}
+
+{% endwith %}
+{% endfor -%}
+
+{% for struct in game.struct %}
+{% with ffi_type=struct.str_name|rust_ffi_type %}
+// Conversions for {{ struct.str_name }}
+
+{% with api_type=struct.str_name|rust_api_output_type(api_mod_path='api::') %}
+impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_api(self) -> {{ api_type }} {
+        {% if struct.str_tuple %}
+        {% set separator = joiner(', ') %}
+        ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_api(){% endfor %})
+        {% else %}
+        {{ api_type }} {
+            {% for field_name, _, _ in struct.str_field %}
+            {{ field_name }}: self.{{ field_name }}.to_api(),
+            {% endfor %}
+        }
+        {% endif %}
+    }
+}
+{% endwith %}
+
+{% with api_type=struct.str_name|rust_api_input_type(api_mod_path='api::', skip_ref=True) %}
+impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_ffi(&self) -> {{ ffi_type }} {
+        {% if struct.str_tuple %}
+        let ({{ struct.str_field|map('first')|join(', ') }}) = self;
+
+        {{ ffi_type }} {
+            {% for field_name, field_type, _ in struct.str_field %}
+            {{ field_name }}: {{ field_name }}.to_ffi(),
+            {% endfor %}
+        }
+        {% else %}
+        {{ ffi_type }} {
+            {% for field_name, field_type, _ in struct.str_field %}
+            {{ field_name }}: self.{{ field_name }}.to_ffi(),
+            {% endfor %}
+        }
+        {% endif %}
+    }
+}
+{% endwith %}
+
+{% endwith %}
+{% endfor %}
+
+// Import API functions
+
+extern {
+    fn free(ptr: *mut c_void);
+    fn malloc(size: usize) -> *mut c_void;
+
+    {% for func in game.function %}
+    pub {{ func|rust_prototype(ffi=True) }};
+    {% endfor %}
+}
+
+// Export user functions
+{% for func in game.user_function %}
+
+#[no_mangle]
+unsafe extern "C" {{ func|rust_prototype(ffi=True) }} {
+    {% for arg, type, _ in func.fct_arg %}
+    let {{ arg }} = {{ arg }}.to_api();
+    {% endfor %}
+    {% set separator = joiner(', ') %}
+    crate::{{ func.fct_name }}({{ separator() }}{% for field, _, _ in func.fct_arg %}{{ field }}{% endfor %}).to_ffi()
+}
+{% endfor %}

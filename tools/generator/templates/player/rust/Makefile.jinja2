@@ -1,0 +1,15 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+ # Copyright (c) 2020 Association Prologin <association@prologin.org>
+ #}
+# Add all your champion files in here, separated by spaces
+# Include all the sources (must end with *.c), headers (must end with *.h) and
+# README files.
+CHAMPION_TARGET = champion
+CHAMPION_FILES = champion.rs
+
+# ----
+# Do not modify the lines below
+
+# Add all your sources (must be suffixed by *.rs) in here, separated by spaces
+CHAMPION_FILES += api/mod.rs api/ffi.rs interface/api.hh interface/interface.cc
+-include Makefile-rust

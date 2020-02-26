@@ -1,6 +1,7 @@
 import textwrap
 from functools import partial
-from jinja2 import contextfunction
+from jinja2 import contextfilter, contextfunction
+from typing import Optional
 
 from . import register_filter, register_test, register_function
 
@@ -16,19 +17,53 @@ def is_returning(func) -> bool:
     return func['fct_ret_type'] != 'void'
 
 
+@register_function
+@contextfunction
+def is_enum(ctx, type) -> bool:
+    return is_enum_in(type, ctx['game'])
+
+
+def is_enum_in(type, game) -> bool:
+    return any(type == s['enum_name'] for s in game['enum'])
+
+
 @register_test
 def is_array(type) -> bool:
     return type.endswith(' array')
-
-
-def is_struct_in(type, game) -> bool:
-    return any(type == s['str_name'] for s in game['struct'])
 
 
 @register_function
 @contextfunction
 def is_struct(ctx, type) -> bool:
     return is_struct_in(type, ctx['game'])
+
+
+def is_struct_in(type, game) -> bool:
+    return any(type == s['str_name'] for s in game['struct'])
+
+
+@register_filter
+@contextfilter
+def is_tuple(ctx, type) -> bool:
+    struct = ctx['game'].get_struct(type)
+    return struct is not None and struct['str_tuple']
+
+
+@register_filter
+@contextfilter
+def is_containing_double(ctx, type):
+    if type == 'double':
+        return True
+    elif is_array(type):
+        inner = type[:-len(" array")]
+        return is_containing_double(ctx, inner)
+    elif is_struct(ctx, type):
+        return any(
+            is_containing_double(ctx, field_type)
+            for _, field_type, _ in ctx['game'].get_struct(type)['str_field']
+        )
+
+    return False
 
 
 @register_filter

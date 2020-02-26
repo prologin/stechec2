@@ -1,0 +1,23 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}rust{% endblock %}
+
+{% block extra_flags %}
+RUSTC_FLAGS = --edition 2018 -g -C relocation-model=pic
+CPPFLAGS += -MMD -MP
+LDFLAGS = -lm -lrt -ldl -lpthread -lstdc++
+{% endblock %}
+
+{% block extra_rules %}
+objs += $(CHAMPION_TARGET).o
+
+$(CHAMPION_TARGET).o:
+	rustc --crate-type=staticlib $(RUSTC_FLAGS) --emit link,dep-info=.$(CHAMPION_TARGET).o.d $(CHAMPION_TARGET).rs -o $@
+
+deps = $(objs:.o=.d)
+to_clean += $(deps)
+-include $(deps)
+{% endblock %}
