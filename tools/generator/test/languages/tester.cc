@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 {
     int count = 100;
     if (argc > 1)
-        count = std::strtol(argv[1], NULL, 0);
+        count = std::strtol(argv[1], nullptr, 0);
     for (int i = 0; i < count; ++i)
         test();
 }

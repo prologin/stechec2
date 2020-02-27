@@ -3,7 +3,7 @@
 {% import 'macros/make.jinja2' as make %}
 
 # Add all your sources (must be suffixed by *.py) in here, separated by spaces
-CHAMPION_SOURCES = champion.py
+CHAMPION_SOURCES = Champion.py
 
 # ----
 # Do not modify the lines below
@@ -20,7 +20,6 @@ CXXFLAGS += $(shell $(py_config) --includes)
 LDFLAGS += $(shell $(py_config) --ldflags)
 
 objs = $(INTERFACE_SOURCES:.cc=.o)
-deps = $(objs:.o=.d)
 
 champion.so: $(objs)
 	$(CXX) -o $@ $^ -shared $(LDFLAGS)

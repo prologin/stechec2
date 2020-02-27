@@ -102,13 +102,13 @@ double python_to_cxx<PyObject*, double>(PyObject* in)
 template <>
 bool python_to_cxx<PyObject*, bool>(PyObject* in)
 {
-    return (bool) python_to_cxx<PyObject*, int>(in);
+    return static_cast<bool>(python_to_cxx<PyObject*, int>(in));
 }
 
 template <>
 std::string python_to_cxx<PyObject*, std::string>(PyObject* in)
 {
-    const char * out = PyUnicode_AsUTF8(in);
+    const char* out = PyUnicode_AsUTF8(in);
     if (PyErr_Occurred())
         throw 42;
     return out;
@@ -125,6 +125,7 @@ std::vector<CxxType> python_to_cxx_array(PyObject* in)
 
     std::vector<CxxType> out;
     unsigned int size = PyList_Size(in);
+    out.reserve(size);
 
     for (unsigned int i = 0; i < size; ++i)
         out.push_back(python_to_cxx<PyObject*, CxxType>(PyList_GET_ITEM(in, i)));
@@ -140,20 +141,20 @@ PyObject* cxx_to_python<PyObject*, {{ enum.enum_name }}>({{ enum.enum_name }} in
 {
     PyObject* name = PyUnicode_FromString("{{ enum.enum_name }}");
     PyObject* enm = PyObject_GetAttr(py_module, name);
-    if (enm == NULL)
-        throw 42;
-    PyObject* arglist = Py_BuildValue("(i)", (int) in);
-    PyObject* ret = PyObject_CallObject(enm, arglist);
     Py_DECREF(name);
-    Py_DECREF(arglist);
+    if (enm == nullptr)
+        throw 42;
+    PyObject* arglist = Py_BuildValue("(i)", static_cast<int>(in));
+    PyObject* ret = PyObject_CallObject(enm, arglist);
     Py_DECREF(enm);
+    Py_DECREF(arglist);
     return ret;
 }
 
 template <>
 {{ enum.enum_name }} python_to_cxx<PyObject*, {{ enum.enum_name }}>(PyObject* in)
 {
-  return ({{ enum.enum_name }}) python_to_cxx<PyObject*, int>(in);
+    return static_cast<{{ enum.enum_name }}>(python_to_cxx<PyObject*, int>(in));
 }
 {% endfor %}
 {% for struct in game.struct %}
@@ -173,12 +174,12 @@ PyObject* cxx_to_python<PyObject*, {{ struct.str_name }}>({{ struct.str_name }} 
     PyObject* name = PyUnicode_FromString("{{ struct.str_name }}");
     PyObject* cstr = PyObject_GetAttr(py_module, name);
     Py_DECREF(name);
-    if (cstr == NULL)
+    if (cstr == nullptr)
         throw 42;
     PyObject* ret = PyObject_CallObject(cstr, tuple);
     Py_DECREF(cstr);
     Py_DECREF(tuple);
-    if (ret == NULL)
+    if (ret == nullptr)
         throw 42;
     return ret;
     {% endif %}
@@ -198,7 +199,7 @@ template <>
     i = cxx_to_python<PyObject*, int>({{ loop.index0 }});
     i = PyObject_GetItem(in, i);
         {% endif %}
-    if (i == NULL)
+    if (i == nullptr)
         throw 42;
     out.{{ field_name }} = {{ field_type|python_to_cxx }}(i);
         {% if not struct.str_tuple %}
@@ -212,10 +213,10 @@ template <>
 
 {% for func in game.function %}
 
+// Python native wrapper for function {{ func.fct_name }}.
 {{ func.fct_summary|cxx_comment }}
-static PyObject* p_{{ func.fct_name }}(PyObject* self, PyObject* args)
+static PyObject* p_{{ func.fct_name }}(PyObject* /* self */, PyObject* args)
 {
-    (void) self;
     {% for arg_name, _, _ in func.fct_arg %}
     PyObject* arg_{{ arg_name }};
     {% endfor %}
@@ -224,7 +225,7 @@ static PyObject* p_{{ func.fct_name }}(PyObject* self, PyObject* args)
         , &arg_{{ arg_name }}
         {%- endfor %}))
     {
-        return NULL;
+        return nullptr;
     }
 
     try {
@@ -238,7 +239,7 @@ static PyObject* p_{{ func.fct_name }}(PyObject* self, PyObject* args)
         Py_RETURN_NONE;
         {% endif %}
     } catch (...) {
-        return NULL;
+        return nullptr;
     }
 }
 {% endfor %}
@@ -248,10 +249,10 @@ static PyMethodDef api_callback[] = {
     {% for func in game.function %}
     {"{{ func.fct_name }}", p_{{ func.fct_name }}, METH_VARARGS, "{{ func.fct_name }}"},
     {% endfor %}
-    {NULL, NULL, 0, NULL}
+    {nullptr, nullptr, 0, nullptr}
 };
 
-// Initialize C module
+// Initialize C module.
 PyMODINIT_FUNC PyInit__api()
 {
     static struct PyModuleDef apimoduledef = {
@@ -260,21 +261,21 @@ PyMODINIT_FUNC PyInit__api()
         "API module",
         -1,
         api_callback,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
+        nullptr,
+        nullptr,
+        nullptr,
+        nullptr,
     };
     return PyModule_Create(&apimoduledef);
 }
 
-// Load a Python module
+// Load a Python module.
 static PyObject* _import_module(const char* m)
 {
     PyObject* name = PyUnicode_FromString(m);
     PyObject* mod = PyImport_Import(name);
     Py_DECREF(name);
-    if (mod == NULL)
+    if (mod == nullptr)
         if (PyErr_Occurred())
         {
             PyErr_Print();
@@ -283,16 +284,16 @@ static PyObject* _import_module(const char* m)
     return mod;
 }
 
-// Inititialize python, register API functions, and load .py file
+// Initialize Python VM, register API functions, and load .py file.
 static void _init_python()
 {
     static wchar_t empty_string[] = L"";
-    static wchar_t *argv[] = { (wchar_t *) &empty_string, NULL };
+    static wchar_t *argv[] = { (wchar_t *) &empty_string, nullptr };
 
     const char* champion_path;
 
     champion_path = getenv("CHAMPION_PATH");
-    if (champion_path == NULL)
+    if (champion_path == nullptr)
         champion_path = ".";
 
     setenv("PYTHONPATH", champion_path, 1);
@@ -310,7 +311,7 @@ static void _init_python()
     py_module = _import_module("api");
 }
 
-// Run a Python function
+// Run a Python function.
 static PyObject* _call_python_function(const char* name)
 {
     static bool initialized = false;
@@ -322,7 +323,7 @@ static PyObject* _call_python_function(const char* name)
     }
 
     PyObject *arglist, *func;
-    PyObject *result = NULL;
+    PyObject *result = nullptr;
 
     func = PyObject_GetAttrString(champ_module, (char*)name);
     if (func && PyCallable_Check(func))
@@ -332,14 +333,14 @@ static PyObject* _call_python_function(const char* name)
         Py_XDECREF(arglist);
         Py_DECREF(func);
     }
-    if (result == NULL && PyErr_Occurred())
+    if (result == nullptr && PyErr_Occurred())
         PyErr_Print();
 
     return result;
 }
 
 
-// Functions called from Stechec to Python
+// Functions called from Stechec to Python.
 {% for func in game.user_function %}
 
 extern "C" {{ func|cxx_prototype }}
