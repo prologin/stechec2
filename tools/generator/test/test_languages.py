@@ -59,7 +59,7 @@ class TestLanguages(unittest.TestCase):
             subprocess.run(
                 [
                     'g++', '-std=c++17', '-g', '-Wall', '-Wextra', '-Werror',
-                    '-o', 'tester', './champion.so', '../tester.cc'
+                    '-o', 'tester', '../tester.cc', './champion.so'
                 ],
                 universal_newlines=True, check=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
