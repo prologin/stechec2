@@ -1,0 +1,70 @@
+name: stechec2-build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    name: "${{ matrix.build.name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        build:
+          - name: Build GCC
+            compiler: g++
+
+          - name: Build Clang
+            compiler: clang++
+
+          - name: Build Clang (ASAN)
+            compiler: clang++
+            configure_flags: --enable-asan
+
+          - name: Build Clang (TSAN)
+            compiler: clang++
+            configure_flags: --enable-tsan
+
+          - name: Coverage report
+            compiler: g++
+            configure_flags: --enable-gcov
+            coverage: true
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install stechec2 dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            build-essential clang python3-yaml ruby libzmq3-dev libzmqpp-dev \
+            libgtest-dev libgflags-dev gcovr lcov
+
+      - name: Configure
+        env:
+            CXX: "${{ matrix.build.compiler }}"
+        run: |
+            ./waf.py configure --with-games=tictactoe,plusminus \
+                ${{ matrix.build.configure_flags }} \
+                || cat ./build/config.log
+
+      - name: Build & Check
+        env:
+            CXX: "${{ matrix.build.compiler }}"
+        run: ./waf.py build --check
+
+      - name: Coverage report
+        if: matrix.build.coverage
+        run: |
+            lcov -o build/lcov.info --directory build --capture
+            lcov -o build/lcov.info --remove build/lcov.info '*.unittest*'
+
+      - name: Coverage upload to Coveralls
+        if: matrix.build.coverage
+        uses: coverallsapp/github-action@master
+        with:
+          path-to-lcov: build/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
