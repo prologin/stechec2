@@ -20,7 +20,7 @@ class TestLanguages(unittest.TestCase):
         self.run_language_tests('cxx', 'champion.cc')
 
     def test_python(self):
-        self.run_language_tests('python', 'champion.py')
+        self.run_language_tests('python', 'Champion.py')
 
     def run_language_tests(self, language, champion_file_name):
         language_dir = self.player_path / language
