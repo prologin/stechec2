@@ -1,5 +1,6 @@
-import yaml
 import re
+import typing
+import yaml
 
 
 def load_game(game_file):
@@ -252,7 +253,7 @@ def validate_schema(obj, schema):
                 raise GameSchemaError(
                     path, f"expected a mapping, got {htn(obj.__class__)}")
 
-        elif isinstance(schema, re.Pattern):
+        elif isinstance(schema, typing.Pattern):
             if not isinstance(obj, str):
                 raise GameSchemaError(
                     path, f"expected {htn(str)}, got {htn(obj.__class__)}")
