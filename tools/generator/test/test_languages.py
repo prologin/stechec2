@@ -25,7 +25,7 @@ class TestLanguages(unittest.TestCase):
 
         try:
             subprocess.run(
-                ['./tester'], text=True, check=True,
+                ['./tester'], universal_newlines=True, check=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 cwd=language_dir,
             )
