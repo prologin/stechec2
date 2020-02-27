@@ -3,8 +3,8 @@
 _url=git@github.com/prologin
 pkgname=stechec2
 pkgrel=1
-pkgver=r656
-pkgdesc="Stechec2 with ${pkgver} rules"
+pkgver=r728
+pkgdesc="Stechec2"
 arch=('x86_64')
 url="http://prologin.org/"
 license=('GPL')
