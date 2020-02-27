@@ -1,0 +1,32 @@
+name: stechec2-generator-test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  test:
+    name: Generator tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install generator dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install \
+            python3 python3-yaml python3-jinja2 flake8 php-cli php-dev \
+            libphp-embed ocaml mono-devel ghc openjdk-8-jdk
+
+      - name: Lint with flake8
+        working-directory: ./tools/generator
+        run: |
+          flake8 . --count --show-source --statistics --exclude test/languages
+        continue-on-error: true
+
+      - name: Test
+        working-directory: ./tools
+        run: |
+          python3 -m generator.test
