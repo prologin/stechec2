@@ -13,8 +13,11 @@ INTERFACE_SOURCES = interface.cc
 SOURCES = $(INTERFACE_SOURCES)
 
 {{ make.common_flags() }}
-CXXFLAGS += $(shell python3-config --embed --includes)
-LDFLAGS += $(shell python3-config --embed --ldflags)
+
+# Use python3-config --embed if it works (>3.8), python3-config otherwise.
+py_config = $(shell python3-config --embed >/dev/null && echo python3-config --embed || echo python3-config )
+CXXFLAGS += $(shell $(py_config) --includes)
+LDFLAGS += $(shell $(py_config) --ldflags)
 
 objs = $(INTERFACE_SOURCES:.cc=.o)
 deps = $(objs:.o=.d)
