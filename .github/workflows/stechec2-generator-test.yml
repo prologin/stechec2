@@ -17,8 +17,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install \
-            python3 python3-yaml python3-jinja2 flake8 php-cli php-dev \
-            libphp-embed ocaml mono-devel ghc openjdk-8-jdk
+            python3 python3-dev python3-yaml python3-jinja2 flake8 php-cli \
+            php-dev libphp-embed ocaml mono-devel ghc openjdk-8-jdk
 
       - name: Lint with flake8
         working-directory: ./tools/generator
