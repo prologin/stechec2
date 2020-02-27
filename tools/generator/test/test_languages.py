@@ -44,7 +44,7 @@ class TestLanguages(unittest.TestCase):
         # Compile champion.so
         try:
             subprocess.run(
-                ['make'], text=True, check=True,
+                ['make'], universal_newlines=True, check=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 cwd=language_dir,
             )
@@ -61,7 +61,7 @@ class TestLanguages(unittest.TestCase):
                     'g++', '-std=c++17', '-g', '-Wall', '-Wextra', '-Werror',
                     '-o', 'tester', './champion.so', '../tester.cc'
                 ],
-                text=True, check=True,
+                universal_newlines=True, check=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                 cwd=language_dir,
             )
