@@ -448,7 +448,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
 
 void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 {
-    msgr->push_id(players_.size());
+    // Send last player id, assumes players_ is sorted.
+    msgr->push_id(players_.back()->id);
 
     at_start();
     at_server_start(msgr);
