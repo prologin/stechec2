@@ -30,6 +30,7 @@ def load_library_in(env):
     from . import (  # noqa: E402, F401
         common,
         c,
+        caml,
         cxx,
         php,
         python

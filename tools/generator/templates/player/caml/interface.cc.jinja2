@@ -1,0 +1,249 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains the code to call the API functions from the OCaml
+// language.
+// {{ stechec2_generated }}
+
+#include <caml/mlvalues.h>
+#include <caml/callback.h>
+#include <caml/alloc.h>
+#include <caml/memory.h>
+
+#include <vector>
+#include <string>
+
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+{% endfor %}
+
+extern "C" {
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype(prefix='api_') }};
+{% endfor %}
+}
+
+template <typename CamlType, typename CxxType>
+CamlType cxx_to_caml(CxxType in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template <>
+value cxx_to_caml<value, int>(int in)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(in));
+}
+
+template <>
+value cxx_to_caml<value, double>(double in)
+{
+    CAMLparam0();
+    CAMLreturn(caml_copy_double(in));
+}
+
+template<>
+value cxx_to_caml<value, std::string>(std::string in)
+{
+    CAMLparam0();
+    size_t l = in.length();
+    char* out = (char *) malloc(l + 1);
+    {# TODO: is this loop really needed? Doesn't caml_copy_string already do a strdup? #}
+    for (size_t i = 0; i < l; i++)
+        out[i] = in[i];
+    out[l] = 0;
+    CAMLreturn(caml_copy_string(out));
+}
+
+template <>
+value cxx_to_caml<value, bool>(bool in)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(in));
+}
+
+template <typename CxxType>
+value cxx_to_caml_array(const std::vector<CxxType>& in)
+{
+    CAMLparam0();
+    CAMLlocal1(v);
+    size_t size = in.size();
+    if (size == 0)
+        CAMLreturn(Atom(0));
+    v = caml_alloc(size, 0);
+    for (size_t i = 0; i < size; ++i)
+        caml_initialize(&Field(v, i), cxx_to_caml<value, CxxType>(in[i]));
+    CAMLreturn(v);
+}
+
+template <typename CamlType, typename CxxType>
+CxxType caml_to_cxx(CamlType in)
+{
+    return in.__if_that_triggers_an_error_there_is_a_problem;
+}
+
+template<>
+std::string caml_to_cxx<value, std::string>(value in)
+{
+    CAMLparam1(in);
+    CAMLreturnT(std::string, String_val(in));
+}
+
+template <>
+int caml_to_cxx<value, int>(value in)
+{
+    CAMLparam1(in);
+    CAMLreturnT(int, Int_val(in));
+}
+
+template <>
+double caml_to_cxx<value, double>(value in)
+{
+    CAMLparam1(in);
+    CAMLreturnT(double, Double_val(in));
+}
+
+template <>
+bool caml_to_cxx<value, bool>(value in)
+{
+    CAMLparam1(in);
+    CAMLreturnT(bool, Int_val(in));
+}
+
+template <typename CxxType>
+std::vector<CxxType> caml_to_cxx_array(value in)
+{
+    CAMLparam1(in);
+    std::vector<CxxType> out;
+    mlsize_t size = Wosize_val(in);
+    for (size_t i = 0; i < size; ++i)
+        out.push_back(caml_to_cxx<value, CxxType>(Field(in, i)));
+    CAMLreturnT(std::vector<CxxType>, out);
+}
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|cxx_comment }}
+template<>
+value cxx_to_caml<value, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(in));
+}
+
+template<>
+{{ enum.enum_name }} caml_to_cxx<value, {{ enum.enum_name }}>(value in)
+{
+    CAMLparam1(in);
+    CAMLreturnT({{ enum.enum_name }}, ({{ enum.enum_name }})Int_val(in));
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ struct.str_summary|cxx_comment }}
+template<>
+value cxx_to_caml<value, {{ struct.str_name }}>({{ struct.str_name }} in)
+{
+    CAMLparam0();
+    CAMLlocal1(out);
+    out = caml_alloc({{ struct.str_field|length }}, 0);
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    caml_initialize(&Field(out, {{ loop.index0 }}), {{ field_type|cxx_to_caml }}(in.{{ field_name }}));
+    {% endfor %}
+    CAMLreturn(out);
+}
+
+template<>
+{{ struct.str_name }} caml_to_cxx<value, {{ struct.str_name }}>(value in)
+{
+    CAMLparam1(in);
+    {{ struct.str_name }} out;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out.{{ field_name }} = {{ field_type|caml_to_cxx }}(Field(in, {{ loop.index0 }}));
+    {% endfor %}
+    CAMLreturnT({{ struct.str_name }}, out);
+}
+{% endfor %}
+
+/*
+** Inititialize caml
+*/
+static inline void _init_caml()
+{
+    static bool is_initialized = false;
+    if (!is_initialized)
+    {
+        is_initialized = true;
+        const char* argv[2] = {"./caml", NULL};
+        caml_startup(const_cast<char**>(argv));
+    }
+}
+{% for func in game.function %}
+{%- set arg_list = func.fct_arg|caml_cxx_args %}
+
+{{ func.fct_summary|cxx_comment }}
+extern "C" value ml_{{ func.fct_name }}({# argument list #}
+                                        {%- set comma = joiner(', ') -%}
+                                        {%- for arg_name, _, _ in arg_list -%}
+                                        {{ comma() }}value {{ arg_name }}
+                                        {%- endfor -%}
+                                       )
+{
+    {# TODO: This only works for functions with 5 parameters or less.
+     # To handle more, we must call CAMLparam5 once, then CAMLxparamN, grouping
+     # the arguments 5 by 5 maximum #}
+    CAMLparam{{ arg_list|length }}({# argument list #}
+                                   {%- set comma = joiner(', ') -%}
+                                   {%- for arg_name, _, _ in arg_list -%}
+                                   {{ comma() }}{{ arg_name }}
+                                   {%- endfor -%}
+                                  );
+    {% set _api_call -%}
+    api_{{ func.fct_name }}({# argument list #}
+                            {%- set comma = joiner(', ') -%}
+                            {%- for arg_name, arg_type, _ in arg_list -%}
+                            {%- if not arg_name == 'unit' -%}
+                            {{ comma() }}{{ arg_type|caml_to_cxx }}({{ arg_name }})
+                            {%- endif -%}
+                            {%- endfor -%}
+                           )
+    {%- endset %}
+    {% if func is returning %}
+    CAMLreturn(({{ func.fct_ret_type|cxx_to_caml }}({{ _api_call }})));
+    {% else %}
+    {{ _api_call }};
+    CAMLreturn(Val_unit);
+    {% endif %}
+}
+{% endfor %}
+
+{% for func in game.user_function %}
+
+{{ func.fct_summary|cxx_comment }}
+extern "C" {{ func|cxx_prototype }}
+{
+    _init_caml();
+    CAMLparam0();
+    CAMLlocal1(_ret);
+
+    static const value *closure = NULL;
+    if (closure == NULL)
+        closure = caml_named_value("ml_{{ func.fct_name }}");
+
+    _ret = callback(*closure, Val_unit);
+
+    {% if func is returning %}
+    CAMLreturnT({{ func.fct_ret_type|cxx_type }}, ({{ func.fct_ret_type|caml_to_cxx }}(_ret)));
+    {% else %}
+    CAMLreturn0;
+    {% endif %}
+}
+{% endfor %}

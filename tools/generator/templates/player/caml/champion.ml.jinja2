@@ -1,0 +1,28 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> -#}
+
+open Api
+
+{% for func in game.user_function %}
+
+{{ func.fct_summary|caml_comment }}
+{{ func|caml_prototype }}
+  begin
+    (* TODO *)
+
+    (* Pour s'assurer que les sorties s'affichent *)
+    flush stderr;
+    flush stdout
+    {# TODO: if the function returns something, put a default value here #}
+  end
+{% endfor %}
+
+{{ "/!\\ Ne modifie pas les lignes suivantes, elles sont importantes pour
+    l'utilisation du moteur de jeu /!\\"|caml_comment }}
+let _ =
+  begin
+{% for func in game.user_function %}
+    Callback.register "ml_{{ func.fct_name }}" {{ func.fct_name }}{% if not loop.last %};{% endif %}
+
+{% endfor %}
+  end

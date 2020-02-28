@@ -29,3 +29,6 @@ def make_player(game, out_dir: Path) -> None:
     gen_lang(game, out_dir, 'python',
              ['api.py', 'Champion.py', 'interface.cc', 'Makefile',
               'Makefile-python'])
+    gen_lang(game, out_dir, 'caml',
+             ['api.ml', 'champion.ml', 'champion.mli', 'interface.cc',
+              'Makefile', 'Makefile-caml'])
