@@ -11,6 +11,7 @@
 extern "C" {
 
 void test();
+void test_alert();
 
 void api_send_me_42(int n)
 {
@@ -176,7 +177,14 @@ int main(int argc, char *argv[])
 {
     int count = 100;
     if (argc > 1)
+    {
+        if (std::string(argv[1]) == "--test-alert")
+        {
+            test_alert();
+            return 0;
+        }
         count = std::strtol(argv[1], nullptr, 0);
+    }
     for (int i = 0; i < count; ++i)
         test();
 }

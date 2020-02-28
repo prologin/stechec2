@@ -12,6 +12,11 @@
 #include <cmath>
 #include <cstring>
 
+void test_alert()
+{
+    assert(false);
+}
+
 ///
 // Called 10K times to test if things work well.
 //

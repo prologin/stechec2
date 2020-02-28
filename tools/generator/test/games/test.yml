@@ -127,6 +127,11 @@ function:
 
 user_function:
   -
+    fct_name: test_alert
+    fct_summary: Raise an assertion to check the alerting system works.
+    fct_ret_type: void
+    fct_arg: []
+  -
     fct_name: test
     fct_summary: Called 10K times to test if things work well.
     fct_ret_type: void

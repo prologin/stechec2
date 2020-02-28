@@ -4,6 +4,11 @@
 
 public class Prologin extends Interface
 {
+  public void test_alert()
+  {
+    assert(false);
+  }
+
   public void test()
   {
     send_me_42(42);

@@ -10,6 +10,9 @@ let range m n = Array.init (n - m) (fun i -> m + i)
 
 let times42 x = Array.make 42 x
 
+let test_alert () =
+    assert (false);
+
 (*
 ** Called 10K times to test if things work well.
 *)

@@ -9,6 +9,11 @@
 #include <assert.h>
 #include <math.h>
 
+void test_alert()
+{
+    assert(false);
+}
+
 ///
 // Called 10K times to test if things work well.
 //

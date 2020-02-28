@@ -5,6 +5,12 @@
 
 from api import *
 
+
+def test_alert():
+    raise 42
+    assert False
+
+
 # Called 10K times to test if things work well.
 def test():
     send_me_42(42)
