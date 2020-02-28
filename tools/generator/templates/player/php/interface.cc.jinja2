@@ -272,6 +272,16 @@ static zend_module_entry api_module_entry = {
     STANDARD_MODULE_PROPERTIES
 };
 
+static void ini_set(const std::string& key, const std::string& value)
+{
+    zend_string* ini_entry = zend_string_init(key.c_str(), key.size(), 0);
+    zend_alter_ini_entry_chars(
+            ini_entry, value.c_str(), value.size(),
+            PHP_INI_SYSTEM, PHP_INI_STAGE_STARTUP
+    );
+    zend_string_release(ini_entry);
+}
+
 static void _init_php()
 {
     static int initialized = 0;
@@ -287,12 +297,16 @@ static void _init_php()
     char buffer[1024];
     snprintf(buffer, 1024, "include('%s/%s.php');", path, "champion");
 
-    char champion_name[32] = "champion";
+    char champion_name[] = "champion";
     char* argv[] = { champion_name, NULL };
     php_embed_init(1, argv);
+
+    ini_set("zend.assertions", "1");
+    ini_set("assert.exception", "1");
+
     zend_startup_module(&api_module_entry);
 
-    char string_name[32] = "PHP to Stechec interface";
+    char string_name[] = "PHP to Stechec interface";
     zend_eval_string(buffer, NULL, string_name);
 }
 
