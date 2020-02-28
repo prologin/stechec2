@@ -7,6 +7,11 @@
 
 require('api.php');
 
+function test_alert()
+{
+    assert("false");
+}
+
 /*
  * Called 10K times to test if things work well.
  */

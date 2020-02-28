@@ -5,6 +5,11 @@ mod ffi;
 use api::*;
 use std::os::raw::{c_double, c_int, c_void};
 
+fn test_alert()
+{
+    assert!(false);
+}
+
 /// Called 10K times to test if things work well.
 fn test()
 {

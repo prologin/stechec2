@@ -26,6 +26,14 @@ class TestLanguages(unittest.TestCase):
         language_dir = self.player_path / language
         self.compile_language(language, champion_file_name)
 
+        msg_assert = "test_alert() did not assert, assertions are not working."
+        with self.assertRaises(subprocess.CalledProcessError, msg=msg_assert):
+            subprocess.run(
+                ['./tester', '--test-alert'], universal_newlines=True,
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                cwd=language_dir,
+            )
+
         try:
             subprocess.run(
                 ['./tester'], universal_newlines=True, check=True,

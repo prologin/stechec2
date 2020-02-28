@@ -8,6 +8,11 @@ using System.Diagnostics;
 namespace Prologin {
 
   class Prologin {
+    public void TestAlert()
+    {
+      Debug.Assert(false);
+    }
+
     public void Test()
     {
       Api.SendMe42(42);
