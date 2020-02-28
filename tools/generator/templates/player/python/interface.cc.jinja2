@@ -325,7 +325,7 @@ static PyObject* _call_python_function(const char* name)
     PyObject *arglist, *func;
     PyObject *result = nullptr;
 
-    func = PyObject_GetAttrString(champ_module, (char*)name);
+    func = PyObject_GetAttrString(champ_module, name);
     if (func && PyCallable_Check(func))
     {
         arglist = Py_BuildValue("()");
