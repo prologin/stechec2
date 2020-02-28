@@ -55,7 +55,7 @@ import tempfile
 from pathlib import Path
 
 REPO_PATH = Path(__file__).resolve().parent.parent
-DEFAULT_GAME_YML = REPO_PATH / 'games/tictactoe/tictactoe.yml'
+DEFAULT_GAME_YML = REPO_PATH / 'tools/generator/test/games/test.yml'
 
 
 @contextlib.contextmanager
