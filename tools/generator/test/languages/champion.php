@@ -17,13 +17,13 @@ function test()
     send_me_true(true);
     send_me_tau(6.2831853);
 
-    assert("returns_42() === 42");
-    assert("returns_true() === true");
-    assert("abs(returns_tau() - 6.2831853) < 0.0001");
-    assert("returns_range(1, 100) === range(1, 99)");
-    assert("returns_range(1, 10000) === range(1, 9999)");
-    assert("returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7)");
-    assert("returns_sorted(range(1, 1000)) === range(1, 1000)");
+    assert(returns_42() === 42);
+    assert(returns_true() === true);
+    assert(abs(returns_tau() - 6.2831853) < 0.0001);
+    assert(returns_range(1, 100) === range(1, 99));
+    assert(returns_range(1, 10000) === range(1, 9999));
+    assert(returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7));
+    assert(returns_sorted(range(1, 1000)) === range(1, 1000));
 
     send_me_test_enum(VAL1, VAL2);
 
@@ -46,5 +46,5 @@ function test()
         "field_str_arr" => array_fill(0, 42, $struct1)
     ));
 
-    assert('$l1 == $l2');
+    assert($l1 == $l2);
 }
