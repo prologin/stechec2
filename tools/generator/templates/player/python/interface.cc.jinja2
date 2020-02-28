@@ -334,7 +334,10 @@ static PyObject* _call_python_function(const char* name)
         Py_DECREF(func);
     }
     if (result == nullptr && PyErr_Occurred())
+    {
         PyErr_Print();
+        abort();
+    }
 
     return result;
 }
@@ -346,10 +349,6 @@ static PyObject* _call_python_function(const char* name)
 extern "C" {{ func|cxx_prototype }}
 {
     PyObject* _retval = _call_python_function("{{ func.fct_name }}");
-    if (!_retval && PyErr_Occurred()) {
-        PyErr_Print();
-        abort();
-    }
     try {
         {% if func is returning %}
         {{ func.fct_ret_type|cxx_type }} ret = {{ func.fct_ret_type|python_to_cxx }}(_retval);
