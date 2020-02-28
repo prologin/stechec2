@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020 Antoine Pietri
+
 import functools
 
 FILTER_LIBRARY = {}
@@ -32,6 +36,7 @@ def load_library_in(env):
         c,
         caml,
         cxx,
+        java,
         php,
         python,
         rust,

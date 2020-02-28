@@ -1,0 +1,347 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2005-2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains the code to call the API functions from the Java language.
+// {{ stechec2_generated }}
+
+#include <cstdlib>
+#include <string>
+#include <vector>
+
+#include <jni.h>
+
+struct Champion
+{
+    static jclass Class();
+};
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+
+struct {{ enum.enum_name|camel_case }}
+{
+    static jclass Class();
+};
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+
+struct {{ struct.str_name|camel_case }}
+{
+    static jclass Class();
+};
+{% endfor %}
+
+struct StechecJavaRunTime
+{
+    StechecJavaRunTime() = default;
+    ~StechecJavaRunTime();
+    void init();
+    bool function_enter();
+    void function_exit(bool attached);
+
+    JavaVM* jvm;
+    JNIEnv* env;
+    jobject prologin;
+
+private:
+    bool is_init_ = false;
+};
+static struct StechecJavaRunTime jrt;
+
+{% for func in game.function %}
+extern "C" {{ func|cxx_prototype(prefix='api_') }};
+{% endfor %}
+{% for enum in game.enum %}
+extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
+{% endfor %}
+{% for struct in game.struct %}
+extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name }} v);
+{% endfor %}
+
+// In case of errors...
+template <typename Lang, typename CxxType>
+CxxType java_to_cxx(Lang in)
+{
+    return in.error_should_not_happen;
+}
+
+template <typename CxxType, typename Lang>
+Lang cxx_to_java(CxxType in)
+{
+    return in.error_should_not_happen;
+}
+
+template<typename Lang, typename CxxType>
+std::vector<CxxType> java_to_cxx_array(jobject in);
+
+template<typename CxxType, typename Lang>
+jarray cxx_to_java_array(std::vector<CxxType> in);
+
+// Basic type wrappers
+{% for type in ['bool', 'int', 'double'] %}
+{% set arraytype = type|jni_type + 'Array' %}
+template <>
+{{ type|jni_type }} cxx_to_java<{{ type }}, {{ type|jni_type }}>({{ type }} in)
+{
+    return ({{ type|jni_type }})in;
+}
+
+template <>
+{{ type }} java_to_cxx<{{ type|jni_type }}, {{ type }}>({{ type|jni_type }} in)
+{
+    return ({{ type }})in;
+}
+
+template <>
+jarray cxx_to_java_array<{{ type }}, {{ type|jni_type }}>(std::vector<{{ type }}> in)
+{
+    {{ arraytype }} out = jrt.env->New{{ type|java_type_method_call }}Array((jsize)in.size());
+    {% if type != 'bool' %}
+    const {{ type|jni_type }}* in_cast = (const {{ type|jni_type }}*)in.data();
+    {% else %}
+    // std::vector<bool>::data() does not return a bool*, because the data is
+    // packed, so we need to create a new bool array
+    {{ type|jni_type }}* in_cast = new {{ type|jni_type }}[in.size()];
+    std::copy(std::begin(in), std::end(in), in_cast);
+    {% endif %}
+    jrt.env->Set{{ type|java_type_method_call }}ArrayRegion(out, (jsize)0, (jsize)in.size(), in_cast);
+    {% if type == 'bool' %}
+    delete[] in_cast;
+    {% endif %}
+    return (jarray)out;
+}
+
+template <>
+std::vector<{{ type }}> java_to_cxx_array<{{ type|jni_type }}, {{ type }}>(jobject in)
+{
+    {{ arraytype }} array = ({{ arraytype }})in;
+    jsize size = jrt.env->GetArrayLength(array);
+    {{ type|jni_type }}* datas = jrt.env->Get{{ type|java_type_method_call }}ArrayElements(array, NULL);
+    std::vector<{{ type }}> out(datas, datas + size);
+    jrt.env->Release{{ type|java_type_method_call }}ArrayElements(array, datas, JNI_ABORT);
+    return out;
+}
+
+{% endfor %}
+// String wrappers
+template <>
+jstring cxx_to_java<std::string, jstring>(std::string in)
+{
+    return jrt.env->NewStringUTF(in.data());
+}
+
+template <>
+std::string java_to_cxx<jstring, std::string>(jstring in)
+{
+    jboolean is_copy;
+    const jchar* datas = jrt.env->GetStringChars(in, &is_copy);
+    jsize size = jrt.env->GetStringLength(in);
+    std::string out((const char*)datas, (size_t)size);
+    if (is_copy)
+        jrt.env->ReleaseStringChars(in, datas);
+    return out;
+}
+
+// Object array wrappers (assume Lang::class exists)
+template <typename CxxType, typename Lang>
+jarray cxx_to_java_array(std::vector<CxxType> in)
+{
+    jobjectArray out = jrt.env->NewObjectArray((jsize)in.size(), Lang::Class(), NULL);
+    for (size_t i = 0; i < in.size(); i++)
+        jrt.env->SetObjectArrayElement(out, (jsize)i, cxx_to_java<CxxType, jobject>(in[i]));
+    return out;
+}
+
+template <typename Lang, typename CxxType>
+std::vector<CxxType> java_to_cxx_array(jobject in)
+{
+    jobjectArray array = (jobjectArray)in;
+    size_t size = (size_t)jrt.env->GetArrayLength(array);
+    std::vector<CxxType> out;
+    for (size_t i = 0; i < size; i++)
+        out.push_back(java_to_cxx<jobject, CxxType>(jrt.env->GetObjectArrayElement(array, (jsize)i)));
+    return out;
+}
+{% for enum in game.enum %}
+
+template<>
+{{ enum.enum_name }} java_to_cxx<jobject, {{ enum.enum_name }}>(jobject in)
+{
+    jmethodID ordinal = jrt.env->GetMethodID({{ enum.enum_name|camel_case }}::Class(), "ordinal", "()I");
+    return {{ enum.enum_name }}(java_to_cxx<jint, int>(jrt.env->CallIntMethod(in, ordinal)));
+}
+
+template<>
+jobject cxx_to_java<{{ enum.enum_name }}, jobject>({{ enum.enum_name }} in)
+{
+    jmethodID method = jrt.env->GetStaticMethodID({{ enum.enum_name|camel_case }}::Class(), "values", "()[L{{ enum.enum_name|camel_case }};");
+    jobjectArray values = (jobjectArray)jrt.env->CallStaticObjectMethod({{ enum.enum_name|camel_case }}::Class(), method);
+    return jrt.env->GetObjectArrayElement(values, (jsize)in);
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+template <>
+{{ struct.str_name }} java_to_cxx<jobject, {{ struct.str_name }}>(jobject in)
+{
+    {{ struct.str_name }} out;
+    {% for field_name, field_type, _ in struct.str_field %}
+    out.{{ field_name }} = {{ field_type|java_to_cxx }}(jrt.env->Get{{ field_type|java_type_method_call }}Field(in, jrt.env->GetFieldID({{ struct.str_name|camel_case }}::Class(), "{{ field_name }}", "{{ field_type|jni_type_signature }}")));
+    {% endfor %}
+    return out;
+}
+
+template <>
+jobject cxx_to_java<{{ struct.str_name }}, jobject>({{ struct.str_name }} in)
+{
+    jobject out = jrt.env->NewObject({{ struct.str_name|camel_case }}::Class(), jrt.env->GetMethodID({{ struct.str_name|camel_case }}::Class(), "<init>", "()V"));
+    {% for field_name, field_type, _ in struct.str_field %}
+    jrt.env->Set{{ field_type|java_type_method_call }}Field(out, jrt.env->GetFieldID({{ struct.str_name|camel_case }}::Class(), "{{ field_name }}", "{{ field_type|jni_type_signature }}"), {{ field_type|cxx_to_java }}(in.{{field_name }}));
+    {% endfor %}
+    return out;
+}
+{% endfor %}
+{% for func in game.function %}
+
+{{ func.fct_ret_type|jni_type }} {{ func.fct_name }}(JNIEnv*, jobject
+{%- for arg_name, arg_type, _ in func.fct_arg -%}
+, {{ arg_type|jni_type }} {{ arg_name }}
+{%- endfor %})
+{
+    {%+ if func is returning %}return {{ func.fct_ret_type|cxx_to_java }}{% endif -%}
+    (api_{{ func.fct_name }}(
+    {%- set comma = joiner(', ') -%}
+    {%- for arg_name, arg_type, _ in func.fct_arg -%}
+    {{ comma() }}{{ arg_type|java_to_cxx }}({{ arg_name }})
+    {%- endfor %}));
+}
+{% endfor %}
+{% for enum in game.enum %}
+
+void afficher_{{ enum.enum_name }}(JNIEnv*, jobject, jobject v)
+{
+    api_afficher_{{ enum.enum_name }}(java_to_cxx<jobject, {{ enum.enum_name }}>(v));
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+void afficher_{{ struct.str_name }}(JNIEnv*, jobject, jobject v)
+{
+    api_afficher_{{ struct.str_name }}(java_to_cxx<jobject, {{ struct.str_name }}>(v));
+}
+{% endfor %}
+{% for func in game.user_function %}
+
+extern "C" {{ func|cxx_prototype }}
+{
+    jrt.init();
+    bool attached = jrt.function_enter();
+    jmethodID method = jrt.env->GetMethodID(Champion::Class(), "{{ func.fct_name }}", "{{ func|jni_method_signature }}");
+    {% if func is returning %}{{ func.fct_ret_type|cxx_type }} out = {{ func.fct_ret_type|java_to_cxx }}({% endif -%}
+    jrt.env->Call{{ func.fct_ret_type|java_type_method_call }}Method(jrt.prologin, method
+    {%- for arg_name, arg_type, _ in func.fct_arg -%}
+    , {{ arg_type|java_to_cxx }}({{ arg_name }})
+    {%- endfor %})
+    {%- if func is returning %}){% endif %};
+    if (jrt.env->ExceptionOccurred())
+    {
+        jrt.env->ExceptionDescribe();
+        exit(1);
+    }
+    jrt.function_exit(attached);
+    {% if func is returning %}
+    return out;
+    {% endif %}
+}
+{% endfor %}
+
+jclass Champion::Class()
+{
+    return jrt.env->FindClass("Champion");
+}
+{% for enum in game.enum %}
+
+jclass {{ enum.enum_name|camel_case }}::Class()
+{
+    return jrt.env->FindClass("{{ enum.enum_name|camel_case }}");
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+jclass {{ struct.str_name|camel_case }}::Class()
+{
+    return jrt.env->FindClass("{{ struct.str_name|camel_case }}");
+}
+{% endfor %}
+
+
+{# Bound native methods to the Java interface #}
+static void _register_native_methods(JNIEnv* env)
+{
+    JNINativeMethod methods[] = {
+    {% for func in game.function %}
+        {(char*)"{{ func.fct_name }}", (char*)"{{ func|jni_method_signature }}", (void*)&{{ func.fct_name }}},
+    {% endfor %}
+    {% for enum in game.enum %}
+        {(char*)"afficher_{{ enum.enum_name }}", (char*)"({{ enum.enum_name|jni_type_signature }})V", (void*)&afficher_{{ enum.enum_name }}},
+    {% endfor %}
+    {% for struct in game.struct %}
+        {(char*)"afficher_{{ struct.str_name }}", (char*)"({{ struct.str_name|jni_type_signature }})V", (void*)&afficher_{{ struct.str_name }}},
+    {% endfor %}
+    };
+    env->RegisterNatives(Champion::Class(), methods, sizeof(methods)/sizeof(methods[0]));
+}
+
+StechecJavaRunTime::~StechecJavaRunTime()
+{
+    {# FIXME
+    The call to `DestroyJavaVM` causes the program to crash on call to destructor
+    if (is_init_)
+        jvm->DestroyJavaVM();
+    #}
+}
+
+void StechecJavaRunTime::init()
+{
+    if (is_init_)
+        return;
+
+    is_init_ = true;
+
+    std::string classpath = "-Djava.class.path=";
+    char* champion_path = getenv("CHAMPION_PATH");
+    if (champion_path == NULL)
+        champion_path = (char*)"./";
+    classpath.append(champion_path);
+
+    JavaVMInitArgs vm_args; /* JDK/JRE 6 VM initialization arguments */
+    JavaVMOption options[4];
+    options[0].optionString = (char*) classpath.c_str();
+    options[1].optionString = (char*) "-ea";
+    options[2].optionString = (char*) "-XX:MaxHeapSize=512m";
+    options[3].optionString = (char*) "-XX:CompressedClassSpaceSize=64m";
+    vm_args.version = JNI_VERSION_1_6;
+    vm_args.nOptions = 4;
+    vm_args.options = options;
+    vm_args.ignoreUnrecognized = false;
+    JNI_CreateJavaVM(&jvm, (void**)&env, &vm_args);
+    prologin = env->NewObject(Champion::Class(), env->GetMethodID(Champion::Class(), "<init>", "()V"));
+    _register_native_methods(env);
+}
+
+bool StechecJavaRunTime::function_enter()
+{
+    if (jvm->GetEnv((void**)&env, JNI_VERSION_1_6) == JNI_OK)
+        return false;
+    jvm->AttachCurrentThread((void**)&env, NULL);
+    return true;
+}
+
+void StechecJavaRunTime::function_exit(bool attached)
+{
+    if (attached)
+        jvm->DetachCurrentThread();
+}

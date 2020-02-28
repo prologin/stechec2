@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020 Antoine Pietri
+
 import contextlib
 import pathlib
 import shutil
@@ -16,17 +20,20 @@ class TestLanguages(unittest.TestCase):
     def test_c(self):
         self.run_language_tests('c', 'champion.c')
 
+    def test_caml(self):
+        self.run_language_tests('caml', 'champion.ml')
+
     def test_cxx(self):
         self.run_language_tests('cxx', 'champion.cc')
 
-    def test_python(self):
-        self.run_language_tests('python', 'Champion.py')
+    def test_java(self):
+        self.run_language_tests('java', 'Champion.java')
 
     def test_php(self):
         self.run_language_tests('php', 'champion.php')
 
-    def test_caml(self):
-        self.run_language_tests('caml', 'champion.ml')
+    def test_python(self):
+        self.run_language_tests('python', 'Champion.py')
 
     def test_rust(self):
         self.run_language_tests('rust', 'champion.rs')

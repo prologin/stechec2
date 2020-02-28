@@ -1,0 +1,17 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2020 Association Prologin <association@prologin.org> #}
+{# Copyright (c) 2020 Sacha Delanoue -#}
+
+public class Champion extends Api
+{
+{% for func in game.user_function %}
+    {{ func.fct_summary|java_comment(doc=True, indent=4) }}
+    public {{ func|java_prototype }}
+    {
+        // TODO
+    }
+    {% if not loop.last %}
+
+    {% endif %}
+{% endfor %}
+}

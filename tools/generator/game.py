@@ -1,3 +1,9 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020 Antoine Pietri
+# Copyright (c) 2020 Rémi Dupré
+# Copyright (c) 2020 Sacha Delanoue
+
 import re
 import typing
 import yaml
@@ -186,6 +192,11 @@ class Game:
             ),
             None
         )
+
+    def get_cst_type(self, constant) -> type:
+        """Get the type of a constant"""
+        return constant.get("cst_type", "int")
+
 
 # Adapted from camisole/schema.py
 # ------------->8----------------

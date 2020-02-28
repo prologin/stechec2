@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020 Sacha Delanoue
+# Copyright (c) 2020 Antoine Pietri
 
 import os
 from pathlib import Path
@@ -33,18 +35,21 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
     gen_lang('c',
              files=['champion.c', 'Makefile'],
              symlinks=['api.h', 'interface.cc', 'Makefile-c'])
+    gen_lang('caml',
+             files=['champion.ml', 'champion.mli', 'Makefile'],
+             symlinks=['api.ml', 'interface.cc', 'Makefile-caml'])
     gen_lang('cxx',
              files=['champion.cc', 'Makefile'],
              symlinks=['api.hh', 'interface.cc', 'Makefile-cxx'])
+    gen_lang('java',
+             files=['Champion.java', 'Makefile'],
+             symlinks=['Api.java', 'interface.cc', 'Makefile-java'])
     gen_lang('php',
              files=['champion.php', 'Makefile'],
              symlinks=['api.php', 'interface.cc', 'Makefile-php'])
     gen_lang('python',
              files=['Champion.py', 'Makefile'],
              symlinks=['api.py', 'interface.cc', 'Makefile-python'])
-    gen_lang('caml',
-             files=['champion.ml', 'champion.mli', 'Makefile'],
-             symlinks=['api.ml', 'interface.cc', 'Makefile-caml'])
     gen_lang('rust',
              files=['Makefile', 'champion.rs'],
              symlinks=['Cargo.toml', 'Makefile-rust', 'api.rs', 'ffi.rs',

@@ -1,0 +1,23 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020 Sacha Delanoue
+# Copyright (c) 2020 Antoine Pietri
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}java{% endblock %}
+
+{% block extra_flags %}
+JAVA_HOME ?= $(shell readlink -f /usr/bin/java | sed "s:/bin/java$$::")
+CXXFLAGS += -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -ggdb3
+LDFLAGS += -Wl,-rpath -Wl,$(JAVA_HOME)/lib/server/ -L$(JAVA_HOME)/lib/server/ -ljvm
+
+java_sources = $(filter %.java,$(CHAMPION_FILES))
+{% endblock %}
+
+{% block all_dependencies %}{{ super() }} $(java_sources:.java=.class){% endblock %}
+
+{% block extra_rules %}
+%.class: %.java
+	javac $<
+{% endblock %}
