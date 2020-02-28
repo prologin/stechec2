@@ -4,23 +4,22 @@
 ** to the script file : gen/generator_caml.rb
 *)
 
-open Api;;
+open Api
 
 let range m n = Array.init (n - m) (fun i -> m + i)
 
 let times42 x = Array.make 42 x
 
-let test_alert () =
-    assert (false);
+let test_alert () = assert (false)
 
 (*
 ** Called 10K times to test if things work well.
 *)
 let test () =  (* Pose ton code ici *)
+  begin
     (* Check the types of constants. *)
     ignore (const_val : int);
     ignore (const_double : float);
-    ignore (const_double_2 : float);
 
     send_me_42 42;
     send_me_42_and_1337 42 1337;
@@ -45,7 +44,9 @@ let test () =  (* Pose ton code ici *)
     assert (l = (times42 { field_int = 42;
                            field_int_arr = times42 42;
                            field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } }));
-    flush stderr; flush stdout;; (* Pour que vos sorties s'affichent *)
+    flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
+  end
 
 (* /!\ Ne touche pas a ce qui suit /!\ *)
-Callback.register "ml_test" test;;
+let _ =
+  Callback.register "ml_test" test

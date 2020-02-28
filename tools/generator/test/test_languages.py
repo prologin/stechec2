@@ -25,6 +25,9 @@ class TestLanguages(unittest.TestCase):
     def test_php(self):
         self.run_language_tests('php', 'champion.php')
 
+    def test_caml(self):
+        self.run_language_tests('caml', 'champion.ml')
+
     def run_language_tests(self, language, champion_file_name):
         language_dir = self.player_path / language
         self.compile_language(language, champion_file_name)

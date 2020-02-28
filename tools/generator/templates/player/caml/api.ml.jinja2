@@ -1,0 +1,39 @@
+{# Constants #}
+{% for constant in game.constant %}
+{{ constant.cst_comment|caml_comment(doc=True) }}
+let {{ constant.cst_name|lower }} = {{ constant.cst_val }}
+
+{% endfor %}
+
+{# Enums #}
+{% for enum in game.enum %}
+{{ enum.enum_summary|caml_comment(doc=True) }}
+type {{ enum.enum_name }} =
+  {% for field_name, field_comment in enum.enum_field %}
+  | {{ field_name|capitalize }} (** <- {{ field_comment }} *)
+  {% endfor %}
+
+{% endfor %}
+
+{# Structs #}
+{% for struct in game.struct %}
+{{ struct.str_summary|caml_comment(doc=True) }}
+{% if struct.str_tuple %}
+type {{ struct.str_name }} = ({%- set product = joiner(' * ') -%}
+                              {%- for _, field_type, _ in struct.str_field -%}
+                              {{ product() }}{{ field_type|caml_type }}
+                              {%- endfor %})
+{% else %}
+type {{ struct.str_name }} = {
+  {% for field_name, field_type, field_comment in struct.str_field %}
+  {{ field_name }} : {{ field_type|caml_type }}; (** <- {{ field_comment }} *)
+  {% endfor %}
+}
+{% endif %}
+
+{% endfor %}
+{% for func in game.function %}
+{{ func.fct_summary|caml_comment(doc=True) }}
+{{ func|caml_signature(external=True) }} = "ml_{{ func.fct_name }}"
+
+{% endfor %}

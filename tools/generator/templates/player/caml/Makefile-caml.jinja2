@@ -1,0 +1,37 @@
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}caml{% endblock %}
+
+{% block extra_flags %}
+OCAMLC = ocamlc
+OCAML_PATH = $(shell $(OCAMLC) -where)
+OCAML_FLAGS = -g
+
+CXXFLAGS += -I$(OCAML_PATH)
+LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lcamlrun_shared -lcurses -lm
+
+objs += champion-ocaml.o
+{% endblock %}
+
+{% block extra_rules %}
+ML_SOURCES = $(shell ocamldep -sort $(filter %.ml,$(CHAMPION_FILES)))
+ML_INTERFACES = $(filter %.mli,$(CHAMPION_FILES))
+ML_OBJS = $(ML_SOURCES:.ml=.cmo)
+
+%.cmi: %.mli
+	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+
+%.cmi: %.ml
+	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+
+%.cmo: %.ml %.cmi
+	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+
+champion-ocaml.o: $(ML_OBJS)
+	$(OCAMLC) -output-obj $(OCAML_FLAGS) $^ -o $@
+
+.depend: $(ML_SOURCES) $(ML_INTERFACES)
+	ocamldep -all $^ > $@
+
+include .depend
+{% endblock %}
