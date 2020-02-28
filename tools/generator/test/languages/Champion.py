@@ -7,7 +7,6 @@ from api import *
 
 
 def test_alert():
-    raise 42
     assert False
 
 
