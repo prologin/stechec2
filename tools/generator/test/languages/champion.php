@@ -1,8 +1,5 @@
 <?php
 
-ini_set('zend.assertions', 1);
-ini_set('assert.exception', 1);
-
 require('api.php');
 
 function test_alert()
