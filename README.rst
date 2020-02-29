@@ -97,12 +97,12 @@ Requirements:
 
 Archlinux::
 
-  pacman --needed -S php php-embed ocaml mono jdk8-openjdk ghc
+  pacman --needed -S php php-embed ocaml mono jdk11-openjdk ghc
 
 Debian/Ubuntu::
 
   apt-get install php-cli php-dev libphp-embed ocaml mono-devel ghc \
-                  openjdk-8-jdk
+                  openjdk-11-jdk
 
 Create your AI
 --------------
