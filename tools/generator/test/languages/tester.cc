@@ -210,6 +210,23 @@ extern "C" void api_afficher_struct_with_array(struct_with_array v)
     std::cerr << v << std::endl;
 }
 
+std::ostream& operator<<(std::ostream& os, struct_with_struct v)
+{
+    os << "{ ";
+    os << "field_integer"
+       << "=" << v.field_integer;
+    os << ", ";
+    os << "field_struct"
+       << "=" << v.field_struct;
+    os << " }";
+    return os;
+}
+
+extern "C" void api_afficher_struct_with_struct(struct_with_struct v)
+{
+    std::cerr << v << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     int count = 100;
