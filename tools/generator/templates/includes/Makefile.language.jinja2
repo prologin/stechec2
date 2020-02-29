@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+
+# Add all your champion files in here, separated by spaces
+# Include all the sources, headers and README files.
+CHAMPION_FILES = {% block champion_files %}{% endblock %}
+
+# ----
+# Do not modify the lines below
+
+CHAMPION_FILES += {% block generated_files %}interface.cc{% endblock %}
+
+CPPFLAGS += -MMD -MP
+CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
+{% block extra_flags %}
+{% endblock %}
+
+to_clean :=
+
+cxx_sources = $(filter %.cc,$(CHAMPION_FILES))
+objs += $(cxx_sources:.cc=.o)
+
+{% block extra_rules %}
+{% endblock %}
+
+deps = $(objs:.o=.d)
+-include $(deps)
+
+to_clean += $(objs) $(deps)
+
+champion.so: $(objs)
+	$(CXX) -o $@ $^ -shared $(LDFLAGS)
+
+clean:
+	@$(RM) _lang # In case the tar rule was interrupted
+	$(RM) $(to_clean)
+
+distclean: clean
+	$(RM) champion.so champion.tgz
+
+champion.tgz: $(CHAMPION_FILES)
+	@echo "{% block lang %}{% endblock %}" > _lang
+	tar czf $@ $^ _lang
+	@rm _lang
+
+tar: champion.tgz
+
+.PHONY: tar clean distclean
