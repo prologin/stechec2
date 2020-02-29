@@ -1,27 +1,15 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+{# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
-{% import 'macros/make.jinja2' as make %}
+#}
+{% extends "includes/Makefile.language.jinja2" %}
 
-# Add all your sources (must be suffixed by *.py) in here, separated by spaces
-CHAMPION_SOURCES = Champion.py
+{% block lang %}python{% endblock %}
+{% block champion_files %}Champion.py{% endblock %}
+{% block generated_files %}interface.cc api.py{%endblock %}
 
-# ----
-# Do not modify the lines below
-
-CHAMPION_SOURCES += api.py
-INTERFACE_SOURCES = interface.cc
-SOURCES = $(INTERFACE_SOURCES)
-
-{{ make.common_flags() }}
-
-# Use python3-config --embed if it works (>3.8), python3-config otherwise.
+{% block extra_flags %}
+# python3-config needs --embed in >=3.8 but the flag does not work in <3.8
 py_config = $(shell python3-config --embed >/dev/null && echo python3-config --embed || echo python3-config )
 CXXFLAGS += $(shell $(py_config) --includes)
 LDFLAGS += $(shell $(py_config) --ldflags)
-
-objs = $(INTERFACE_SOURCES:.cc=.o)
-
-champion.so: $(objs)
-	$(CXX) -o $@ $^ -shared $(LDFLAGS)
-
-{{ make.common_rules('python') }}
+{% endblock %}

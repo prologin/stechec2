@@ -1,26 +1,17 @@
-# SPDX-License-Identifier: GPL-2.0-or-later
+{# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
-{% import 'macros/make.jinja2' as make %}
+#}
+{% extends "includes/Makefile.language.jinja2" %}
 
-# Add all your sources (must be suffixed by *.c) in here, separated by spaces
-CHAMPION_SOURCES = champion.c
-# Add all other files, like your headers in here, separated by spaces
-CHAMPION_HEADERS =
+{% block lang %}c{% endblock %}
+{% block champion_files %}champion.c{% endblock %}
+{% block generated_files %}interface.cc api.h{%endblock %}
 
-# ----
-# Do not modify the lines below
-
-CHAMPION_HEADERS += api.h
-INTERFACE_SOURCES = interface.cc
-SOURCES = $(CHAMPION_SOURCES) $(CHAMPION_HEADERS) $(INTERFACE_SOURCES)
-
+{% block extra_flags %}
 CFLAGS = -ggdb3 -Wall -std=c11 -fPIC
-{{ make.common_flags() }}
+{% endblock %}
 
-objs = $(CHAMPION_SOURCES:.c=.o) $(INTERFACE_SOURCES:.cc=.o)
-deps = $(objs:.o=.d)
-
-champion.so: $(objs)
-	$(CXX) -o $@ $^ -shared
-
-{{ make.common_rules('c') }}
+{% block extra_rules %}
+c_sources = $(filter %.c,$(CHAMPION_FILES))
+objs += $(c_sources:.c=.o)
+{% endblock %}
