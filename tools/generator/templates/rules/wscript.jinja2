@@ -5,6 +5,8 @@
 import glob
 import os.path
 
+from wafgenerator import generator_player_install
+
 
 def options(opt):
     pass
@@ -55,3 +57,5 @@ def build(bld):
     bld.install_files('${PREFIX}/share/stechec2/{{ game.name }}', [
         '{{ game.name }}.yml',
     ])
+
+    generator_player_install(bld, '{{ game.name }}')
