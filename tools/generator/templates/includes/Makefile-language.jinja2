@@ -1,14 +1,11 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
 
-# Add all your champion files in here, separated by spaces
-# Include all the sources, headers and README files.
-CHAMPION_FILES = {% block champion_files %}{% endblock %}
-
-# ----
-# Do not modify the lines below
-
-CHAMPION_FILES += {% block generated_files %}interface.cc{% endblock %}
+# When running in server mode, simply take all the files extracted from the
+# archive.
+ifdef STECHEC_SERVER
+  CHAMPION_FILES = $(wildcard *)
+endif
 
 CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
 {% block extra_flags %}
