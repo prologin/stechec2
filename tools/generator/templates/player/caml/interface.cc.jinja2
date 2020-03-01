@@ -181,8 +181,9 @@ static inline void _init_caml()
     if (!is_initialized)
     {
         is_initialized = true;
-        const char* argv[2] = {"./caml", NULL};
-        caml_startup(const_cast<char**>(argv));
+        char program_name[] = "./caml";
+        char* argv[2] = {program_name, NULL};
+        caml_startup(argv);
     }
 }
 {% for func in game.function %}
