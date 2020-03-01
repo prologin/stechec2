@@ -9,14 +9,15 @@ OCAML_FLAGS = -g
 
 CXXFLAGS += -I$(OCAML_PATH)
 LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lcamlrun_shared -lcurses -lm
-
-objs += champion-ocaml.o
 {% endblock %}
 
 {% block extra_rules %}
 ML_SOURCES = $(shell ocamldep -sort $(filter %.ml,$(CHAMPION_FILES)))
 ML_INTERFACES = $(filter %.mli,$(CHAMPION_FILES))
 ML_OBJS = $(ML_SOURCES:.ml=.cmo)
+
+objs += champion-ocaml.o
+to_clean += $(ML_OBJS) $(ML_OBJS:.cmo=.cmi) champion-ocaml.cds
 
 %.cmi: %.mli
 	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
