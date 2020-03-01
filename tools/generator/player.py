@@ -19,10 +19,13 @@ def make_player(game, out_dir: Path) -> None:
     """Generate the template to code a champion for a stechec project"""
 
     gen_lang(game, out_dir, 'c',
-             ['api.h', 'champion.c', 'interface.cc', 'Makefile'])
+             ['api.h', 'champion.c', 'interface.cc', 'Makefile', 'Makefile-c'])
     gen_lang(game, out_dir, 'cxx',
-             ['api.hh', 'champion.cc', 'interface.cc', 'Makefile'])
+             ['api.hh', 'champion.cc', 'interface.cc', 'Makefile',
+              'Makefile-cxx'])
     gen_lang(game, out_dir, 'php',
-             ['api.php', 'champion.php', 'interface.cc', 'Makefile'])
+             ['api.php', 'champion.php', 'interface.cc', 'Makefile',
+              'Makefile-php'])
     gen_lang(game, out_dir, 'python',
-             ['api.py', 'Champion.py', 'interface.cc', 'Makefile'])
+             ['api.py', 'Champion.py', 'interface.cc', 'Makefile',
+              'Makefile-python'])

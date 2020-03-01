@@ -1,0 +1,13 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}python{% endblock %}
+
+{% block extra_flags %}
+# python3-config needs --embed in >=3.8 but the flag does not work in <3.8
+py_config = $(shell python3-config --embed >/dev/null && echo python3-config --embed || echo python3-config )
+CXXFLAGS += $(shell $(py_config) --includes)
+LDFLAGS += $(shell $(py_config) --ldflags)
+{% endblock %}

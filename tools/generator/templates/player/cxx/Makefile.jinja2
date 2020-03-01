@@ -1,18 +1,13 @@
 {# SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
 #}
-{% extends "includes/Makefile.language.jinja2" %}
+# Add all your champion files in here, separated by spaces
+# Include all the sources (must end with *.cc), headers (must end with .hh) and
+# README files.
+CHAMPION_FILES = champion.cc
 
-{% block lang %}cxx{% endblock %}
-{% block champion_files %}champion.cc{% endblock %}
-{% block generated_files %}interface.cc api.hh{%endblock %}
+# ----
+# Do not modify the lines below
 
-{% block extra_flags %}
-CPPFLAGS += -MMD -MP
-{% endblock %}
-
-{% block extra_rules %}
-deps = $(objs:.o=.d)
-to_clean += $(deps)
--include $(deps)
-{% endblock %}
+CHAMPION_FILES += interface.cc api.hh
+-include Makefile-cxx

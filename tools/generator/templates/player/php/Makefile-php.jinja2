@@ -1,0 +1,11 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}php{% endblock %}
+
+{% block extra_flags %}
+CXXFLAGS += $(shell php-config --includes)
+LDFLAGS += $(shell php-config --libs --ldflags) -lphp7
+{% endblock %}
