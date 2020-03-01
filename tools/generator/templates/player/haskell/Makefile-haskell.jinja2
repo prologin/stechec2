@@ -1,0 +1,38 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}haskell{% endblock %}
+
+{% block extra_flags %}
+GHC ?= ghc
+HSC2HS ?= hsc2hs
+
+GHC_FLAGS = -pgml $(CXX) -O9 -dynamic --make -shared -fPIC \
+			-L$(shell $(GHC) --print-libdir) \
+			-lHSrts-ghc$(shell $(GHC) --numeric-version)
+
+CPPFLAGS += -I$(shell $(GHC) --print-libdir)/include
+{% endblock %}
+
+{% block extra_rules %}
+hs_ffi_sources = $(filter %.hsc, $(CHAMPION_FILES))
+hs_ffi_gen = $(hs_ffi_sources:.hsc=.hs)
+
+hs_sources = $(filter %.hs,$(CHAMPION_FILES))
+hs_sources += $(hs_ffi_gen)
+
+to_clean += $(hs_ffi_gen)
+to_clean += $(hs_sources:.hs=.hi)
+to_clean += $(hs_sources:.hs=.o)
+to_clean += $(hs_sources:.hs=_stub.h)
+
+%.hs: %.hsc
+	$(HSC2HS) -o $@ $^
+{% endblock %}
+
+{% block build_library %}
+champion.so: $(objs) $(hs_sources)
+	$(GHC) $(GHC_FLAGS) -o $@ $^ -shared
+{% endblock %}

@@ -41,6 +41,8 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
     gen_lang('cxx',
              files=['champion.cc', 'Makefile'],
              symlinks=['api.hh', 'interface.cc', 'Makefile-cxx'])
+    gen_lang(game, out_dir, 'haskell',
+             ['Makefile', 'Makefile-haskell'])
     gen_lang('java',
              files=['Champion.java', 'Makefile'],
              symlinks=['Api.java', 'interface.cc', 'Makefile-java'])
