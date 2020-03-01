@@ -20,8 +20,10 @@ to_clean = $(objs)
 {% block extra_rules %}
 {% endblock %}
 
+{% block build_library %}
 champion.so: $(objs)
 	$(CXX) -o $@ $^ -shared $(LDFLAGS)
+{% endblock %}
 
 clean:
 	@$(RM) _lang # In case the tar rule was interrupted
