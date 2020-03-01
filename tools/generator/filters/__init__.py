@@ -30,10 +30,10 @@ def load_library_in(env):
     from . import (  # noqa: E402, F401
         common,
         c,
+        caml,
         cxx,
         php,
-        python,
-        caml
+        python
     )
     for filter_name, filter in FILTER_LIBRARY.items():
         env.filters[filter_name] = filter

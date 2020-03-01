@@ -39,6 +39,8 @@ CamlType cxx_to_caml(Cxx in)
 template <>
 value cxx_to_caml<value, int>(int in)
 {
+    {# TODO: investigate whether that empty call to CAMLparam0 really is
+     # necessary here and every time it's used in this file #}
     CAMLparam0();
     CAMLreturn(Val_int(in));
 }
@@ -184,9 +186,9 @@ extern "C" value ml_{{ func.fct_name }}({# argument list #}
                                         {%- endfor -%}
                                        )
 {
+    {# TODO: Use CAMLparamN, then CAMLxparamN, by grouping the arguments 5 by 5
+     # maximum #}
     CAMLparam0();
-    {# TODO: forbid instanciation if there's more than 5 parameters, OCaml
-     # has CAMLxparam0 to CAMLxparam5 only #}
     CAMLxparam{{ arg_list|length }}({# argument list #}
                                     {%- set comma = joiner(', ') -%}
                                     {%- for arg_name, _, _ in arg_list -%}
