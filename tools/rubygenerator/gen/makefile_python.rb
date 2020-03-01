@@ -26,8 +26,9 @@ lib_TARGETS = #{target}
 #{target}-dists += interface.hh
 #{target}-srcs = interface.cc
 
-#{target}-cxxflags = -O2 -fPIC $(shell python3-config --includes)
-#{target}-ldflags = -s $(shell python3-config --ldflags)
+py_config = $(shell python3-config --embed >/dev/null && echo python3-config --embed || echo python3-config )
+#{target}-cxxflags = -O2 -fPIC $(shell $(py_config) --includes)
+#{target}-ldflags = -s $(shell $(py_config) --ldflags)
 
 V=1
 include $(MFPATH)/rules.mk
