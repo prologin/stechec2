@@ -176,7 +176,7 @@ static inline void _init_caml()
     }
 }
 {% for func in game.function %}
-{%- set arg_list = func.fct_arg|cxx_nonempty_or_unit %}
+{%- set arg_list = func.fct_arg|caml_cxx_args %}
 
 {{ func.fct_summary|cxx_comment }}
 extern "C" value ml_{{ func.fct_name }}({# argument list #}

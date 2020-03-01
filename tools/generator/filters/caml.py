@@ -25,7 +25,7 @@ def caml_callback(func) -> str:
 # there is nothing useful to give
 
 @register_filter
-def cxx_nonempty_or_unit(arg_list):
+def caml_cxx_args(arg_list):
     if not arg_list:
         return [('unit', 'void', 'empty caml parameter')]
     return arg_list
