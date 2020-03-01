@@ -22,7 +22,7 @@ open Api
 let _ =
   begin
 {% for func in game.user_function %}
-    Callback.register "{{ func|caml_callback }}" {{ func.fct_name }}{% if not loop.last %};{% endif %}
+    Callback.register "ml_{{ func.fct_name }}" {{ func.fct_name }}{% if not loop.last %};{% endif %}
 
 {% endfor %}
   end

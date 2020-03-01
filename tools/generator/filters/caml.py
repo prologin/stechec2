@@ -13,14 +13,6 @@ def caml_type(value: str) -> str:
     return value
 
 
-@register_filter
-def caml_callback(func) -> str:
-    '''symbolic name of a function to be used with Callback.register in caml
-    code, and with caml_named_value in C code
-    '''
-    return 'ml_' + func['fct_name']
-
-
 # caml functions need to take at least one parameter, be it a unit value if
 # there is nothing useful to give
 

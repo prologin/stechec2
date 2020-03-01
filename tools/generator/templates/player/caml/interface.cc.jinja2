@@ -31,11 +31,12 @@ extern "C" {
 {% endfor %}
 }
 
-template <typename CamlType, typename Cxx>
-CamlType cxx_to_caml(Cxx in)
+template <typename CamlType, typename CxxType>
+CamlType cxx_to_caml(CxxType in)
 {
     return in.__if_that_triggers_an_error_there_is_a_problem;
 }
+
 template <>
 value cxx_to_caml<value, int>(int in)
 {
@@ -44,30 +45,36 @@ value cxx_to_caml<value, int>(int in)
     CAMLparam0();
     CAMLreturn(Val_int(in));
 }
+
 template <>
 value cxx_to_caml<value, double>(double in)
 {
     CAMLparam0();
     CAMLreturn(caml_copy_double(in));
 }
+
 template<>
 value cxx_to_caml<value, std::string>(std::string in)
 {
     CAMLparam0();
     size_t l = in.length();
-    char * out = (char *) malloc(l + 1);
-    for (size_t i = 0; i < l; i++) out[i] = in[i];
+    char* out = (char *) malloc(l + 1);
+    {# TODO: is this loop really needed? Doesn't caml_copy_string already do a strdup? #}
+    for (size_t i = 0; i < l; i++)
+        out[i] = in[i];
     out[l] = 0;
     CAMLreturn(caml_copy_string(out));
 }
+
 template <>
 value cxx_to_caml<value, bool>(bool in)
 {
     CAMLparam0();
     CAMLreturn(Val_int(in));
 }
-template <typename Cxx>
-value cxx_to_caml_array(const std::vector<Cxx>& in)
+
+template <typename CxxType>
+value cxx_to_caml_array(const std::vector<CxxType>& in)
 {
     CAMLparam0();
     CAMLlocal1(v);
@@ -76,47 +83,53 @@ value cxx_to_caml_array(const std::vector<Cxx>& in)
         CAMLreturn(Atom(0));
     v = caml_alloc(size, 0);
     for (size_t i = 0; i < size; ++i)
-        caml_initialize(&Field(v, i), cxx_to_caml<value, Cxx>(in[i]));
+        caml_initialize(&Field(v, i), cxx_to_caml<value, CxxType>(in[i]));
     CAMLreturn(v);
 }
-template <typename CamlType, typename Cxx>
-Cxx caml_to_cxx(CamlType in)
+
+template <typename CamlType, typename CxxType>
+CxxType caml_to_cxx(CamlType in)
 {
     return in.__if_that_triggers_an_error_there_is_a_problem;
 }
+
 template<>
 std::string caml_to_cxx<value, std::string>(value in)
 {
     CAMLparam1(in);
     CAMLreturnT(std::string, String_val(in));
 }
+
 template <>
 int caml_to_cxx<value, int>(value in)
 {
     CAMLparam1(in);
     CAMLreturnT(int, Int_val(in));
 }
+
 template <>
 double caml_to_cxx<value, double>(value in)
 {
     CAMLparam1(in);
     CAMLreturnT(double, Double_val(in));
 }
+
 template <>
 bool caml_to_cxx<value, bool>(value in)
 {
     CAMLparam1(in);
     CAMLreturnT(bool, Int_val(in));
 }
-template <typename Cxx>
-std::vector<Cxx> caml_to_cxx_array(value in)
+
+template <typename CxxType>
+std::vector<CxxType> caml_to_cxx_array(value in)
 {
     CAMLparam1(in);
-    std::vector<Cxx> out;
+    std::vector<CxxType> out;
     mlsize_t size = Wosize_val(in);
     for (size_t i = 0; i < size; ++i)
-        out.push_back(caml_to_cxx<value, Cxx>(Field(in, i)));
-    CAMLreturnT(std::vector<Cxx>, out);
+        out.push_back(caml_to_cxx<value, CxxType>(Field(in, i)));
+    CAMLreturnT(std::vector<CxxType>, out);
 }
 {% for enum in game.enum %}
 
@@ -145,7 +158,7 @@ value cxx_to_caml<value, {{ struct.str_name }}>({{ struct.str_name }} in)
     CAMLlocal1(out);
     out = caml_alloc({{ struct.str_field|length }}, 0);
     {% for field_name, field_type, field_comment in struct.str_field %}
-    caml_initialize(&Field(out, {{ loop.index0 }}), {{ field_type|cxx_to_caml}}(in.{{ field_name }}));
+    caml_initialize(&Field(out, {{ loop.index0 }}), {{ field_type|cxx_to_caml }}(in.{{ field_name }}));
     {% endfor %}
     CAMLreturn(out);
 }
@@ -225,7 +238,7 @@ extern "C" {{ func|cxx_prototype }}
 
     static const value *closure = NULL;
     if (closure == NULL)
-        closure = caml_named_value("{{ func|caml_callback }}");
+        closure = caml_named_value("ml_{{ func.fct_name }}");
 
     _ret = callback(*closure, Val_unit);
 

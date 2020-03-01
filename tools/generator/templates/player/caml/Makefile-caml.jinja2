@@ -3,7 +3,7 @@
 {% block lang %}caml{% endblock %}
 
 {% block extra_flags %}
-OCAMLC = ocamlc
+OCAMLC ?= ocamlc
 OCAML_PATH = $(shell $(OCAMLC) -where)
 OCAML_FLAGS = -g
 
