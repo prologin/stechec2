@@ -10,23 +10,18 @@ CHAMPION_FILES = {% block champion_files %}{% endblock %}
 
 CHAMPION_FILES += {% block generated_files %}interface.cc{% endblock %}
 
-CPPFLAGS += -MMD -MP
 CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
 {% block extra_flags %}
 {% endblock %}
 
-to_clean :=
+all: champion.so
 
 cxx_sources = $(filter %.cc,$(CHAMPION_FILES))
 objs += $(cxx_sources:.cc=.o)
+to_clean = $(objs)
 
 {% block extra_rules %}
 {% endblock %}
-
-deps = $(objs:.o=.d)
--include $(deps)
-
-to_clean += $(objs) $(deps)
 
 champion.so: $(objs)
 	$(CXX) -o $@ $^ -shared $(LDFLAGS)

@@ -9,9 +9,14 @@
 
 {% block extra_flags %}
 CFLAGS = -ggdb3 -Wall -std=c11 -fPIC
+CPPFLAGS += -MMD -MP
 {% endblock %}
 
 {% block extra_rules %}
 c_sources = $(filter %.c,$(CHAMPION_FILES))
 objs += $(c_sources:.c=.o)
+
+deps = $(objs:.o=.d)
+to_clean += $(deps)
+-include $(deps)
 {% endblock %}
