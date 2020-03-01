@@ -6,3 +6,13 @@
 {% block lang %}cxx{% endblock %}
 {% block champion_files %}champion.cc{% endblock %}
 {% block generated_files %}interface.cc api.hh{%endblock %}
+
+{% block extra_flags %}
+CPPFLAGS += -MMD -MP
+{% endblock %}
+
+{% block extra_rules %}
+deps = $(objs:.o=.d)
+to_clean += $(deps)
+-include $(deps)
+{% endblock %}
