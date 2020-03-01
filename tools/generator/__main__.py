@@ -14,6 +14,31 @@ from .texdoc import make_texdoc
 from .sphinxdoc import make_sphinxdoc
 
 
+def get_install_prefix():
+    """
+    Check if the generator is being run from a stechec2 install prefix and
+    return the prefix path.
+    """
+    path = Path(__file__).parent.parent.parent.parent
+    if (path / 'bin/stechec2-generator').exists():
+        return path
+    else:
+        return None
+
+
+def game_or_yaml_path(path):
+    """
+    argparse.FileType that reads either from the given path, or from a
+    matching game config file in the current stechec2 install prefix.
+    """
+    prefix = get_install_prefix()
+    if prefix:
+        game_path = prefix / 'share/stechec2/{f}/{f}.yml'.format(f=path)
+        if game_path.exists():
+            path = game_path
+    return argparse.FileType('r')(path)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description=textwrap.dedent(
@@ -23,8 +48,19 @@ def main():
             on its YAML description file.
             """))
     sp = parser.add_subparsers(dest='command', help='Generator to use')
-    sp.add_parser('player', help="create player stubs for all languages")
-    sp.add_parser('server', help="create special Makefiles for the workernode")
+
+    player_subparser = sp.add_parser(
+        'player', help="create player stubs for all languages"
+    )
+    player_subparser.add_argument(
+        '--symlink', nargs='?', type=Path, const=True,
+        help=("Instead of generating the read-only API and interface files, "
+              "symlink them from a pre-generated player environment. "
+              "This avoids regenerating all the environments when the API "
+              "changes. If no path is given, defaults to the default rules "
+              "install path.")
+    )
+
     sp.add_parser('rules', help="generate boilerplate for api rules")
     sp.add_parser('texdoc', help="generate latex API doc of the game")
     sp.add_parser('sphinxdoc', help="generate sphinx API doc of the game")
@@ -35,7 +71,7 @@ def main():
     sp.add_parser('ruby-apidoc')
     sp.add_parser('ruby-sphinxdoc')
 
-    parser.add_argument('yaml_file', type=argparse.FileType('r'),
+    parser.add_argument('yaml_file', type=game_or_yaml_path,
                         help="The game YAML file")
     parser.add_argument('out_dir', type=Path, help="The output directory")
     args = parser.parse_args()
@@ -46,7 +82,20 @@ def main():
     if args.command == 'rules':
         make_rules(game, args.out_dir)
     elif args.command == 'player':
-        make_player(game, args.out_dir)
+        symlink = None
+        if args.symlink:
+            if args.symlink is True:  # Use default install path
+                prefix = get_install_prefix()
+                if not prefix:
+                    raise RuntimeError(
+                        "Cannot use --symlink without a path from a "
+                        "non-installed generator"
+                    )
+                symlink = prefix / ('share/stechec2/{}/player'
+                                    .format(game['name']))
+            else:
+                symlink = args.symlink
+        make_player(game, args.out_dir, symlink=symlink)
     elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
     elif args.command == 'sphinxdoc':

@@ -33,6 +33,10 @@ class Generator:
         out = tpl.stream(game=self.game, **params)
         out_path = self.out_dir / out_name
         out_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            out_path.unlink()  # remove symlink leftovers
+        except FileNotFoundError:
+            pass
         out.dump(out_path.open('w'))
 
     def register_filters(self):
