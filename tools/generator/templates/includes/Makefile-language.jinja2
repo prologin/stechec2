@@ -7,7 +7,7 @@ ifdef STECHEC_SERVER
   CHAMPION_FILES = $(wildcard *)
 endif
 
-CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC
+CXXFLAGS = -ggdb3 -Wall -std=c++17 -fPIC -O2
 {% block extra_flags %}
 {% endblock %}
 
