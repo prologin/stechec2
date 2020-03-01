@@ -59,11 +59,8 @@ value cxx_to_caml<value, std::string>(std::string in)
     CAMLparam0();
     size_t l = in.length();
     char* out = (char *) malloc(l + 1);
-    {# TODO: is this loop really needed? Doesn't caml_copy_string already do a strdup? #}
-    for (size_t i = 0; i < l; i++)
-        out[i] = in[i];
     out[l] = 0;
-    CAMLreturn(caml_copy_string(out));
+    CAMLreturn(caml_copy_string(in.c_str()));
 }
 
 template <>
