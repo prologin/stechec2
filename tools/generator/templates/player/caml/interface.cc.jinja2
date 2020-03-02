@@ -40,8 +40,6 @@ CamlType cxx_to_caml(CxxType in)
 template <>
 value cxx_to_caml<value, int>(int in)
 {
-    {# TODO: investigate whether that empty call to CAMLparam0 really is
-     # necessary here and every time it's used in this file #}
     CAMLparam0();
     CAMLreturn(Val_int(in));
 }
@@ -197,15 +195,15 @@ extern "C" value ml_{{ func.fct_name }}({# argument list #}
                                         {%- endfor -%}
                                        )
 {
-    {# TODO: Use CAMLparamN, then CAMLxparamN, by grouping the arguments 5 by 5
-     # maximum #}
-    CAMLparam0();
-    CAMLxparam{{ arg_list|length }}({# argument list #}
-                                    {%- set comma = joiner(', ') -%}
-                                    {%- for arg_name, _, _ in arg_list -%}
-                                    {{ comma() }}{{ arg_name }}
-                                    {%- endfor -%}
-                                   );
+    {# TODO: This only works for functions with 5 parameters or less.
+     # To handle more, we must call CAMLparam5 once, then CAMLxparamN, grouping
+     # the arguments 5 by 5 maximum #}
+    CAMLparam{{ arg_list|length }}({# argument list #}
+                                   {%- set comma = joiner(', ') -%}
+                                   {%- for arg_name, _, _ in arg_list -%}
+                                   {{ comma() }}{{ arg_name }}
+                                   {%- endfor -%}
+                                  );
     {% set _api_call -%}
     api_{{ func.fct_name }}({# argument list #}
                             {%- set comma = joiner(', ') -%}
