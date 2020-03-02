@@ -76,3 +76,21 @@ def caml_to_cxx(value: str) -> str:
         return 'caml_to_cxx_array<{}>'.format(value[:-len(' array')])
     else:
         return 'caml_to_cxx<value, {}>'.format(value)
+
+
+@register_filter
+def caml_param_macro(value) -> str:
+    """
+    Generate the series of CAMLparamX macros corresponding to the given
+    parameter list by grouping the parameters in chunks of 5.
+    """
+    params = list(value)
+    lines = []
+    for ndx in range(0, len(params), 5):
+        chunk = params[ndx:min(ndx + 5, len(params))]
+        lines.append('{}{}({});'.format(
+            'CAMLparam' if ndx == 0 else 'CAMLxparam',
+            len(chunk),
+            ', '.join(chunk)
+        ))
+    return '\n'.join(lines)
