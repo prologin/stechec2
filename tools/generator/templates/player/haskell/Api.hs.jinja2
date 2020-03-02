@@ -1,0 +1,41 @@
+-- This file was generated
+
+module Api (
+{% for enum in game.enum %}
+{{ enum.enum_name|capitalize }} (..),
+{% endfor %}
+
+{% for s in game.struct %}
+{{ s.str_name|capitalize }} (..),
+{% endfor %}
+
+{% for func in game.function %}
+{{ func.fct_name }},
+{% endfor %}
+
+{% for enum in game.enum %}
+afficher_{{ enum.enum_name|lower }},
+{% endfor %}
+
+{% for s in game.struct %}
+afficher_{{ s.str_name|lower }},
+{% endfor %}
+
+{% for cst in game.constant %}
+{{ cst.cst_name|lower }},
+{% endfor %}
+) where
+
+import CApi
+
+{# Constants #}
+{% for cst in game.constant %}
+
+{{ cst.cst_comment|haskell_comment }}
+{% if 'cst_type'  in cst %}
+{{ cst.cst_name|lower }} :: {{ cst.cst_type|haskell_type }}
+{% else %}
+{{ cst.cst_name|lower }} :: Int
+{% endif %}
+{{ cst.cst_name|lower }} = {{ cst.cst_val }}
+{% endfor %}
