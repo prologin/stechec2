@@ -22,6 +22,7 @@ test = do
   send_me_42_and_1337 42 1337
   send_me_true True
   send_me_tau 6.2831853
+  send_me_13_ints 1 2 3 4 5 6 7 8 9 10 11 12 13
 
   assert' . (== 42) <$> returns_42
   assert' <$> returns_true

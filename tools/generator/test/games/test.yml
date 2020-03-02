@@ -67,6 +67,24 @@ function:
     fct_arg:
       - [t, double, a double approximating tau]
   -
+    fct_name: send_me_13_ints
+    fct_summary: Send me thirteen integers from 1 to 13
+    fct_ret_type: void
+    fct_arg:
+      - [arg1, int, the integer 1]
+      - [arg2, int, the integer 2]
+      - [arg3, int, the integer 3]
+      - [arg4, int, the integer 4]
+      - [arg5, int, the integer 5]
+      - [arg6, int, the integer 6]
+      - [arg7, int, the integer 7]
+      - [arg8, int, the integer 8]
+      - [arg9, int, the integer 9]
+      - [arg10, int, the integer 10]
+      - [arg11, int, the integer 11]
+      - [arg12, int, the integer 12]
+      - [arg13, int, the integer 13]
+  -
     fct_name: returns_42
     fct_summary: Returns 42
     fct_ret_type: int

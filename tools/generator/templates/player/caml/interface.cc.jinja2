@@ -195,15 +195,7 @@ extern "C" value ml_{{ func.fct_name }}({# argument list #}
                                         {%- endfor -%}
                                        )
 {
-    {# TODO: This only works for functions with 5 parameters or less.
-     # To handle more, we must call CAMLparam5 once, then CAMLxparamN, grouping
-     # the arguments 5 by 5 maximum #}
-    CAMLparam{{ arg_list|length }}({# argument list #}
-                                   {%- set comma = joiner(', ') -%}
-                                   {%- for arg_name, _, _ in arg_list -%}
-                                   {{ comma() }}{{ arg_name }}
-                                   {%- endfor -%}
-                                  );
+    {{ arg_list|map('first')|caml_param_macro|indent }}
     {% set _api_call -%}
     api_{{ func.fct_name }}({# argument list #}
                             {%- set comma = joiner(', ') -%}
@@ -221,6 +213,20 @@ extern "C" value ml_{{ func.fct_name }}({# argument list #}
     CAMLreturn(Val_unit);
     {% endif %}
 }
+{% if (arg_list|length) > 5 %}
+
+// Bytecode wrapper for {{ func.fct_name }}.
+// This is necessary for all primitives with arity greater than 5:
+// https://caml.inria.fr/pub/docs/manual-ocaml/intfc.html#ss:c-prim-impl
+extern "C" value ml_bytecode_{{ func.fct_name }}(value* argv, int argc)
+{
+    {% set comma = joiner(', ') %}
+    return ml_{{ func.fct_name }}(
+    {%- for _, _, _ in arg_list -%}
+        {{ comma() }}argv[{{ loop.index0 }}]
+    {%- endfor -%});
+}
+{% endif %}
 {% endfor %}
 
 {% for func in game.user_function %}

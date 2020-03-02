@@ -34,6 +34,7 @@ type {{ struct.str_name }} = {
 {% endfor %}
 {% for func in game.function %}
 {{ func.fct_summary|caml_comment(doc=True) }}
-{{ func|caml_signature(external=True) }} = "ml_{{ func.fct_name }}"
+{{ func|caml_signature(external=True) }} = {% if (func.fct_arg|length) > 5 -%}
+    "ml_bytecode_{{ func.fct_name }}" {% endif %}"ml_{{ func.fct_name }}"
 
 {% endfor %}

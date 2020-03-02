@@ -34,6 +34,25 @@ void api_send_me_tau(double b)
     assert(b > 6.2831 && b < 6.2832);
 }
 
+void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
+                         int arg6, int arg7, int arg8, int arg9, int arg10,
+                         int arg11, int arg12, int arg13)
+{
+    assert(arg1 == 1);
+    assert(arg2 == 2);
+    assert(arg3 == 3);
+    assert(arg4 == 4);
+    assert(arg5 == 5);
+    assert(arg6 == 6);
+    assert(arg7 == 7);
+    assert(arg8 == 8);
+    assert(arg9 == 9);
+    assert(arg10 == 10);
+    assert(arg11 == 11);
+    assert(arg12 == 12);
+    assert(arg13 == 13);
+}
+
 int api_returns_42()
 {
     return 42;
