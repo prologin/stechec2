@@ -1,0 +1,20 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
+
+-- This file was generated
+
+module Champion where
+
+import Api
+
+{% for func in game.user_function %}
+
+{{ func.fct_summary|haskell_comment }}
+{{ func.fct_name }} :: IO ()
+{{ func.fct_name }} = return () -- TODO
+{% endfor %}
+
+{% for func in game.user_function %}
+
+hs_{{ func.fct_name }} = {{ func.fct_name }}
+foreign export ccall hs_{{ func.fct_name }} :: IO ()
+{% endfor %}
