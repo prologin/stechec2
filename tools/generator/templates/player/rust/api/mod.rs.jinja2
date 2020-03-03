@@ -32,7 +32,7 @@ pub enum {{ enum.enum_name|camel_case }} {
 }
 
 {% endfor %}
-{% for struct in game.struct if not struct.str_tuple %}
+{% for struct in game.struct if not struct is tuple %}
 {% if struct.str_name|is_containing_double %}
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 {% else %}

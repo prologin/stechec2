@@ -95,14 +95,14 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
     elif is_array(value):
         prefix = value[:-len(' array')]
         return 'Vec<{}>'.format(rust_api_output_type(ctx, prefix))
-    elif is_tuple(ctx, value):
+    elif value in generics:
+        return generics[value]
+    elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
         return '({})'.format(
             ', '.join(
                 rust_api_output_type(ctx, field)
                 for _, field, _ in ctx['game'].get_struct(value)['str_field']
             ))
-    elif value in generics:
-        return generics[value]
     else:
         return api_mod_path + camel_case(value)
 
@@ -115,7 +115,7 @@ def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str
     elif is_array(value):
         inner = value[:-len(' array')]
         return '&[' + rust_api_output_type(ctx, inner) + ']'
-    elif is_tuple(ctx, value):
+    elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
         return '({})'.format(
             ', '.join(
                 rust_api_input_type(ctx, field)
@@ -134,7 +134,7 @@ def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str
 @contextfilter
 def rust_is_copy(ctx, value: str) -> bool:
     """Check if a type implements the Copy trait"""
-    if is_tuple(ctx, value):
+    if is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
         return all(
             rust_is_copy(ctx, field_type)
             for _, field_type, _ in ctx['game'].get_struct(value)['str_field']

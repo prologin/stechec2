@@ -209,7 +209,7 @@ impl ToFFI<{{ name }}> for api::{{ name }} {
 {% with api_type=struct.str_name|rust_api_output_type(api_mod_path='api::') %}
 impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
     unsafe fn to_api(self) -> {{ api_type }} {
-        {% if struct.str_tuple %}
+        {% if struct is tuple %}
         {% set separator = joiner(', ') %}
         ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_api(){% endfor %})
         {% else %}
@@ -226,7 +226,7 @@ impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
 {% with api_type=struct.str_name|rust_api_input_type(api_mod_path='api::', skip_ref=True) %}
 impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
     unsafe fn to_ffi(&self) -> {{ ffi_type }} {
-        {% if struct.str_tuple %}
+        {% if struct is tuple %}
         let ({{ struct.str_field|map('first')|join(', ') }}) = self;
 
         {{ ffi_type }} {

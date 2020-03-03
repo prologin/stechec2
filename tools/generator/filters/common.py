@@ -42,11 +42,9 @@ def is_struct_in(type, game) -> bool:
     return any(type == s['str_name'] for s in game['struct'])
 
 
-@register_filter
-@contextfilter
-def is_tuple(ctx, type) -> bool:
-    struct = ctx['game'].get_struct(type)
-    return struct is not None and struct['str_tuple']
+@register_test
+def is_tuple(struct) -> bool:
+    return struct['str_tuple']
 
 
 @register_filter
