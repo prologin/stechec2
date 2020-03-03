@@ -33,11 +33,7 @@ pub enum {{ enum.enum_name|camel_case }} {
 
 {% endfor %}
 {% for struct in game.struct if not struct is tuple %}
-{% if struct.str_name|is_containing_double %}
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
-{% else %}
-#[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-{% endif %}
+#[derive({{ struct.str_name|rust_auto_traits|sort|join(', ') }})]
 pub struct {{ struct.str_name|camel_case }} {
     {% for field_name, field_type, field_comment in struct.str_field %}
     /// {{ field_comment }}

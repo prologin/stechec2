@@ -4,8 +4,8 @@ from jinja2 import contextfilter
 
 from . import register_filter
 from .common import (
-    camel_case, generic_args, generic_comment, is_array, is_enum, is_returning,
-    is_struct, is_tuple,
+    camel_case, generic_args, generic_comment, get_array_inner, is_array,
+    is_enum, is_returning, is_struct, is_tuple,
 )
 from .cxx import cxx_comment
 
@@ -71,9 +71,8 @@ def rust_ffi_type(ctx, value: str) -> str:
         'void': '()',
     }
 
-    if value.endswith(" array"):
-        prefix = value[:-len(' array')]
-        return 'Array<{}>'.format(rust_ffi_type(ctx, prefix))
+    if is_array(value):
+        return 'Array<{}>'.format(rust_ffi_type(ctx, get_array_inner(value)))
     elif value in generics:
         return generics[value]
     else:
@@ -93,8 +92,7 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
     if value == 'string':
         return 'String'
     elif is_array(value):
-        prefix = value[:-len(' array')]
-        return 'Vec<{}>'.format(rust_api_output_type(ctx, prefix))
+        return 'Vec<{}>'.format(rust_api_output_type(ctx, get_array_inner(value)))
     elif value in generics:
         return generics[value]
     elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
@@ -113,8 +111,7 @@ def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str
     if value == 'string':
         return '&str'
     elif is_array(value):
-        inner = value[:-len(' array')]
-        return '&[' + rust_api_output_type(ctx, inner) + ']'
+        return '&[' + rust_api_output_type(ctx, get_array_inner(value)) + ']'
     elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
         return '({})'.format(
             ', '.join(
@@ -143,3 +140,36 @@ def rust_is_copy(ctx, value: str) -> bool:
     return (
         is_enum(ctx, value) or value in ['bool', 'double', 'int', 'void']
     )
+
+
+@register_filter
+@contextfilter
+def rust_auto_traits(ctx, value: str) -> set:
+    """
+    Return the list of auto traits that can be implemented for given input
+    type.
+    """
+    if is_struct(ctx, value):
+        inherited = set.intersection(*(
+            rust_auto_traits(ctx, field_type)
+            for _, field_type, _ in ctx['game'].get_struct(value)['str_field']
+        ))
+
+        if not is_tuple(ctx['game'].get_struct(value)) and 'Copy' in inherited:
+            inherited.remove('Copy')
+
+        return inherited
+
+    if is_array(value):
+        inherited = rust_auto_traits(ctx, get_array_inner(value))
+
+        if 'Copy' in inherited:
+            inherited.remove('Copy')
+
+        return inherited
+
+    if value == 'double':
+        return {'Copy', 'Clone', 'Debug', 'PartialEq', 'PartialOrd'}
+
+    return {'Copy', 'Clone', 'Debug', 'Eq', 'Hash', 'Ord', 'PartialEq',
+            'PartialOrd'}

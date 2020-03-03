@@ -32,6 +32,11 @@ def is_array(type) -> bool:
     return type.endswith(' array')
 
 
+@register_test
+def get_array_inner(type) -> bool:
+    return type[:-len(' array')]
+
+
 @register_function
 @contextfunction
 def is_struct(ctx, type) -> bool:
@@ -45,23 +50,6 @@ def is_struct_in(type, game) -> bool:
 @register_test
 def is_tuple(struct) -> bool:
     return struct['str_tuple']
-
-
-@register_filter
-@contextfilter
-def is_containing_double(ctx, type):
-    if type == 'double':
-        return True
-    elif is_array(type):
-        inner = type[:-len(" array")]
-        return is_containing_double(ctx, inner)
-    elif is_struct(ctx, type):
-        return any(
-            is_containing_double(ctx, field_type)
-            for _, field_type, _ in ctx['game'].get_struct(type)['str_field']
-        )
-
-    return False
 
 
 @register_filter
