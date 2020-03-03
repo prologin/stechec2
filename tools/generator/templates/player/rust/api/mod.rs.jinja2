@@ -9,12 +9,12 @@
 // defined.
 
 //! Rust API for {{ game.name }}
-#![allow(unused_imports)]
 
 mod ffi;
 
 use crate::api::ffi::{ToAPI, ToFFI};
 
+#[allow(unused_imports)]
 use std::cell::UnsafeCell;
 
 {% for constant in game.constant %}

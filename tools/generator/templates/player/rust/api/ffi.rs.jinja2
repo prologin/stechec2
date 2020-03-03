@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (c) 2012-2020 Association Prologin <association@prologin.org>
 
+#![allow(clippy::unit_arg)]
+#![allow(clippy::unused_unit)]
+
 use crate::api;
 
 use std::ffi::{CStr, CString};
@@ -112,7 +115,7 @@ impl ToAPI<String> for RawString {
         {# NOTE: maybe we prefer never panicking by using the behaviour of
          #       String::from_utf8_lossy?
          #}
-        CStr::from_ptr((&self).ptr)
+        CStr::from_ptr(self.ptr)
             .to_owned()
             .into_string()
             .expect("API provided invalid UTF-8")
