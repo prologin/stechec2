@@ -48,6 +48,13 @@ void test()
         assert(v.items[i] == i + 1);
     free(v.items);
 
+    bool multiple_of_3[] = {true, false, false, true, false, false, true, false, false};
+    bool_array ba = (bool_array){multiple_of_3, 9};
+    ba = returns_not(ba);
+    for (int i = 0; i < 9; ++i)
+        assert(ba.items[i] == (i % 3 != 0));
+    free(ba.items);
+
     struct_with_array s;
     s.field_int = 42;
     simple_struct ss[42];

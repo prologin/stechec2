@@ -49,6 +49,11 @@ void test()
 
     assert(returns_sorted(r) == r);
 
+    std::vector<bool> ba = {true, false, false, true, false, false, true, false, false};
+    ba = returns_not(ba);
+    for (int i = 0; i < 9; ++i)
+        assert(ba[i] == (i % 3 != 0));
+
     struct_with_array s;
     s.field_int = 42;
     for (int i = 0; i < 42; ++i)

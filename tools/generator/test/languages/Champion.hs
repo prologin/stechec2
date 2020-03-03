@@ -31,6 +31,8 @@ test = do
   assert' . (== [1..10000]) <$> returns_range 1 10000
   assert' . (== [1..7]) <$> returns_sorted [1, 3, 2, 4, 5, 7, 6]
   assert' . (== [1..10000]) <$> returns_sorted [1..10000]
+  assert' . (== [False,True,True,False,True,True,False,True,True]) <$>
+    returns_not [True,False,False,True,False,False,True,False,False]
 
   send_me_42s $ theStruct
   send_me_test_enum Val1 Val2;

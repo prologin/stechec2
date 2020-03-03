@@ -118,6 +118,12 @@ function:
     fct_arg:
       - [l, int array, the list]
   -
+    fct_name: returns_not
+    fct_summary: Apply NOT on a list of booleans
+    fct_ret_type: bool array
+    fct_arg:
+      - [l, bool array, input list]
+  -
     fct_name: send_me_simple
     fct_summary: Send me a simple struct
     fct_ret_type: void

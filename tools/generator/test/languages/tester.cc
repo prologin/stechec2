@@ -87,6 +87,13 @@ std::vector<int> api_returns_sorted(std::vector<int> l)
     return l;
 }
 
+std::vector<bool> api_returns_not(std::vector<bool> l)
+{
+    for (unsigned i = 0; i < l.size(); ++i)
+        l[i] = !l[i];
+    return l;
+}
+
 void api_send_me_simple(simple_struct s)
 {
     assert(s.field_i == 42);
