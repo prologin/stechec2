@@ -13,6 +13,10 @@ use api::*;
 {{ func.fct_summary|rust_comment(doc=True) }}
 pub {{ func|rust_prototype }}
 {
+    {% if func is returning %}
     todo!()
+    {% else %}
+    // TODO
+    {% endif %}
 }
 {% endfor %}

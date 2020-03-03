@@ -22,13 +22,13 @@ pub fn test() {
     assert!((returns_tau() - 6.2831).abs() < 0.001);
 
     let r = returns_range(1, 100);
-    assert!(r == (1..100).collect::<Vec<c_int>>());
+    assert!(r == (1..100).collect::<Vec<_>>());
 
     let r = returns_range(1, 10000);
-    assert!(r == (1..10000).collect::<Vec<c_int>>());
+    assert!(r == (1..10000).collect::<Vec<_>>());
 
-    let v = returns_sorted(&vec![1, 3, 2, 4, 5, 7, 6]);
-    assert!(v == (1..8).collect::<Vec<c_int>>());
+    let v = returns_sorted(&[1, 3, 2, 4, 5, 7, 6]);
+    assert!(v == (1..8).collect::<Vec<_>>());
 
     let ba = returns_not(&vec![true, false, false, true, false, false, true, false, false]);
     assert!(ba == vec![false, true, true, false, true, true, false, true, true]);
@@ -65,6 +65,6 @@ pub fn test() {
         42
     ];
 
-    let lr = send_me_struct_array(&l[..]);
+    let lr = send_me_struct_array(&l);
     assert!(l == lr);
 }
