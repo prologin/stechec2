@@ -4,12 +4,10 @@ import os
 
 
 def generator_player_install(bld, game):
-    project_root = os.path.dirname(str(bld.bldnode))
-
-    bld.env.env = dict(os.environ)
-    bld.env.env['PYTHONPATH'] = os.path.join(project_root, 'tools')
+    bld.env.TOOLSDIR = os.path.join(bld.top_dir, 'tools')
     bld(
-        rule='python3 -m generator player ${SRC} ${TGT}',
+        rule=('PYTHONPATH=${TOOLSDIR} '
+              'python3 -m generator player ${SRC} ${TGT}'),
         source='{}.yml'.format(game),
         target='player',
         always=True,
