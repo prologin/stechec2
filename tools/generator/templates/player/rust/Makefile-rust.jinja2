@@ -12,10 +12,10 @@ LDFLAGS = -lm -lrt -ldl -lpthread -lstdc++
 {% endblock %}
 
 {% block extra_rules %}
-objs += $(CHAMPION_TARGET).o
+objs += champion.a
 
-$(CHAMPION_TARGET).o:
-	rustc --crate-type=staticlib $(RUSTC_FLAGS) --emit link,dep-info=.$(CHAMPION_TARGET).o.d $(CHAMPION_TARGET).rs -o $@
+$(CHAMPION_TARGET).a:
+	rustc --crate-type=staticlib $(RUSTC_FLAGS) --emit link,dep-info=.champion.a.d champion.rs -o $@
 
 deps = $(objs:.o=.d)
 to_clean += $(deps)

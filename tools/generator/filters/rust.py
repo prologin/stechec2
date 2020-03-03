@@ -63,7 +63,7 @@ def rust_prototype(ctx, func, ffi=False) -> str:
 @contextfilter
 def rust_ffi_type(ctx, value: str) -> str:
     """Type sent to the FFI"""
-    generics = {
+    basic_types = {
         'bool': 'c_bool',
         'double': 'c_double',
         'int': 'c_int',
@@ -73,8 +73,8 @@ def rust_ffi_type(ctx, value: str) -> str:
 
     if is_array(value):
         return 'Array<{}>'.format(rust_ffi_type(ctx, get_array_inner(value)))
-    elif value in generics:
-        return generics[value]
+    elif value in basic_types:
+        return basic_types[value]
     else:
         return camel_case(value)
 
@@ -82,19 +82,18 @@ def rust_ffi_type(ctx, value: str) -> str:
 @register_filter
 @contextfilter
 def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
-    generics = {
+    basic_types = {
         'bool': 'bool',
         'double': 'f64',
         'int': 'i32',
+        'string': 'String',
         'void': '()',
     }
 
-    if value == 'string':
-        return 'String'
-    elif is_array(value):
+    if is_array(value):
         return 'Vec<{}>'.format(rust_api_output_type(ctx, get_array_inner(value)))
-    elif value in generics:
-        return generics[value]
+    elif value in basic_types:
+        return basic_types[value]
     elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
         return '({})'.format(
             ', '.join(

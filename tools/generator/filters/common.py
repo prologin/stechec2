@@ -20,11 +20,7 @@ def is_returning(func) -> bool:
 @register_function
 @contextfunction
 def is_enum(ctx, type) -> bool:
-    return is_enum_in(type, ctx['game'])
-
-
-def is_enum_in(type, game) -> bool:
-    return any(type == s['enum_name'] for s in game['enum'])
+    return ctx['game'].get_enum(type) is not None
 
 
 @register_test
@@ -32,7 +28,7 @@ def is_array(type) -> bool:
     return type.endswith(' array')
 
 
-@register_test
+@register_filter
 def get_array_inner(type) -> bool:
     return type[:-len(' array')]
 
@@ -40,11 +36,7 @@ def get_array_inner(type) -> bool:
 @register_function
 @contextfunction
 def is_struct(ctx, type) -> bool:
-    return is_struct_in(type, ctx['game'])
-
-
-def is_struct_in(type, game) -> bool:
-    return any(type == s['str_name'] for s in game['struct'])
+    return ctx['game'].get_struct(type) is not None
 
 
 @register_test
