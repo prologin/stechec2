@@ -37,6 +37,11 @@ public class Prologin extends Interface
     for (int i = 0; i < 7; ++i)
       assert(v[i] == i + 1);
 
+    boolean[] ba = {true, false, false, true, false, false, true, false, false};
+    ba = returns_not(ba);
+    for (int i = 0; i < 9; ++i)
+      assert(ba[i] == (i % 3 != 0));
+
     StructWithArray s = new StructWithArray();
     s.field_int = 42;
     s.field_int_arr = new int[42];

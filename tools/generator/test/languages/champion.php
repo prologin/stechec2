@@ -25,6 +25,8 @@ function test()
     assert(returns_range(1, 10000) === range(1, 9999));
     assert(returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7));
     assert(returns_sorted(range(1, 1000)) === range(1, 1000));
+    assert(returns_not(array(true, false, false, true, false, false, true, false, false)) ===
+        array(false, true, true, false, true, true, false, true, true));
 
     send_me_test_enum(VAL1, VAL2);
 

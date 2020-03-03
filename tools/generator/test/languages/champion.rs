@@ -34,6 +34,9 @@ fn test()
     let v = returns_sorted(&vec![1, 3, 2, 4, 5, 7, 6]);
     assert!(v == (1..8).collect::<Vec<c_int>>());
 
+    let ba = returns_not(&vec![true, false, false, true, false, false, true, false, false]);
+    assert!(ba == vec![false, true, true, false, true, true, false, true, true]);
+
     let s = StructWithArray {
         field_int: 42,
         field_int_arr: vec![42; 42],

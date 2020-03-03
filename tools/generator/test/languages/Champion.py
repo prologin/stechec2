@@ -26,6 +26,7 @@ def test():
     assert returns_range(1, 10000) == list(range(1, 10000))
     assert returns_sorted([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
     assert returns_sorted(list(range(10000))) == list(range(10000))
+    assert returns_not([i % 3 == 0 for i in range(9)]) == [i % 3 != 0 for i in range(9)]
     send_me_42s(struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
