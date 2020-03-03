@@ -12,7 +12,7 @@
 
 mod ffi;
 
-use crate::api::ffi::{ToAPI, ToFFI};
+use crate::api::ffi::{CToRust, RustToC};
 
 #[allow(unused_imports)]
 use std::cell::UnsafeCell;
@@ -56,12 +56,12 @@ pub {{ func|rust_prototype }} {
     unsafe {
         {% for arg, type, _ in func.fct_arg %}
         {% if type|rust_is_copy %}
-        let {{ arg }} = {{ arg }}.to_ffi();
+        let {{ arg }} = {{ arg }}.to_c();
         {% else %}
-        let {{ arg }} = UnsafeCell::new({{ arg }}.to_ffi());
+        let {{ arg }} = UnsafeCell::new({{ arg }}.to_c());
         {% endif %}
         {% endfor %}
-        ffi::{{ func|rust_ffi_call }}.to_api()
+        ffi::{{ func|rust_ffi_call }}.to_rust()
     }
 }
 {% endfor %}

@@ -73,34 +73,34 @@ pub struct {{ struct.str_name|camel_case }} {
 
 // Conversion traits
 
-pub trait ToAPI<T> {
+pub trait CToRust<T> {
     /// Convert from a C-compatible type.
     ///
     /// As there can't be a clear ownership through the ffi, you need to make
     /// sure that foreign code assumes that you will drop provided values.
-    unsafe fn to_api(self) -> T;
+    unsafe fn to_rust(self) -> T;
 }
 
-pub trait ToFFI<T> {
+pub trait RustToC<T> {
     /// Convert to a C-compatible type.
     ///
     /// As there can't be a clear ownership through the ffi, you need to make
     /// sure that foreign code assumes that you will drop provided values.
-    unsafe fn to_ffi(&self) -> T;
+    unsafe fn to_c(&self) -> T;
 }
 
 {% for type in ['bool', 'double', 'int', 'void'] %}
 {% with ffi_type=type|rust_ffi_type, api_type=type|rust_api_output_type %}
 // Conversions for {{ type }}
 
-impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
-    unsafe fn to_api(self) -> {{ api_type }} {
+impl CToRust<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_rust(self) -> {{ api_type }} {
         self
     }
 }
 
-impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
-    unsafe fn to_ffi(&self) -> {{ ffi_type }} {
+impl RustToC<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_c(&self) -> {{ ffi_type }} {
         *self
     }
 }
@@ -110,8 +110,8 @@ impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
 
 // Conversions for string
 
-impl ToAPI<String> for RawString {
-    unsafe fn to_api(self) -> String {
+impl CToRust<String> for RawString {
+    unsafe fn to_rust(self) -> String {
         {# NOTE: maybe we prefer never panicking by using the behaviour of
          #       String::from_utf8_lossy?
          #}
@@ -122,11 +122,11 @@ impl ToAPI<String> for RawString {
     }
 }
 
-impl<S> ToFFI<RawString> for S
+impl<S> RustToC<RawString> for S
 where
     S: AsRef<str>,
 {
-    unsafe fn to_ffi(&self) -> RawString {
+    unsafe fn to_c(&self) -> RawString {
         let c_string = CString::new(self.as_ref().to_string())
             .expect("string provided to the API contains a null character");
         let len = c_string.as_bytes().len();
@@ -139,39 +139,39 @@ where
 
 // Conversions for array
 
-impl<T, U> ToAPI<Vec<U>> for Array<T>
+impl<T, U> CToRust<Vec<U>> for Array<T>
 where
-    T: ToAPI<U>,
+    T: CToRust<U>,
 {
-    unsafe fn to_api(self) -> Vec<U> {
+    unsafe fn to_rust(self) -> Vec<U> {
         (0..self.len)
             .map(|i| self.ptr.add(i).read())
-            .map(|item| item.to_api())
+            .map(|item| item.to_rust())
             .collect()
     }
 }
 
-impl<T, U> ToFFI<Array<U>> for [T]
+impl<T, U> RustToC<Array<U>> for [T]
 where
-    T: ToFFI<U>,
+    T: RustToC<U>,
 {
-    unsafe fn to_ffi(&self) -> Array<U> {
+    unsafe fn to_c(&self) -> Array<U> {
         let ptr = malloc(self.len() * size_of::<U>()) as *mut U;
 
         for (i, item) in self.iter().enumerate() {
-            ptr::write(ptr.add(i), item.to_ffi());
+            ptr::write(ptr.add(i), item.to_c());
         }
 
         Array { ptr, len: self.len() }
     }
 }
 
-impl<T, U> ToFFI<Array<U>> for Vec<T>
+impl<T, U> RustToC<Array<U>> for Vec<T>
 where
-    T: ToFFI<U>,
+    T: RustToC<U>,
 {
-    unsafe fn to_ffi(&self) -> Array<U> {
-        self[..].to_ffi()
+    unsafe fn to_c(&self) -> Array<U> {
+        self[..].to_c()
     }
 }
 
@@ -179,8 +179,8 @@ where
 {% with name=enum.enum_name|camel_case %}
 // Conversions for {{ enum.enum_name }}
 
-impl ToAPI<api::{{ name }}> for {{ name }} {
-    unsafe fn to_api(self) -> api::{{ name }} {
+impl CToRust<api::{{ name }}> for {{ name }} {
+    unsafe fn to_rust(self) -> api::{{ name }} {
         match self {
             {% for field_name, _ in enum.enum_field %}
             {{ name }}::{{ field_name|camel_case }} => api::{{ name }}::{{ field_name|camel_case }},
@@ -189,8 +189,8 @@ impl ToAPI<api::{{ name }}> for {{ name }} {
     }
 }
 
-impl ToFFI<{{ name }}> for api::{{ name }} {
-    unsafe fn to_ffi(&self) -> {{ name }} {
+impl RustToC<{{ name }}> for api::{{ name }} {
+    unsafe fn to_c(&self) -> {{ name }} {
         match self {
             {% for field_name, _ in enum.enum_field %}
             api::{{ name }}::{{ field_name|camel_case }} => {{ name }}::{{ field_name|camel_case }},
@@ -207,15 +207,15 @@ impl ToFFI<{{ name }}> for api::{{ name }} {
 // Conversions for {{ struct.str_name }}
 
 {% with api_type=struct.str_name|rust_api_output_type(api_mod_path='api::') %}
-impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
-    unsafe fn to_api(self) -> {{ api_type }} {
+impl CToRust<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_rust(self) -> {{ api_type }} {
         {% if struct is tuple %}
         {% set separator = joiner(', ') %}
-        ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_api(){% endfor %})
+        ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_rust(){% endfor %})
         {% else %}
         {{ api_type }} {
             {% for field_name, _, _ in struct.str_field %}
-            {{ field_name }}: self.{{ field_name }}.to_api(),
+            {{ field_name }}: self.{{ field_name }}.to_rust(),
             {% endfor %}
         }
         {% endif %}
@@ -224,20 +224,20 @@ impl ToAPI<{{ api_type }}> for {{ ffi_type }} {
 {% endwith %}
 
 {% with api_type=struct.str_name|rust_api_input_type(api_mod_path='api::', skip_ref=True) %}
-impl ToFFI<{{ ffi_type }}> for {{ api_type }} {
-    unsafe fn to_ffi(&self) -> {{ ffi_type }} {
+impl RustToC<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_c(&self) -> {{ ffi_type }} {
         {% if struct is tuple %}
         let ({{ struct.str_field|map('first')|join(', ') }}) = self;
 
         {{ ffi_type }} {
             {% for field_name, field_type, _ in struct.str_field %}
-            {{ field_name }}: {{ field_name }}.to_ffi(),
+            {{ field_name }}: {{ field_name }}.to_c(),
             {% endfor %}
         }
         {% else %}
         {{ ffi_type }} {
             {% for field_name, field_type, _ in struct.str_field %}
-            {{ field_name }}: self.{{ field_name }}.to_ffi(),
+            {{ field_name }}: self.{{ field_name }}.to_c(),
             {% endfor %}
         }
         {% endif %}
@@ -265,9 +265,9 @@ extern {
 #[no_mangle]
 unsafe extern "C" {{ func|rust_prototype(ffi=True) }} {
     {% for arg, type, _ in func.fct_arg %}
-    let {{ arg }} = {{ arg }}.to_api();
+    let {{ arg }} = {{ arg }}.to_rust();
     {% endfor %}
     {% set separator = joiner(', ') %}
-    crate::{{ func.fct_name }}({{ separator() }}{% for field, _, _ in func.fct_arg %}{{ field }}{% endfor %}).to_ffi()
+    crate::{{ func.fct_name }}({{ separator() }}{% for field, _, _ in func.fct_arg %}{{ field }}{% endfor %}).to_c()
 }
 {% endfor %}
