@@ -48,6 +48,8 @@ let test () =  (* Pose ton code ici *)
     flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
   end
 
+let double_me = List.map (fun x -> 2 * x)
+
 (* /!\ Ne touche pas a ce qui suit /!\ *)
 let _ =
   Callback.register "ml_test" test

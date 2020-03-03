@@ -41,3 +41,7 @@ def test():
         field_int=42,
         field_int_arr=[42] * 42,
         field_str_arr=[simple_struct(42, True, 42.42)] * 42)] * 42
+
+
+def double_me(values):
+    return [x * 2 for x in values]

@@ -12,6 +12,7 @@ extern "C" {
 
 void test();
 void test_alert();
+std::vector<int> double_me(std::vector<int> values);
 
 void api_send_me_42(int n)
 {
@@ -204,6 +205,24 @@ int main(int argc, char *argv[])
         }
         count = std::strtol(argv[1], nullptr, 0);
     }
+
     for (int i = 0; i < count; ++i)
         test();
+
+    // Double empty array
+    {
+        std::vector<int> res = double_me(std::vector<int>());
+        assert(res.empty());
+    }
+
+    // Double filled array
+    {
+        std::vector<int> input = {0, 1, 2, 3, 4};
+        std::vector<int> res = double_me(input);
+
+        assert(res.size() == 5);
+
+        for (int i = 0 ; i < 5 ; i++)
+            assert(res[i] == 2 * i);
+    }
 }

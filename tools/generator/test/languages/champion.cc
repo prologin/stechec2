@@ -102,3 +102,11 @@ void test()
     assert(s < s2);
     assert(std::hash<struct_with_array>()(s2) != 42);
 }
+
+
+std::vector<int> double_me(std::vector<int> values) {
+    for (int& val: values)
+        val *= 2;
+
+    return values;
+}

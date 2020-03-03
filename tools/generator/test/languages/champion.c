@@ -105,3 +105,11 @@ void test()
     free(ll.items);
 }
 
+
+int_array double_me(int_array values)
+{
+    for (int i = 0 ; i < values.length ; i++)
+        values.items[i] *= 2;
+
+    return values;
+}

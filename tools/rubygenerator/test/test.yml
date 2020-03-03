@@ -136,3 +136,9 @@ user_function:
     fct_summary: Called 10K times to test if things work well.
     fct_ret_type: void
     fct_arg: []
+  -
+    fct_name: double_me
+    fct_summary: Double values inside input array.
+    fct_ret_type: int array
+    fct_arg:
+      - [values, int array, "Input array"]

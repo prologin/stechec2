@@ -49,3 +49,9 @@ function test()
 
     assert($l1 == $l2);
 }
+
+function double($x) { return $x * 2; }
+
+function double_me($values) {
+    return array_map(double, $values);
+}
