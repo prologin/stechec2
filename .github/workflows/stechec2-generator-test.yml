@@ -27,13 +27,12 @@ jobs:
             php-dev libphp-embed ocaml mono-devel ghc \
             libargon2-0-dev libsodium-dev
 
-      - name: Lint with flake8
-        working-directory: ./tools/generator
-        run: |
-          flake8 . --count --show-source --statistics --exclude test/languages
-        continue-on-error: true
-
       - name: Test
         working-directory: ./tools
         run: |
           python3 -m generator.test
+
+      - name: Lint with flake8
+        working-directory: ./tools/generator
+        run: |
+          flake8 . --count --show-source --statistics --exclude test/languages
