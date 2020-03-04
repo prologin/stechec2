@@ -167,3 +167,45 @@ class TestYamlErrors(unittest.TestCase):
                     ]
                 }],
             }))
+
+    def test_error_name_reserved_keyword(self):
+        expected = ("Game name 'bool': name conflicts with a keyword of a "
+                    "target language.")
+        with self.assertRaisesRegex(GameError, expected):
+            Game(test_game_config({
+                'name': 'bool'
+            }))
+
+    def test_error_function_reserved_keyword(self):
+        expected = ("Function 'static': name conflicts with a keyword of a "
+                    "target language.")
+        with self.assertRaisesRegex(GameError, expected):
+            Game(test_game_config({
+                'function': [{
+                    'fct_name': 'static',
+                    'fct_summary': 'static is a keyword',
+                    'fct_ret_type': 'int',
+                    'fct_arg': [],
+                }]
+            }))
+
+    def test_error_function_arg_reserved_keyword(self):
+        expected = ("Function add_stuff: argument 'type': name conflicts with "
+                    "a keyword of a target language.")
+        with self.assertRaisesRegex(GameError, expected):
+            Game(test_game_config({
+                'enum': [{
+                    'enum_name': 'error',
+                    'enum_summary': 'error',
+                    'enum_field': [
+                        ['ok', 'OK']
+                    ]
+                }],
+                'function': [{
+                    'fct_name': 'add_stuff',
+                    'fct_summary': 'add a thing',
+                    'fct_ret_type': 'error',
+                    'fct_action': 'yes',
+                    'fct_arg': [['type', 'int', 'Type of stuff to add']],
+                }]
+            }))

@@ -7,6 +7,7 @@
 import re
 import typing
 import yaml
+from keyword import iskeyword
 
 
 def load_game(game_file):
@@ -113,6 +114,7 @@ class Game:
         for f in (self.game['function'] + self.game['user_function']):
             self.check_func(f)
         self.check_field_unicity()
+        self.check_reserved_keywords()
 
     def check_struct(self, struct):
         field_names = set()
@@ -170,6 +172,35 @@ class Game:
                         "This will confuse some type inferrers."
                         .format(origin_type, origin, name, def_type, def_name))
                 used_field_names[name] = (origin_type, origin)
+
+    def check_reserved_keywords(self) -> None:
+        '''Check that no identifier is in conflict with a reserved keyword'''
+
+        def throw_if_conflicts(name: str, what: str) -> bool:
+            if name in RESERVED_LANGUAGE_KEYWORDS or name.capitalize(
+            ) in RESERVED_LANGUAGE_KEYWORDS or iskeyword(name):
+                raise GameError(
+                    "{} '{}': name conflicts with a keyword of a target "
+                    "language."
+                    .format(what, name))
+        throw_if_conflicts(self.game['name'], "Game name")
+        for constant in self.game['constant']:
+            throw_if_conflicts(constant['cst_name'], "Constant")
+        for enum in self.game['enum']:
+            throw_if_conflicts(enum['enum_name'], "Enum")
+            for field_name, _ in enum['enum_field']:
+                throw_if_conflicts(field_name,
+                                   "Enum {}: field".format(enum['enum_name']))
+        for struct in self.game['struct']:
+            throw_if_conflicts(struct['str_name'], "Struct")
+            for field_name, _, _ in struct['str_field']:
+                throw_if_conflicts(
+                    field_name, "Struct {}: field".format(struct['str_name']))
+        for func in (self.game['function'] + self.game['user_function']):
+            throw_if_conflicts(func['fct_name'], "Function")
+            for arg_name, _, _ in func['fct_arg']:
+                throw_if_conflicts(
+                    arg_name, "Function {}: argument".format(func['fct_name']))
 
     def get_enum(self, enum_name):
         '''Get an enum by name, None if it does not exist'''
@@ -349,3 +380,42 @@ GAME_SCHEMA = {
         }
     ],
 }
+
+# Obtained with sorted(set(iorgen.parser_c.KEYWORDS +
+# iorgen.parser_cpp.KEYWORDS + iorgen.parser_csharp.KEYWORDS +
+# iorgen.parser_haskell.KEYWORDS + iorgen.parser_java.KEYWORDS +
+# iorgen.parser_php.KEYWORDS + iorgen.parser_rust.KEYWORDS))
+# Note that python keywords are not present, use keyword.iskeyword
+RESERVED_LANGUAGE_KEYWORDS = [
+    'Self', 'abstract', 'alignas', 'alignof', 'and', 'and_eq', 'array', 'as',
+    'asm', 'assert', 'atomic_cancel', 'atomic_commit', 'atomic_noexcept',
+    'auto', 'base', 'become', 'bitand', 'bitor', 'bool', 'boolean', 'box',
+    'break', 'byte', 'callable', 'case', 'catch', 'char', 'char16_t',
+    'char32_t', 'checked', 'class', 'clone', 'co_await', 'co_return',
+    'co_yield', 'compl', 'concept', 'const', 'const_cast', 'constexpr',
+    'continue', 'crate', 'data', 'decimal', 'declare', 'decltype', 'default',
+    'delegate', 'delete', 'deriving', 'die', 'do', 'double', 'dynamic_cast',
+    'echo', 'else', 'elseif', 'empty', 'enddeclare', 'endfor', 'endforeach',
+    'endif', 'endswitch', 'endwhile', 'enum', 'eval', 'event', 'exit',
+    'explicit', 'export', 'extends', 'extern', 'extern(', 'false', 'final',
+    'finally', 'fixed', 'float', 'fn', 'for', 'forall', 'foreach', 'foreign',
+    'friend', 'function', 'global', 'goto', 'hiding', 'if', 'impl',
+    'implements', 'implicit', 'import', 'in', 'include', 'include_once',
+    'infix', 'infixl', 'infixr', 'inline', 'instance', 'instanceof',
+    'insteadof', 'int', 'interface', 'internal', 'is', 'isset', 'let', 'list',
+    'lock', 'long', 'loop', 'macro', 'match', 'mdo', 'mod', 'module', 'move',
+    'mut', 'mutable', 'namespace', 'native', 'new', 'newtype', 'noexcept',
+    'not', 'not_eq', 'null', 'nullptr', 'object', 'of', 'offsetof', 'operator',
+    'or', 'or_eq', 'out', 'override', 'package', 'params', 'print', 'priv',
+    'private', 'proc', 'protected', 'pub', 'public', 'pure', 'qualified',
+    'readonly', 'rec', 'ref', 'reflexpr', 'register', 'reinterpret_cast',
+    'require', 'require_once', 'requires', 'return', 'sbyte', 'sealed', 'self',
+    'short', 'signed', 'sizeof', 'stackalloc', 'static', 'static_assert',
+    'static_cast', 'strictfp', 'string', 'struct', 'super', 'switch',
+    'synchronized', 'template', 'then', 'this', 'thread_local', 'throw',
+    'throws', 'trait', 'transient', 'true', 'try', 'type', 'typedef', 'typeid',
+    'typename', 'typeof', 'uint', 'ulong', 'unchecked', 'union', 'unsafe',
+    'unset', 'unsigned', 'unsized', 'use', 'ushort', 'using', 'using static',
+    'var', 'virtual', 'void', 'volatile', 'wchar_t', 'where', 'while', 'xor',
+    'xor_eq', 'yield'
+]
