@@ -95,5 +95,9 @@ public class Champion extends Api
                 assert(l[i].field_str_arr[j].field_double == 42.42);
             }
         }
+
+        // Specific Java test
+        StructWithStruct sws = new StructWithStruct();
+        assert(sws.field_struct != null);
     }
 }
