@@ -58,9 +58,8 @@ The type system
 Stechec2 uses its generators to implements some basic types in every supported
 languages. When a field requires a type in the yaml, you can use the built-in
 types (``int``, ``bool``  and ``string``), the structs you defined, the enums
-you defined and ``_ array`` (where _ is a type itself). You can even use arrays
-of arrays (``int array array array``, for instance, will create a 3D matrix of
-ints).
+you defined and ``_ array`` (where _ is a type itself). You can't use nested
+arrays (for instance, ``int array array array`` is illegal).
 
 The user functions
 ------------------
