@@ -1,7 +1,6 @@
 pub mod api;
+mod ffi;
 use api::*;
-
-use std::os::raw::{c_double, c_int, c_void};
 
 pub fn test_alert() {
     assert!(false);

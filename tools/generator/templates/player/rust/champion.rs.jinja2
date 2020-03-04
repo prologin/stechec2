@@ -5,7 +5,9 @@
 #[doc(inline)]
 pub use std;
 
+mod ffi;
 pub mod api;
+
 use api::*;
 
 {% for func in game.user_function %}

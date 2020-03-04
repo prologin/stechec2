@@ -10,9 +10,8 @@
 
 //! Rust API for {{ game.name }}
 
-mod ffi;
-
-use crate::api::ffi::{CToRust, RustToC};
+use crate::ffi;
+use crate::ffi::{CToRust, RustToC};
 
 #[allow(unused_imports)]
 use std::cell::UnsafeCell;
