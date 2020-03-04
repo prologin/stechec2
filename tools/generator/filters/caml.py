@@ -1,7 +1,7 @@
 import textwrap
 
 from . import register_filter
-from .common import is_array
+from .common import get_array_inner, is_array
 
 
 @register_filter
@@ -73,7 +73,7 @@ def cxx_to_caml(caml_type: str) -> str:
 @register_filter
 def caml_to_cxx(value: str) -> str:
     if is_array(value):
-        return 'caml_to_cxx_array<{}>'.format(value[:-len(' array')])
+        return 'caml_to_cxx_array<{}>'.format(get_array_inner(value))
     else:
         return 'caml_to_cxx<value, {}>'.format(value)
 

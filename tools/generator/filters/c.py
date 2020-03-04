@@ -10,8 +10,8 @@ from .cxx import cxx_comment, cxx_type
 def c_type(value: str) -> str:
     if value == "string":
         return "char*"
-    if value.endswith(" array"):
-        return "{}_array".format(c_type(value[:-len(' array')]))
+    if is_array(value):
+        return "{}_array".format(c_type(get_array_inner(value)))
     return value
 
 
