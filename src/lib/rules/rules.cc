@@ -3,8 +3,12 @@
 #include "rules.hh"
 
 #include <algorithm>
+#include <chrono>
+#include <fstream>
 #include <set>
 #include <unordered_set>
+
+DEFINE_string(stats, "", "YAML stats about the match output path.");
 
 namespace rules
 {
@@ -33,6 +37,39 @@ bool Rules::is_spectator(uint32_t id)
             return true;
 
     return false;
+}
+
+void Rules::write_stats() const
+{
+    if (FLAGS_stats.empty())
+        return;
+
+    std::ofstream ofs(FLAGS_stats);
+    if (!ofs.is_open())
+        FATAL("Cannot open stats file for writing %s: %s", FLAGS_stats.c_str(),
+              strerror(errno));
+
+    // Write generic stats
+    ofs << "- metrics:\n";
+    for (const auto& item : metrics_)
+        ofs << "  - " << item.first << ": " << item.second << '\n';
+
+    // Write stats about players
+    for (const auto& player : players_)
+    {
+        ofs << "- player:\n"
+            << "  - id: " << player->id << '\n'
+            << "  - name: " << player->name << '\n';
+
+        // Turn durations will be empty for the opponent players in player
+        // loops.
+        if (!player->turn_duration_ms.empty())
+        {
+            ofs << "  - turn_duration_ms:" << '\n';
+            for (const auto duration : player->turn_duration_ms)
+                ofs << "    - " << duration << '\n';
+        }
+    }
 }
 
 /*-----------------.
@@ -73,6 +110,8 @@ void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_player_end(msgr);
+
+    write_stats();
 }
 
 void SynchronousRules::replay_loop(ReplayMessenger_sptr msgr)
@@ -93,6 +132,8 @@ void SynchronousRules::replay_loop(ReplayMessenger_sptr msgr)
     }
 
     at_end();
+
+    write_stats();
 }
 
 void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -127,6 +168,8 @@ void SynchronousRules::spectator_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_spectator_end(msgr);
+
+    write_stats();
 }
 
 void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
@@ -151,6 +194,8 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 
     while (!is_finished())
     {
+        auto round_start = std::chrono::high_resolution_clock::now();
+
         auto spectators_count = spectators_.size();
         start_of_round();
 
@@ -203,6 +248,7 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
             spectators_count--;
         }
 
+        metrics_["actions_total"] += actions->size();
         save_player_actions(actions);
 
         for (const auto& action : actions->all())
@@ -212,10 +258,21 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         end_of_round();
 
         dump_state_stream();
+
+        // Record round duration
+        auto round_end = std::chrono::high_resolution_clock::now();
+        double millis =
+            std::chrono::duration<double, std::milli>(round_end - round_start)
+                .count();
+        // For simplicity, the player turn duration == round duration.
+        for (const auto& player : players_)
+            player->turn_duration_ms.push_back(millis);
     }
 
     at_end();
     at_server_end(msgr);
+
+    write_stats();
 }
 
 /*---------------.
@@ -273,6 +330,8 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
         else /* Current player turn */
         {
             DEBUG("Turn for player %d (me!!!)", playing_id);
+            auto turn_start = std::chrono::high_resolution_clock::now();
+
             start_of_player_turn(playing_id);
             start_of_turn(playing_id);
 
@@ -287,6 +346,13 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
             msgr->pull_actions(actions);
             DEBUG("Got %u actions", actions->size());
             actions->clear();
+
+            // Record turn duration
+            auto turn_end = std::chrono::high_resolution_clock::now();
+            double millis =
+                std::chrono::duration<double, std::milli>(turn_end - turn_start)
+                    .count();
+            players_[playing_id]->turn_duration_ms.push_back(millis);
         }
         end_of_player_turn(playing_id);
         end_of_turn(playing_id);
@@ -305,6 +371,8 @@ void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_player_end(msgr);
+
+    write_stats();
 }
 
 void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
@@ -352,6 +420,8 @@ void TurnBasedRules::replay_loop(ReplayMessenger_sptr msgr)
     }
 
     at_end();
+
+    write_stats();
 }
 
 void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
@@ -452,6 +522,8 @@ void TurnBasedRules::spectator_loop(ClientMessenger_sptr msgr)
 
     at_end();
     at_spectator_end(msgr);
+
+    write_stats();
 }
 
 void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
@@ -470,6 +542,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
     {
         for (const auto& player : players_)
         {
+            auto turn_start = std::chrono::high_resolution_clock::now();
+
             start_of_player_turn(player->id);
             start_of_turn(player->id);
 
@@ -499,6 +573,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                 }
             }
 
+            metrics_["actions_total"] += actions->size();
             save_player_actions(actions);
             msgr->push_actions(*actions);
 
@@ -506,6 +581,13 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
             end_of_turn(player->id);
 
             dump_state_stream();
+
+            // Record turn duration
+            auto turn_end = std::chrono::high_resolution_clock::now();
+            double millis =
+                std::chrono::duration<double, std::milli>(turn_end - turn_start)
+                    .count();
+            player->turn_duration_ms.push_back(millis);
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
@@ -540,6 +622,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
     at_end();
     at_server_end(msgr);
+
+    write_stats();
 }
 
 } // namespace rules
