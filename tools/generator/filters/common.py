@@ -1,9 +1,7 @@
 import textwrap
 from functools import partial
-from jinja2 import contextfilter, contextfunction
-from typing import Optional
 
-from . import register_filter, register_test, register_function
+from . import register_filter, register_test
 
 
 @register_filter

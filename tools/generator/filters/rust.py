@@ -1,11 +1,8 @@
-import string
-from functools import partial
 from jinja2 import contextfilter
 
 from . import register_filter
 from .common import (
-    camel_case, generic_args, generic_comment, get_array_inner, is_array,
-    is_returning, is_tuple,
+    camel_case, get_array_inner, is_array, is_returning, is_tuple,
 )
 from .cxx import cxx_comment
 
@@ -37,14 +34,14 @@ def rust_ffi_call(ctx, func) -> str:
 @register_filter
 @contextfilter
 def rust_prototype(ctx, func, ffi=False) -> str:
-    # Input params
+    # Input params
     get_type = rust_ffi_type if ffi else rust_api_input_type
     args = [
         '{}: {}'.format(arg_name, get_type(ctx, arg_type))
         for arg_name, arg_type, _ in func['fct_arg']
     ]
 
-    # Output
+    # Output
     get_type = rust_ffi_type if ffi else rust_api_output_type
 
     if is_returning(func):
@@ -93,7 +90,9 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
     as_struct = ctx['game'].get_struct(value)
 
     if is_array(value):
-        return 'Vec<{}>'.format(rust_api_output_type(ctx, get_array_inner(value)))
+        return 'Vec<{}>'.format(
+            rust_api_output_type(ctx, get_array_inner(value))
+        )
     elif value in basic_types:
         return basic_types[value]
     elif as_struct and is_tuple(as_struct):
@@ -108,7 +107,9 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
 
 @register_filter
 @contextfilter
-def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str:
+def rust_api_input_type(
+    ctx, value: str, api_mod_path='', skip_ref=False
+) -> str:
     as_struct = ctx['game'].get_struct(value)
 
     if value == 'string':
@@ -142,7 +143,10 @@ def rust_is_copy(ctx, value: str) -> bool:
             for _, field_type, _ in ctx['game'].get_struct(value)['str_field']
         )
 
-    return ctx['game'].get_enum(value) is not None or value in ['bool', 'double', 'int', 'void']
+    return (
+        ctx['game'].get_enum(value) is not None
+        or value in ['bool', 'double', 'int', 'void']
+    )
 
 
 @register_filter

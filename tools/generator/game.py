@@ -187,10 +187,9 @@ class Game:
             None
         )
 
-
-
 # Adapted from camisole/schema.py
 # ------------->8----------------
+
 
 class GameSchemaError(GameError):
     def __init__(self, path, msg):
