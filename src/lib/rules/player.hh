@@ -11,15 +11,21 @@
 #include <utils/buffer.hh>
 #include <vector>
 
-namespace rules {
+namespace rules
+{
 
 // TODO: refactor rules::Player to rules::Client
 struct Player final
 {
     Player() = default;
     Player(uint32_t id_, uint32_t type_)
-        : id(id_), type(type_), score(0), nb_timeout(0), name("anonymous")
-    {}
+        : id(id_)
+        , type(type_)
+        , score(0)
+        , nb_timeout(0)
+        , name("anonymous")
+    {
+    }
 
     void handle_buffer(utils::Buffer& buf)
     {
@@ -43,7 +49,10 @@ class Players final : public utils::IBufferizable
 
 public:
     Players() = default;
-    explicit Players(PlayersVector players) : players_{std::move(players)} {}
+    explicit Players(PlayersVector players)
+        : players_{std::move(players)}
+    {
+    }
 
     void handle_buffer(utils::Buffer& buf) override
     {
@@ -83,7 +92,10 @@ public:
         return ss.str();
     }
 
-    void add(std::shared_ptr<Player> player) { players_.push_back(player); }
+    void add(std::shared_ptr<Player> player)
+    {
+        players_.push_back(player);
+    }
 
     // Sort players by identifiers
     void sort()
@@ -92,16 +104,37 @@ public:
                   [](const auto& a, const auto& b) { return a->id < b->id; });
     }
 
-    size_t size() const { return players_.size(); }
+    size_t size() const
+    {
+        return players_.size();
+    }
 
-    auto begin() const { return players_.begin(); }
-    auto end() const { return players_.end(); }
+    auto begin() const
+    {
+        return players_.begin();
+    }
+    auto end() const
+    {
+        return players_.end();
+    }
 
-    auto front() const { return players_.front(); }
-    auto back() const { return players_.back(); }
+    auto front() const
+    {
+        return players_.front();
+    }
+    auto back() const
+    {
+        return players_.back();
+    }
 
-    auto operator[](int i) { return players_[i]; }
-    auto operator[](int i) const { return players_[i]; }
+    auto operator[](int i)
+    {
+        return players_[i];
+    }
+    auto operator[](int i) const
+    {
+        return players_[i];
+    }
 
 private:
     PlayersVector players_;

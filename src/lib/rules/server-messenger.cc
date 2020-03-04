@@ -5,11 +5,14 @@
 #include <net/message.hh>
 #include <rules/actions.hh>
 
-namespace rules {
+namespace rules
+{
 
 ServerMessenger::ServerMessenger(net::ServerSocket* sckt)
-    : sckt_(sckt), last_client_id_(-1)
-{}
+    : sckt_(sckt)
+    , last_client_id_(-1)
+{
+}
 
 void ServerMessenger::send(const utils::Buffer& buf)
 {

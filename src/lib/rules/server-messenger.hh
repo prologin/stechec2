@@ -9,14 +9,18 @@
 #include <rules/messenger.hh>
 #include <utils/buffer.hh>
 
-namespace rules {
+namespace rules
+{
 
 class Actions;
 
 class ServerMessengerError : public std::runtime_error
 {
 public:
-    ServerMessengerError() : std::runtime_error("Server messenger error") {}
+    ServerMessengerError()
+        : std::runtime_error("Server messenger error")
+    {
+    }
 };
 
 class ServerMessenger : public Messenger
@@ -38,7 +42,10 @@ public:
     void ack();
     void wait_for_ack();
 
-    uint32_t last_client_id() { return last_client_id_; }
+    uint32_t last_client_id()
+    {
+        return last_client_id_;
+    }
 
 private:
     net::ServerSocket* sckt_; // Not owned.

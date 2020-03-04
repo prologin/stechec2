@@ -7,7 +7,8 @@
 #include <stdexcept>
 #include <string>
 
-namespace utils {
+namespace utils
+{
 
 class DLLError : public std::runtime_error
 {

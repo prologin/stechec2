@@ -18,7 +18,8 @@ typedef enum error
     OUT_OF_BOUDS, /* <- guess is out of bounds */
 } error;
 // This is needed for old compilers
-namespace std {
+namespace std
+{
 template <>
 struct hash<error>
 {
@@ -68,7 +69,8 @@ static inline void afficher_error(error v)
 // Les fonctions suivantes définissent les opérations de comparaison, d'égalité
 // et de hachage sur les structures du sujet.
 
-namespace std {
+namespace std
+{
 template <typename T>
 struct hash<std::vector<T>>
 {
@@ -82,15 +84,16 @@ struct hash<std::vector<T>>
 };
 } // namespace std
 
-extern "C" {
+extern "C"
+{
 
-/// Function called at the start of the game
-void init_game();
+    /// Function called at the start of the game
+    void init_game();
 
-/// Called when this is your turn to play
-void play_turn();
+    /// Called when this is your turn to play
+    void play_turn();
 
-/// Function called at the end of the game
-void end_game();
+    /// Function called at the end of the game
+    void end_game();
 }
 #endif

@@ -17,8 +17,8 @@
 //
 void test()
 {
-    assert(CONST_VAL/4 == 10);
-    assert(CONST_DOUBLE_2/2 == 668.5);
+    assert(CONST_VAL / 4 == 10);
+    assert(CONST_DOUBLE_2 / 2 == 668.5);
 
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
@@ -48,7 +48,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         s.field_int_arr.push_back(42);
-        simple_struct ss = { 42, true, 42.42 };
+        simple_struct ss = {42, true, 42.42};
         s.field_str_arr.push_back(ss);
     }
     send_me_42s(s);
@@ -62,7 +62,7 @@ void test()
         for (int j = 0; j < 42; ++j)
         {
             l[i].field_int_arr.push_back(42);
-            simple_struct ss = { 42, true, 42.42 };
+            simple_struct ss = {42, true, 42.42};
             l[i].field_str_arr.push_back(ss);
         }
     }
@@ -88,7 +88,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         s2.field_int_arr.push_back(42);
-        simple_struct ss = { 42, true, 42.42 };
+        simple_struct ss = {42, true, 42.42};
         s2.field_str_arr.push_back(ss);
     }
     assert(s == s2);

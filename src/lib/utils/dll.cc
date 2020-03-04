@@ -5,9 +5,13 @@
 
 #include <dlfcn.h>
 
-namespace utils {
+namespace utils
+{
 
-DLLError::DLLError() : std::runtime_error(dlerror()) {}
+DLLError::DLLError()
+    : std::runtime_error(dlerror())
+{
+}
 
 DLL::DLL(const std::string& filename)
     : filename_(filename)

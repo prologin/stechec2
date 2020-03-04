@@ -12,7 +12,8 @@
 
 DECLARE_int32(verbose);
 
-namespace utils {
+namespace utils
+{
 
 #define ANSI_COL_NONE "\033[0m"
 #define ANSI_COL_RED "\033[1;31m"
@@ -42,10 +43,19 @@ public:
         DEBUG_LEVEL = 5
     };
 
-    std::ostream& stream() { return std::cerr; }
+    std::ostream& stream()
+    {
+        return std::cerr;
+    }
 
-    DisplayLevel& level() { return level_; }
-    const DisplayLevel& level() const { return level_; }
+    DisplayLevel& level()
+    {
+        return level_;
+    }
+    const DisplayLevel& level() const
+    {
+        return level_;
+    }
 
     static Logger& get()
     {
@@ -70,7 +80,7 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
          const char* module_name, const char* module_color, const char* fmt,
          ...);
 
-#define LOG(lvl, args...) \
+#define LOG(lvl, args...)                                                      \
     utils::log(lvl, __FILE__, __LINE__, MODULE_NAME, MODULE_COLOR, ##args)
 #define ERR(args...) LOG(utils::Logger::ERROR_LEVEL, ##args)
 #define WARN(args...) LOG(utils::Logger::WARNING_LEVEL, ##args)
@@ -78,30 +88,30 @@ void log(Logger::DisplayLevel lvl, const char* file, int line,
 #define NOTICE(args...) LOG(utils::Logger::NOTICE_LEVEL, ##args)
 #define DEBUG(args...) LOG(utils::Logger::DEBUG_LEVEL, ##args)
 
-#define FATAL(args...) \
-    do \
-    { \
-        LOG(utils::Logger::FATAL_LEVEL, ##args); \
-        abort(); \
+#define FATAL(args...)                                                         \
+    do                                                                         \
+    {                                                                          \
+        LOG(utils::Logger::FATAL_LEVEL, ##args);                               \
+        abort();                                                               \
     } while (0)
 
 // Basically, an assertion using our logging system
-#define CHECK(cond) \
-    do \
-    { \
-        if (!(cond)) \
-            FATAL("%s", "Assertion failed: " #cond " -- aborting"); \
+#define CHECK(cond)                                                            \
+    do                                                                         \
+    {                                                                          \
+        if (!(cond))                                                           \
+            FATAL("%s", "Assertion failed: " #cond " -- aborting");            \
     } while (0)
 
 // An assertion which raises an exception instead of aborting.
-#define CHECK_EXC(exc, cond) \
-    do \
-    { \
-        if (!(cond)) \
-        { \
-            ERR("%s", "Assertion failed: " #cond " -- raising " #exc); \
-            throw exc(); \
-        } \
+#define CHECK_EXC(exc, cond)                                                   \
+    do                                                                         \
+    {                                                                          \
+        if (!(cond))                                                           \
+        {                                                                      \
+            ERR("%s", "Assertion failed: " #cond " -- raising " #exc);         \
+            throw exc();                                                       \
+        }                                                                      \
     } while (0)
 
 } // namespace utils

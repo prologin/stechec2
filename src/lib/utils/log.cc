@@ -9,9 +9,13 @@
 
 DEFINE_int32(verbose, 5, "Verbosity of the log (0-5)");
 
-namespace utils {
+namespace utils
+{
 
-Logger::Logger() : level_(static_cast<Logger::DisplayLevel>(FLAGS_verbose)) {}
+Logger::Logger()
+    : level_(static_cast<Logger::DisplayLevel>(FLAGS_verbose))
+{
+}
 
 void log(Logger::DisplayLevel lvl, const char* file, int line,
          const char* module_name, const char* module_color, const char* fmt,

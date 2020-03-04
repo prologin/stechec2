@@ -6,14 +6,16 @@
 #include <set>
 #include <unordered_set>
 
-namespace rules {
+namespace rules
+{
 
 Rules::Rules(const Options& opt)
     : opt_(opt)
     , players_(opt.players)
     , spectators_(opt.spectators)
     , timeout_(opt.time)
-{}
+{
+}
 
 void Rules::save_player_actions(Actions* actions)
 {
@@ -37,7 +39,10 @@ bool Rules::is_spectator(uint32_t id)
 | SynchronousRules |
 `-----------------*/
 
-SynchronousRules::SynchronousRules(const Options& opt) : Rules(opt) {}
+SynchronousRules::SynchronousRules(const Options& opt)
+    : Rules(opt)
+{
+}
 
 void SynchronousRules::player_loop(ClientMessenger_sptr msgr)
 {
@@ -217,7 +222,10 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
 | TurnBasedRules |
 `---------------*/
 
-TurnBasedRules::TurnBasedRules(const Options& opt) : Rules(opt) {}
+TurnBasedRules::TurnBasedRules(const Options& opt)
+    : Rules(opt)
+{
+}
 
 void TurnBasedRules::player_loop(ClientMessenger_sptr msgr)
 {

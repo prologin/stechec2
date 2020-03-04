@@ -3,7 +3,8 @@
 
 #include <cstdint>
 
-namespace rules {
+namespace rules
+{
 
 // Game-specific configuration that the server enforces
 struct Config

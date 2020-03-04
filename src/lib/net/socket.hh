@@ -9,7 +9,8 @@
 
 #include <utils/buffer.hh>
 
-namespace net {
+namespace net
+{
 
 struct Message;
 
@@ -25,7 +26,10 @@ public:
 
     virtual ~Socket() = default;
 
-    virtual void init() { shared_init(); }
+    virtual void init()
+    {
+        shared_init();
+    }
     virtual bool send(const utils::Buffer& msg, int flags = 0);
     virtual std::unique_ptr<utils::Buffer> recv(int flags = 0);
     virtual bool poll(long timeout);

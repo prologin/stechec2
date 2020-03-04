@@ -8,7 +8,8 @@
 
 #include "game-state.hh"
 
-namespace rules {
+namespace rules
+{
 
 // GameStateHistory<GameState> holds a GameState instance, can save it to a
 // stack and allows restoring previous versions.
@@ -21,17 +22,36 @@ class GameStateHistory
 public:
     GameStateHistory(std::unique_ptr<GameState> current)
         : current_(std::move(current))
-    {}
+    {
+    }
 
-    GameState& operator*() { return *current_.get(); }
-    const GameState& operator*() const { return *current_.get(); }
-    GameState* operator->() { return current_.get(); }
-    const GameState* operator->() const { return current_.get(); }
+    GameState& operator*()
+    {
+        return *current_.get();
+    }
+    const GameState& operator*() const
+    {
+        return *current_.get();
+    }
+    GameState* operator->()
+    {
+        return current_.get();
+    }
+    const GameState* operator->() const
+    {
+        return current_.get();
+    }
 
     // Copies current GameState and stores it in the version history
-    void save() { versions_.emplace_back(current_->copy()); }
+    void save()
+    {
+        versions_.emplace_back(current_->copy());
+    }
     // Returns true if there is a restorable GameState in the version history
-    bool can_cancel() const { return !versions_.empty(); }
+    bool can_cancel() const
+    {
+        return !versions_.empty();
+    }
     // Restores most recent version of the GameState
     void cancel()
     {
@@ -40,7 +60,10 @@ public:
         versions_.pop_back();
     }
     // Deletes previous copies of the GameState instance
-    void clear_old_versions() { versions_.clear(); }
+    void clear_old_versions()
+    {
+        versions_.clear();
+    }
 
 private:
     std::unique_ptr<GameState> current_;

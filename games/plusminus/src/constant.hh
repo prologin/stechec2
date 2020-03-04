@@ -12,7 +12,8 @@ typedef enum error
 } error;
 
 // This is needed for old compilers
-namespace std {
+namespace std
+{
 template <>
 struct hash<error>
 {

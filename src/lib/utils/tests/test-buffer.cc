@@ -26,7 +26,10 @@ struct MyBufferizable : IBufferizable
 {
     int x;
 
-    void handle_buffer(Buffer& buf) override { buf.handle(x); };
+    void handle_buffer(Buffer& buf) override
+    {
+        buf.handle(x);
+    };
 };
 
 TEST(UtilsBuffer, Serialize)

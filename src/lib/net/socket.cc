@@ -10,7 +10,8 @@
 DEFINE_int32(socket_timeout, -1,
              "Timeout value to use for all sock ops, in ms.");
 
-namespace net {
+namespace net
+{
 
 Socket::Socket(const std::string& pubsub_addr, const std::string& reqrep_addr,
                int io_thread)
@@ -19,7 +20,8 @@ Socket::Socket(const std::string& pubsub_addr, const std::string& reqrep_addr,
     , ctx_(io_thread)
     , pubsub_sckt_()
     , reqrep_sckt_()
-{}
+{
+}
 
 void Socket::shared_init()
 {
@@ -76,8 +78,7 @@ bool Socket::send_sckt(const utils::Buffer& buf, zmq::socket_t* sckt, int flags)
     }
 }
 
-std::unique_ptr<utils::Buffer>
-Socket::recv_sckt(zmq::socket_t* sckt, int flags)
+std::unique_ptr<utils::Buffer> Socket::recv_sckt(zmq::socket_t* sckt, int flags)
 {
     try
     {

@@ -4,7 +4,8 @@
 
 #include "actions.hh"
 
-namespace rules {
+namespace rules
+{
 
 void Actions::handle_buffer(utils::Buffer& buf)
 {

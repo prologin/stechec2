@@ -3,23 +3,13 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 ---
 Language: Cpp
-BreakBeforeBraces: Custom
-BraceWrapping:
-  AfterClass: true
-  AfterControlStatement: true
-  AfterEnum: true
-  AfterExternBlock: false
-  AfterFunction: true
-  AfterNamespace: false
-  AfterStruct: true
-  BeforeCatch: true
-  BeforeElse: true
-  SplitEmptyFunction: false
 AccessModifierOffset: -4
-AlignEscapedNewlines: DontAlign
-AllowShortFunctionsOnASingleLine: Inline
-AlwaysBreakTemplateDeclarations : true
-BreakConstructorInitializers: BeforeComma
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: true
+BraceWrapping:
+  AfterExternBlock: false
+BreakBeforeBraces: Allman
+BreakConstructorInitializersBeforeComma: true
 DerivePointerAlignment: false
+IncludeBlocks: Preserve
 PointerAlignment: Left

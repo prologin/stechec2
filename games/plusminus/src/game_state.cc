@@ -7,7 +7,9 @@
 
 GameState::GameState(const std::string& map_content,
                      const rules::Players& players)
-    : rules::GameState(players), secret_number_found(false), round(0)
+    : rules::GameState(players)
+    , secret_number_found(false)
+    , round(0)
 {
     std::istringstream map_stream{map_content};
     map_stream >> secret_number;

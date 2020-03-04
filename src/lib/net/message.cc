@@ -6,11 +6,14 @@
 #include <ostream>
 #include <sstream>
 
-namespace net {
+namespace net
+{
 
 Message::Message(uint32_t type, uint32_t client_id)
-    : type(type), client_id(client_id)
-{}
+    : type(type)
+    , client_id(client_id)
+{
+}
 
 std::string Message::str() const
 {

@@ -8,8 +8,14 @@ using rules::GameStateHistory;
 class State final : public rules::GameState
 {
 public:
-    State(int a) : a(a) {}
-    State* copy() const { return new State(*this); }
+    State(int a)
+        : a(a)
+    {
+    }
+    State* copy() const
+    {
+        return new State(*this);
+    }
     int a;
 };
 

@@ -7,7 +7,8 @@
 
 #include <utils/buffer.hh>
 
-namespace net {
+namespace net
+{
 
 // Message types of stechec2 (not the rules)
 enum MsgType

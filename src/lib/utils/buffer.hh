@@ -14,7 +14,8 @@
 #include <utility>
 #include <vector>
 
-namespace utils {
+namespace utils
+{
 
 class Buffer;
 
@@ -27,7 +28,10 @@ struct IBufferizable
 // is too small to be deserialized properly.
 struct DeserializationError : public std::runtime_error
 {
-    DeserializationError() : std::runtime_error("Deserialization error") {}
+    DeserializationError()
+        : std::runtime_error("Deserialization error")
+    {
+    }
 };
 
 // Serializes or deserializes data to an internal buffer. To use it, use the
@@ -36,22 +40,42 @@ class Buffer
 {
 public:
     // If no buffer is provided, it's serialization
-    Buffer() : data_(), idx_(0), serialize_(true) {}
-    Buffer(const utils::Buffer& other) : Buffer(other.data_) {}
+    Buffer()
+        : data_()
+        , idx_(0)
+        , serialize_(true)
+    {
+    }
+    Buffer(const utils::Buffer& other)
+        : Buffer(other.data_)
+    {
+    }
 
     // If a buffer is provided, it's unserialization
     explicit Buffer(std::vector<uint8_t> data)
-        : data_(std::move(data)), idx_(0), serialize_(false)
-    {}
+        : data_(std::move(data))
+        , idx_(0)
+        , serialize_(false)
+    {
+    }
     Buffer(Buffer&& buf) noexcept
-        : data_{std::move(buf.data_)}, idx_{0}, serialize_{false}
-    {}
+        : data_{std::move(buf.data_)}
+        , idx_{0}
+        , serialize_{false}
+    {
+    }
 
     Buffer& operator=(const Buffer& buf) = default;
 
     // Allow access to the serialized data
-    const uint8_t* data() const { return &data_[0]; }
-    size_t size() const { return data_.size(); }
+    const uint8_t* data() const
+    {
+        return &data_[0];
+    }
+    size_t size() const
+    {
+        return data_.size();
+    }
 
     // Handle a memory zone argument
     void handle_mem(char* mem, size_t len)
@@ -166,8 +190,14 @@ public:
     }
 
 public:
-    bool empty() const { return idx_ >= data_.size(); }
-    bool serialize() const { return serialize_; }
+    bool empty() const
+    {
+        return idx_ >= data_.size();
+    }
+    bool serialize() const
+    {
+        return serialize_;
+    }
 
 private:
     std::vector<uint8_t> data_;

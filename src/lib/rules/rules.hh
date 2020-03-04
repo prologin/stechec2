@@ -12,7 +12,8 @@
 #include "replay-messenger.hh"
 #include "server-messenger.hh"
 
-namespace rules {
+namespace rules
+{
 
 const int max_consecutive_timeout = 3;
 
