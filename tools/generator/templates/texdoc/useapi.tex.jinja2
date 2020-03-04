@@ -105,7 +105,7 @@ fonctionACompleter = do
 \item{L'API est fournie par le module \texttt{api}, dont tout le contenu est
       importé par défaut par le code à compléter ;}
 \item{Les énumérations sont représentées par des \texttt{IntEnum} Python, qui
-    peuvent-être utilisés comme ceci : \texttt{nom\_enum.CHAMP}. ;}
+      peuvent être utilisées comme ceci : \texttt{nom\_enum.CHAMP}. ;}
 \item{Les structures sont représentées par des \texttt{namedtuple} Python, dont
       on peut accéder aux champs via la notation pointée habituelle, et
       qui peuvent être créés comme ceci : \texttt{foo(bar=42, x=3)}, sauf pour
@@ -120,5 +120,7 @@ fonctionACompleter = do
 \item{Les noms des structures et énumérations sont en \texttt{CamelCase}.
       Ainsi, une structure nommée \texttt{foo\_bar} dans le sujet
       s'appellera \texttt{FooBar} en Rust.}
-\item{Les tableaux sont représentés par des \texttt{Vec<T>}.}
+\item{Les tableaux sont représentés par des \texttt{Vec<T>} et les strings par
+      des \texttt{String}. Les fonctions prennent leurs primitives empruntées
+      \texttt{\&[T]} et \texttt{\&str} en entrée.}
 \end{itemize}
