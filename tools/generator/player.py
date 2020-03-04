@@ -46,6 +46,6 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
              files=['champion.ml', 'champion.mli', 'Makefile'],
              symlinks=['api.ml', 'interface.cc', 'Makefile-caml'])
     gen_lang('rust',
-             files=['Makefile', 'champion.rs' ],
+             files=['Makefile', 'champion.rs'],
              symlinks=['Cargo.toml', 'Makefile-rust', 'api.rs', 'ffi.rs',
                        'api.h', 'interface.cc'])
