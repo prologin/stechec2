@@ -2,7 +2,7 @@ from functools import partial
 from jinja2 import contextfilter
 
 from . import register_filter
-from .common import generic_args, generic_prototype, is_struct_in, is_array
+from .common import generic_args, generic_prototype, is_array, get_array_inner
 from .cxx import cxx_comment, cxx_type
 
 
@@ -10,8 +10,8 @@ from .cxx import cxx_comment, cxx_type
 def c_type(value: str) -> str:
     if value == "string":
         return "char*"
-    if value.endswith(" array"):
-        return "{}_array".format(c_type(value[:-len(' array')]))
+    if is_array(value):
+        return "{}_array".format(c_type(get_array_inner(value)))
     return value
 
 
@@ -36,9 +36,9 @@ c_comment = register_filter(cxx_comment, name='c_comment')
 @contextfilter
 def c_internal_cxx_type(ctx, value: str) -> str:
     if is_array(value):
-        base_type = value[:-len(' array')]
+        base_type = get_array_inner(value)
         return 'std::vector<{}>'.format(c_internal_cxx_type(ctx, base_type))
-    elif is_struct_in(value, ctx['game']):
+    elif ctx['game'].get_struct(value):
         return '__internal__cxx__' + value
     return cxx_type(value)
 
@@ -47,7 +47,7 @@ def c_internal_cxx_type(ctx, value: str) -> str:
 @contextfilter
 def c_to_cxx(ctx, value: str) -> str:
     if is_array(value):
-        base_type = value[:-len(' array')]
+        base_type = get_array_inner(value)
         return 'c_to_cxx_array<{}, {}, {}>'.format(
             c_type(base_type),
             c_type(value),
@@ -63,7 +63,7 @@ def c_to_cxx(ctx, value: str) -> str:
 @contextfilter
 def cxx_to_c(ctx, value: str) -> str:
     if is_array(value):
-        base_type = value[:-len(' array')]
+        base_type = get_array_inner(value)
         return 'cxx_to_c_array<{}, {}, {}>'.format(
             c_type(base_type),
             c_type(value),

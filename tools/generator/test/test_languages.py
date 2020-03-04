@@ -28,6 +28,9 @@ class TestLanguages(unittest.TestCase):
     def test_caml(self):
         self.run_language_tests('caml', 'champion.ml')
 
+    def test_rust(self):
+        self.run_language_tests('rust', 'champion.rs')
+
     def run_language_tests(self, language, champion_file_name):
         language_dir = self.player_path / language
         self.compile_language(language, champion_file_name)

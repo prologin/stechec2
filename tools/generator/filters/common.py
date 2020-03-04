@@ -1,6 +1,7 @@
 import textwrap
 from functools import partial
-from jinja2 import contextfunction
+from jinja2 import contextfilter, contextfunction
+from typing import Optional
 
 from . import register_filter, register_test, register_function
 
@@ -21,14 +22,14 @@ def is_array(type) -> bool:
     return type.endswith(' array')
 
 
-def is_struct_in(type, game) -> bool:
-    return any(type == s['str_name'] for s in game['struct'])
+@register_filter
+def get_array_inner(type) -> bool:
+    return type[:-len(' array')]
 
 
-@register_function
-@contextfunction
-def is_struct(ctx, type) -> bool:
-    return is_struct_in(type, ctx['game'])
+@register_test
+def is_tuple(struct) -> bool:
+    return struct['str_tuple']
 
 
 @register_filter
