@@ -101,7 +101,8 @@ public:
     }
 
     // Handle a list of simple types
-    template <typename T> void handle(std::list<T>& l)
+    template <typename T>
+    void handle(std::list<T>& l)
     {
         unsigned int size = l.size();
         handle(size);
@@ -145,13 +146,15 @@ public:
     }
 
     // Handle arrays
-    template <typename T> void handle_array(T* arr, size_t count)
+    template <typename T>
+    void handle_array(T* arr, size_t count)
     {
         handle_mem((char*)arr, count * sizeof(T));
     }
 
     // Handle integral and simple types
-    template <typename T> void handle(T& x)
+    template <typename T>
+    void handle(T& x)
     {
         handle_mem((char*)&x, sizeof(T));
     }

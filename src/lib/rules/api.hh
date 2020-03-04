@@ -11,14 +11,16 @@
 namespace rules
 {
 
-template <typename GameState, typename ApiError> class Api
+template <typename GameState, typename ApiError>
+class Api
 {
 protected:
     // Functor template implementing the boilerplate of applying a champion's
     // action to the game state. The T template parameter is the first argument
     // of the Action's constructor. It is optional, but declaring it allows
     // using brace-initializers to type T when calling operator().
-    template <typename Action, typename T = Action> class ApiActionFunc
+    template <typename Action, typename T = Action>
+    class ApiActionFunc
     {
     public:
         ApiActionFunc(Api* api)
@@ -28,7 +30,8 @@ protected:
         virtual ~ApiActionFunc() = default;
 
         // Apply the champion's action to the game state
-        template <typename... Args> ApiError call(Args&&... args)
+        template <typename... Args>
+        ApiError call(Args&&... args)
         {
             // Build action object
             auto action = std::make_unique<Action>(std::forward<Args>(args)...,
@@ -47,7 +50,8 @@ protected:
         }
 
         // Universal forward
-        template <typename... Args> ApiError operator()(Args&&... args)
+        template <typename... Args>
+        ApiError operator()(Args&&... args)
         {
             return call(std::forward<Args>(args)...);
         }

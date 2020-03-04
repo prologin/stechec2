@@ -3,12 +3,13 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 ---
 Language: Cpp
-DerivePointerAlignment: false
-PointerAlignment: Left
-BreakBeforeBraces: Allman
 AccessModifierOffset: -4
-BreakConstructorInitializersBeforeComma: true
 AllowShortFunctionsOnASingleLine: Inline
-IncludeBlocks: Preserve
+AlwaysBreakTemplateDeclarations: true
 BraceWrapping:
   AfterExternBlock: false
+BreakBeforeBraces: Allman
+BreakConstructorInitializersBeforeComma: true
+DerivePointerAlignment: false
+IncludeBlocks: Preserve
+PointerAlignment: Left

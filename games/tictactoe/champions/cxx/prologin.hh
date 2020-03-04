@@ -22,7 +22,8 @@ typedef enum error
 // This is needed for old compilers
 namespace std
 {
-template <> struct hash<error>
+template <>
+struct hash<error>
 {
     size_t operator()(const error& v) const
     {
@@ -85,7 +86,8 @@ static inline void afficher_position(position v)
 
 namespace std
 {
-template <typename T> struct hash<std::vector<T>>
+template <typename T>
+struct hash<std::vector<T>>
 {
     std::size_t operator()(const std::vector<T>& v) const
     {
@@ -143,7 +145,8 @@ inline bool operator>(const position& a, const position& b)
 
 namespace std
 {
-template <> struct hash<position>
+template <>
+struct hash<position>
 {
     std::size_t operator()(const position& s) const
     {

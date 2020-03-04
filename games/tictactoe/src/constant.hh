@@ -15,7 +15,8 @@ typedef enum error
 // This is needed for old compilers
 namespace std
 {
-template <> struct hash<error>
+template <>
+struct hash<error>
 {
     size_t operator()(const error& v) const
     {

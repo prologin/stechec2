@@ -13,7 +13,8 @@ namespace rules
 
 // GameStateHistory<GameState> holds a GameState instance, can save it to a
 // stack and allows restoring previous versions.
-template <typename GameState> class GameStateHistory
+template <typename GameState>
+class GameStateHistory
 {
     static_assert(std::is_base_of<rules::GameState, GameState>::value,
                   "GameState not derived from rules::GameState");
