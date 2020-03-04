@@ -68,8 +68,14 @@ public:
     Buffer& operator=(const Buffer& buf) = default;
 
     // Allow access to the serialized data
-    const uint8_t* data() const { return &data_[0]; }
-    size_t size() const { return data_.size(); }
+    const uint8_t* data() const
+    {
+        return &data_[0];
+    }
+    size_t size() const
+    {
+        return data_.size();
+    }
 
     // Handle a memory zone argument
     void handle_mem(char* mem, size_t len)
@@ -184,8 +190,14 @@ public:
     }
 
 public:
-    bool empty() const { return idx_ >= data_.size(); }
-    bool serialize() const { return serialize_; }
+    bool empty() const
+    {
+        return idx_ >= data_.size();
+    }
+    bool serialize() const
+    {
+        return serialize_;
+    }
 
 private:
     std::vector<uint8_t> data_;

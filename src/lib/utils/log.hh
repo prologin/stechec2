@@ -43,10 +43,19 @@ public:
         DEBUG_LEVEL = 5
     };
 
-    std::ostream& stream() { return std::cerr; }
+    std::ostream& stream()
+    {
+        return std::cerr;
+    }
 
-    DisplayLevel& level() { return level_; }
-    const DisplayLevel& level() const { return level_; }
+    DisplayLevel& level()
+    {
+        return level_;
+    }
+    const DisplayLevel& level() const
+    {
+        return level_;
+    }
 
     static Logger& get()
     {

@@ -25,8 +25,14 @@ public:
     // TODO(halfr): add default implem and return a std::unique_ptr
     virtual GameState* copy() const = 0;
 
-    int check(const IAction& action) const { return action.check(*this); }
-    void apply(const IAction& action) { action.apply(this); }
+    int check(const IAction& action) const
+    {
+        return action.check(*this);
+    }
+    void apply(const IAction& action)
+    {
+        action.apply(this);
+    }
 
 protected:
     // Protected to be called by copy()

@@ -17,7 +17,10 @@ public:
         , x(0)
     {
     }
-    MyGameState* copy() const { return new MyGameState(*this); }
+    MyGameState* copy() const
+    {
+        return new MyGameState(*this);
+    }
     int x;
 };
 
@@ -34,13 +37,22 @@ public:
             return 0;
     }
 
-    void apply_on(MyGameState* st) const override { st->x += 1; }
+    void apply_on(MyGameState* st) const override
+    {
+        st->x += 1;
+    }
 
     void handle_buffer(utils::Buffer&) override {}
 
-    uint32_t player_id() const override { return 0; }
+    uint32_t player_id() const override
+    {
+        return 0;
+    }
 
-    uint32_t id() const override { return 0; }
+    uint32_t id() const override
+    {
+        return 0;
+    }
 };
 
 class MyDecrAction : public Action<MyGameState>
@@ -56,13 +68,22 @@ public:
             return 0;
     }
 
-    void apply_on(MyGameState* st) const override { st->x -= 1; }
+    void apply_on(MyGameState* st) const override
+    {
+        st->x -= 1;
+    }
 
     void handle_buffer(utils::Buffer&) override {}
 
-    uint32_t player_id() const override { return 0; }
+    uint32_t player_id() const override
+    {
+        return 0;
+    }
 
-    uint32_t id() const override { return 0; }
+    uint32_t id() const override
+    {
+        return 0;
+    }
 };
 
 TEST(RulesAction, CheckApply)

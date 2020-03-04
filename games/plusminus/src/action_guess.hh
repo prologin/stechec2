@@ -26,8 +26,14 @@ public:
         buf.handle(player_id_);
     }
 
-    uint32_t player_id() const override { return player_id_; };
-    uint32_t id() const override { return ID_ACTION_GUESS; }
+    uint32_t player_id() const override
+    {
+        return player_id_;
+    };
+    uint32_t id() const override
+    {
+        return ID_ACTION_GUESS;
+    }
 
 private:
     int guess_;

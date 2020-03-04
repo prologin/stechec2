@@ -27,8 +27,14 @@ public:
         buf.handle(player_id_);
     }
 
-    uint32_t player_id() const override { return player_id_; };
-    uint32_t id() const override { return ID_ACTION_PLAY; }
+    uint32_t player_id() const override
+    {
+        return player_id_;
+    };
+    uint32_t id() const override
+    {
+        return ID_ACTION_PLAY;
+    }
 
 private:
     position pos_;

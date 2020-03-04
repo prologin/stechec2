@@ -14,7 +14,10 @@ extern "C"
     void test();
     void test_alert();
 
-    void api_send_me_42(int n) { assert(n == 42); }
+    void api_send_me_42(int n)
+    {
+        assert(n == 42);
+    }
 
     void api_send_me_42_and_1337(int n1, int n2)
     {
@@ -22,9 +25,15 @@ extern "C"
         assert(n2 == 1337);
     }
 
-    void api_send_me_true(bool b) { assert(b); }
+    void api_send_me_true(bool b)
+    {
+        assert(b);
+    }
 
-    void api_send_me_tau(double b) { assert(b > 6.2831 && b < 6.2832); }
+    void api_send_me_tau(double b)
+    {
+        assert(b > 6.2831 && b < 6.2832);
+    }
 
     void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
                              int arg6, int arg7, int arg8, int arg9, int arg10,
@@ -45,13 +54,25 @@ extern "C"
         assert(arg13 == 13);
     }
 
-    int api_returns_42() { return 42; }
+    int api_returns_42()
+    {
+        return 42;
+    }
 
-    bool api_returns_true() { return true; }
+    bool api_returns_true()
+    {
+        return true;
+    }
 
-    double api_returns_tau() { return 6.2831853; }
+    double api_returns_tau()
+    {
+        return 6.2831853;
+    }
 
-    test_enum api_returns_val1() { return VAL1; }
+    test_enum api_returns_val1()
+    {
+        return VAL1;
+    }
 
     std::vector<int> api_returns_range(int m, int n)
     {

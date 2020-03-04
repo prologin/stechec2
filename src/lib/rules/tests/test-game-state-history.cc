@@ -12,7 +12,10 @@ public:
         : a(a)
     {
     }
-    State* copy() const { return new State(*this); }
+    State* copy() const
+    {
+        return new State(*this);
+    }
     int a;
 };
 

@@ -60,7 +60,10 @@ public:
     {
         apply_on(static_cast<TState*>(st));
     }
-    void apply(std::unique_ptr<TState>& st) const { apply_on(st.get()); }
+    void apply(std::unique_ptr<TState>& st) const
+    {
+        apply_on(st.get());
+    }
 };
 
 } // namespace rules

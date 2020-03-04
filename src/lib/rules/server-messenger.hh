@@ -42,7 +42,10 @@ public:
     void ack();
     void wait_for_ack();
 
-    uint32_t last_client_id() { return last_client_id_; }
+    uint32_t last_client_id()
+    {
+        return last_client_id_;
+    }
 
 private:
     net::ServerSocket* sckt_; // Not owned.

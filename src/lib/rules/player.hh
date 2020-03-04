@@ -92,7 +92,10 @@ public:
         return ss.str();
     }
 
-    void add(std::shared_ptr<Player> player) { players_.push_back(player); }
+    void add(std::shared_ptr<Player> player)
+    {
+        players_.push_back(player);
+    }
 
     // Sort players by identifiers
     void sort()
@@ -101,16 +104,37 @@ public:
                   [](const auto& a, const auto& b) { return a->id < b->id; });
     }
 
-    size_t size() const { return players_.size(); }
+    size_t size() const
+    {
+        return players_.size();
+    }
 
-    auto begin() const { return players_.begin(); }
-    auto end() const { return players_.end(); }
+    auto begin() const
+    {
+        return players_.begin();
+    }
+    auto end() const
+    {
+        return players_.end();
+    }
 
-    auto front() const { return players_.front(); }
-    auto back() const { return players_.back(); }
+    auto front() const
+    {
+        return players_.front();
+    }
+    auto back() const
+    {
+        return players_.back();
+    }
 
-    auto operator[](int i) { return players_[i]; }
-    auto operator[](int i) const { return players_[i]; }
+    auto operator[](int i)
+    {
+        return players_[i];
+    }
+    auto operator[](int i) const
+    {
+        return players_[i];
+    }
 
 private:
     PlayersVector players_;

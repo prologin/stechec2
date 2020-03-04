@@ -32,7 +32,10 @@ extern "C"
         rules_ = new Rules(opt);
     }
 
-    void rules_result() { delete rules_; }
+    void rules_result()
+    {
+        delete rules_;
+    }
 
     void player_loop(rules::ClientMessenger_sptr msgr)
     {

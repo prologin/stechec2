@@ -35,15 +35,30 @@ public:
         actions_.push_back(std::move(action));
     }
 
-    void cancel() { actions_.pop_back(); }
+    void cancel()
+    {
+        actions_.pop_back();
+    }
 
-    size_t size() const { return actions_.size(); }
+    size_t size() const
+    {
+        return actions_.size();
+    }
 
-    void clear() { actions_.clear(); }
+    void clear()
+    {
+        actions_.clear();
+    }
 
-    const ActionLog& all() const { return actions_; }
+    const ActionLog& all() const
+    {
+        return actions_;
+    }
     // Deprecated: the action buffer should not be mutable.
-    ActionLog& all() { return actions_; }
+    ActionLog& all()
+    {
+        return actions_;
+    }
 
 private:
     ActionLog actions_;

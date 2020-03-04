@@ -59,7 +59,10 @@ protected:
         // Explicitly defining argument type to allow brace-initializing T,
         // which is not otherwise usable with the universal forward defined
         // above.
-        ApiError operator()(T arg) { return call(arg); }
+        ApiError operator()(T arg)
+        {
+            return call(arg);
+        }
 
     private:
         Api* api_;
@@ -73,12 +76,24 @@ public:
     }
     virtual ~Api() {}
 
-    const std::shared_ptr<Player> player() const { return player_; }
+    const std::shared_ptr<Player> player() const
+    {
+        return player_;
+    }
 
-    Actions* actions() { return &actions_; }
+    Actions* actions()
+    {
+        return &actions_;
+    }
 
-    GameState& game_state() { return *game_state_; }
-    const GameState& game_state() const { return *game_state_; }
+    GameState& game_state()
+    {
+        return *game_state_;
+    }
+    const GameState& game_state() const
+    {
+        return *game_state_;
+    }
 
     // Checks action on GameState
     ApiError game_state_check(const IAction& action) const
@@ -87,10 +102,19 @@ public:
     }
 
     // Applies action to GameState
-    void game_state_apply(const IAction& action) { game_state_->apply(action); }
+    void game_state_apply(const IAction& action)
+    {
+        game_state_->apply(action);
+    }
 
-    void game_state_save() { game_state_.save(); }
-    void clear_old_game_states() { game_state_.clear_old_versions(); }
+    void game_state_save()
+    {
+        game_state_.save();
+    }
+    void clear_old_game_states()
+    {
+        game_state_.clear_old_versions();
+    }
 
     // Cancels the last played action
     bool cancel()
