@@ -2,7 +2,7 @@ from functools import partial
 from jinja2 import contextfilter
 
 from . import register_filter
-from .common import generic_args, generic_prototype, is_struct, is_array, get_array_inner
+from .common import generic_args, generic_prototype, is_array, get_array_inner
 from .cxx import cxx_comment, cxx_type
 
 
@@ -38,7 +38,7 @@ def c_internal_cxx_type(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
         return 'std::vector<{}>'.format(c_internal_cxx_type(ctx, base_type))
-    elif is_struct(ctx, value):
+    elif ctx['game'].get_struct(value):
         return '__internal__cxx__' + value
     return cxx_type(value)
 

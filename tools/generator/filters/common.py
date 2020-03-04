@@ -17,12 +17,6 @@ def is_returning(func) -> bool:
     return func['fct_ret_type'] != 'void'
 
 
-@register_function
-@contextfunction
-def is_enum(ctx, type) -> bool:
-    return ctx['game'].get_enum(type) is not None
-
-
 @register_test
 def is_array(type) -> bool:
     return type.endswith(' array')
@@ -31,12 +25,6 @@ def is_array(type) -> bool:
 @register_filter
 def get_array_inner(type) -> bool:
     return type[:-len(' array')]
-
-
-@register_function
-@contextfunction
-def is_struct(ctx, type) -> bool:
-    return ctx['game'].get_struct(type) is not None
 
 
 @register_test

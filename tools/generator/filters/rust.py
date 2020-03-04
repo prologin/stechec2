@@ -5,7 +5,7 @@ from jinja2 import contextfilter
 from . import register_filter
 from .common import (
     camel_case, generic_args, generic_comment, get_array_inner, is_array,
-    is_enum, is_returning, is_struct, is_tuple,
+    is_returning, is_tuple,
 )
 from .cxx import cxx_comment
 
@@ -90,11 +90,13 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
         'void': '()',
     }
 
+    as_struct = ctx['game'].get_struct(value)
+
     if is_array(value):
         return 'Vec<{}>'.format(rust_api_output_type(ctx, get_array_inner(value)))
     elif value in basic_types:
         return basic_types[value]
-    elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
+    elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
                 rust_api_output_type(ctx, field)
@@ -107,11 +109,13 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
 @register_filter
 @contextfilter
 def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str:
+    as_struct = ctx['game'].get_struct(value)
+
     if value == 'string':
         return '&str'
     elif is_array(value):
         return '&[' + rust_api_output_type(ctx, get_array_inner(value)) + ']'
-    elif is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
+    elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
                 rust_api_input_type(ctx, field)
@@ -130,15 +134,15 @@ def rust_api_input_type(ctx, value: str, api_mod_path='', skip_ref=False) -> str
 @contextfilter
 def rust_is_copy(ctx, value: str) -> bool:
     """Check if a type implements the Copy trait"""
-    if is_struct(ctx, value) and is_tuple(ctx['game'].get_struct(value)):
+    as_struct = ctx['game'].get_struct(value)
+
+    if as_struct and is_tuple(as_struct):
         return all(
             rust_is_copy(ctx, field_type)
             for _, field_type, _ in ctx['game'].get_struct(value)['str_field']
         )
 
-    return (
-        is_enum(ctx, value) or value in ['bool', 'double', 'int', 'void']
-    )
+    return ctx['game'].get_enum(value) is not None or value in ['bool', 'double', 'int', 'void']
 
 
 @register_filter
@@ -148,13 +152,15 @@ def rust_auto_traits(ctx, value: str) -> set:
     Return the list of auto traits that can be implemented for given input
     type.
     """
-    if is_struct(ctx, value):
+    as_struct = ctx['game'].get_struct(value)
+
+    if as_struct:
         inherited = set.intersection(*(
             rust_auto_traits(ctx, field_type)
-            for _, field_type, _ in ctx['game'].get_struct(value)['str_field']
+            for _, field_type, _ in as_struct['str_field']
         ))
 
-        if not is_tuple(ctx['game'].get_struct(value)) and 'Copy' in inherited:
+        if not is_tuple(as_struct) and 'Copy' in inherited:
             inherited.remove('Copy')
 
         return inherited
