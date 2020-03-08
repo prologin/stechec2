@@ -9,6 +9,7 @@ def camel_case(value: str) -> str:
     """Convert a snake case identifier to a upper camel case one"""
     return "".join(i.capitalize() for i in value.split("_"))
 
+
 @register_test
 def is_returning(func) -> bool:
     return func['fct_ret_type'] != 'void'
