@@ -12,6 +12,7 @@ def haskell_type(type_id: str) -> str:
         return '()'
     return type_id.capitalize()
 
+
 haskell_comment = register_filter(
     partial(generic_comment, start='-- '),
     name='haskell_comment',
