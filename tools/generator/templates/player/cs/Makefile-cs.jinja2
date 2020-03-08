@@ -1,0 +1,21 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (c) 2020 Association Prologin <association@prologin.org>
+#}
+{% extends "includes/Makefile-language.jinja2" %}
+
+{% block lang %}cs{% endblock %}
+
+{% block extra_flags %}
+MCS_FLAGS = -target:library -nowarn:0169,0649
+CXXFLAGS += $(shell pkg-config --cflags glib-2.0 mono-2)
+LDFLAGS = -lm $(shell pkg-config --libs glib-2.0 mono-2)
+{% endblock %}
+
+{% block all_dependencies %}champion.so champion.dll{% endblock %}
+
+{% block extra_rules %}
+cs_sources = $(filter %.cs,$(CHAMPION_FILES))
+
+champion.dll: $(cs_sources)
+	mcs $(MCS_FLAGS) -out:$@ $^
+{% endblock %}

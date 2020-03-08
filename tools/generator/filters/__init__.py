@@ -35,6 +35,7 @@ def load_library_in(env):
         common,
         c,
         caml,
+        cs,
         cxx,
         haskell,
         java,
