@@ -38,6 +38,9 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
     gen_lang('caml',
              files=['champion.ml', 'champion.mli', 'Makefile'],
              symlinks=['api.ml', 'interface.cc', 'Makefile-caml'])
+    gen_lang('cs',
+             files=['champion.cs', 'Makefile'],
+             symlinks=['Makefile-cs'])
     gen_lang('cxx',
              files=['champion.cc', 'Makefile'],
              symlinks=['api.hh', 'interface.cc', 'Makefile-cxx'])
