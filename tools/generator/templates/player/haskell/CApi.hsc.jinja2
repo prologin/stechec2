@@ -75,9 +75,9 @@ instance ApiStorable Double where
 {{ enum.enum_summary|haskell_comment }}
 data {{ enum.enum_name|capitalize }} =
 {% for field_name, field_comment in enum.enum_field %}
-{% if not loop.first %}|{% else %} {% endif %} {{ field_name|capitalize }} -- {{ field_comment }}
+{% if not loop.first %}  |{% else %}   {% endif %} {{ field_name|capitalize }} {{ field_comment|haskell_comment }}
 {% endfor %}
-deriving(Show, Eq, Enum)
+  deriving(Show, Eq, Enum)
 type C{{ enum.enum_name|capitalize }} = CInt
 
 instance ApiStorable {{ enum.enum_name|capitalize }} where
@@ -99,16 +99,15 @@ instance ApiStorable {{ enum.enum_name|capitalize }} where
 {% if struct.str_tuple %}
 data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }}
 {{ join(' ', haskell_type(struct.str_fields[1])) }}
-
 {% else %}
 data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }} {
 {% for name, type, comment in struct.str_field %}
- {{ name }} :: {{ type|haskell_type }}{{ ',' if not loop.last }} -- {{ comment }}
+  {{ name }} :: {{ type|haskell_type }}{{ ',' if not loop.last }} {{ comment|haskell_comment }}
 {% endfor %}
 }
 {% endif %}
 
-deriving(Show, Eq)
+  deriving(Show, Eq)
 
 {% if struct.str_tuple %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
@@ -116,84 +115,114 @@ data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
 {% else %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }} {
 {% for name, type, comment in struct.str_field %}
-c{{ name }} :: {{ type|c_haskell_type }}{{ ',' if not loop.last }} -- c{{ comment }}
+  c{{ name }} :: C{{ type|haskell_c_type }}{{ ',' if not loop.last }} {{ comment|haskell_comment }}
 {% endfor %}
 }
 {% endif %}
 
 instance Storable C{{ struct.str_name|capitalize }} where
-sizeOf _ = (#size {{ struct.str_name }})
-{-# INLINE sizeOf #-}
-alignment _ = alignment (undefined :: CInt)
-{-# INLINE alignment #-}
-peek ptr = do
-
-
+  sizeOf _ = (#size {{ struct.str_name }})
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined :: CInt)
+  {-# INLINE alignment #-}
+  peek ptr = do
 {% for name, _, _ in struct.str_field %}
-a{{ name }} <- (#peek {{ struct.str_name }}, {{ name }}) ptr
+    a{{ name }} <- (#peek {{ struct.str_name }}, {{ name }}) ptr
 {% endfor %}
+    return $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
 
-return $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
-
-
-{-# INLINE peek #-}
-poke ptr (C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) = do
+  {-# INLINE peek #-}
+  poke ptr (C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) = do
 
 {% for name, _, _ in struct.str_field %}
-(#poke {{ struct.str_name }}, {{ name }}) ptr a{{ name }}
+    (#poke {{ struct.str_name }}, {{ name }}) ptr a{{ name }}
 {% endfor %}
 
 
-{-# INLINE poke #-}
-
+  {-# INLINE poke #-}
 instance ApiStorable {{ struct.str_name|capitalize }} where
+  type ApiStorableType {{ struct.str_name|capitalize }} = Ptr C{{ struct.str_name|capitalize }}
+  toStorable ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f ={% for name, _, _ in struct.str_field %} toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %} do
+    alloca $ \ptr -> do
+      poke ptr $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}
 
-type ApiStorableType {{ struct.str_name|capitalize }} = Ptr C{{ struct.str_name|capitalize }}
+      f ptr
 
-toStorable ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f ={% for name, _, _ in struct.str_field %} toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %} do
+  {-# INLINE toStorable #-}
+  unStorable ptr = do
+    (C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) <- peek ptr
+{% for name, _, _ in struct.str_field %}
+    a{{ name }} <- unStorableBase a{{ name }}'
+{% endfor %}
+    return $ {{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
 
 
-alloca $ \ptr -> do
 
-poke ptr $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType {{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
+  toStorableBase ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f =
+{% for name, _, _ in struct.str_field %}    toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %}f (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %})
 
-f ptr
 
-{-# INLINE toStorable #-}
-
-unStorable ptr = do
-
-(C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) <- peek ptr
+  {-# INLINE toStorableBase #-}
+  unStorableBase (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) = do
 
 {% for name, _, _ in struct.str_field %}
-a{{ name }} <- unStorableBase a{{ name }}'
+    a{{ name }} <- unStorableBase a{{ name }}'
+{% endfor %}
+
+    return $ {{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
+
+  {-# INLINE unStorableBase #-}
+
 {% endfor %}
 
 
-return $ {{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
+{% for name, type in game|haskell_get_array_types %}
+data C{{ name }} = C{{ name }} { c{{ name }}Ptr :: Ptr C{{ type|get_array_inner|haskell_c_type }}, c{{ name }}Size :: CSize }
 
+instance Storable C{{ name }} where
+  sizeOf _ = (#size {{ name|lower }})
+  {-# INLINE sizeOf #-}
+  alignment _ = alignment (undefined :: CInt)
+  {-# INLINE alignment #-}
+  peek ptr = do
+    length <- (#peek {{ name|lower}}, length) ptr
+    items <- (#peek {{ name|lower}}, items) ptr
+    return $ C{{ name }} items length
 
+  {-# INLINE peek #-}
+  poke ptr (C{{ name }} items length) = do
+    (#poke {{ name|lower}}, length) ptr length
+    (#poke {{ name|lower}}, items) ptr items
+  {-# INLINE poke #-}
 
-{-# INLINE unStorable #-}
+instance ApiStorable {{ type|haskell_type }} where
+  type ApiStorableType {{ type|haskell_type }} = Ptr C{{ name }}
+  toStorable xs f = toStorableBase xs $ \a -> alloca $ \ptr -> do
+    poke ptr a
+    f ptr
+  {-# INLINE toStorable #-}
+  unStorable xa = do
+    (C{{ name }} xa' xl) <- peek xa
+    xs <- peekArray (fromIntegral xl) xa'
+    mapM unStorableBase xs
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType {{ type|haskell_type }} = C{{ name }}
 
-type ApiStorableBaseType {{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
-
-toStorableBase ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f =
-
-{% for name, _, _ in struct.str_field %} toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %}f (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %})
-
-
-{-# INLINE toStorableBase #-}
-
-unStorableBase (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) = do
-
-{% for name, _, _ in struct.str_field %}
-a{{ name }} <- unStorableBase a{{ name }}'
-{% endfor %}
-
-return $ {{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
-
-{-# INLINE unStorableBase #-}
-
-
+  toStorableBase xs f = do
+    let xl = length xs
+    allocaArray xl $ \xa ->
+      foldl'
+        (\acc (i, c) -> toStorableBase c $ \c' -> do
+          poke (advancePtr xa i) c'
+          acc
+        )
+        (f $ C{{ name }} xa (fromIntegral xl))
+        (zip [0..] xs)
+  {-# INLINE toStorableBase #-}
+  unStorableBase (C{{ name }} xa xl) = do
+    xs <- peekArray (fromIntegral xl) xa
+    mapM unStorableBase xs
+  {-# INLINE unStorableBase #-}
 {% endfor %}
