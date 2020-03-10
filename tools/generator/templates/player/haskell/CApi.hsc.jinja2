@@ -1,0 +1,199 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE UndecidableInstances #-}
+
+{{ stechec2_generated|haskell_comment }}
+
+module CApi where
+
+import Data.List (foldl')
+import Foreign
+import Foreign.C.Types
+import Foreign.Marshal.Array
+
+#include "api.h"
+
+class ApiStorable a where
+  type ApiStorableType a
+  toStorable :: a -> (ApiStorableType a -> IO b) -> IO b
+  unStorable :: ApiStorableType a -> IO a
+  type ApiStorableBaseType a
+  toStorableBase :: a -> (ApiStorableBaseType a -> IO b) -> IO b
+  unStorableBase :: ApiStorableBaseType a -> IO a
+
+instance ApiStorable () where
+  type ApiStorableType () = ()
+  toStorable () f = f ()
+  {-# INLINE toStorable #-}
+  unStorable _ = return ()
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType () = ()
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+instance ApiStorable Int where
+  type ApiStorableType Int = CInt
+  toStorable x f = f (fromIntegral x)
+  {-# INLINE toStorable #-}
+  unStorable = return . fromIntegral
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType Int = ApiStorableType Int
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+instance ApiStorable Bool where
+  type ApiStorableType Bool = CBool
+  toStorable x f = f ((\bx -> if bx then 1 else 0) x)
+  {-# INLINE toStorable #-}
+  unStorable = return . (/= 0)
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType Bool = ApiStorableType Bool
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+instance ApiStorable Double where
+  type ApiStorableType Double = CDouble
+  toStorable x f = f (CDouble x)
+  {-# INLINE toStorable #-}
+  unStorable = return . (\(CDouble x) -> x)
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType Double = ApiStorableType Double
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|haskell_comment }}
+data {{ enum.enum_name|capitalize }} =
+{% for field_name, field_comment in enum.enum_field %}
+{% if not loop.first %}|{% else %} {% endif %} {{ field_name|capitalize }} -- {{ field_comment }}
+{% endfor %}
+deriving(Show, Eq, Enum)
+type C{{ enum.enum_name|capitalize }} = CInt
+
+instance ApiStorable {{ enum.enum_name|capitalize }} where
+  type ApiStorableType {{ enum.enum_name|capitalize }} = CInt
+  toStorable x f = f (fromIntegral (fromEnum x))
+  {-# INLINE toStorable #-}
+  unStorable = return . toEnum . fromIntegral
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType {{ enum.enum_name|capitalize }} = ApiStorableType {{ enum.enum_name|capitalize }}
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+{% endfor %}
+
+{% for struct in game.struct %}
+{{ struct.str_summary|haskell_comment }}
+{% if struct.str_tuple %}
+data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }}
+{{ join(' ', haskell_type(struct.str_fields[1])) }}
+
+{% else %}
+data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }} {
+{% for name, type, comment in struct.str_field %}
+ {{ name }} :: {{ type|haskell_type }}{{ ',' if not loop.last }} -- {{ comment }}
+{% endfor %}
+}
+{% endif %}
+
+deriving(Show, Eq)
+
+{% if struct.str_tuple %}
+data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
+{{ join(' ', struct.str_field[1]|haskell_type) }}
+{% else %}
+data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }} {
+{% for name, type, comment in struct.str_field %}
+c{{ name }} :: {{ type|c_haskell_type }}{{ ',' if not loop.last }} -- c{{ comment }}
+{% endfor %}
+}
+{% endif %}
+
+instance Storable C{{ struct.str_name|capitalize }} where
+sizeOf _ = (#size {{ struct.str_name }})
+{-# INLINE sizeOf #-}
+alignment _ = alignment (undefined :: CInt)
+{-# INLINE alignment #-}
+peek ptr = do
+
+
+{% for name, _, _ in struct.str_field %}
+a{{ name }} <- (#peek {{ struct.str_name }}, {{ name }}) ptr
+{% endfor %}
+
+return $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
+
+
+{-# INLINE peek #-}
+poke ptr (C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) = do
+
+{% for name, _, _ in struct.str_field %}
+(#poke {{ struct.str_name }}, {{ name }}) ptr a{{ name }}
+{% endfor %}
+
+
+{-# INLINE poke #-}
+
+instance ApiStorable {{ struct.str_name|capitalize }} where
+
+type ApiStorableType {{ struct.str_name|capitalize }} = Ptr C{{ struct.str_name|capitalize }}
+
+toStorable ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f ={% for name, _, _ in struct.str_field %} toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %} do
+
+
+alloca $ \ptr -> do
+
+poke ptr $ C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}
+
+f ptr
+
+{-# INLINE toStorable #-}
+
+unStorable ptr = do
+
+(C{{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) <- peek ptr
+
+{% for name, _, _ in struct.str_field %}
+a{{ name }} <- unStorableBase a{{ name }}'
+{% endfor %}
+
+
+return $ {{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
+
+
+
+{-# INLINE unStorable #-}
+
+type ApiStorableBaseType {{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
+
+toStorableBase ({{ struct.str_name|capitalize }}{% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}) f =
+
+{% for name, _, _ in struct.str_field %} toStorableBase a{{ name }} $ \a{{ name }}' -> {% endfor %}f (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %})
+
+
+{-# INLINE toStorableBase #-}
+
+unStorableBase (C{{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}'{% endfor %}) = do
+
+{% for name, _, _ in struct.str_field %}
+a{{ name }} <- unStorableBase a{{ name }}'
+{% endfor %}
+
+return $ {{ struct.str_name|capitalize }} {% for name, _, _ in struct.str_field %} a{{ name }}{% endfor %}
+
+{-# INLINE unStorableBase #-}
+
+
+{% endfor %}
