@@ -94,15 +94,16 @@ Requirements:
 - mono
 - jdk-java
 - ghc
+- rustc
 
 Archlinux::
 
-  pacman --needed -S php php-embed ocaml mono jdk11-openjdk ghc
+  pacman --needed -S php php-embed ocaml mono jdk11-openjdk ghc rust
 
 Debian/Ubuntu::
 
   apt-get install php-cli php-dev libphp-embed ocaml mono-devel ghc \
-                  openjdk-11-jdk
+                  openjdk-11-jdk rustc
 
 Create your AI
 --------------
