@@ -226,3 +226,30 @@ instance ApiStorable {{ type|haskell_type }} where
     mapM unStorableBase xs
   {-# INLINE unStorableBase #-}
 {% endfor %}
+
+
+{% for func in game.function %}
+{{ func.fct_summary|haskell_comment }}
+{{ func.fct_name }} ::{% for _, type, _ in func.fct_arg %} {{ type|haskell_type }} -> {% endfor %}IO {{ func.fct_ret_type|haskell_type }}
+{{ func.fct_name }}{% for name, _, _ in func.fct_arg %} {{ name }} {% endfor %} ={% for name, _, _ in func.fct_arg %} toStorable {{ name }} $ \{{ name }}' -> {% endfor %} (hs_{{ func.fct_name }} {% for name, _, _ in func.fct_arg %} {{ name }}'{% endfor %}) >>= unStorable
+
+
+foreign import ccall
+  hs_{{ func.fct_name }} :: {% for _, type, _ in func.fct_arg %} (ApiStorableType {{ type|haskell_type }}) ->{% endfor %} IO (ApiStorableType {{ func.fct_ret_type|haskell_type }})
+{% endfor %}
+
+{% for enum in game.enum %}
+afficher_{{ enum.enum_name }} :: {{ enum.enum_name|capitalize }} -> IO ()
+afficher_{{ enum.enum_name }} v = toStorable v $ \v' -> (hs_afficher_{{ enum.enum_name }} v') >>= unStorable
+
+foreign import ccall
+  hs_afficher_{{ enum.enum_name }} :: (ApiStorableType {{ enum.enum_name|capitalize }}) -> IO (ApiStorableType ())
+{% endfor %}
+
+{% for struct in game.struct %}
+afficher_{{ struct.str_name }} :: {{ struct.str_name|capitalize }} -> IO ()
+afficher_{{ struct.str_name }} v = toStorable v $ \v' -> (hs_afficher_{{ struct.str_name }} v') >>= unStorable
+
+foreign import ccall
+  hs_afficher_{{ struct.str_name }} :: (ApiStorableType {{ struct.str_name|capitalize }}) -> IO (ApiStorableType ())
+{% endfor %}
