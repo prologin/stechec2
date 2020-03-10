@@ -26,6 +26,9 @@ class TestLanguages(unittest.TestCase):
     def test_cxx(self):
         self.run_language_tests('cxx', 'champion.cc')
 
+    def test_haskell(self):
+        self.run_language_tests('haskell', 'Champion.hs')
+
     def test_java(self):
         self.run_language_tests('java', 'Champion.java')
 
