@@ -3,7 +3,7 @@ import unittest
 from generator.game import Game, GameError
 
 
-def test_game_config(content):
+def get_test_game(content):
     g = {
         'name': 'test',
         'constant': [],
@@ -21,7 +21,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function 'foobar_fail': Argument 'barfoo' was defined "
                     "twice")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'function': [{
                     'fct_name': 'foobar_fail',
                     'fct_summary': 'same argument is here twice',
@@ -37,7 +37,7 @@ class TestYamlErrors(unittest.TestCase):
     def test_error_struct_shadows_enum(self):
         expected = "Type sometype was defined twice."
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'enum': [{
                     'enum_name': 'sometype',
                     'enum_summary': 'some type',
@@ -58,7 +58,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Struct structtype: Field 'conflict' conflicts with a "
                     "type name")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'enum': [{
                     'enum_name': 'conflict',
                     'enum_summary': 'enum type',
@@ -79,7 +79,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function 'foobar_fail': Argument 'sometype' conflicts "
                     "with a type name")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'struct': [{
                     'str_name': 'sometype',
                     'str_summary': 'some type',
@@ -102,7 +102,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function 'foobar_fail': Argument 'foobar' of unknown "
                     "type 'whatever'")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'function': [{
                     'fct_name': 'foobar_fail',
                     'fct_summary': 'argument type is unknown',
@@ -117,7 +117,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function 'foobar_fail' has an unknown return type "
                     "'whatever'")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'function': [{
                     'fct_name': 'foobar_fail',
                     'fct_summary': 'argument type is unknown',
@@ -129,7 +129,7 @@ class TestYamlErrors(unittest.TestCase):
     def test_error_func_defined_twice(self):
         expected = "Function 'foobar_fail' was defined twice."
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'function': [
                     {
                         'fct_name': 'foobar_fail',
@@ -151,7 +151,7 @@ class TestYamlErrors(unittest.TestCase):
                     "in enum 'enumtype'. This will confuse some type "
                     "inferrers.")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'enum': [{
                     'enum_name': 'enumtype',
                     'enum_summary': 'enum type',
@@ -172,7 +172,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Game name 'bool': name conflicts with a keyword of a "
                     "target language.")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'name': 'bool'
             }))
 
@@ -180,7 +180,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function 'static': name conflicts with a keyword of a "
                     "target language.")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'function': [{
                     'fct_name': 'static',
                     'fct_summary': 'static is a keyword',
@@ -193,7 +193,7 @@ class TestYamlErrors(unittest.TestCase):
         expected = ("Function add_stuff: argument 'type': name conflicts with "
                     "a keyword of a target language.")
         with self.assertRaisesRegex(GameError, expected):
-            Game(test_game_config({
+            Game(get_test_game({
                 'enum': [{
                     'enum_name': 'error',
                     'enum_summary': 'error',
