@@ -44,10 +44,32 @@ class Game:
         self.game['user_function'] = self.game.get('user_function', [])
 
         validate_schema(self.game, GAME_SCHEMA)
+        self.load_constants()
         self.load_base_types()
         self.load_used_types()
         self.load_funcs()
         self.check()
+
+    def load_constants(self):
+        '''Load the constants and infer their type if necessary.'''
+        cst_type_mapping = {
+            int: 'int',
+            str: 'string',
+            float: 'double',
+        }
+        for cst in self.game['constant']:
+            val_type = type(cst['cst_val'])
+            if val_type not in cst_type_mapping:
+                raise GameError("Constant '{}' has unsupported type: {}"
+                                .format(cst['cst_name'], val_type))
+            cst_type = cst_type_mapping[val_type]
+            if 'cst_type' not in cst:
+                cst['cst_type'] = cst_type
+            elif cst['cst_type'] != cst_type:
+                raise GameError(
+                    "Constant '{}' type '{}' does not match value '{}'"
+                    .format(cst['cst_name'], cst['cst_type'], cst_type)
+                )
 
     def load_base_types(self):
         '''
@@ -223,10 +245,6 @@ class Game:
             ),
             None
         )
-
-    def get_cst_type(self, constant) -> type:
-        """Get the type of a constant"""
-        return constant.get("cst_type", "int")
 
 
 # Adapted from camisole/schema.py

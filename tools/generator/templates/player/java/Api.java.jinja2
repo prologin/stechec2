@@ -32,7 +32,7 @@ public class Api
 
     {% endif %}
     {{ constant.cst_comment|java_comment(doc=True, indent=4) }}
-    public static final {{ game.get_cst_type(constant)|java_type }} {{ constant.cst_name }} = {{ constant.cst_val }};
+    public static final {{ constant.cst_type|java_type }} {{ constant.cst_name }} = {{ constant.cst_val }};
     {% endfor %}
     {% for func in game.function %}
 
