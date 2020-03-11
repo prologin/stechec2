@@ -33,6 +33,7 @@ def test():
         field_str_arr=[simple_struct(42, True, 42.42)] * 42))
 
     send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
+    afficher_test_enum(test_enum.VAL2)
     l = send_me_struct_array([struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,

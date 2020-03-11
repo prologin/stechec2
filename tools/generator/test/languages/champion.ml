@@ -39,6 +39,7 @@ let test () =  (* Pose ton code ici *)
                   field_int_arr = times42 42;
                   field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } };
     send_me_test_enum Val1 Val2;
+    afficher_test_enum Val2;
     let l = send_me_struct_array (
         times42 { field_int = 42;
                   field_int_arr = times42 42;

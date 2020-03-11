@@ -67,6 +67,8 @@ void test()
 
     send_me_test_enum(VAL1, VAL2);
 
+    afficher_test_enum(VAL2);
+
     std::vector<struct_with_array> l(42);
     for (int i = 0; i < 42; ++i)
     {

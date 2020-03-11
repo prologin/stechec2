@@ -29,6 +29,7 @@ function test()
         array(false, true, true, false, true, true, false, true, true));
 
     send_me_test_enum(VAL1, VAL2);
+    afficher_test_enum(VAL2);
 
     $struct1 = array("field_i" => 42, "field_bool" => true, "field_double" => 42.42);
     send_me_simple($struct1);

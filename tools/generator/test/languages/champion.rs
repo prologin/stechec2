@@ -48,6 +48,8 @@ pub fn test() {
 
     send_me_test_enum(TestEnum::Val1, TestEnum::Val2);
 
+    afficher_test_enum(TestEnum::Val2);
+
     let l = vec![
         StructWithArray {
             field_int: 42,

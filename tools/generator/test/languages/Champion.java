@@ -62,6 +62,8 @@ public class Champion extends Api
 
         send_me_test_enum(TestEnum.VAL1, TestEnum.VAL2);
 
+        afficher_test_enum(TestEnum.VAL2);
+
         StructWithArray[] l = new StructWithArray[42];
         for (int i = 0; i < 42; ++i)
         {

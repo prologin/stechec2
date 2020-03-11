@@ -165,7 +165,9 @@ std::ostream& operator<<(std::ostream& os, test_enum v)
 }
 extern "C" void api_afficher_test_enum(test_enum v)
 {
-    std::cerr << v << std::endl;
+    // For the tests, let’s just check that the function is called with VAL2,
+    // instead of the default implementation `std::cerr << v << std::endl;`
+    assert(v == VAL2);
 }
 
 ///

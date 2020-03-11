@@ -58,6 +58,8 @@ namespace Prologin {
 
       Api.SendMeTestEnum(TestEnum.VAL1, TestEnum.VAL2);
 
+      Api.AfficherTestEnum(TestEnum.VAL2);
+
       StructWithArray[] l = new StructWithArray[42];
       for (int i = 0; i < 42; ++i)
       {

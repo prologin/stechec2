@@ -37,6 +37,8 @@ test = do
   send_me_42s $ theStruct
   send_me_test_enum Val1 Val2;
 
+  afficher_test_enum(Val2);
+
   assert' . (== (replicate 42 theStruct)) <$> send_me_struct_array (replicate 42 theStruct)
   return ()
 
