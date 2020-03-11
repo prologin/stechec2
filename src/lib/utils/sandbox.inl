@@ -4,6 +4,7 @@
 #include "sandbox.hh"
 
 #include <cerrno>
+#include <chrono>
 #include <ctime>
 #include <pthread.h>
 #include <string>
@@ -16,10 +17,12 @@
 // Implementation of the sandbox. Lots of tricky C++ to get a nice user API,
 // but most of it could be removed when C++11 compilers become better.
 
-namespace utils {
+namespace utils
+{
 
 // Private namespace for the sandbox implementation.
-namespace sandbox_impl {
+namespace sandbox_impl
+{
 
 // Metaprogramming trick to apply a std::tuple to a function.
 template <int N>
@@ -102,6 +105,17 @@ void* thread_proc(void* arg)
 
 } // namespace sandbox_impl
 
+template <typename Clock, typename Duration = typename Clock::duration>
+timespec timepoint_to_timespec(std::chrono::time_point<Clock, Duration> tp)
+{
+    using namespace std::chrono;
+
+    auto secs = time_point_cast<seconds>(tp);
+    auto ns =
+        time_point_cast<nanoseconds>(tp) - time_point_cast<nanoseconds>(secs);
+    return timespec{secs.time_since_epoch().count(), ns.count()};
+}
+
 template <typename Ret, typename... Args>
 Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
 {
@@ -115,16 +129,9 @@ Ret Sandbox::execute(const std::function<Ret(Args...)>& func, Args... args)
                                                     &retval};
 
     // Initialize the timeout struct.
-    struct timespec ts;
-    if (clock_gettime(CLOCK_REALTIME, &ts) < 0)
-        FATAL("Unable to get the current time");
-    ts.tv_sec += get_timeout() / 1000;
-    ts.tv_nsec += (get_timeout() % 1000) * 1000000;
-    if (ts.tv_nsec >= 1000000000L)
-    {
-        ts.tv_sec++;
-        ts.tv_nsec -= 1000000000L;
-    }
+    struct timespec ts =
+        timepoint_to_timespec(std::chrono::system_clock::now() +
+                              std::chrono::milliseconds(get_timeout()));
 
     // Create the thread.
     pthread_t sandbox_thread;
