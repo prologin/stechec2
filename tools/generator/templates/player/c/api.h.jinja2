@@ -39,13 +39,3 @@ typedef struct {{ type }}_array {
 {{ func.fct_summary|c_comment }}
 {{ func|c_prototype }};
 {% endfor %}
-{% for enum in game.enum %}
-
-/// Affiche le contenu d'une enum de type {{ enum.enum_name }}
-void afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
-{% endfor %}
-{% for struct in game.struct %}
-
-/// Affiche le contenu d'une struct de type {{ struct.str_name }}
-void afficher_{{ struct.str_name }}({{ struct.str_name }} v);
-{% endfor %}
