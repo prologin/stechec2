@@ -108,19 +108,3 @@ extern "C" {{ func|c_prototype }}
     ){% if func is returning %}){% endif %};
 }
 {% endfor %}
-{% for enum in game.enum %}
-
-extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
-void afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
-{
-    api_afficher_{{ enum.enum_name }}(v);
-}
-{% endfor %}
-{% for struct in game.struct %}
-
-extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name|c_internal_cxx_type }} v);
-void afficher_{{ struct.str_name }}({{ struct.str_name }} v)
-{
-    api_afficher_{{ struct.str_name }}({{ struct.str_name|c_to_cxx }}(v));
-}
-{% endfor %}

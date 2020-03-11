@@ -48,6 +48,7 @@ class Game:
         self.load_base_types()
         self.load_used_types()
         self.load_funcs()
+        self.load_generated_funcs()
         self.check()
 
     def load_constants(self):
@@ -127,7 +128,20 @@ class Game:
                 raise GameError("Function '{}' was defined twice."
                                 .format(f['fct_name']))
             defined_funcs.add(f['fct_name'])
-        # TODO: add display_* functions
+
+    def load_generated_funcs(self):
+        def add_display(t):
+            self.game['function'].append({
+                'fct_name': 'afficher_{}'.format(t),
+                'fct_summary': ("Affiche le contenu d'une valeur de type {}"
+                                .format(t)),
+                'fct_arg': [('v', t, 'The value to display')],
+                'fct_ret_type': 'void',
+            })
+        for e in self.game['enum']:
+            add_display(e['enum_name'])
+        for s in self.game['struct']:
+            add_display(s['str_name'])
 
     def check(self):
         '''Perform various integrity checks on the game objects'''

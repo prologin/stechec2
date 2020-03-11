@@ -39,18 +39,4 @@ public class Api
     {{ func.fct_summary|java_comment(doc=True, indent=4) }}
     public static native {{ func|java_prototype }};
     {% endfor %}
-    {% for enum in game.enum %}
-
-    /**
-     * Affiche le contenu d'une enum de type {{ enum.enum_name }}
-     */
-    public static native void afficher_{{ enum.enum_name }}({{ enum.enum_name|camel_case }} v);
-    {% endfor %}
-    {% for struct in game.struct %}
-
-    /**
-     * Affiche le contenu d'une struct de type {{ struct.str_name }}
-     */
-    public static native void afficher_{{ struct.str_name }}({{ struct.str_name|camel_case }} v);
-    {% endfor %}
 }

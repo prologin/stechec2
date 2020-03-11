@@ -54,12 +54,6 @@ static struct StechecJavaRunTime jrt;
 {% for func in game.function %}
 extern "C" {{ func|cxx_prototype(prefix='api_') }};
 {% endfor %}
-{% for enum in game.enum %}
-extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
-{% endfor %}
-{% for struct in game.struct %}
-extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name }} v);
-{% endfor %}
 
 // In case of errors...
 template <typename Lang, typename CxxType>
@@ -219,20 +213,6 @@ jobject cxx_to_java<{{ struct.str_name }}, jobject>({{ struct.str_name }} in)
     {%- endfor %}));
 }
 {% endfor %}
-{% for enum in game.enum %}
-
-void afficher_{{ enum.enum_name }}(JNIEnv*, jobject, jobject v)
-{
-    api_afficher_{{ enum.enum_name }}(java_to_cxx<jobject, {{ enum.enum_name }}>(v));
-}
-{% endfor %}
-{% for struct in game.struct %}
-
-void afficher_{{ struct.str_name }}(JNIEnv*, jobject, jobject v)
-{
-    api_afficher_{{ struct.str_name }}(java_to_cxx<jobject, {{ struct.str_name }}>(v));
-}
-{% endfor %}
 {% for func in game.user_function %}
 
 extern "C" {{ func|cxx_prototype }}
@@ -284,12 +264,6 @@ static void _register_native_methods(JNIEnv* env)
     JNINativeMethod methods[] = {
     {% for func in game.function %}
         {(char*)"{{ func.fct_name }}", (char*)"{{ func|jni_method_signature }}", (void*)&{{ func.fct_name }}},
-    {% endfor %}
-    {% for enum in game.enum %}
-        {(char*)"afficher_{{ enum.enum_name }}", (char*)"({{ enum.enum_name|jni_type_signature }})V", (void*)&afficher_{{ enum.enum_name }}},
-    {% endfor %}
-    {% for struct in game.struct %}
-        {(char*)"afficher_{{ struct.str_name }}", (char*)"({{ struct.str_name|jni_type_signature }})V", (void*)&afficher_{{ struct.str_name }}},
     {% endfor %}
     };
     env->RegisterNatives(Champion::Class(), methods, sizeof(methods)/sizeof(methods[0]));

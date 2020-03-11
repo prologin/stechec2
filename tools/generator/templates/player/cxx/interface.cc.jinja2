@@ -17,19 +17,3 @@ extern "C" {{ func|cxx_prototype(prefix='api_') }};
     api_{{ func.fct_name }}({{ func.fct_arg|map('first')|join(', ') }});
 }
 {% endfor %}
-{% for enum in game.enum %}
-
-extern "C" void api_afficher_{{ enum.enum_name }}({{ enum.enum_name }} v);
-void afficher_{{ enum.enum_name }}({{ enum.enum_name }} v)
-{
-    api_afficher_{{ enum.enum_name }}(v);
-}
-{% endfor %}
-{% for struct in game.struct %}
-
-extern "C" void api_afficher_{{ struct.str_name }}({{ struct.str_name }} v);
-void afficher_{{ struct.str_name }}({{ struct.str_name }} v)
-{
-    api_afficher_{{ struct.str_name }}(v);
-}
-{% endfor %}
