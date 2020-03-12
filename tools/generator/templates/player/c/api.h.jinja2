@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include <stdlib.h>
 #include <stdbool.h>
+#include <stdlib.h>
 {% for constant in game.constant %}
 
 {{ c.decl_constant(constant) }}
@@ -25,7 +25,8 @@ struct {{ struct.str_name }};
 {% endfor %}
 {% for type in game.used_array_types() %}
 
-typedef struct {{ type }}_array {
+typedef struct {{ type }}_array
+{
     {%+ if game.get_struct(type) %}struct {% endif %}{{ type|c_type }}* items;
     size_t length;
 } {{ type }}_array;
