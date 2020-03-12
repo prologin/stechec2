@@ -33,7 +33,8 @@
 // The rest of the file is generated operators for the structs defined above.
 // -----
 
-namespace std {
+namespace std
+{
 template <typename T>
 struct hash<std::vector<T>>
 {
@@ -84,7 +85,8 @@ inline bool operator>(const {{ struct.str_name }}& a, const {{ struct.str_name }
     return false;
 }
 
-namespace std {
+namespace std
+{
 template <>
 struct hash<{{ struct.str_name }}>
 {
@@ -101,8 +103,9 @@ struct hash<{{ struct.str_name }}>
 {% endfor %}
 
 {# Demangle user functions #}
-extern "C" {
+extern "C"
+{
 {% for func in game.user_function %}
-extern "C" {{ func|cxx_prototype }};
+    {{ func|cxx_prototype }};
 {% endfor %}
 }
