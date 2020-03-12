@@ -4,26 +4,27 @@
 // This file contains the code to call the API functions from the C language.
 // {{ stechec2_generated }}
 
-#include <vector>
 #include <string>
+#include <vector>
 
-extern "C" {
+extern "C"
+{
 #include "api.h"
 }
 
-template<typename CType, typename CxxType>
+template <typename CType, typename CxxType>
 CxxType c_to_cxx(CType in)
 {
     return in;
 }
 
-template<>
+template <>
 std::string c_to_cxx<char*, std::string>(char* in)
 {
     return in;
 }
 
-template<typename CType, typename CType_array, typename CxxType>
+template <typename CType, typename CType_array, typename CxxType>
 std::vector<CxxType> c_to_cxx_array(CType_array in)
 {
     std::vector<CxxType> out(in.length);
@@ -32,13 +33,13 @@ std::vector<CxxType> c_to_cxx_array(CType_array in)
     return out;
 }
 
-template<typename CType, typename CxxType>
+template <typename CType, typename CxxType>
 CType cxx_to_c(CxxType in)
 {
     return in;
 }
 
-template<>
+template <>
 char* cxx_to_c<char*, std::string>(std::string in)
 {
     size_t l = in.length();
@@ -49,11 +50,11 @@ char* cxx_to_c<char*, std::string>(std::string in)
     return out;
 }
 
-template<typename CType, typename CType_array, typename CxxType>
+template <typename CType, typename CType_array, typename CxxType>
 CType_array cxx_to_c_array(const std::vector<CxxType>& in)
 {
-    CType_array out = { NULL, in.size() };
-    out.items = (CType *)malloc((out.length) * sizeof(CType));
+    CType_array out = {NULL, in.size()};
+    out.items = (CType*)malloc((out.length) * sizeof(CType));
     for (size_t i = 0; i < out.length; ++i)
         out.items[i] = cxx_to_c<CType, CxxType>(in[i]);
     return out;
@@ -61,7 +62,6 @@ CType_array cxx_to_c_array(const std::vector<CxxType>& in)
 {% for struct in game.struct %}
 {% set c_type = struct.str_name %}
 {% set cxx_type = '__internal__cxx__' + struct.str_name %}
-
 
 {{ struct.str_summary|cxx_comment(doc=True) }}
 
@@ -72,7 +72,7 @@ typedef struct {{ cxx_type }}
     {% endfor %}
 } {{ cxx_type }};
 
-template<>
+template <>
 {{ cxx_type }} c_to_cxx<{{ c_type }}, {{ cxx_type }}>({{ c_type }} in)
 {
     {{ cxx_type }} out;
@@ -82,7 +82,7 @@ template<>
     return out;
 }
 
-template<>
+template <>
 {{ c_type }} cxx_to_c<{{ c_type }}, {{ cxx_type }}>({{ cxx_type }} in)
 {
     {{ c_type }} out;
@@ -100,8 +100,8 @@ extern "C" {{ func|c_internal_cxx_prototype(prefix='api_') }};
 extern "C" {{ func|c_prototype }}
 {
     {% if func is returning %}
-    return {{ func.fct_ret_type|cxx_to_c }}({% endif -%}
-    api_{{ func.fct_name }}(
+    return {{ func.fct_ret_type|cxx_to_c }}(
+    {%- endif %}api_{{ func.fct_name }}(
         {%- for arg_name, arg_type, arg_comment in func.fct_arg %}
         {{- arg_type|c_to_cxx }}({{ arg_name }}){% if not loop.last %}, {% endif %}
         {% endfor -%}
