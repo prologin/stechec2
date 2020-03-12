@@ -131,103 +131,14 @@ extern "C"
     }
 }
 
-// Printers
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const std::vector<T>& arr)
-{
-    os << "[";
-    typename std::vector<T>::const_iterator it;
-    for (it = arr.begin(); it != arr.end(); ++it)
-    {
-        if (it != arr.begin())
-            os << ", ";
-        os << *it;
-    }
-    os << "]";
-    return os;
-}
-
-///
-// Affiche le contenu d'une valeur de type test_enum
-//
-std::ostream& operator<<(std::ostream& os, test_enum v)
-{
-    switch (v)
-    {
-    case VAL1:
-        os << "VAL1";
-        break;
-    case VAL2:
-        os << "VAL2";
-        break;
-    }
-    return os;
-}
 extern "C" void api_afficher_test_enum(test_enum v)
 {
-    // For the tests, let’s just check that the function is called with VAL2,
-    // instead of the default implementation `std::cerr << v << std::endl;`
     assert(v == VAL2);
 }
 
-///
-// Affiche le contenu d'une valeur de type simple_struct
-//
-std::ostream& operator<<(std::ostream& os, simple_struct v)
-{
-    os << "{ ";
-    os << "field_i"
-       << "=" << v.field_i;
-    os << ", ";
-    os << "field_bool"
-       << "=" << v.field_bool;
-    os << " }";
-    return os;
-}
-extern "C" void api_afficher_simple_struct(simple_struct v)
-{
-    std::cerr << v << std::endl;
-}
-
-///
-// Affiche le contenu d'une valeur de type struct_with_array
-//
-std::ostream& operator<<(std::ostream& os, struct_with_array v)
-{
-    os << "{ ";
-    os << "field_int"
-       << "=" << v.field_int;
-    os << ", ";
-    os << "field_int_arr"
-       << "=" << v.field_int_arr;
-    os << ", ";
-    os << "field_str_arr"
-       << "=" << v.field_str_arr;
-    os << " }";
-    return os;
-}
-
-extern "C" void api_afficher_struct_with_array(struct_with_array v)
-{
-    std::cerr << v << std::endl;
-}
-
-std::ostream& operator<<(std::ostream& os, struct_with_struct v)
-{
-    os << "{ ";
-    os << "field_integer"
-       << "=" << v.field_integer;
-    os << ", ";
-    os << "field_struct"
-       << "=" << v.field_struct;
-    os << " }";
-    return os;
-}
-
-extern "C" void api_afficher_struct_with_struct(struct_with_struct v)
-{
-    std::cerr << v << std::endl;
-}
+extern "C" void api_afficher_simple_struct(simple_struct) {}
+extern "C" void api_afficher_struct_with_array(struct_with_array) {}
+extern "C" void api_afficher_struct_with_struct(struct_with_struct) {}
 
 int main(int argc, char* argv[])
 {
