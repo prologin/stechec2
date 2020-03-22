@@ -16,11 +16,11 @@ def c_type(value: str) -> str:
 
 
 @register_filter
-def c_args(value, type_mapper=lambda x: x) -> str:
+def c_args(value, type_mapper=c_type) -> str:
     if not value:
         return 'void'
     else:
-        return generic_args(value, type_mapper=c_type)
+        return generic_args(value, type_mapper=type_mapper)
 
 
 c_prototype = register_filter(
