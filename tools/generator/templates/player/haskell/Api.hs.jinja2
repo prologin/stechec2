@@ -13,14 +13,6 @@ module Api (
 {{ func.fct_name }},
 {% endfor %}
 
-{% for enum in game.enum %}
-afficher_{{ enum.enum_name|lower }},
-{% endfor %}
-
-{% for s in game.struct %}
-afficher_{{ s.str_name|lower }},
-{% endfor %}
-
 {% for cst in game.constant %}
 {{ cst.cst_name|lower }},
 {% endfor %}

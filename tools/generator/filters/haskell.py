@@ -1,7 +1,10 @@
 from functools import partial
+from jinja2 import contextfilter
 
 from . import register_filter
-from .common import generic_comment, get_array_inner, is_array
+from .c import c_type, c_args, c_internal_cxx_type
+from .common import (generic_comment, generic_prototype, get_array_inner,
+                     is_array)
 
 
 @register_filter
@@ -18,6 +21,15 @@ def haskell_c_type(type_id: str) -> str:
     if is_array(type_id):
         return f'{haskell_c_type(get_array_inner(type_id))}_array'
     return type_id.capitalize()
+
+
+@register_filter
+@contextfilter
+def cptr_type(ctx, type_id: str) -> str:
+    res = c_type(type_id)
+    if is_array(type_id) or ctx['game'].get_struct(type_id):
+        res += '*'
+    return res
 
 
 haskell_comment = register_filter(
@@ -47,3 +59,54 @@ def haskell_get_array_types(game: dict):
 
     types = list(dict.fromkeys(types))
     return types
+
+
+@register_filter
+@contextfilter
+def cptr_to_cxx(ctx, value: str, use_ptr: bool = False) -> str:
+    if is_array(value):
+        base_type = get_array_inner(value)
+        return 'cptr_to_cxx_array{}<{}, {}, {}>'.format(
+            '_ptr' if use_ptr else '',
+            c_type(base_type),
+            c_type(value),
+            c_internal_cxx_type(ctx, base_type)
+        )
+    else:
+        ctype = cptr_type(ctx, value) if use_ptr else c_type(value)
+        cpptype = c_internal_cxx_type(ctx, value)
+        return 'cptr_to_cxx<{}, {}>'.format(ctype, cpptype)
+
+
+@register_filter
+@contextfilter
+def cxx_to_cptr(ctx, value: str, use_ptr: bool = False) -> str:
+    if is_array(value):
+        base_type = get_array_inner(value)
+        return 'cxx_to_cptr_array{}<{}, {}, {}>'.format(
+            '_ptr' if use_ptr else '',
+            c_type(base_type),
+            c_type(value),
+            c_internal_cxx_type(ctx, base_type),
+        )
+    else:
+        ctype = cptr_type(ctx, value) if use_ptr else c_type(value)
+        cpptype = c_internal_cxx_type(ctx, value)
+        return 'cxx_to_cptr<{}, {}>'.format(ctype, cpptype)
+
+
+@register_filter
+@contextfilter
+def cptr_internal_cxx_prototype(ctx, *args, **kwargs) -> str:
+    return generic_prototype(type_mapper=partial(c_internal_cxx_type, ctx),
+                             *args, **kwargs)
+
+
+@register_filter
+@contextfilter
+def haskell_c_prototype(ctx, *args, **kwargs) -> str:
+    type_mapper = partial(cptr_type, ctx)
+    arg_mapper = partial(c_args, type_mapper=type_mapper)
+    return generic_prototype(type_mapper=type_mapper,
+                             arg_mapper=arg_mapper,
+                             prefix='hs_', *args, **kwargs)

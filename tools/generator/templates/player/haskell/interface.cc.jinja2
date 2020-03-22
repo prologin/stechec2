@@ -1,1 +1,182 @@
-{% include 'player/c/interface.cc.jinja2' %}
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2020 Association Prologin <association@prologin.org>
+
+// This file contains the code to call the API functions from the C language.
+// {{ stechec2_generated }}
+
+#include <vector>
+#include <string>
+
+#include "HsFFI.h"
+
+extern "C" {
+#include "api.h"
+}
+
+extern "C" void haskell_init()
+{
+    static bool done = false;
+    if (!done){
+        hs_init(0, 0);
+        done = true;
+    }
+}
+
+static std::vector<void*> __internal_need_free;
+
+template<typename CPtrType, typename CxxType>
+CxxType cptr_to_cxx(CPtrType in)
+{
+    return in;
+}
+
+template<>
+std::string cptr_to_cxx<char*, std::string>(char* in)
+{
+    return in;
+}
+
+template<typename CPtrType, typename CPtrType_array, typename CxxType>
+std::vector<CxxType> cptr_to_cxx_array(CPtrType_array in)
+{
+    std::vector<CxxType> out(in.length);
+    for (size_t i = 0; i < in.length; ++i)
+        out[i] = cptr_to_cxx<CPtrType, CxxType>(in.items[i]);
+    return out;
+}
+
+template<typename CPtrType, typename CPtrType_array, typename CxxType>
+std::vector<CxxType> cptr_to_cxx_array_ptr(CPtrType_array* in)
+{
+    std::vector<CxxType> out(in->length);
+    for (size_t i = 0; i < in->length; ++i)
+        out[i] = cptr_to_cxx<CPtrType, CxxType>(in->items[i]);
+    return out;
+}
+
+template<typename CPtrType, typename CxxType>
+CPtrType cxx_to_cptr(CxxType in)
+{
+    return in;
+}
+
+template<>
+char* cxx_to_cptr<char*, std::string>(std::string in)
+{
+    size_t l = in.length();
+    char* out = (char *) malloc(l + 1);
+    __internal_need_free.push_back(out);
+    for (size_t i = 0; i < l; i++)
+        out[i] = in[i];
+    out[l] = 0;
+    return out;
+}
+
+template<typename CPtrType, typename CPtrType_array, typename CxxType>
+CPtrType_array cxx_to_cptr_array(const std::vector<CxxType>& in)
+{
+    CPtrType_array out = { NULL, in.size() };
+    out.items = (CPtrType *)malloc((out.length) * sizeof(CPtrType));
+    __internal_need_free.push_back(out.items);
+    for (size_t i = 0; i < out.length; ++i)
+        out.items[i] = cxx_to_cptr<CPtrType, CxxType>(in[i]);
+    return out;
+}
+
+template<typename CPtrType, typename CPtrType_array, typename CxxType>
+CPtrType_array* cxx_to_cptr_array_ptr(const std::vector<CxxType>& in)
+{
+    CPtrType_array* out = (CPtrType_array*)malloc(sizeof (CPtrType_array));
+    __internal_need_free.push_back(out);
+    *out = { NULL, in.size() };
+    out->items = (CPtrType *)malloc((out->length) * sizeof(CPtrType));
+    __internal_need_free.push_back(out->items);
+    for (size_t i = 0; i < out->length; ++i)
+        out->items[i] = cxx_to_cptr<CPtrType, CxxType>(in[i]);
+    return out;
+}
+{% for struct in game.struct %}
+{% set c_type = struct.str_name %}
+{% set cxx_type = '__internal__cxx__' + struct.str_name %}
+
+
+{{ struct.str_summary|cxx_comment(doc=True) }}
+
+typedef struct {{ cxx_type }}
+{
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    {{ field_type|c_internal_cxx_type }} {{ field_name }}; ///< {{ field_comment }}
+    {% endfor %}
+} {{ cxx_type }};
+
+template<>
+{{ cxx_type }} cptr_to_cxx<{{ c_type }}, {{ cxx_type }}>({{ c_type }} in)
+{
+    {{ cxx_type }} out;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out.{{ field_name }} = {{ field_type|cptr_to_cxx }}(in.{{ field_name }});
+    {% endfor %}
+    return out;
+}
+
+template<>
+{{ c_type }} cxx_to_cptr<{{ c_type }}, {{ cxx_type }}>({{ cxx_type }} in)
+{
+    {{ c_type }} out;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out.{{ field_name }} = {{ field_type|cxx_to_cptr }}(in.{{ field_name }});
+    {% endfor %}
+    return out;
+}
+
+template<>
+{{ cxx_type }} cptr_to_cxx<{{ c_type }}*, {{ cxx_type }}>({{ c_type }}* in)
+{
+    {{ cxx_type }} out;
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out.{{ field_name }} = {{ field_type|cptr_to_cxx }}(in->{{ field_name }});
+    {% endfor %}
+    return out;
+}
+
+template<>
+{{ c_type }}* cxx_to_cptr<{{ c_type }}*, {{ cxx_type }}>({{ cxx_type }} in)
+{
+    {{ c_type }}* out = ({{ c_type }}*)malloc(sizeof ({{ c_type }}));
+    __internal_need_free.push_back(out);
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out->{{ field_name }} = {{ field_type|cxx_to_cptr }}(in.{{ field_name }});
+    {% endfor %}
+    return out;
+}
+{% endfor %}
+
+{% for func in game.function %}
+
+extern "C" {{ func|c_internal_cxx_prototype(prefix='api_') }};
+
+extern "C" {{ func|haskell_c_prototype }}
+{
+    {% if func is returning %}
+    return {{ func.fct_ret_type|cxx_to_cptr(use_ptr=True) }}({% endif -%}
+    api_{{ func.fct_name }}(
+        {%- for arg_name, arg_type, arg_comment in func.fct_arg %}
+        {{- arg_type|cptr_to_cxx(use_ptr=True) }}({{ arg_name }}){% if not loop.last %}, {% endif %}
+        {% endfor -%}
+    ){% if func is returning %}){% endif %};
+}
+{% endfor %}
+{% for func in game.user_function %}
+
+extern "C" {{ func|c_prototype(prefix='hs_') }};
+
+extern "C" {{ func|c_prototype }}
+{
+    haskell_init();
+    hs_{{ func.fct_name }}();
+    hs_perform_gc();
+    for (void* ptr : __internal_need_free)
+        free(ptr);
+    __internal_need_free.clear();
+}
+{% endfor %}
