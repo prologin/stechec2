@@ -3,6 +3,7 @@
 # Copyright (c) 2020 Antoine Pietri
 
 import contextlib
+import os
 import pathlib
 import shutil
 import subprocess
@@ -44,27 +45,28 @@ class TestLanguages(unittest.TestCase):
     def run_language_tests(self, language, champion_file_name):
         language_dir = self.player_path / language
         self.compile_language(language, champion_file_name)
-        self.check_language_alert(language_dir)
         self.check_language(language_dir)
 
     def check_language(self, language_dir):
-        try:
-            subprocess.run(
-                ['./tester'], universal_newlines=True, check=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                cwd=language_dir,
-            )
-        except subprocess.CalledProcessError as e:
-            self.fail("Test failed with output:\n" + e.output)
+        env = os.environ.copy()
+        env['LD_LIBRARY_PATH'] = '.:{}'.format(env.get('LD_LIBRARY_PATH', ''))
 
-    def check_language_alert(self, language_dir):
         msg_assert = "test_alert() did not assert, assertions are not working."
         with self.assertRaises(subprocess.CalledProcessError, msg=msg_assert):
             subprocess.run(
                 ['./tester', '--test-alert'], universal_newlines=True,
                 check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                cwd=language_dir,
+                cwd=language_dir, env=env
             )
+
+        try:
+            subprocess.run(
+                ['./tester'], universal_newlines=True, check=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                cwd=language_dir, env=env
+            )
+        except subprocess.CalledProcessError as e:
+            self.fail("Test failed with output:\n" + e.output)
 
     def compile_language(self, language, champion_file_name):
         language_dir = self.player_path / language
