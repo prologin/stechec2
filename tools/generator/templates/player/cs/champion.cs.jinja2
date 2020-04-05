@@ -3,17 +3,16 @@
  #}
 using System;
 
-namespace Prologin {
+namespace Champion {
+    class Champion {
 
-	class Prologin {
+        {% for func in game.user_function %}
 
-		{% for func in game.user_function %}
-
-		{{ func.fct_summary|cs_comment }}
-		{{ func|cs_prototype }}
-		{
-			// TODO
-		}
-		{% endfor %}
-	}
+        {{ func.fct_summary|cs_comment }}
+        {{ func|cs_prototype }}
+        {
+            // TODO
+        }
+        {% endfor %}
+    }
 }

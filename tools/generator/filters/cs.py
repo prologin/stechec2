@@ -61,14 +61,26 @@ def cs_mono_prototype(ctx, *args, **kwargs) -> str:
 @register_filter
 @contextfilter
 def cs_to_cxx(ctx, value: str) -> str:
-    ctype = cs_mono_type(ctx, value)
-    cpptype = cxx_type(value)
-    return 'lang2cxx<{}, {}>'.format(ctype, cpptype)
+    if is_array(value):
+        base_type = get_array_inner(value)
+        cstype = cs_mono_type(ctx, base_type)
+        cxxtype = cxx_type(base_type)
+        return 'lang2cxx_array<{}, {}>'.format(cstype, cxxtype)
+    else:
+        cstype = cs_mono_type(ctx, value)
+        cxxtype = cxx_type(value)
+        return 'lang2cxx<{}, {}>'.format(cstype, cxxtype)
 
 
 @register_filter
 @contextfilter
 def cxx_to_cs(ctx, value: str) -> str:
-    ctype = cs_mono_type(ctx, value)
-    cpptype = cxx_type(value)
-    return 'cxx2lang<{}, {}>'.format(ctype, cpptype)
+    if is_array(value):
+        base_type = get_array_inner(value)
+        cstype = cs_mono_type(ctx, base_type)
+        cxxtype = cxx_type(base_type)
+        return 'cxx2lang_array<{}, {}>'.format(cstype, cxxtype)
+    else:
+        cstype = cs_mono_type(ctx, value)
+        cxxtype = cxx_type(value)
+        return 'cxx2lang<{}, {}>'.format(cstype, cxxtype)
