@@ -24,6 +24,9 @@ class TestLanguages(unittest.TestCase):
     def test_caml(self):
         self.run_language_tests('caml', 'champion.ml')
 
+    def test_csharp(self):
+        self.run_language_tests('cs', 'champion.cs')
+
     def test_cxx(self):
         self.run_language_tests('cxx', 'champion.cc')
 

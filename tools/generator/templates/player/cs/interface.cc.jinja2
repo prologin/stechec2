@@ -122,31 +122,27 @@ bool lang2cxx<gint32, bool>(gint32 in)
     return (bool)in;
 }
 
-template <>
-MonoArray* cxx2lang<MonoArray*, std::vector<int>>(std::vector<int> in)
+template <typename CsType, typename CxxType>
+MonoArray* cxx2lang_array(const std::vector<CxxType>& in)
 {
     gint32 size = in.size();
+    // TODO: handle string/double types
     MonoClass* mcKlass = mono_get_int32_class();
     MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
-
-    for (int i = 0; i < size; ++i)
-        mono_array_set(maArray, gint32, i, (cxx2lang<gint32, int>(in[i])));
-
+    for (size_t i = 0; i < size; ++i)
+        mono_array_set(maArray, gint32, i, (cxx2lang<CsType, CxxType>(in[i])));
     return maArray;
 }
 
-template <>
-std::vector<int> lang2cxx<MonoArray*, std::vector<int>>(MonoArray* in)
+template <typename CsType, typename CxxType>
+std::vector<CxxType> lang2cxx_array(MonoArray* in)
 {
-    std::vector<int> out;
+    std::vector<CxxType> out;
     gint32 size = mono_array_length(in);
-
     for (int i = 0; i < size; ++i)
-        out.push_back(lang2cxx<gint32, int>(mono_array_get(in, gint32, i)));
-
+        out.push_back(lang2cxx<CsType, CxxType>(mono_array_get(in, CsType, i)));
     return out;
 }
-
 {% for enum in game.enum %}
 
 {{ enum.enum_summary|cxx_comment }}
@@ -161,32 +157,6 @@ template <>
 {
     return ({{ enum.enum_name }})in;
 }
-
-template <>
-MonoArray* cxx2lang<MonoArray*, std::vector<{{ enum.enum_name }}>>(std::vector<{{ enum.enum_name }}> in)
-{
-    gint32 size = in.size();
-    MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ enum.enum_name|camel_case }}");
-    MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
-    for (int i = 0; i < size; ++i)
-        mono_array_set(maArray, gint32, i,
-                       (cxx2lang<gint32, {{ enum.enum_name }}>(in[i])));
-    return maArray;
-}
-
-template <>
-std::vector<{{ enum.enum_name }}>
-lang2cxx<MonoArray*, std::vector<{{ enum.enum_name }}>>(MonoArray* in)
-{
-    std::vector<{{ enum.enum_name }}> out;
-    gint32 size = mono_array_length(in);
-
-    for (int i = 0; i < size; ++i)
-        out.push_back(
-            lang2cxx<gint32, {{ enum.enum_name }}>(mono_array_get(in, gint32, i)));
-    return out;
-}
 {% endfor %}
 {% for struct in game.struct %}
 
@@ -196,7 +166,7 @@ template <>
 MonoObject* cxx2lang<MonoObject*, {{ struct.str_name }}>({{ struct.str_name }} in)
 {
     MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
     MonoObject* moObj = mono_object_new(gl_csharp.getDomain(), mcKlass);
     mono_runtime_object_init(moObj);
     {% for field_name, field_type, field_comment in struct.str_field %}
@@ -216,7 +186,7 @@ template <>
     void* tmp;
     (void)tmp;
     MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
 
     {% for field_name, field_type, field_comment in struct.str_field %}
     {% if field_type is array or game.get_struct(field_type) %}
@@ -239,12 +209,11 @@ template <>
 }
 
 template <>
-MonoArray*
-cxx2lang<MonoArray*, std::vector<{{ struct.str_name }}>>(std::vector<{{ struct.str_name }}> in)
+MonoArray* cxx2lang_array<MonoObject*, {{ struct.str_name }}>(const std::vector<{{ struct.str_name }}>& in)
 {
     gint32 size = in.size();
     MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
     MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
     for (int i = 0; i < size; ++i)
         mono_array_setref(maArray, i,
@@ -253,8 +222,7 @@ cxx2lang<MonoArray*, std::vector<{{ struct.str_name }}>>(std::vector<{{ struct.s
 }
 
 template <>
-std::vector<{{ struct.str_name }}>
-lang2cxx<MonoArray*, std::vector<{{ struct.str_name }}>>(MonoArray* in)
+std::vector<{{ struct.str_name }}> lang2cxx_array<MonoObject*, {{ struct.str_name }}>(MonoArray* in)
 {
     std::vector<{{ struct.str_name }}> out;
     gint32 size = mono_array_length(in);
@@ -314,7 +282,7 @@ CSharpInterface::CSharpInterface()
 
     // Register API functions as internal Mono functions
     {% for func in game.function %}
-    mono_add_internal_call("Prologin.Api::{{ func.fct_name|camel_case }}", (const void*)cs_{{ func.fct_name }});
+    mono_add_internal_call("Champion.Api::{{ func.fct_name|camel_case }}", (const void*)cs_{{ func.fct_name }});
     {% endfor %}
 }
 
