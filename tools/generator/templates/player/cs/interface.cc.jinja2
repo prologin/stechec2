@@ -1,0 +1,360 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (c) 2020 Association Prologin <association@prologin.org>
+{% import 'macros/cxx.jinja2' as cxx %}
+
+// This file contains the code to call the API functions from the C#
+// language.
+// {{ stechec2_generated }}
+
+#include <assert.h>
+#include <cstdlib>
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <mono/jit/jit.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/threads.h>
+
+typedef int32_t gint32;
+
+class CSharpInterface
+{
+    public:
+        CSharpInterface();
+        ~CSharpInterface();
+        MonoObject* callCSharpMethod(const char* name);
+        MonoImage* getImage();
+        MonoDomain* getDomain();
+
+    private:
+
+        MonoDomain* _domain;
+        MonoAssembly* _assembly;
+        MonoImage* _image;
+        MonoClass* _class;
+        MonoObject* _object;
+};
+
+{% for enum in game.enum %}
+
+{{ cxx.decl_enum(enum) }}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ cxx.decl_struct(struct) }}
+{% endfor %}
+
+extern "C" {
+{% for func in game.function %}
+
+{{ func.fct_summary|cxx_comment(doc=True) }}
+{{ func|cxx_prototype(prefix='api_') }};
+{% endfor %}
+}
+
+CSharpInterface gl_csharp;
+
+template <class Out, class Cxx>
+Out cxx2lang(Cxx in)
+{
+    return (Out)in;
+}
+
+template <>
+MonoString* cxx2lang<MonoString*, std::string>(std::string in)
+{
+    return mono_string_new(gl_csharp.getDomain(), in.c_str());
+}
+
+template <>
+gint32 cxx2lang<gint32, int>(int in)
+{
+    return (gint32)in;
+}
+
+template <>
+gint32 cxx2lang<gint32, bool>(bool in)
+{
+    return (gint32)in;
+}
+
+template <class Out, class Cxx>
+Cxx lang2cxx(Out in)
+{
+    return (Cxx)in;
+}
+
+template <>
+std::string lang2cxx<MonoString*, std::string>(MonoString* in)
+{
+    std::string s_out;
+    MonoError error;
+    char* c_out;
+
+    if (!in)
+        return std::string("(null)");
+    c_out = mono_string_to_utf8_checked(in, &error);
+    if (!mono_error_ok(&error))
+    {
+        s_out = std::string(mono_error_get_message(&error));
+        mono_error_cleanup(&error);
+        return s_out;
+    }
+    else
+    {
+        s_out = std::string(c_out);
+        mono_free(c_out);
+        return s_out;
+    }
+}
+
+template <>
+int lang2cxx<gint32, int>(gint32 in)
+{
+    return (int)in;
+}
+
+template <>
+bool lang2cxx<gint32, bool>(gint32 in)
+{
+    return (bool)in;
+}
+
+template <>
+MonoArray* cxx2lang<MonoArray*, std::vector<int>>(std::vector<int> in)
+{
+    gint32 size = in.size();
+    MonoClass* mcKlass = mono_get_int32_class();
+    MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
+
+    for (int i = 0; i < size; ++i)
+        mono_array_set(maArray, gint32, i, (cxx2lang<gint32, int>(in[i])));
+
+    return maArray;
+}
+
+template <>
+std::vector<int> lang2cxx<MonoArray*, std::vector<int>>(MonoArray* in)
+{
+    std::vector<int> out;
+    gint32 size = mono_array_length(in);
+
+    for (int i = 0; i < size; ++i)
+        out.push_back(lang2cxx<gint32, int>(mono_array_get(in, gint32, i)));
+
+    return out;
+}
+
+{% for enum in game.enum %}
+
+{{ enum.enum_summary|cxx_comment }}
+template <>
+gint32 cxx2lang<gint32, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+{
+    return (gint32)in;
+}
+
+template <>
+{{ enum.enum_name }} lang2cxx<gint32, {{ enum.enum_name }}>(gint32 in)
+{
+    return ({{ enum.enum_name }})in;
+}
+
+template <>
+MonoArray* cxx2lang<MonoArray*, std::vector<{{ enum.enum_name }}>>(std::vector<{{ enum.enum_name }}> in)
+{
+    gint32 size = in.size();
+    MonoClass* mcKlass =
+        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ enum.enum_name|camel_case }}");
+    MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
+    for (int i = 0; i < size; ++i)
+        mono_array_set(maArray, gint32, i,
+                       (cxx2lang<gint32, {{ enum.enum_name }}>(in[i])));
+    return maArray;
+}
+
+template <>
+std::vector<{{ enum.enum_name }}>
+lang2cxx<MonoArray*, std::vector<{{ enum.enum_name }}>>(MonoArray* in)
+{
+    std::vector<{{ enum.enum_name }}> out;
+    gint32 size = mono_array_length(in);
+
+    for (int i = 0; i < size; ++i)
+        out.push_back(
+            lang2cxx<gint32, {{ enum.enum_name }}>(mono_array_get(in, gint32, i)));
+    return out;
+}
+{% endfor %}
+{% for struct in game.struct %}
+
+{{ struct.str_summary|cxx_comment }}
+
+template <>
+MonoObject* cxx2lang<MonoObject*, {{ struct.str_name }}>({{ struct.str_name }} in)
+{
+    MonoClass* mcKlass =
+        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+    MonoObject* moObj = mono_object_new(gl_csharp.getDomain(), mcKlass);
+    mono_runtime_object_init(moObj);
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    auto arg_{{ field_name }} = {{ field_type|cxx_to_cs }}(in.{{ field_name }});
+    mono_field_set_value(
+        moObj,
+        mono_class_get_field_from_name(mcKlass, "{{ field_name|camel_case }}"),
+        &arg_{{ field_name }});
+    {% endfor %}
+    return moObj;
+}
+
+template <>
+{{ struct.str_name }} lang2cxx<MonoObject*, {{ struct.str_name }}>(MonoObject* in)
+{
+    {{ struct.str_name }} out;
+    void* tmp;
+    (void)tmp;
+    MonoClass* mcKlass =
+        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    {% if field_type is array or game.get_struct(field_type) %}
+    {# Reference types should be converted from MonoObject #}
+    mono_field_get_value(
+        in,
+        mono_class_get_field_from_name(mcKlass, "{{ field_name|camel_case }}"),
+        &tmp);
+    out.{{ field_name }} = {{ field_type|cs_to_cxx }}(
+        reinterpret_cast<{{ field_type|cs_mono_type }}>(tmp));
+    {% else %}
+    {# Other types are passed directly by reference #}
+    mono_field_get_value(
+        in,
+        mono_class_get_field_from_name(mcKlass, "{{ field_name|camel_case }}"),
+        &out.{{ field_name }});
+    {% endif %}
+    {% endfor %}
+    return out;
+}
+
+template <>
+MonoArray*
+cxx2lang<MonoArray*, std::vector<{{ struct.str_name }}>>(std::vector<{{ struct.str_name }}> in)
+{
+    gint32 size = in.size();
+    MonoClass* mcKlass =
+        mono_class_from_name(gl_csharp.getImage(), "Prologin", "{{ struct.str_name|camel_case }}");
+    MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
+    for (int i = 0; i < size; ++i)
+        mono_array_setref(maArray, i,
+                          (cxx2lang<MonoObject*, {{ struct.str_name }}>(in[i])));
+    return maArray;
+}
+
+template <>
+std::vector<{{ struct.str_name }}>
+lang2cxx<MonoArray*, std::vector<{{ struct.str_name }}>>(MonoArray* in)
+{
+    std::vector<{{ struct.str_name }}> out;
+    gint32 size = mono_array_length(in);
+
+    for (int i = 0; i < size; ++i)
+        out.push_back(lang2cxx<MonoObject*, {{ struct.str_name }}>(
+            reinterpret_cast<MonoObject*>(mono_array_get(in, MonoObject*, i))));
+    return out;
+}
+{% endfor %}
+
+{% for func in game.function %}
+
+// C# native wrapper for function {{ func.fct_name }}.
+{{ func.fct_summary|cxx_comment }}
+{{ func|cs_mono_prototype }}
+{
+    {%+ if func is returning %}return {{ func.fct_ret_type|cxx_to_cs }}{% endif -%}
+    (api_{{ func.fct_name }}(
+    {%- set comma = joiner(', ') -%}
+    {%- for arg_name, arg_type, _ in func.fct_arg -%}
+    {{ comma() }}{{ arg_type|cs_to_cxx }}({{ arg_name }})
+    {%- endfor %}));
+}
+{% endfor %}
+
+// Inititialize Mono and load the DLL file.
+CSharpInterface::CSharpInterface()
+{
+    const char* champion_path = getenv("CHAMPION_PATH");
+    std::string champion;
+
+    if (!champion_path)
+        champion = "./champion.dll";
+    else
+    {
+        champion = champion_path;
+        champion += "/champion.dll";
+    }
+
+    _domain = mono_jit_init(champion.c_str());
+    assert(_domain != NULL);
+
+    _assembly = mono_domain_assembly_open(_domain, champion.c_str());
+    assert(_assembly != NULL);
+
+    _image = mono_assembly_get_image(_assembly);
+    assert(_image != NULL);
+
+    _class = mono_class_from_name(_image, "Champion", "Champion");
+    assert(_class != NULL);
+
+    _object = mono_object_new(_domain, _class);
+    assert(_object);
+
+    mono_runtime_object_init(_object);
+
+    // Register API functions as internal Mono functions
+    {% for func in game.function %}
+    mono_add_internal_call("Prologin.Api::{{ func.fct_name|camel_case }}", (const void*)cs_{{ func.fct_name }});
+    {% endfor %}
+}
+
+MonoImage* CSharpInterface::getImage()
+{
+    return _image;
+}
+
+MonoDomain* CSharpInterface::getDomain()
+{
+    return _domain;
+}
+
+CSharpInterface::~CSharpInterface()
+{
+    mono_image_close(_image);
+    mono_assembly_close(_assembly);
+    // XXX -- mono segfaults when calling this. Seems to be a known bug
+    //        appearing when mono_jit_clean() is called from a dtor. ???
+    // mono_jit_cleanup(_domain);
+}
+
+// Calls C# functions from C++
+MonoObject* CSharpInterface::callCSharpMethod(const char* name)
+{
+    MonoThread* thread = mono_thread_attach(_domain);
+    MonoMethod* method = mono_class_get_method_from_name(_class, name, 0);
+    MonoObject* object = mono_runtime_invoke(method, _object, NULL, NULL);
+
+    mono_thread_detach(thread);
+
+    return object;
+}
+
+
+// Functions called from Stechec to C#.
+{% for func in game.user_function %}
+
+extern "C" {{ func|cxx_prototype }}
+{
+    gl_csharp.callCSharpMethod("{{ func.fct_name|camel_case }}");
+}
+{% endfor %}
