@@ -15,6 +15,7 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
 #include <mono/metadata/threads.h>
 
 typedef int32_t gint32;
@@ -263,8 +264,12 @@ CSharpInterface::CSharpInterface()
         champion += "/champion.dll";
     }
 
+    mono_config_parse(NULL);
+
     _domain = mono_jit_init(champion.c_str());
     assert(_domain != NULL);
+
+    mono_domain_set_config(_domain, ".", ".mono.conf");
 
     _assembly = mono_domain_assembly_open(_domain, champion.c_str());
     assert(_assembly != NULL);
