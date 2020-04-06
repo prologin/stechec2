@@ -98,7 +98,7 @@ instance ApiStorable {{ enum.enum_name|capitalize }} where
 {{ struct.str_summary|haskell_comment }}
 {% if struct.str_tuple %}
 data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }}
-{{ join(' ', haskell_type(struct.str_fields[1])) }}
+{% for name, type, comment in struct.str_field %} {{ type|haskell_type }}{% endfor %}
 {% else %}
 data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }} {
 {% for name, type, comment in struct.str_field %}
@@ -111,7 +111,7 @@ data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }} {
 
 {% if struct.str_tuple %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
-{{ join(' ', struct.str_field[1]|haskell_type) }}
+{% for name, type, comment in struct.str_field %} {{ type|haskell_type }}{% endfor %}
 {% else %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }} {
 {% for name, type, comment in struct.str_field %}
