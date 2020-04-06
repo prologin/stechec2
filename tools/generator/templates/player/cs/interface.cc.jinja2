@@ -175,7 +175,12 @@ MonoObject* cxx2lang<MonoObject*, {{ struct.str_name }}>({{ struct.str_name }} i
     mono_field_set_value(
         moObj,
         mono_class_get_field_from_name(mcKlass, "{{ field_name|camel_case }}"),
-        &arg_{{ field_name }});
+        {% if field_type is array or game.get_struct(field_type) %}
+        arg_{{ field_name }}
+        {% else %}
+        &arg_{{ field_name }}
+        {% endif %}
+    );
     {% endfor %}
     return moObj;
 }
