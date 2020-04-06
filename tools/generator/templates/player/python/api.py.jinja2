@@ -3,7 +3,7 @@
 # {{ stechec2_generated }}
 
 from enum import IntEnum
-from collections import namedtuple
+from typing import NamedTuple, List
 
 from _api import *
 
@@ -29,11 +29,10 @@ class {{ enum.enum_name }}(IntEnum):
 {% for struct in game.struct %}
     {% if not struct.str_tuple %}
 {{ struct.str_summary|python_comment }}
-{{ struct.str_name }} = namedtuple('{{ struct.str_name }}', [
+class {{ struct.str_name }}(NamedTuple):
     {% for field_name, field_type, field_comment in struct.str_field %}
-    '{{ field_name }}',  # {{ field_comment }}
+    {{ field_name }}: {{ field_type|python_type }}  # {{ field_comment }}
     {% endfor %}
-])
 
 
     {% endif %}

@@ -5,6 +5,21 @@ from .common import generic_comment, get_array_inner, is_array
 
 
 @register_filter
+def python_type(val: str) -> str:
+    base_types = {
+        'void': 'None',
+        'int': 'int',
+        'double': 'float',
+        'string': 'str',
+    }
+    if val in base_types:
+        return base_types[val]
+    if is_array(val):
+        return 'List[{}]'.format(python_type(get_array_inner(val)))
+    return val
+
+
+@register_filter
 def python_prototype(func) -> str:
     return 'def {}({}):'.format(
         func['fct_name'],
