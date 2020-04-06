@@ -3,7 +3,6 @@
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
 
 import argparse
-import subprocess
 import textwrap
 from pathlib import Path
 
@@ -65,12 +64,6 @@ def main():
     sp.add_parser('texdoc', help="generate latex API doc of the game")
     sp.add_parser('sphinxdoc', help="generate sphinx API doc of the game")
 
-    sp.add_parser('ruby-player')
-    sp.add_parser('ruby-server')
-    sp.add_parser('ruby-rules')
-    sp.add_parser('ruby-apidoc')
-    sp.add_parser('ruby-sphinxdoc')
-
     parser.add_argument('yaml_file', type=game_or_yaml_path,
                         help="The game YAML file")
     parser.add_argument('out_dir', type=Path, help="The output directory")
@@ -101,14 +94,7 @@ def main():
     elif args.command == 'sphinxdoc':
         make_sphinxdoc(game, args.out_dir)
     else:
-        command = args.command
-        if command.startswith('ruby-'):
-            command = command[len('ruby-'):]
-        subprocess.run(
-            ['stechec2-ruby-generator', command, args.yaml_file.name,
-             str(args.out_dir)],
-            check=True
-        )
+        raise RuntimeError("Unknown command {}.".format(args.command))
 
 
 if __name__ == "__main__":
