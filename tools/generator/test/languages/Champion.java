@@ -22,6 +22,7 @@ public class Champion extends Api
         assert(returns_42() == 42);
         assert(returns_true() == true);
         assert(Math.abs(returns_tau() - 6.2831) < 0.001);
+        assert(returns_val1() == TestEnum.VAL1);
 
         int[] r = returns_range(1, 100);
         for (int i = 1; i < 100; ++i)
@@ -44,6 +45,12 @@ public class Champion extends Api
         ba = returns_not(ba);
         for (int i = 0; i < 9; ++i)
             assert(ba[i] == (i % 3 != 0));
+
+        SimpleStruct simple = new SimpleStruct();
+        simple.field_i = 42;
+        simple.field_bool = true;
+        simple.field_double = 42.42;
+        send_me_simple(simple);
 
         StructWithArray s = new StructWithArray();
         s.field_int = 42;

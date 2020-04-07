@@ -19,6 +19,7 @@ pub fn test() {
     assert!(returns_42() == 42);
     assert!(returns_true() == true);
     assert!((returns_tau() - 6.2831).abs() < 0.001);
+    assert!(returns_val1() == TestEnum::Val1);
 
     let r = returns_range(1, 100);
     assert!(r == (1..100).collect::<Vec<_>>());
@@ -31,6 +32,13 @@ pub fn test() {
 
     let ba = returns_not(&vec![true, false, false, true, false, false, true, false, false]);
     assert!(ba == vec![false, true, true, false, true, true, false, true, true]);
+
+    let simple = SimpleStruct {
+        field_i: 42,
+        field_bool: true,
+        field_double: 42.42,
+    };
+    send_me_simple(&simple);
 
     let s = StructWithArray {
         field_int: 42,

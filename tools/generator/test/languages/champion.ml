@@ -29,12 +29,14 @@ let test () =  (* Pose ton code ici *)
     assert ((returns_42 ()) = 42);
     assert ((returns_true ()) = true);
     assert (abs_float (returns_tau () -. 6.2831853) < 0.0001);
+    assert ((returns_val1 ()) = Val1);
     assert ((returns_range 1 100) = (range 1 100));
     assert ((returns_range 1 10000) = (range 1 10000));
     assert ((returns_sorted [|1;3;2;4;5;7;6|]) = [|1;2;3;4;5;6;7|]);
     assert ((returns_sorted (range 1 10000)) = (range 1 10000));
     assert ((returns_not [|true;false;false;true;false;false;true;false;false|]) =
         [|false;true;true;false;true;true;false;true;true|]);
+    send_me_simple { field_i = 42; field_bool = true; field_double = 42.42 };
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
                   field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } };

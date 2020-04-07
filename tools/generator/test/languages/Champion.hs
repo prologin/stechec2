@@ -35,6 +35,7 @@ test = do
   () <- assert' . (== 42) <$> returns_42
   () <- assert' <$> returns_true
   () <- assert' . (\x -> abs (x - 6.2831853) < 0.0001) <$> returns_tau
+  () <- assert' . (== Val1) <$> returns_val1
   () <- assert' . (== [1..99]) <$> returns_range 1 100
   () <- assert' . (== [1..9999]) <$> returns_range 1 10000
   () <- assert' . (== [1..7]) <$> returns_sorted [1, 3, 2, 4, 5, 7, 6]
@@ -42,6 +43,7 @@ test = do
   () <- assert' . (== [False,True,True,False,True,True,False,True,True]) <$>
     returns_not [True,False,False,True,False,False,True,False,False]
 
+  send_me_simple $ Simple_struct 42 True 42.42
   send_me_42s $ theStruct
   send_me_test_enum Val1 Val2;
 

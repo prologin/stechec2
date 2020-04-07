@@ -21,6 +21,7 @@ function test()
     assert(returns_42() === 42);
     assert(returns_true() === true);
     assert(abs(returns_tau() - 6.2831853) < 0.0001);
+    assert(returns_val1() === VAL1);
     assert(returns_range(1, 100) === range(1, 99));
     assert(returns_range(1, 10000) === range(1, 9999));
     assert(returns_sorted(array(1, 3, 2, 4, 5, 7, 6)) === range(1, 7));
