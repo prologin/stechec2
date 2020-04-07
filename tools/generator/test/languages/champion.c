@@ -30,6 +30,7 @@ void test()
     assert(returns_42() == 42);
     assert(returns_true() == true);
     assert(fabs(returns_tau() - 6.2831) < 0.001);
+    assert(returns_val1() == VAL1);
 
     int_array r = returns_range(1, 100);
     for (int i = 1; i < 100; ++i)
@@ -54,6 +55,12 @@ void test()
     for (int i = 0; i < 9; ++i)
         assert(ba.items[i] == (i % 3 != 0));
     free(ba.items);
+
+    simple_struct simple;
+    simple.field_i = 42;
+    simple.field_bool = true;
+    simple.field_double = 42.42;
+    send_me_simple(simple);
 
     struct_with_array s;
     s.field_int = 42;

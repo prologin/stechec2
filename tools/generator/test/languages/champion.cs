@@ -32,6 +32,7 @@ namespace Champion {
       Assert(Api.Returns42() == 42);
       Assert(Api.ReturnsTrue() == true);
       Assert(Math.Abs(Api.ReturnsTau() - 6.2831853) < 0.0001);
+      Assert(Api.ReturnsVal1() == TestEnum.VAL1);
 
       int[] r = Api.ReturnsRange(1, 100);
       for (int i = 1; i < 100; ++i)
@@ -50,6 +51,19 @@ namespace Champion {
       for (int i = 0; i < 7; ++i)
         Assert(v[i] == i + 1);
 
+      bool[] ba = {true, false, false, true, false, false, true, false, false};
+      ba = Api.ReturnsNot(ba);
+      for (int i = 0; i < 9; ++i) {
+          // XFAIL: the C# generator doesn't handle arrays of booleans
+          // Assert(ba[i] == (i % 3 != 0));
+      }
+
+      SimpleStruct simple = new SimpleStruct();
+      simple.FieldI = 42;
+      simple.FieldBool = true;
+      simple.FieldDouble = 42.42;
+      Api.SendMeSimple(simple);
+
       StructWithArray s = new StructWithArray();
       s.FieldInt = 42;
       s.FieldIntArr = new int[42];
@@ -57,11 +71,7 @@ namespace Champion {
       for (int i = 0; i < 42; ++i)
       {
         s.FieldIntArr[i] = 42;
-        SimpleStruct ss = new SimpleStruct();
-        ss.FieldI = 42;
-        ss.FieldBool = true;
-        ss.FieldDouble = 42.42;
-        s.FieldStrArr[i] = ss;
+        s.FieldStrArr[i] = simple;
       }
       Api.SendMe42s(s);
 
@@ -79,11 +89,7 @@ namespace Champion {
         for (int j = 0; j < 42; ++j)
         {
           l[i].FieldIntArr[j] = 42;
-          SimpleStruct ss = new SimpleStruct();
-          ss.FieldI = 42;
-          ss.FieldBool = true;
-          ss.FieldDouble = 42.42;
-          l[i].FieldStrArr[j] = ss;
+          l[i].FieldStrArr[j] = simple;
         }
       }
 

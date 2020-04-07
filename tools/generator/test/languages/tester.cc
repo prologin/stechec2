@@ -8,31 +8,54 @@
 
 #include "cxx/api.hh"
 
+struct {
+    int send_me_42;
+    int send_me_42_and_1337;
+    int send_me_true;
+    int send_me_tau;
+    int send_me_13_ints;
+    int send_me_simple;
+    int send_me_42s;
+    int send_me_test_enum;
+    int send_me_struct_array;
+    int afficher_test_enum;
+    int returns_42;
+    int returns_true;
+    int returns_tau;
+    int returns_val1;
+    int returns_range;
+    int returns_sorted;
+    int returns_not;
+} func_called;
+
 extern "C"
 {
-
     void test();
     void test_alert();
 
     void api_send_me_42(int n)
     {
         assert(n == 42);
+        func_called.send_me_42 += 1;
     }
 
     void api_send_me_42_and_1337(int n1, int n2)
     {
         assert(n1 == 42);
         assert(n2 == 1337);
+        func_called.send_me_42_and_1337 += 1;
     }
 
     void api_send_me_true(bool b)
     {
         assert(b);
+        func_called.send_me_true += 1;
     }
 
     void api_send_me_tau(double b)
     {
         assert(b > 6.2831 && b < 6.2832);
+        func_called.send_me_tau += 1;
     }
 
     void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
@@ -52,30 +75,36 @@ extern "C"
         assert(arg11 == 11);
         assert(arg12 == 12);
         assert(arg13 == 13);
+        func_called.send_me_13_ints += 1;
     }
 
     int api_returns_42()
     {
+        func_called.returns_42 += 1;
         return 42;
     }
 
     bool api_returns_true()
     {
+        func_called.returns_true += 1;
         return true;
     }
 
     double api_returns_tau()
     {
+        func_called.returns_tau += 1;
         return 6.2831853;
     }
 
     test_enum api_returns_val1()
     {
+        func_called.returns_val1 += 1;
         return VAL1;
     }
 
     std::vector<int> api_returns_range(int m, int n)
     {
+        func_called.returns_range += 1;
         std::vector<int> v(n - m);
         for (int i = m; i < n; ++i)
             v[i - m] = i;
@@ -84,12 +113,14 @@ extern "C"
 
     std::vector<int> api_returns_sorted(std::vector<int> l)
     {
+        func_called.returns_sorted += 1;
         std::sort(l.begin(), l.end());
         return l;
     }
 
     std::vector<bool> api_returns_not(std::vector<bool> l)
     {
+        func_called.returns_not += 1;
         for (unsigned i = 0; i < l.size(); ++i)
             l[i] = !l[i];
         return l;
@@ -99,6 +130,8 @@ extern "C"
     {
         assert(s.field_i == 42);
         assert(s.field_bool);
+        assert(s.field_double > 42.41 and s.field_double < 42.43);
+        func_called.send_me_simple += 1;
     }
 
     void api_send_me_42s(struct_with_array s)
@@ -113,12 +146,14 @@ extern "C"
             assert(s2.field_i == 42);
             assert(s2.field_bool);
         }
+        func_called.send_me_42s += 1;
     }
 
     void api_send_me_test_enum(test_enum v1, test_enum v2)
     {
         assert(v1 == VAL1);
         assert(v2 == VAL2);
+        func_called.send_me_test_enum += 1;
     }
 
     std::vector<struct_with_array>
@@ -127,18 +162,21 @@ extern "C"
         assert(l.size() == 42);
         for (auto& s : l)
             api_send_me_42s(s);
+        func_called.send_me_struct_array += 1;
         return l;
     }
+
+    void api_afficher_test_enum(test_enum v)
+    {
+        assert(v == VAL2);
+        func_called.afficher_test_enum += 1;
+    }
+
+    void api_afficher_simple_struct(simple_struct) {}
+    void api_afficher_struct_with_array(struct_with_array) {}
+    void api_afficher_struct_with_struct(struct_with_struct) {}
 }
 
-extern "C" void api_afficher_test_enum(test_enum v)
-{
-    assert(v == VAL2);
-}
-
-extern "C" void api_afficher_simple_struct(simple_struct) {}
-extern "C" void api_afficher_struct_with_array(struct_with_array) {}
-extern "C" void api_afficher_struct_with_struct(struct_with_struct) {}
 
 int main(int argc, char* argv[])
 {
@@ -154,4 +192,22 @@ int main(int argc, char* argv[])
     }
     for (int i = 0; i < count; ++i)
         test();
+
+    assert(func_called.send_me_42);
+    assert(func_called.send_me_42_and_1337);
+    assert(func_called.send_me_true);
+    assert(func_called.send_me_tau);
+    assert(func_called.send_me_13_ints);
+    assert(func_called.send_me_simple);
+    assert(func_called.send_me_42s);
+    assert(func_called.send_me_test_enum);
+    assert(func_called.send_me_struct_array);
+    assert(func_called.afficher_test_enum);
+    assert(func_called.returns_42);
+    assert(func_called.returns_true);
+    assert(func_called.returns_tau);
+    assert(func_called.returns_val1);
+    assert(func_called.returns_range);
+    assert(func_called.returns_sorted);
+    assert(func_called.returns_not);
 }
