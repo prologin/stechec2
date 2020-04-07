@@ -34,7 +34,7 @@ protected:
         ApiError call(Args&&... args)
         {
             // Build action object
-            auto action = std::make_unique<Action>(std::forward<Args>(args)...,
+            auto action = std::make_shared<Action>(std::forward<Args>(args)...,
                                                    api_->player_->id);
 
             // Check action
@@ -69,7 +69,7 @@ protected:
     };
 
 public:
-    Api(std::unique_ptr<GameState> game_state, std::shared_ptr<Player> player)
+    Api(std::shared_ptr<GameState> game_state, std::shared_ptr<Player> player)
         : game_state_(std::move(game_state))
         , player_(player)
     {

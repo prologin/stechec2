@@ -20,7 +20,7 @@ class GameStateHistory
                   "GameState not derived from rules::GameState");
 
 public:
-    GameStateHistory(std::unique_ptr<GameState> current)
+    GameStateHistory(std::shared_ptr<GameState> current)
         : current_(std::move(current))
     {
     }
@@ -66,7 +66,7 @@ public:
     }
 
 private:
-    std::unique_ptr<GameState> current_;
-    std::vector<std::unique_ptr<GameState>> versions_;
+    std::shared_ptr<GameState> current_;
+    std::vector<std::shared_ptr<GameState>> versions_;
 };
 } // namespace rules

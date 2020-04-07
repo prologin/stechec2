@@ -18,7 +18,7 @@
 class Api final : public rules::Api<GameState, error>
 {
 public:
-    Api(std::unique_ptr<GameState> game_state,
+    Api(std::shared_ptr<GameState> game_state,
         std::shared_ptr<rules::Player> player);
 
     /// Play at the given position
