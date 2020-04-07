@@ -16,6 +16,8 @@ jobs:
         build:
           - name: Build GCC
             compiler: g++
+            configure_flags: --enable-gcov
+            coverage: true
 
           - name: Build Clang
             compiler: clang++
@@ -30,11 +32,6 @@ jobs:
           # - name: Build Clang (TSAN)
           #   compiler: clang++
           #   configure_flags: --enable-tsan
-
-          - name: Coverage report
-            compiler: g++
-            configure_flags: --enable-gcov
-            coverage: true
 
     steps:
       - name: Checkout repository
