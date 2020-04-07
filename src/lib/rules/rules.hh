@@ -2,6 +2,8 @@
 // Copyright (c) 2013 Association Prologin <association@prologin.org>
 #pragma once
 
+#include <map>
+#include <string>
 #include <utils/log.hh>
 
 #include "action.hh"
@@ -65,7 +67,7 @@ public:
     virtual void end_of_round() {}
 
     // Called at every turn by the server to dump the gamestate in the dumpfile
-    virtual void dump_state(std::ostream&)
+    virtual void dump_state(std::ostream&, std::map<std::string, int>)
     {
         FATAL("dump_state() virtual function not implemented in the rules "
               "but the server was launched with the `--dump` option.");
@@ -78,10 +80,10 @@ public:
 protected:
     bool is_spectator(uint32_t id);
 
-    void dump_state_stream()
+    void dump_state_stream(std::map<std::string, int> timestamp)
     {
         if (opt_.dump_stream)
-            dump_state(*opt_.dump_stream);
+            dump_state(*opt_.dump_stream, timestamp);
     }
 
     Options opt_;

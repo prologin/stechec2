@@ -147,7 +147,9 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start(msgr);
 
-    dump_state_stream();
+    std::map<std::string, int> timestamp;
+    timestamp["round"] = 0;
+    dump_state_stream(timestamp); // 0 start of game
 
     while (!is_finished())
     {
@@ -204,14 +206,20 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         }
 
         save_player_actions(actions);
-
+        int actions_count = 0;
         for (const auto& action : actions->all())
+        {
+            actions_count++;
             apply_action(*action);
+            timestamp["action"] = actions_count;
+            dump_state_stream(timestamp); // dump for every action
+        }
+        timestamp.erase("action");
         msgr->push_actions(*actions);
 
         end_of_round();
-
-        dump_state_stream();
+        timestamp["round"]++;
+        dump_state_stream(timestamp); // dump for new round
     }
 
     at_end();
@@ -464,7 +472,9 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
     start_of_round();
 
-    dump_state_stream();
+    std::map<std::string, int> timestamp;
+    timestamp["round"] = 0;
+    dump_state_stream(timestamp); // 0 start of game
 
     while (!is_finished())
     {
@@ -472,6 +482,7 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         {
             start_of_player_turn(player->id);
             start_of_turn(player->id);
+            timestamp["player"] = player->id;
 
             DEBUG("Turn for player %d", player->id);
             msgr->push_id(player->id);
@@ -494,8 +505,15 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
+                    int actions_count = 0;
                     for (const auto& action : actions->all())
+                    {
                         apply_action(*action);
+                        actions_count++;
+                        timestamp["action"] = actions_count;
+                        dump_state_stream(timestamp);
+                    }
+                    timestamp.erase("action");
                 }
             }
 
@@ -504,8 +522,8 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
             end_of_player_turn(player->id);
             end_of_turn(player->id);
-
-            dump_state_stream();
+            dump_state_stream(timestamp); // dump at end of player turn
+            timestamp.erase("player");
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
@@ -532,8 +550,13 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
         end_of_round();
         DEBUG("End of round!");
+        dump_state_stream(timestamp); // dump end of round
         if (!is_finished())
+        {
+            timestamp["round"]++;
             start_of_round();
+            dump_state_stream(timestamp); // dump start of round
+        }
         else
             break; // Avoid calling is_finished() twice
     }
