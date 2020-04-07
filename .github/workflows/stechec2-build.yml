@@ -37,7 +37,8 @@ jobs:
             coverage: true
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Install stechec2 dependencies
         run: |
@@ -57,7 +58,7 @@ jobs:
       - name: Build & Check
         env:
             CXX: "${{ matrix.build.compiler }}"
-        run: ./waf.py build --check
+        run: ./waf.py build -j8 --check
 
       - name: Coverage report
         if: matrix.build.coverage
@@ -67,8 +68,9 @@ jobs:
                 '*.unittest*' '/usr/*'
 
       - name: Coverage upload to Coveralls
+        uses: codecov/codecov-action@v1
         if: matrix.build.coverage
-        uses: coverallsapp/github-action@master
         with:
-          path-to-lcov: build/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+            file: build/lcov.info
+            name: stechec2
+            fail_ci_if_error: true
