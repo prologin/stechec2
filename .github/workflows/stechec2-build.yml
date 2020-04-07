@@ -67,7 +67,7 @@ jobs:
             lcov -o build/lcov.info --remove build/lcov.info \
                 '*.unittest*' '/usr/*'
 
-      - name: Coverage upload to Coveralls
+      - name: Coverage upload to Codecov
         uses: codecov/codecov-action@v1
         if: matrix.build.coverage
         with:
