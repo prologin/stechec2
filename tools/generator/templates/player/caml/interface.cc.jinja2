@@ -126,6 +126,39 @@ std::vector<CxxType> caml_to_cxx_array(value in)
         out.push_back(caml_to_cxx<value, CxxType>(Field(in, i)));
     CAMLreturnT(std::vector<CxxType>, out);
 }
+
+// OCaml Manual 20.3.3 - Arrays
+// "Arrays of floating-point numbers (type float array) have a special,
+// unboxed, more efficient representation. These arrays are represented by
+// pointers to blocks with tag Double_array_tag. They should be accessed with
+// the Double_field and Store_double_field macros."
+// https://caml.inria.fr/pub/docs/manual-ocaml/intfc.html#ss:c-arrays
+
+template <>
+value cxx_to_caml_array(const std::vector<double>& in)
+{
+    CAMLparam0();
+    CAMLlocal1(v);
+    size_t size = in.size();
+    if (size == 0)
+        CAMLreturn(Atom(0));
+    v = caml_alloc(size, Double_array_tag);
+    for (size_t i = 0; i < size; ++i)
+        Store_double_field(v, i, in[i]);
+    CAMLreturn(v);
+}
+
+template <>
+std::vector<double> caml_to_cxx_array(value in)
+{
+    CAMLparam1(in);
+    std::vector<double> out;
+    mlsize_t size = Wosize_val(in);
+    for (size_t i = 0; i < size; ++i)
+        out.push_back(Double_field(in, i));
+    CAMLreturnT(std::vector<double>, out);
+}
+
 {% for enum in game.enum %}
 
 {{ enum.enum_summary|cxx_comment }}
