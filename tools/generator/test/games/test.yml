@@ -131,6 +131,12 @@ function:
     fct_arg:
       - [l, bool array, input list]
   -
+    fct_name: returns_inverse
+    fct_summary: Returns the inverse of each double
+    fct_ret_type: double array
+    fct_arg:
+      - [l, double array, input list]
+  -
     fct_name: send_me_simple
     fct_summary: Send me a simple struct
     fct_ret_type: void

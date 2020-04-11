@@ -56,6 +56,13 @@ void test()
         assert(ba.items[i] == (i % 3 != 0));
     free(ba.items);
 
+    double bdo[] = {-0.5, 1.0, 12.5, 42.0};
+    double_array bdi = (double_array){bdo, 4};
+    bdi = returns_inverse(bdi);
+    for (int i = 0; i < 4; ++i)
+        assert(bdi.items[i] - (1 / bdo[i]) < 0.0001);
+    free(bdi.items);
+
     simple_struct simple;
     simple.field_i = 42;
     simple.field_bool = true;

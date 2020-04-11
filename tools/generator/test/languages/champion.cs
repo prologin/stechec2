@@ -54,7 +54,13 @@ namespace Champion {
       bool[] ba = {true, false, false, true, false, false, true, false, false};
       ba = Api.ReturnsNot(ba);
       for (int i = 0; i < 9; ++i) {
-          Assert(ba[i] == (i % 3 != 0));
+        Assert(ba[i] == (i % 3 != 0));
+      }
+
+      double[] bdo = {-0.5, 1.0, 12.5, 42.0};
+      double[] bdi = Api.ReturnsInverse(bdo);
+      for (int i = 0; i < 4; ++i) {
+        Assert(bdi[i] - (1 / bdo[i]) < 0.0001);
       }
 
       SimpleStruct simple = new SimpleStruct();

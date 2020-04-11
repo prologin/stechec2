@@ -36,6 +36,7 @@ let test () =  (* Pose ton code ici *)
     assert ((returns_sorted (range 1 10000)) = (range 1 10000));
     assert ((returns_not [|true;false;false;true;false;false;true;false;false|]) =
         [|false;true;true;false;true;true;false;true;true|]);
+    assert ((returns_inverse [|-0.5;1.0;12.5;42.0|]) = [|-2.0;1.0;0.08;0.023809523809523808|]);
     send_me_simple { field_i = 42; field_bool = true; field_double = 42.42 };
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;

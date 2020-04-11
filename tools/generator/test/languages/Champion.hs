@@ -42,6 +42,8 @@ test = do
   () <- assert' . (== [1..10000]) <$> returns_sorted [1..10000]
   () <- assert' . (== [False,True,True,False,True,True,False,True,True]) <$>
     returns_not [True,False,False,True,False,False,True,False,False]
+  () <- assert' . (== [-2.0, 1.0, 0.08, 0.023809523809523808]) <$>
+    returns_inverse [-0.5,1.0,12.5,42.0]
 
   send_me_simple $ Simple_struct 42 True 42.42
   send_me_42s $ theStruct
