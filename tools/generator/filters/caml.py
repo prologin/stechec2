@@ -10,6 +10,8 @@ def caml_type(value: str) -> str:
         return 'unit'
     if value == 'double':
         return 'float'
+    if is_array(value):
+        return '{} array'.format(caml_type(get_array_inner(value)))
     return value
 
 
