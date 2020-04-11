@@ -54,8 +54,7 @@ namespace Champion {
       bool[] ba = {true, false, false, true, false, false, true, false, false};
       ba = Api.ReturnsNot(ba);
       for (int i = 0; i < 9; ++i) {
-          // XFAIL: the C# generator doesn't handle arrays of booleans
-          // Assert(ba[i] == (i % 3 != 0));
+          Assert(ba[i] == (i % 3 != 0));
       }
 
       SimpleStruct simple = new SimpleStruct();
