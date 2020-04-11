@@ -35,6 +35,12 @@ pub fn test() {
     let ba = returns_not(&vec![true, false, false, true, false, false, true, false, false]);
     assert!(ba == vec![false, true, true, false, true, true, false, true, true]);
 
+    let bdo = &vec![-0.5, 1.0, 12.5, 42.0];
+    let bdi = returns_inverse(bdo);
+    for i in 0..bdi.len() {
+        assert!(bdi[i] - (1. / bdo[i]) < 0.0001);
+    }
+
     let simple = SimpleStruct {
         field_i: 42,
         field_bool: true,

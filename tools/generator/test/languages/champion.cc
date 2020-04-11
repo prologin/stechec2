@@ -58,6 +58,11 @@ void test()
     for (int i = 0; i < 9; ++i)
         assert(ba[i] == (i % 3 != 0));
 
+    std::vector<double> bdo = {-0.5, 1.0, 12.5, 42.0};
+    std::vector<double> bdi = returns_inverse(bdo);
+    for (int i = 0; i < 4; ++i)
+        assert(bdi[i] - (1 / bdo[i]) < 0.0001);
+
     simple_struct simple;
     simple.field_i = 42;
     simple.field_bool = true;

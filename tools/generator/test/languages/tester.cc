@@ -28,6 +28,7 @@ struct {
     int returns_range;
     int returns_sorted;
     int returns_not;
+    int returns_inverse;
 } func_called;
 
 extern "C"
@@ -140,6 +141,14 @@ extern "C"
         return l;
     }
 
+    std::vector<double> api_returns_inverse(std::vector<double> l)
+    {
+        func_called.returns_inverse += 1;
+        for (unsigned i = 0; i < l.size(); ++i)
+            l[i] = 1 / l[i];
+        return l;
+    }
+
     void api_send_me_simple(simple_struct s)
     {
         assert(s.field_i == 42);
@@ -226,4 +235,5 @@ int main(int argc, char* argv[])
     assert(func_called.returns_range);
     assert(func_called.returns_sorted);
     assert(func_called.returns_not);
+    assert(func_called.returns_inverse);
 }

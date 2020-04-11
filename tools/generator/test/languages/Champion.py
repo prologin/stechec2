@@ -29,6 +29,12 @@ def test():
     assert returns_sorted([1, 3, 2, 4, 5, 7, 6]) == [1, 2, 3, 4, 5, 6, 7]
     assert returns_sorted(list(range(10000))) == list(range(10000))
     assert returns_not([i % 3 == 0 for i in range(9)]) == [i % 3 != 0 for i in range(9)]
+
+    bdo = [-0.5, 1.0, 12.5, 42.0]
+    bdi = returns_inverse(bdo)
+    for i, _ in enumerate(bdo):
+        assert(bdi[i] - (1 / bdo[i]) < 0.0001)
+
     send_me_simple(simple_struct(
         field_i=42,
         field_bool=True,

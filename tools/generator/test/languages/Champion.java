@@ -48,6 +48,12 @@ public class Champion extends Api
         for (int i = 0; i < 9; ++i)
             assert(ba[i] == (i % 3 != 0));
 
+        double[] bdo = {-0.5, 1.0, 12.5, 42.0};
+        double[] bdi = returns_inverse(bdo);
+        for (int i = 0; i < 4; ++i) {
+            assert(bdi[i] - (1 / bdo[i]) < 0.0001);
+        }
+
         SimpleStruct simple = new SimpleStruct();
         simple.field_i = 42;
         simple.field_bool = true;
