@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <cstdlib>
 #include <cstring>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -37,6 +38,32 @@ class CSharpInterface
         MonoClass* _class;
         MonoObject* _object;
 };
+
+// Static mapping between C++ types and mono_get_*_class.
+// Usage: MonoClassFactory<double>::get_class -> mono_get_double_class
+
+template <typename T>
+struct MonoClassFactory
+{
+    static const std::function<MonoClass*()> get_class;
+};
+
+template <typename T>
+const std::function<MonoClass*()> MonoClassFactory<T>::get_class =
+    T::__if_that_triggers_an_error_there_is_a_problem;
+
+#define MAP_TYPE_MONOCLASS(CxxType, Factory) \
+template <> \
+const std::function<MonoClass*()> MonoClassFactory<CxxType>::get_class = \
+    Factory;
+
+MAP_TYPE_MONOCLASS(int, mono_get_int32_class);
+MAP_TYPE_MONOCLASS(double, mono_get_double_class);
+MAP_TYPE_MONOCLASS(bool, mono_get_boolean_class);
+MAP_TYPE_MONOCLASS(std::string, mono_get_string_class);
+
+#undef MAP_TYPE_MONOCLASS
+
 
 {% for enum in game.enum %}
 
@@ -127,11 +154,10 @@ template <typename CsType, typename CxxType>
 MonoArray* cxx2lang_array(const std::vector<CxxType>& in)
 {
     gint32 size = in.size();
-    // TODO: handle string/double types
-    MonoClass* mcKlass = mono_get_int32_class();
+    MonoClass* mcKlass = MonoClassFactory<CxxType>::get_class();
     MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
     for (size_t i = 0; i < size; ++i)
-        mono_array_set(maArray, gint32, i, (cxx2lang<CsType, CxxType>(in[i])));
+        mono_array_set(maArray, CxxType, i, (cxx2lang<CsType, CxxType>(in[i])));
     return maArray;
 }
 
@@ -141,7 +167,7 @@ std::vector<CxxType> lang2cxx_array(MonoArray* in)
     std::vector<CxxType> out;
     gint32 size = mono_array_length(in);
     for (int i = 0; i < size; ++i)
-        out.push_back(lang2cxx<CsType, CxxType>(mono_array_get(in, CsType, i)));
+        out.push_back(lang2cxx<CsType, CxxType>(mono_array_get(in, CxxType, i)));
     return out;
 }
 {% for enum in game.enum %}
