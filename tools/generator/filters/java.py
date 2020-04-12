@@ -91,7 +91,7 @@ def cxx_to_java(value: str) -> str:
 @register_filter
 def jni_type(value: str) -> str:
     """Return the real JNI type"""
-    if value in ('boolean', 'int', 'double'):
+    if value in ('boolean', 'int', 'double', 'string'):
         return 'j' + value
     elif value == 'bool':
         return "jboolean"

@@ -47,7 +47,7 @@ def cs_mono_type(ctx, value):
             'int': 'gint32',
             'double': 'double',
             'bool': 'gint32',
-            'string': 'MonoString',
+            'string': 'MonoString*',
         }[value]
 
 

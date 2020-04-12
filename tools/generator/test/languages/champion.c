@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include <string.h>
 
 void test_alert()
 {
@@ -26,10 +27,12 @@ void test()
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
     send_me_tau(6.2831853);
+    send_me_joseph_marchand("Joseph Marchand");
     send_me_13_ints(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
     assert(returns_42() == 42);
     assert(returns_true() == true);
     assert(fabs(returns_tau() - 6.2831) < 0.001);
+    assert(!strcmp(returns_joseph_marchand(), "Joseph Marchand"));
     assert(returns_val1() == VAL1);
 
     int_array r = returns_range(1, 100);

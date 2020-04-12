@@ -27,11 +27,13 @@ namespace Champion {
       Api.SendMe42And1337(42, 1337);
       Api.SendMeTrue(true);
       Api.SendMeTau(6.2831853);
+      Api.SendMeJosephMarchand("Joseph Marchand");
       Api.SendMe13Ints(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
 
       Assert(Api.Returns42() == 42);
       Assert(Api.ReturnsTrue() == true);
       Assert(Math.Abs(Api.ReturnsTau() - 6.2831853) < 0.0001);
+      Assert(Api.ReturnsJosephMarchand() == "Joseph Marchand");
       Assert(Api.ReturnsVal1() == TestEnum.VAL1);
 
       int[] r = Api.ReturnsRange(1, 100);

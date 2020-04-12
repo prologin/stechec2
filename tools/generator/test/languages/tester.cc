@@ -13,6 +13,7 @@ struct {
     int send_me_42_and_1337;
     int send_me_true;
     int send_me_tau;
+    int send_me_joseph_marchand;
     int send_me_13_ints;
     int send_me_simple;
     int send_me_42s;
@@ -22,6 +23,7 @@ struct {
     int returns_42;
     int returns_true;
     int returns_tau;
+    int returns_joseph_marchand;
     int returns_val1;
     int returns_range;
     int returns_sorted;
@@ -56,6 +58,12 @@ extern "C"
     {
         assert(b > 6.2831 && b < 6.2832);
         func_called.send_me_tau += 1;
+    }
+
+    void api_send_me_joseph_marchand(const std::string& s)
+    {
+        assert(s == "Joseph Marchand");
+        func_called.send_me_joseph_marchand += 1;
     }
 
     void api_send_me_13_ints(int arg1, int arg2, int arg3, int arg4, int arg5,
@@ -94,6 +102,12 @@ extern "C"
     {
         func_called.returns_tau += 1;
         return 6.2831853;
+    }
+
+    const std::string api_returns_joseph_marchand()
+    {
+        func_called.returns_joseph_marchand += 1;
+        return "Joseph Marchand";
     }
 
     test_enum api_returns_val1()
@@ -197,6 +211,7 @@ int main(int argc, char* argv[])
     assert(func_called.send_me_42_and_1337);
     assert(func_called.send_me_true);
     assert(func_called.send_me_tau);
+    assert(func_called.send_me_joseph_marchand);
     assert(func_called.send_me_13_ints);
     assert(func_called.send_me_simple);
     assert(func_called.send_me_42s);
@@ -206,6 +221,7 @@ int main(int argc, char* argv[])
     assert(func_called.returns_42);
     assert(func_called.returns_true);
     assert(func_called.returns_tau);
+    assert(func_called.returns_joseph_marchand);
     assert(func_called.returns_val1);
     assert(func_called.returns_range);
     assert(func_called.returns_sorted);

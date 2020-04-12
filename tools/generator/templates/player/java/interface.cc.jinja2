@@ -131,11 +131,11 @@ template <>
 std::string java_to_cxx<jstring, std::string>(jstring in)
 {
     jboolean is_copy;
-    const jchar* datas = jrt.env->GetStringChars(in, &is_copy);
+    const char* datas = jrt.env->GetStringUTFChars(in, &is_copy);
     jsize size = jrt.env->GetStringLength(in);
-    std::string out((const char*)datas, (size_t)size);
+    std::string out(datas, (size_t)size);
     if (is_copy)
-        jrt.env->ReleaseStringChars(in, datas);
+        jrt.env->ReleaseStringUTFChars(in, datas);
     return out;
 }
 
