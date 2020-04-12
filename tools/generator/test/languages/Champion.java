@@ -18,10 +18,12 @@ public class Champion extends Api
         send_me_42_and_1337(42, 1337);
         send_me_true(true);
         send_me_tau(6.2831853);
+        send_me_joseph_marchand("Joseph Marchand");
         send_me_13_ints(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
         assert(returns_42() == 42);
         assert(returns_true() == true);
         assert(Math.abs(returns_tau() - 6.2831) < 0.001);
+        assert(returns_joseph_marchand().equals("Joseph Marchand"));
         assert(returns_val1() == TestEnum.VAL1);
 
         int[] r = returns_range(1, 100);

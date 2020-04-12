@@ -74,6 +74,12 @@ function:
     fct_arg:
       - [t, double, a double approximating tau]
   -
+    fct_name: send_me_joseph_marchand
+    fct_summary: "Send me the string 'Joseph Marchand'"
+    fct_ret_type: void
+    fct_arg:
+      - [s, string, the string to send]
+  -
     fct_name: send_me_13_ints
     fct_summary: Send me thirteen integers from 1 to 13
     fct_ret_type: void
@@ -105,6 +111,11 @@ function:
     fct_name: returns_tau
     fct_summary: Returns a double approximating tau
     fct_ret_type: double
+    fct_arg: []
+  -
+    fct_name: returns_joseph_marchand
+    fct_summary: "Returns the string 'Joseph Marchand'"
+    fct_ret_type: string
     fct_arg: []
   -
     fct_name: returns_val1

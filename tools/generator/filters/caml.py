@@ -2,6 +2,7 @@ import textwrap
 
 from . import register_filter
 from .common import get_array_inner, is_array
+from .cxx import cxx_type
 
 
 @register_filter
@@ -65,19 +66,19 @@ def caml_comment(value: str, indent: int = 0, doc: bool = False) -> str:
 
 
 @register_filter
-def cxx_to_caml(caml_type: str) -> str:
-    if is_array(caml_type):
+def cxx_to_caml(value: str) -> str:
+    if is_array(value):
         return 'cxx_to_caml_array'
     else:
-        return 'cxx_to_caml<value, {}>'.format(caml_type)
+        return 'cxx_to_caml<value, {}>'.format(cxx_type(value))
 
 
 @register_filter
 def caml_to_cxx(value: str) -> str:
     if is_array(value):
-        return 'caml_to_cxx_array<{}>'.format(get_array_inner(value))
+        return 'caml_to_cxx_array<{}>'.format(cxx_type(get_array_inner(value)))
     else:
-        return 'caml_to_cxx<value, {}>'.format(value)
+        return 'caml_to_cxx<value, {}>'.format(cxx_type(value))
 
 
 @register_filter
