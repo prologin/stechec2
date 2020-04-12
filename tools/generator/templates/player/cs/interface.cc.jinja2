@@ -12,6 +12,7 @@
 #include <functional>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
 #include <mono/jit/jit.h>
 #include <mono/metadata/assembly.h>
@@ -56,6 +57,8 @@ extern "C" {
 {% endfor %}
 }
 
+CSharpInterface gl_csharp;
+
 // Static mapping between C++ types and mono_get_*_class.
 template <typename T>
 MonoClass* get_mono_class() = delete;
@@ -67,9 +70,13 @@ template <>
 MonoClass* get_mono_class<bool>() { return mono_get_boolean_class(); };
 template <>
 MonoClass* get_mono_class<std::string>() { return mono_get_string_class(); };
-
-
-CSharpInterface gl_csharp;
+{% for struct in game.struct %}
+template <>
+MonoClass* get_mono_class<{{ struct.str_name }}>()
+{
+    return mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
+}
+{% endfor %}
 
 template <class Out, class Cxx>
 Out cxx2lang(Cxx in)
@@ -144,7 +151,13 @@ MonoArray* cxx2lang_array(const std::vector<CxxType>& in)
     MonoClass* mcKlass = get_mono_class<CxxType>();
     MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
     for (size_t i = 0; i < size; ++i)
-        mono_array_set(maArray, CxxType, i, (cxx2lang<CsType, CxxType>(in[i])));
+    {
+        CsType item = (cxx2lang<CsType, CxxType>(in[i]));
+        if constexpr (std::is_same_v<CsType, MonoObject*>)
+            mono_array_setref(maArray, i, item);
+        else
+            mono_array_set(maArray, CxxType, i, item);
+    }
     return maArray;
 }
 
@@ -154,7 +167,14 @@ std::vector<CxxType> lang2cxx_array(MonoArray* in)
     std::vector<CxxType> out;
     gint32 size = mono_array_length(in);
     for (int i = 0; i < size; ++i)
-        out.push_back(lang2cxx<CsType, CxxType>(mono_array_get(in, CxxType, i)));
+    {
+        CsType item;
+        if constexpr (std::is_same_v<CsType, MonoObject*>)
+            item = mono_array_get(in, MonoObject*, i);
+        else
+            item = mono_array_get(in, CxxType, i);
+        out.push_back(lang2cxx<CsType, CxxType>(item));
+    }
     return out;
 }
 {% for enum in game.enum %}
@@ -179,8 +199,7 @@ template <>
 template <>
 MonoObject* cxx2lang<MonoObject*, {{ struct.str_name }}>({{ struct.str_name }} in)
 {
-    MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
+    MonoClass* mcKlass = get_mono_class<{{ struct.str_name }}>();
     MonoObject* moObj = mono_object_new(gl_csharp.getDomain(), mcKlass);
     mono_runtime_object_init(moObj);
     {% for field_name, field_type, field_comment in struct.str_field %}
@@ -224,31 +243,6 @@ template <>
         &out.{{ field_name }});
     {% endif %}
     {% endfor %}
-    return out;
-}
-
-template <>
-MonoArray* cxx2lang_array<MonoObject*, {{ struct.str_name }}>(const std::vector<{{ struct.str_name }}>& in)
-{
-    gint32 size = in.size();
-    MonoClass* mcKlass =
-        mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
-    MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
-    for (int i = 0; i < size; ++i)
-        mono_array_setref(maArray, i,
-                          (cxx2lang<MonoObject*, {{ struct.str_name }}>(in[i])));
-    return maArray;
-}
-
-template <>
-std::vector<{{ struct.str_name }}> lang2cxx_array<MonoObject*, {{ struct.str_name }}>(MonoArray* in)
-{
-    std::vector<{{ struct.str_name }}> out;
-    gint32 size = mono_array_length(in);
-
-    for (int i = 0; i < size; ++i)
-        out.push_back(lang2cxx<MonoObject*, {{ struct.str_name }}>(
-            mono_array_get(in, MonoObject*, i)));
     return out;
 }
 {% endfor %}
