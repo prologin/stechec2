@@ -31,6 +31,7 @@ struct:
       - [field_i, int, "Integer field"]
       - [field_bool, bool, "Bool field"]
       - [field_double, double, "Double field"]
+      - [field_string, string, "String field"]
   -
     str_name: struct_with_array
     str_summary: Structure which contains an array.

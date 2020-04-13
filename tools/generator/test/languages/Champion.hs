@@ -12,7 +12,7 @@ assert' :: Bool -> ()
 assert' False = error "Assertion failed."
 assert' _     = ()
 
-theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True 42.42))
+theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True 42.42 "TTY"))
 
 -- Raise an assertion to check the alerting system works.
 test_alert :: IO ()
@@ -47,7 +47,7 @@ test = do
   () <- assert' . (== [-2.0, 1.0, 0.08, 0.023809523809523808]) <$>
     returns_inverse [-0.5,1.0,12.5,42.0]
 
-  send_me_simple $ Simple_struct 42 True 42.42
+  send_me_simple $ Simple_struct 42 True 42.42 "TTY"
   send_me_42s $ theStruct
   send_me_test_enum Val1 Val2;
 

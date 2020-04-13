@@ -154,6 +154,7 @@ extern "C"
         assert(s.field_i == 42);
         assert(s.field_bool);
         assert(s.field_double > 42.41 and s.field_double < 42.43);
+        assert(s.field_string == "TTY");
         func_called.send_me_simple += 1;
     }
 
@@ -165,10 +166,7 @@ extern "C"
             assert(i == 42);
         assert(s.field_str_arr.size() == 42);
         for (auto& s2 : s.field_str_arr)
-        {
-            assert(s2.field_i == 42);
-            assert(s2.field_bool);
-        }
+            api_send_me_simple(s2);
         func_called.send_me_42s += 1;
     }
 

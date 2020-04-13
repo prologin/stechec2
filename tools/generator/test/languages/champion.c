@@ -70,6 +70,7 @@ void test()
     simple.field_i = 42;
     simple.field_bool = true;
     simple.field_double = 42.42;
+    simple.field_string = "TTY";
     send_me_simple(simple);
 
     struct_with_array s;
@@ -79,7 +80,7 @@ void test()
     for (int i = 0; i < 42; ++i)
     {
         sr[i] = 42;
-        ss[i] = (simple_struct){42, true, 42.42};
+        ss[i] = simple;
     }
     s.field_int_arr = (int_array){sr, 42};
     s.field_str_arr = (simple_struct_array){ss, 42};
@@ -100,7 +101,7 @@ void test()
         for (int j = 0; j < 42; ++j)
         {
             l[i].field_int_arr.items[j] = 42;
-            l[i].field_str_arr.items[j] = (simple_struct){ 42, true, 42.42 };
+            l[i].field_str_arr.items[j] = simple;
         }
     }
     struct_with_array_array ll = send_me_struct_array((struct_with_array_array){l, 42});
@@ -121,6 +122,7 @@ void test()
             assert(ll.items[i].field_str_arr.items[j].field_i == 42);
             assert(ll.items[i].field_str_arr.items[j].field_bool == true);
             assert(ll.items[i].field_str_arr.items[j].field_double == 42.42);
+            assert(!strcmp(ll.items[i].field_str_arr.items[j].field_string, "TTY"));
         }
     }
     for (int i = 0; i < 42; ++i)

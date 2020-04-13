@@ -69,6 +69,7 @@ namespace Champion {
       simple.FieldI = 42;
       simple.FieldBool = true;
       simple.FieldDouble = 42.42;
+      simple.FieldString = "TTY";
       Api.SendMeSimple(simple);
 
       StructWithArray s = new StructWithArray();
@@ -114,6 +115,7 @@ namespace Champion {
           Assert(l[i].FieldStrArr[j].FieldI == 42);
           Assert(l[i].FieldStrArr[j].FieldBool == true);
           Assert(l[i].FieldStrArr[j].FieldDouble == 42.42);
+          Assert(l[i].FieldStrArr[j].FieldString == "TTY");
         }
       }
     }

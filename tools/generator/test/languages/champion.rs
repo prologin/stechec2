@@ -45,20 +45,14 @@ pub fn test() {
         field_i: 42,
         field_bool: true,
         field_double: 42.42,
+        field_string: String::from("TTY"),
     };
     send_me_simple(&simple);
 
     let s = StructWithArray {
         field_int: 42,
         field_int_arr: vec![42; 42],
-        field_str_arr: vec![
-            SimpleStruct {
-                field_i: 42,
-                field_bool: true,
-                field_double: 42.42,
-            };
-            42
-        ],
+        field_str_arr: vec![simple.clone(); 42],
     };
     send_me_42s(&s);
 
@@ -70,14 +64,7 @@ pub fn test() {
         StructWithArray {
             field_int: 42,
             field_int_arr: vec![42; 42],
-            field_str_arr: vec![
-                SimpleStruct {
-                    field_i: 42,
-                    field_bool: true,
-                    field_double: 42.42,
-                };
-                42
-            ],
+            field_str_arr: vec![simple.clone(); 42],
         };
         42
     ];

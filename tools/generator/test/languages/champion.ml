@@ -39,20 +39,24 @@ let test () =  (* Pose ton code ici *)
     assert ((returns_not [|true;false;false;true;false;false;true;false;false|]) =
         [|false;true;true;false;true;true;false;true;true|]);
     assert ((returns_inverse [|-0.5;1.0;12.5;42.0|]) = [|-2.0;1.0;0.08;0.023809523809523808|]);
-    send_me_simple { field_i = 42; field_bool = true; field_double = 42.42 };
+    let simple = { field_i = 42;
+                   field_bool = true;
+                   field_double = 42.42;
+                   field_string = "TTY" } in
+    send_me_simple simple;
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } };
+                  field_str_arr = times42 simple };
     send_me_test_enum Val1 Val2;
     afficher_test_enum Val2;
     let l = send_me_struct_array (
         times42 { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } }
+                  field_str_arr = times42 simple }
     ) in
     assert (l = (times42 { field_int = 42;
                            field_int_arr = times42 42;
-                           field_str_arr = times42 { field_i = 42; field_bool = true; field_double = 42.42 } }));
+                           field_str_arr = times42 simple }));
     flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
   end
 
