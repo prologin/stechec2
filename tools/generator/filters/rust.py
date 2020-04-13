@@ -159,15 +159,10 @@ def rust_auto_traits(ctx, value: str) -> set:
     as_struct = ctx['game'].get_struct(value)
 
     if as_struct:
-        inherited = set.intersection(*(
+        return set.intersection(*(
             rust_auto_traits(ctx, field_type)
             for _, field_type, _ in as_struct['str_field']
         ))
-
-        if not is_tuple(as_struct) and 'Copy' in inherited:
-            inherited.remove('Copy')
-
-        return inherited
 
     if is_array(value):
         inherited = rust_auto_traits(ctx, get_array_inner(value))
