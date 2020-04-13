@@ -14,7 +14,7 @@ LDFLAGS = -lm -lrt -ldl -lpthread -lstdc++
 {% block extra_rules %}
 objs += champion.a
 
-champion.a:
+champion.a: $(CHAMPION_SRC)
 	rustc --crate-type=staticlib $(RUSTC_FLAGS) --emit link,dep-info=.champion.a.d champion.rs -o champion.a
 
 deps = $(cxx_sources:.cc=.d) champion.a.d
