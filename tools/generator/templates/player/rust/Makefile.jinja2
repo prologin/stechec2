@@ -3,11 +3,10 @@
  #}
 # Add all your champion files in here, separated by spaces
 # Include all the sources (*.rs) and README files.
-CHAMPION_SRC = champion.rs
+CHAMPION_FILES = champion.rs
 
 # ----
 # Do not modify the lines below
 
-CHAMPION_SRC += api.rs
-CHAMPION_FILES += $(CHAMPION_SRC) ffi.rs api.hh interface.cc
+CHAMPION_FILES += api.rs ffi.rs api.hh interface.cc
 -include Makefile-rust
