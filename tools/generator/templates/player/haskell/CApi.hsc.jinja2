@@ -9,6 +9,7 @@ module CApi where
 
 import Data.List (foldl')
 import Foreign
+import Foreign.C.String
 import Foreign.C.Types
 import Foreign.Marshal.Array
 
@@ -65,6 +66,18 @@ instance ApiStorable Double where
   unStorable = return . (\(CDouble x) -> x)
   {-# INLINE unStorable #-}
   type ApiStorableBaseType Double = ApiStorableType Double
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+
+instance ApiStorable String where
+  type ApiStorableType String = CString
+  toStorable = withCString
+  {-# INLINE toStorable #-}
+  unStorable = peekCString
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType String = ApiStorableType String
   toStorableBase = toStorable
   {-# INLINE toStorableBase #-}
   unStorableBase = unStorable
