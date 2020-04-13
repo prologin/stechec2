@@ -175,5 +175,9 @@ def rust_auto_traits(ctx, value: str) -> set:
     if value == 'double':
         return {'Copy', 'Clone', 'Debug', 'PartialEq', 'PartialOrd'}
 
+    if value == 'string':
+        return {'Clone', 'Debug', 'Eq', 'Hash', 'Ord', 'PartialEq',
+                'PartialOrd'}
+
     return {'Copy', 'Clone', 'Debug', 'Eq', 'Hash', 'Ord', 'PartialEq',
             'PartialOrd'}
