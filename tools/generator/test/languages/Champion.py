@@ -1,8 +1,3 @@
-# -*- coding: iso-8859-1 -*-
-# This file has been generated, if you wish to
-# modify it in a permanent way, please refer
-# to the script file : gen/generator_python.rb
-
 from api import *
 
 
@@ -35,23 +30,26 @@ def test():
     for i, _ in enumerate(bdo):
         assert(bdi[i] - (1 / bdo[i]) < 0.0001)
 
-    send_me_simple(simple_struct(
+    simple = simple_struct(
         field_i=42,
         field_bool=True,
-        field_double=42.42))
+        field_double=42.42,
+        field_string="TTY",
+    )
+    send_me_simple(simple)
     send_me_42s(struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple_struct(42, True, 42.42)] * 42))
+        field_str_arr=[simple] * 42))
 
     send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
     afficher_test_enum(test_enum.VAL2)
     l = send_me_struct_array([struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple_struct(42, True, 42.42)] * 42)] * 42)
+        field_str_arr=[simple] * 42)] * 42)
 
     assert l == [struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple_struct(42, True, 42.42)] * 42)] * 42
+        field_str_arr=[simple] * 42)] * 42

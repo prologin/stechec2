@@ -134,7 +134,7 @@ where
     unsafe fn to_c(&self) -> RawString {
         let c_string = CString::new(self.as_ref().to_string())
             .expect("string provided to the API contains a null character");
-        let len = c_string.as_bytes().len();
+        let len = c_string.as_bytes_with_nul().len();
 
         let ptr = malloc(len * size_of::<c_char>()) as *mut c_char;
         c_string.as_c_str().as_ptr().copy_to(ptr, len);

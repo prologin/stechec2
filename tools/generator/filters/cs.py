@@ -1,7 +1,7 @@
 from functools import partial
-from jinja2 import contextfilter
+from jinja2 import contextfilter, contextfunction
 
-from . import register_filter
+from . import register_filter, register_function
 from .common import (generic_comment, get_array_inner, generic_prototype,
                      is_array, camel_case)
 from .cxx import cxx_type
@@ -30,6 +30,14 @@ def cs_prototype(ctx, value, *args, **kwargs) -> str:
     value['fct_name'] = camel_case(value['fct_name'])
     return generic_prototype(value, *args, type_mapper=partial(cs_type, ctx),
                              **kwargs)
+
+
+@register_function
+@contextfunction
+def cs_is_reftype(ctx, value: str) -> bool:
+    return (is_array(value)
+            or value == 'string'
+            or ctx['game'].get_struct(value))
 
 
 @register_filter

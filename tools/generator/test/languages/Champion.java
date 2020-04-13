@@ -58,6 +58,7 @@ public class Champion extends Api
         simple.field_i = 42;
         simple.field_bool = true;
         simple.field_double = 42.42;
+        simple.field_string = "TTY";
         send_me_simple(simple);
 
         StructWithArray s = new StructWithArray();
@@ -71,6 +72,7 @@ public class Champion extends Api
             ss.field_i = 42;
             ss.field_bool = true;
             ss.field_double = 42.42;
+            ss.field_string = "TTY";
             s.field_str_arr[i] = ss;
         }
         send_me_42s(s);
@@ -93,6 +95,7 @@ public class Champion extends Api
                 ss.field_i = 42;
                 ss.field_bool = true;
                 ss.field_double = 42.42;
+                ss.field_string = "TTY";
                 l[i].field_str_arr[j] = ss;
             }
         }
@@ -110,6 +113,7 @@ public class Champion extends Api
                 assert(l[i].field_str_arr[j].field_i == 42);
                 assert(l[i].field_str_arr[j].field_bool == true);
                 assert(l[i].field_str_arr[j].field_double == 42.42);
+                assert(l[i].field_str_arr[j].field_string.equals("TTY"));
             }
         }
 

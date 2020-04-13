@@ -39,7 +39,12 @@ function test()
     send_me_test_enum(VAL1, VAL2);
     afficher_test_enum(VAL2);
 
-    $struct1 = array("field_i" => 42, "field_bool" => true, "field_double" => 42.42);
+    $struct1 = array(
+        "field_i" => 42,
+        "field_bool" => true,
+        "field_double" => 42.42,
+        "field_string" => "TTY",
+    );
     send_me_simple($struct1);
     send_me_42s(array(
         "field_int" => 42,

@@ -207,7 +207,7 @@ MonoObject* cxx2lang<MonoObject*, {{ struct.str_name }}>({{ struct.str_name }} i
     mono_field_set_value(
         moObj,
         mono_class_get_field_from_name(mcKlass, "{{ field_name|camel_case }}"),
-        {% if field_type is array or game.get_struct(field_type) %}
+        {% if cs_is_reftype(field_type) %}
         arg_{{ field_name }}
         {% else %}
         &arg_{{ field_name }}
@@ -227,7 +227,7 @@ template <>
         mono_class_from_name(gl_csharp.getImage(), "Champion", "{{ struct.str_name|camel_case }}");
 
     {% for field_name, field_type, field_comment in struct.str_field %}
-    {% if field_type is array or game.get_struct(field_type) %}
+    {% if cs_is_reftype(field_type) %}
     {# Reference types should be converted from MonoObject #}
     mono_field_get_value(
         in,

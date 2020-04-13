@@ -183,7 +183,7 @@ template <>
 {
     {{ struct.str_name }} out;
     {% for field_name, field_type, _ in struct.str_field %}
-    out.{{ field_name }} = {{ field_type|java_to_cxx }}(jrt.env->Get{{ field_type|java_type_method_call }}Field(in, jrt.env->GetFieldID({{ struct.str_name|camel_case }}::Class(), "{{ field_name }}", "{{ field_type|jni_type_signature }}")));
+    out.{{ field_name }} = {{ field_type|java_to_cxx }}({% if field_type == 'string' %}(jstring){% endif %}jrt.env->Get{{ field_type|java_type_method_call }}Field(in, jrt.env->GetFieldID({{ struct.str_name|camel_case }}::Class(), "{{ field_name }}", "{{ field_type|jni_type_signature }}")));
     {% endfor %}
     return out;
 }
