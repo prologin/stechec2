@@ -150,10 +150,11 @@ MonoArray* cxx2lang_array(const std::vector<CxxType>& in)
     gint32 size = in.size();
     MonoClass* mcKlass = get_mono_class<CxxType>();
     MonoArray* maArray = mono_array_new(gl_csharp.getDomain(), mcKlass, size);
-    for (size_t i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         CsType item = (cxx2lang<CsType, CxxType>(in[i]));
-        if constexpr (std::is_same_v<CsType, MonoObject*>)
+        if constexpr (std::is_same_v<CsType, MonoObject*> ||
+                      std::is_same_v<CsType, MonoString*>)
             mono_array_setref(maArray, i, item);
         else
             mono_array_set(maArray, CxxType, i, item);
@@ -169,8 +170,9 @@ std::vector<CxxType> lang2cxx_array(MonoArray* in)
     for (int i = 0; i < size; ++i)
     {
         CsType item;
-        if constexpr (std::is_same_v<CsType, MonoObject*>)
-            item = mono_array_get(in, MonoObject*, i);
+        if constexpr (std::is_same_v<CsType, MonoObject*> ||
+                      std::is_same_v<CsType, MonoString*>)
+            item = mono_array_get(in, CsType, i);
         else
             item = mono_array_get(in, CxxType, i);
         out.push_back(lang2cxx<CsType, CxxType>(item));

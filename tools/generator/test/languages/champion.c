@@ -66,6 +66,14 @@ void test()
         assert(bdi.items[i] - (1 / bdo[i]) < 0.0001);
     free(bdi.items);
 
+    char* sa[] = {"Alea", "Jacta", "Est"};
+    string_array sau = (string_array){sa, 3};
+    sau = returns_upper(sau);
+    assert(!strcmp(sau.items[0], "ALEA"));
+    assert(!strcmp(sau.items[1], "JACTA"));
+    assert(!strcmp(sau.items[2], "EST"));
+    free(sau.items);
+
     simple_struct simple;
     simple.field_i = 42;
     simple.field_bool = true;

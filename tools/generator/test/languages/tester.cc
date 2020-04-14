@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
+#include <cctype>
 #include <iostream>
 #include <sstream>
 
@@ -25,10 +26,11 @@ struct {
     int returns_tau;
     int returns_joseph_marchand;
     int returns_val1;
-    int returns_range;
-    int returns_sorted;
-    int returns_not;
-    int returns_inverse;
+    int returns_range; // Test arrays of ints (return value)
+    int returns_sorted; // Test arrays of ints
+    int returns_not; // Test arrays of bools
+    int returns_inverse; // Test arrays of double
+    int returns_upper; // Test arrays of strings
 } func_called;
 
 extern "C"
@@ -149,6 +151,15 @@ extern "C"
         return l;
     }
 
+    std::vector<std::string> api_returns_upper(std::vector<std::string> l)
+    {
+        func_called.returns_upper += 1;
+        for (unsigned i = 0; i < l.size(); ++i)
+            std::transform(l[i].begin(), l[i].end(), l[i].begin(),
+                           ::toupper);
+        return l;
+    }
+
     void api_send_me_simple(simple_struct s)
     {
         assert(s.field_i == 42);
@@ -234,4 +245,5 @@ int main(int argc, char* argv[])
     assert(func_called.returns_sorted);
     assert(func_called.returns_not);
     assert(func_called.returns_inverse);
+    assert(func_called.returns_upper);
 }

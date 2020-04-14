@@ -55,6 +55,7 @@ static struct StechecJavaRunTime jrt;
 extern "C" {{ func|cxx_prototype(prefix='api_') }};
 {% endfor %}
 
+
 // In case of errors...
 template <typename Lang, typename CxxType>
 CxxType java_to_cxx(Lang in)
@@ -139,11 +140,34 @@ std::string java_to_cxx<jstring, std::string>(jstring in)
     return out;
 }
 
+template <>
+jarray cxx_to_java_array<std::string, jstring>(std::vector<std::string> in)
+{
+    jobjectArray out = jrt.env->NewObjectArray(
+            (jsize)in.size(), jrt.env->FindClass("java/lang/String"), NULL);
+    for (size_t i = 0; i < in.size(); i++)
+        jrt.env->SetObjectArrayElement(out, (jsize)i, cxx_to_java<std::string, jstring>(in[i]));
+    return out;
+}
+
+template <>
+std::vector<std::string> java_to_cxx_array<jstring, std::string>(jobject in)
+{
+    jobjectArray array = (jobjectArray)in;
+    size_t size = (size_t)jrt.env->GetArrayLength(array);
+    std::vector<std::string> out;
+    for (size_t i = 0; i < size; i++)
+        out.push_back(java_to_cxx<jstring, std::string>(
+            (jstring)jrt.env->GetObjectArrayElement(array, (jsize)i)));
+    return out;
+}
+
 // Object array wrappers (assume Lang::class exists)
 template <typename CxxType, typename Lang>
 jarray cxx_to_java_array(std::vector<CxxType> in)
 {
-    jobjectArray out = jrt.env->NewObjectArray((jsize)in.size(), Lang::Class(), NULL);
+    jobjectArray out = jrt.env->NewObjectArray(
+            (jsize)in.size(), Lang::Class(), NULL);
     for (size_t i = 0; i < in.size(); i++)
         jrt.env->SetObjectArrayElement(out, (jsize)i, cxx_to_java<CxxType, jobject>(in[i]));
     return out;

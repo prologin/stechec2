@@ -131,6 +131,12 @@ function:
       - [m, int, lower bound]
       - [n, int, upper bound]
   -
+    fct_name: returns_upper
+    fct_summary: Returns the provided list of strings in uppercase
+    fct_ret_type: string array
+    fct_arg:
+      - [sarr, string array, list of strings to uppercase]
+  -
     fct_name: returns_sorted
     fct_summary: Sorts a list of integers.
     fct_ret_type: int array

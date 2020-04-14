@@ -30,6 +30,8 @@ def test():
     for i, _ in enumerate(bdo):
         assert(bdi[i] - (1 / bdo[i]) < 0.0001)
 
+    assert returns_upper(["Alea", "Jacta", "Est"]) == ["ALEA", "JACTA", "EST"]
+
     simple = simple_struct(
         field_i=42,
         field_bool=True,

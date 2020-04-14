@@ -34,7 +34,10 @@ function test()
     $bdo = array(-0.5, 1.0, 12.5, 42.0);
     $bdi = returns_inverse($bdo);
     for ($i = 0; $i < 4; $i++)
-        assert(bdi[i] - (1 / bdo[i]) < 0.0001);
+        assert($bdi[$i] - (1 / $bdo[$i]) < 0.0001);
+
+    assert(returns_upper(array("Alea", "Jacta", "Est"))
+           === array("ALEA", "JACTA", "EST"));
 
     send_me_test_enum(VAL1, VAL2);
     afficher_test_enum(VAL2);
