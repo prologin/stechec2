@@ -63,6 +63,9 @@ void test()
     for (int i = 0; i < 4; ++i)
         assert(bdi[i] - (1 / bdo[i]) < 0.0001);
 
+    assert(returns_upper(std::vector<std::string>{"Alea", "Jacta", "Est"})
+           == (std::vector<std::string>{"ALEA", "JACTA", "EST"}));
+
     simple_struct simple;
     simple.field_i = 42;
     simple.field_bool = true;

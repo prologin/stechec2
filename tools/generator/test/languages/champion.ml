@@ -39,6 +39,8 @@ let test () =  (* Pose ton code ici *)
     assert ((returns_not [|true;false;false;true;false;false;true;false;false|]) =
         [|false;true;true;false;true;true;false;true;true|]);
     assert ((returns_inverse [|-0.5;1.0;12.5;42.0|]) = [|-2.0;1.0;0.08;0.023809523809523808|]);
+    assert ((returns_upper [|"Alea"; "Jacta"; "Est"|])
+            = [|"ALEA"; "JACTA"; "EST"|]);
     let simple = { field_i = 42;
                    field_bool = true;
                    field_double = 42.42;

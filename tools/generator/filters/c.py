@@ -8,10 +8,14 @@ from .cxx import cxx_comment, cxx_type
 
 @register_filter
 def c_type(value: str) -> str:
-    if value == "string":
-        return "char*"
+    if value == 'string':
+        return 'char*'
     if is_array(value):
-        return "{}_array".format(c_type(get_array_inner(value)))
+        base_type = get_array_inner(value)
+        if base_type == 'string':
+            return 'string_array'
+        else:
+            return '{}_array'.format(c_type(base_type))
     return value
 
 

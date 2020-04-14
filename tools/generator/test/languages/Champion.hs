@@ -46,6 +46,8 @@ test = do
     returns_not [True,False,False,True,False,False,True,False,False]
   () <- assert' . (== [-2.0, 1.0, 0.08, 0.023809523809523808]) <$>
     returns_inverse [-0.5,1.0,12.5,42.0]
+  () <- assert' . (== ["ALEA", "JACTA", "EST"]) <$>
+    returns_upper ["Alea", "Jacta", "Est"]
 
   send_me_simple $ Simple_struct 42 True 42.42 "TTY"
   send_me_42s $ theStruct

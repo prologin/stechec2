@@ -65,6 +65,12 @@ namespace Champion {
         Assert(bdi[i] - (1 / bdo[i]) < 0.0001);
       }
 
+      string[] sa = {"Alea", "Jacta", "Est"};
+      string[] sau = Api.ReturnsUpper(sa);
+      Assert(sau[0] == "ALEA");
+      Assert(sau[1] == "JACTA");
+      Assert(sau[2] == "EST");
+
       SimpleStruct simple = new SimpleStruct();
       simple.FieldI = 42;
       simple.FieldBool = true;

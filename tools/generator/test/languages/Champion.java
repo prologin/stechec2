@@ -54,6 +54,12 @@ public class Champion extends Api
             assert(bdi[i] - (1 / bdo[i]) < 0.0001);
         }
 
+        String[] sa = {"Alea", "Jacta", "Est"};
+        String[] sau = returns_upper(sa);
+        assert(sau[0].equals("ALEA"));
+        assert(sau[1].equals("JACTA"));
+        assert(sau[2].equals("EST"));
+
         SimpleStruct simple = new SimpleStruct();
         simple.field_i = 42;
         simple.field_bool = true;
