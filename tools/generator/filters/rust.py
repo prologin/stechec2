@@ -115,7 +115,11 @@ def rust_api_input_type(
     if value == 'string':
         return '&str'
     elif is_array(value):
-        return '&[' + rust_api_output_type(ctx, get_array_inner(value)) + ']'
+        if get_array_inner(value) == 'string':
+            return '&[impl AsRef<str>]'
+        else:
+            inner = rust_api_input_type(ctx, get_array_inner(value), skip_ref=True)
+            return '&[impl Borrow<{}>]'.format(inner)
     elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
@@ -123,10 +127,12 @@ def rust_api_input_type(
                 for _, field, _ in ctx['game'].get_struct(value)['str_field']
             ))
     elif not rust_is_copy(ctx, value):
-        if skip_ref:
-            return rust_api_output_type(ctx, value, api_mod_path)
-        else:
-            return '&' + rust_api_output_type(ctx, value, api_mod_path)
+        res = rust_api_output_type(ctx, value, api_mod_path)
+
+        if not skip_ref:
+            res = '&' + res
+
+        return res
     else:
         return rust_api_output_type(ctx, value, api_mod_path)
 
