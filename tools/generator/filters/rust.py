@@ -118,8 +118,9 @@ def rust_api_input_type(
         if get_array_inner(value) == 'string':
             return '&[impl AsRef<str>]'
         else:
-            inner = rust_api_input_type(ctx, get_array_inner(value), skip_ref=True)
-            return '&[impl Borrow<{}>]'.format(inner)
+            return '&[impl Borrow<{}>]'.format(
+                rust_api_input_type(ctx, get_array_inner(value), skip_ref=True)
+            )
     elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
