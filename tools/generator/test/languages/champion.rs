@@ -17,23 +17,23 @@ pub fn test() {
     send_me_tau(6.2831853);
     send_me_joseph_marchand("Joseph Marchand");
     send_me_13_ints(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13);
-    assert!(returns_42() == 42);
-    assert!(returns_true() == true);
+    assert_eq!(returns_42(), 42);
+    assert_eq!(returns_true(), true);
+    assert_eq!(returns_joseph_marchand(), "Joseph Marchand");
+    assert_eq!(returns_val1(), TestEnum::Val1);
     assert!((returns_tau() - 6.2831).abs() < 0.001);
-    assert!(returns_joseph_marchand() == "Joseph Marchand");
-    assert!(returns_val1() == TestEnum::Val1);
 
     let r = returns_range(1, 100);
-    assert!(r == (1..100).collect::<Vec<_>>());
+    assert_eq!(r, (1..100).collect::<Vec<_>>());
 
     let r = returns_range(1, 10000);
-    assert!(r == (1..10000).collect::<Vec<_>>());
+    assert_eq!(r, (1..10000).collect::<Vec<_>>());
 
     let v = returns_sorted(&[1, 3, 2, 4, 5, 7, 6]);
-    assert!(v == (1..8).collect::<Vec<_>>());
+    assert_eq!(v, (1..8).collect::<Vec<_>>());
 
     let ba = returns_not(&vec![true, false, false, true, false, false, true, false, false]);
-    assert!(ba == vec![false, true, true, false, true, true, false, true, true]);
+    assert_eq!(ba, vec![false, true, true, false, true, true, false, true, true]);
 
     let bdo = &vec![-0.5, 1.0, 12.5, 42.0];
     let bdi = returns_inverse(bdo);
@@ -43,9 +43,11 @@ pub fn test() {
 
     let sa = ["Alea", "Jacta", "Est"];
     let sau = returns_upper(&sa);
-    assert!(sau[0] == "ALEA");
-    assert!(sau[1] == "JACTA");
-    assert!(sau[2] == "EST");
+    assert_eq!(sau, vec!["ALEA", "JACTA", "EST"]);
+
+    let sa: Vec<_> = sa.iter().map(|s| s.to_string()).collect();
+    let sau = returns_upper(&sa);
+    assert_eq!(sau, vec!["ALEA", "JACTA", "EST"]);
 
     let simple = SimpleStruct {
         field_i: 42,
@@ -74,7 +76,10 @@ pub fn test() {
         };
         42
     ];
-
     let lr = send_me_struct_array(&l);
-    assert!(l == lr);
+    assert_eq!(l, lr);
+
+    let l_with_refs: Vec<&StructWithArray> = l.iter().collect();
+    let lr = send_me_struct_array(&l_with_refs);
+    assert_eq!(l, lr);
 }
