@@ -11,9 +11,10 @@
 
 use crate::api;
 
+use std::borrow::Borrow;
 use std::ffi::{CStr, CString};
-use std::os::raw::{c_char, c_double, c_int, c_void};
 use std::{mem::{drop, size_of}, ptr, slice};
+use std::os::raw::{c_char, c_double, c_int, c_void};
 
 #[allow(non_camel_case_types)]
 pub type c_bool = bool;
@@ -144,6 +145,20 @@ where
 
 // Conversions for array
 
+pub unsafe fn array_of_borrow_to_c<T, U, V>(data: &[T]) -> Array<V>
+where
+    T: Borrow<U>,
+    U: RustToC<V>,
+{
+    let ptr = malloc(data.len() * size_of::<V>()) as *mut V;
+
+    for (i, item) in data.iter().enumerate() {
+        ptr::write(ptr.add(i), item.borrow().to_c());
+    }
+
+    Array { ptr, len: data.len() }
+}
+
 impl<T, U> CToRust<Vec<U>> for Array<T>
 where
     T: CToRust<U>,
@@ -161,13 +176,7 @@ where
     T: RustToC<U>,
 {
     unsafe fn to_c(&self) -> Array<U> {
-        let ptr = malloc(self.len() * size_of::<U>()) as *mut U;
-
-        for (i, item) in self.iter().enumerate() {
-            ptr::write(ptr.add(i), item.to_c());
-        }
-
-        Array { ptr, len: self.len() }
+        array_of_borrow_to_c(self)
     }
 }
 

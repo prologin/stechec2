@@ -41,11 +41,8 @@ pub fn test() {
         assert!(bdi[i] - (1. / bdo[i]) < 0.0001);
     }
 
-    let sa: Vec<String> = ["Alea", "Jacta", "Est"].iter().map(|s| s.to_string()).collect();
-    let sau: Vec<String> = returns_upper(&sa);
-    println!("{}", sau[0]);
-    println!("{}", sau[1]);
-    println!("{}", sau[2]);
+    let sa = ["Alea", "Jacta", "Est"];
+    let sau = returns_upper(&sa);
     assert!(sau[0] == "ALEA");
     assert!(sau[1] == "JACTA");
     assert!(sau[2] == "EST");

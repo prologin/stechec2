@@ -8,13 +8,13 @@
 // do not touch the part where constants, enums, structs, and api functions are
 // defined.
 
-//! Rust API for {{ game.name }}
+//! Rust API for {{ game.name }}
 
 use crate::ffi;
-use crate::ffi::{CToRust, RustToC};
+use crate::ffi::{array_of_borrow_to_c, CToRust, RustToC};
 
 #[allow(unused_imports)]
-use std::cell::UnsafeCell;
+use std::{cell::UnsafeCell, borrow::Borrow};
 
 {% for constant in game.constant %}
 {{ constant.cst_comment|cxx_comment(doc=True) }}
@@ -48,16 +48,18 @@ pub struct {{ struct.str_name|camel_case }} {
 ///
 /// ### Parameters
 {% for name, _, comment in func.fct_arg %}
-///  - `{{ name }}`: {{ comment }}
+///  - `{{ name }}`: {{ comment }}
 {% endfor %}
 {% endif %}
 pub {{ func|rust_prototype }} {
     unsafe {
         {% for arg, type, _ in func.fct_arg %}
         {% if type|rust_is_copy %}
-        let {{ arg }} = {{ arg }}.to_c();
+        let {{ arg }} = {{ arg }}.to_c();
+        {% elif type is array %}
+        let {{ arg }} = UnsafeCell::new(array_of_borrow_to_c({{ arg }}));
         {% else %}
-        let {{ arg }} = UnsafeCell::new({{ arg }}.to_c());
+        let {{ arg }} = UnsafeCell::new({{ arg }}.to_c());
         {% endif %}
         {% endfor %}
         ffi::{{ func|rust_ffi_call }}.to_rust()
