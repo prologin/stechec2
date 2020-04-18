@@ -18,7 +18,6 @@ out = 'build'
 def options(opt):
     opt.load('compiler_cxx')
     opt.load('unittest_gtest')
-    opt.load('ruby')
 
     opt.add_option('--enable-debug',
                    action='store_true',
@@ -62,7 +61,6 @@ def configure(conf):
 
     conf.load('compiler_cxx')
     conf.load('unittest_gtest')
-    conf.load('ruby')
 
     # Warning flags
     conf.check_cxx(cxxflags='-Wall')
@@ -122,9 +120,6 @@ def configure(conf):
 
     # Google Flags
     conf.check_cxx(lib="gflags", mandatory=True, uselib_store="gflags")
-
-    # Ruby
-    conf.check_ruby_version((1, 9))
 
     # -lrt
     conf.check_cxx(lib="rt", mandatory=True, uselib_store="rt")

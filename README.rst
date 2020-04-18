@@ -28,18 +28,17 @@ Requirements
 * google-gflags
 * googletest
 * gcovr (for code coverage reports)
-* ruby (only for the generators)
 * python-yaml
 * python-jinja2
 
 Arch Linux::
 
-  pacman --needed -S gcc zeromq gtest ruby python-yaml python-jinja gflags gcovr
+  pacman --needed -S gcc zeromq gtest python-yaml python-jinja gflags gcovr
 
 Debian/Ubuntu::
 
   apt-get install build-essential libzmq3-dev libzmqpp-dev python3-yaml \
-      python3-jinja2 ruby libgtest-dev libgflags-dev gcovr
+      python3-jinja2 libgtest-dev libgflags-dev gcovr
 
 
 Installation
