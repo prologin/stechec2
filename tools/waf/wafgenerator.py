@@ -12,7 +12,7 @@ def generator_player_install(bld, game):
         target='player',
         always=True,
     )
-    start_dir = bld.srcnode.find_dir('games/{}'.format(game))
+    start_dir = bld.bldnode.find_dir('games/{}'.format(game))
     bld.install_files('${PREFIX}/share/stechec2/' + game,
                       start_dir.ant_glob('player/**/*'),
                       relative_trick=True, cwd=start_dir)
