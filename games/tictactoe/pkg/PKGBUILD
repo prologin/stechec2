@@ -2,14 +2,14 @@
 
 pkgname=tictactoe
 pkgrel=1
-pkgver=r616
+pkgver=r846
 pkgdesc="Stechec2 game: ${pkgname}"
 arch=('x86_64')
 url="http://prologin.org/"
 license=('GPL')
 depends=('stechec2' 'gflags' 'zeromq' 'python-yaml' 'python-jinja')
 makedepends=('git')
-source=("https://github.com/prologin/stechec2")
+source=("git+https://github.com/prologin/stechec2")
 sha512sums=(SKIP)
 
 pkgver() {
