@@ -6,6 +6,7 @@
 // language.
 // {{ stechec2_generated }}
 
+#define CAML_NAME_SPACE
 #include <caml/mlvalues.h>
 #include <caml/callback.h>
 #include <caml/alloc.h>
@@ -275,7 +276,7 @@ extern "C" {{ func|cxx_prototype }}
     if (closure == NULL)
         closure = caml_named_value("ml_{{ func.fct_name }}");
 
-    _ret = callback(*closure, Val_unit);
+    _ret = caml_callback(*closure, Val_unit);
 
     {% if func is returning %}
     CAMLreturnT({{ func.fct_ret_type|cxx_type }}, ({{ func.fct_ret_type|caml_to_cxx }}(_ret)));
