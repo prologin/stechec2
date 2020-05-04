@@ -66,7 +66,7 @@ template <>
 value cxx_to_caml<value, bool>(bool in)
 {
     CAMLparam0();
-    CAMLreturn(Val_int(in));
+    CAMLreturn(Val_bool(in));
 }
 
 template <typename CxxType>
@@ -114,7 +114,7 @@ template <>
 bool caml_to_cxx<value, bool>(value in)
 {
     CAMLparam1(in);
-    CAMLreturnT(bool, Int_val(in));
+    CAMLreturnT(bool, Bool_val(in));
 }
 
 template <typename CxxType>
