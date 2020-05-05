@@ -79,7 +79,7 @@ value cxx_to_caml_array(const std::vector<CxxType>& in)
         CAMLreturn(Atom(0));
     v = caml_alloc(size, 0);
     for (size_t i = 0; i < size; ++i)
-        caml_initialize(&Field(v, i), cxx_to_caml<value, CxxType>(in[i]));
+        caml_modify(&Field(v, i), cxx_to_caml<value, CxxType>(in[i]));
     CAMLreturn(v);
 }
 
@@ -121,10 +121,10 @@ template <typename CxxType>
 std::vector<CxxType> caml_to_cxx_array(value in)
 {
     CAMLparam1(in);
-    std::vector<CxxType> out;
     mlsize_t size = Wosize_val(in);
+    std::vector<CxxType> out(size);
     for (size_t i = 0; i < size; ++i)
-        out.push_back(caml_to_cxx<value, CxxType>(Field(in, i)));
+        out[i] = caml_to_cxx<value, CxxType>(Field(in, i));
     CAMLreturnT(std::vector<CxxType>, out);
 }
 
@@ -141,9 +141,7 @@ value cxx_to_caml_array(const std::vector<double>& in)
     CAMLparam0();
     CAMLlocal1(v);
     size_t size = in.size();
-    if (size == 0)
-        CAMLreturn(Atom(0));
-    v = caml_alloc(size, Double_array_tag);
+    v = caml_alloc_float_array(size);
     for (size_t i = 0; i < size; ++i)
         Store_double_field(v, i, in[i]);
     CAMLreturn(v);
@@ -153,10 +151,10 @@ template <>
 std::vector<double> caml_to_cxx_array(value in)
 {
     CAMLparam1(in);
-    std::vector<double> out;
     mlsize_t size = Wosize_val(in);
+    std::vector<double> out(size);
     for (size_t i = 0; i < size; ++i)
-        out.push_back(Double_field(in, i));
+        out[i] = Double_field(in, i);
     CAMLreturnT(std::vector<double>, out);
 }
 
