@@ -17,7 +17,10 @@ Rules::Rules(const rules::Options opt)
     {
         champion_dll_ = std::make_unique<utils::DLL>(opt.champion_lib);
 
-        // FIXME: register user functions
+        {% for func in game.user_function %}
+        champion_{{ func.fct_name }}_ =
+            champion_dll_->get<f_champion_{{ func.fct_name }}>("{{ func.fct_name }}");
+        {% endfor %}
     }
 
     auto game_state = std::make_unique<GameState>(opt.players);
