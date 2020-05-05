@@ -27,6 +27,9 @@ public:
     // Apply action to game state.
     virtual void apply(GameState* st) const = 0;
 
+    // Outputs to a stream the json dump of the action.
+    virtual void dump_json(const GameState& st) const;
+
     // Handles serialization and deserialization of the Action object to a
     // buffer.
     virtual void handle_buffer(utils::Buffer& buf) = 0;
@@ -63,6 +66,13 @@ public:
     void apply(std::unique_ptr<TState>& st) const
     {
         apply_on(st.get());
+    }
+
+    // Outputs to a stream the json dump of the action.
+    virtual void dump_json(const TState& st) const;
+    void dump_json(const GameState& st) const override
+    {
+        return dump_json(static_cast<const TState&>(st));
     }
 };
 

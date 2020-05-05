@@ -13,3 +13,8 @@ void Action{{ action.fct_name|camel_case }}::apply_on(GameState* st) const
 {
     // FIXME
 }
+
+void Action{{ action.fct_name|camel_case }}::dump_json(const GameState& st) const
+{
+    // FIXME: optional function that dumps the action
+}
