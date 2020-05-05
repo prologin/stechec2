@@ -24,6 +24,13 @@ cxx_prototype = register_filter(
 
 
 @register_filter
+def cxx_func_ptr(func) -> str:
+    return '{} (*)({})'.format(
+        cxx_type(func['fct_ret_type']),
+        generic_args(func['fct_arg'], cxx_type))
+
+
+@register_filter
 def cxx_comment(*args, doc: bool = False, **kwargs):
     start = "/// " if doc else "// "
     return generic_comment(*args, **kwargs, start=start)

@@ -16,6 +16,10 @@
 
 #include "api.hh"
 
+{% for func in game.user_function %}
+using f_champion_{{ func.fct_name }} = {{ func|cxx_func_ptr }};
+{% endfor %}
+
 class Rules
 {%- if game.rules_type == 'turnbased' %} : public rules::TurnBasedRules
 {% elif game.rules_type == 'synchronous' %} : public rules::SynchronousRules
@@ -44,4 +48,8 @@ private:
     std::unique_ptr<utils::DLL> champion_dll_;
     std::unique_ptr<Api> api_;
     utils::Sandbox sandbox_;
+
+    {% for func in game.user_function %}
+    f_champion_{{ func.fct_name }} champion_{{ func.fct_name }}_;
+    {% endfor %}
 };
