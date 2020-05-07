@@ -5,7 +5,7 @@
 {% block extra_flags %}
 OCAMLC ?= ocamlc
 OCAML_PATH = $(shell $(OCAMLC) -where)
-OCAML_FLAGS = -g
+OCAML_FLAGS = -g -no-unboxed-types
 
 CXXFLAGS += -I$(OCAML_PATH)
 LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lcamlrun_shared -lcurses -lm
