@@ -183,10 +183,17 @@ value cxx_to_caml<value, {{ struct.str_name }}>({{ struct.str_name }} in)
 {
     CAMLparam0();
     CAMLlocal1(out);
+    {% if struct is caml_test_float_struct %}
+    out = caml_alloc({{ struct.str_field|length }}, Double_array_tag);
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    Store_double_field(out, {{ loop.index0 }}, in.{{ field_name }});
+    {% endfor %}
+    {% else %}
     out = caml_alloc({{ struct.str_field|length }}, 0);
     {% for field_name, field_type, field_comment in struct.str_field %}
-    caml_initialize(&Field(out, {{ loop.index0 }}), {{ field_type|cxx_to_caml }}(in.{{ field_name }}));
+    Store_field(out, {{ loop.index0 }}, ({{ field_type|cxx_to_caml }}(in.{{ field_name }})));
     {% endfor %}
+    {% endif %}
     CAMLreturn(out);
 }
 
@@ -195,9 +202,15 @@ template<>
 {
     CAMLparam1(in);
     {{ struct.str_name }} out;
+    {% if struct is caml_test_float_struct %}
+    {% for field_name, field_type, field_comment in struct.str_field %}
+    out.{{ field_name }} = Double_field(in, {{ loop.index0 }});
+    {% endfor %}
+    {% else %}
     {% for field_name, field_type, field_comment in struct.str_field %}
     out.{{ field_name }} = {{ field_type|caml_to_cxx }}(Field(in, {{ loop.index0 }}));
     {% endfor %}
+    {% endif %}
     CAMLreturnT({{ struct.str_name }}, out);
 }
 {% endfor %}
