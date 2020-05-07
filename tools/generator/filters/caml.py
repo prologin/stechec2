@@ -1,6 +1,6 @@
 import textwrap
 
-from . import register_filter
+from . import register_filter, register_test
 from .common import get_array_inner, is_array
 from .cxx import cxx_type
 
@@ -100,3 +100,12 @@ def caml_param_macro(value) -> str:
             ', '.join(chunk)
         ))
     return '\n'.join(lines)
+
+
+@register_test
+def caml_test_float_struct(struct) -> bool:
+    """
+    Test if the struct contain only float fields.
+    """
+    return all(type_value == "double"
+               for _, type_value, _ in struct["str_field"])

@@ -47,6 +47,13 @@ struct:
     str_field:
       - [field_integer, int, "Integer field"]
       - [field_struct, simple_struct, "Structure field"]
+  -
+    str_name: struct_with_only_double
+    str_summary: Structure which contains only double
+    str_tuple: no
+    str_field:
+      - [field_one, double, "First double"]
+      - [field_two, double, "First double"]
 
 function:
   -
@@ -166,6 +173,12 @@ function:
     fct_ret_type: void
     fct_arg:
       - [s, struct_with_array, the struct]
+  -
+    fct_name: send_me_double_struct
+    fct_summary: Send me this struct with 42f on the two fields.
+    fct_ret_type: void
+    fct_arg:
+      - [s, struct_with_only_double, the struct]
   -
     fct_name: send_me_test_enum
     fct_summary: Send me the two test values of the enum

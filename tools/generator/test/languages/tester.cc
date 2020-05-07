@@ -181,6 +181,12 @@ extern "C"
         func_called.send_me_42s += 1;
     }
 
+    void api_send_me_double_struct(struct_with_only_double s)
+    {
+        assert(s.field_one > 42.41 and s.field_one < 42.43);
+        assert(s.field_two > 42.41 and s.field_two < 42.43);
+    }
+
     void api_send_me_test_enum(test_enum v1, test_enum v2)
     {
         assert(v1 == VAL1);
@@ -207,6 +213,7 @@ extern "C"
     void api_afficher_simple_struct(simple_struct) {}
     void api_afficher_struct_with_array(struct_with_array) {}
     void api_afficher_struct_with_struct(struct_with_struct) {}
+    void api_afficher_struct_with_only_double(struct_with_only_double) {}
 }
 
 
