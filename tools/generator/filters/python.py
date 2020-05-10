@@ -1,12 +1,14 @@
 from functools import partial
+from jinja2 import contextfilter
 
 from . import register_filter
-from .common import generic_comment, get_array_inner, is_array
+from .common import generic_comment, get_array_inner, is_array, is_tuple
 from .cxx import cxx_type
 
 
 @register_filter
-def python_type(val: str) -> str:
+@contextfilter
+def python_type(ctx, val: str) -> str:
     base_types = {
         'void': 'None',
         'int': 'int',
@@ -16,7 +18,12 @@ def python_type(val: str) -> str:
     if val in base_types:
         return base_types[val]
     if is_array(val):
-        return 'List[{}]'.format(python_type(get_array_inner(val)))
+        return 'List[{}]'.format(python_type(ctx, get_array_inner(val)))
+    s = ctx['game'].get_struct(val)
+    if s and is_tuple(s):
+        return 'Tuple[{}]'.format(', '.join(
+            python_type(ctx, arg_type) for _, arg_type, _ in s['str_field']
+        ))
     return val
 
 
