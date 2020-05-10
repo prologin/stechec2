@@ -311,6 +311,30 @@ static void _init_python()
     py_module = _import_module("api");
 }
 
+// Flush stdout and stderr
+static void flush_std_files()
+{
+    PyObject *fout = PySys_GetObject("stdout");
+    PyObject *ferr = PySys_GetObject("stderr");
+    PyObject *tmp;
+
+    if (fout != nullptr && fout != Py_None) {
+        tmp = PyObject_CallMethod(fout, "flush", "");
+        if (tmp == nullptr)
+            PyErr_WriteUnraisable(fout);
+        else
+            Py_DECREF(tmp);
+    }
+
+    if (ferr != nullptr && ferr != Py_None) {
+        tmp = PyObject_CallMethod(ferr, "flush", "");
+        if (tmp == nullptr)
+            PyErr_Clear();
+        else
+            Py_DECREF(tmp);
+    }
+}
+
 // Run a Python function.
 static PyObject* _call_python_function(const char* name)
 {
@@ -339,6 +363,7 @@ static PyObject* _call_python_function(const char* name)
         abort();
     }
 
+    flush_std_files();
     return result;
 }
 
