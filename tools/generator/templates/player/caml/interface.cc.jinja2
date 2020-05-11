@@ -233,7 +233,7 @@ static inline void _init_caml()
 {%- set arg_list = func.fct_arg|caml_cxx_args %}
 
 {{ func.fct_summary|cxx_comment }}
-extern "C" value ml_{{ func.fct_name }}({# argument list #}
+extern "C" CAMLprim value ml_{{ func.fct_name }}({# argument list #}
                                         {%- set comma = joiner(', ') -%}
                                         {%- for arg_name, _, _ in arg_list -%}
                                         {{ comma() }}value {{ arg_name }}
@@ -263,7 +263,7 @@ extern "C" value ml_{{ func.fct_name }}({# argument list #}
 // Bytecode wrapper for {{ func.fct_name }}.
 // This is necessary for all primitives with arity greater than 5:
 // https://caml.inria.fr/pub/docs/manual-ocaml/intfc.html#ss:c-prim-impl
-extern "C" value ml_bytecode_{{ func.fct_name }}(value* argv, int argc)
+extern "C" CAMLprim value ml_bytecode_{{ func.fct_name }}(value* argv, int argc)
 {
     {% set comma = joiner(', ') %}
     return ml_{{ func.fct_name }}(
