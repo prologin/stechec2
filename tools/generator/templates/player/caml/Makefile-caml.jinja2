@@ -3,33 +3,33 @@
 {% block lang %}caml{% endblock %}
 
 {% block extra_flags %}
-OCAMLC ?= ocamlc
-OCAML_PATH = $(shell $(OCAMLC) -where)
+OCAMLOPT ?= ocamlopt
+OCAML_PATH = $(shell $(OCAMLOPT) -where)
 OCAML_FLAGS = -g -no-unboxed-types
 
 CXXFLAGS += -I$(OCAML_PATH)
-LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lcamlrun_shared -lcurses -lm
+LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lasmrun_shared -lcurses -lm
 {% endblock %}
 
 {% block extra_rules %}
 ML_SOURCES = $(shell ocamldep -sort $(filter %.ml,$(CHAMPION_FILES)))
 ML_INTERFACES = $(filter %.mli,$(CHAMPION_FILES))
-ML_OBJS = $(ML_SOURCES:.ml=.cmo)
+ML_OBJS = $(ML_SOURCES:.ml=.cmx)
 
 objs += champion-ocaml.o
-to_clean += $(ML_OBJS) $(ML_OBJS:.cmo=.cmi) champion-ocaml.cds
+to_clean += $(ML_OBJS) $(ML_OBJS:.cmx=.cmi) champion-ocaml.cds
 
 %.cmi: %.mli
-	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+	$(OCAMLOPT) $(OCAML_FLAGS) -c $< -o $@
 
 %.cmi: %.ml
-	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+	$(OCAMLOPT) $(OCAML_FLAGS) -c $< -o $@
 
-%.cmo: %.ml %.cmi
-	$(OCAMLC) $(OCAML_FLAGS) -c $< -o $@
+%.cmx: %.ml %.cmi
+	$(OCAMLOPT) $(OCAML_FLAGS) -c $< -o $@
 
 champion-ocaml.o: $(ML_OBJS)
-	$(OCAMLC) -output-obj $(OCAML_FLAGS) $^ -o $@
+	$(OCAMLOPT) -output-obj $(OCAML_FLAGS) $^ -o $@
 
 .depend: $(ML_SOURCES) $(ML_INTERFACES)
 	ocamldep -all $^ > $@
