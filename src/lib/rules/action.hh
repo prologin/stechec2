@@ -29,7 +29,7 @@ public:
     virtual void apply(GameState* st) const = 0;
 
     // Outputs to a stream the json dump of the action.
-    virtual void dump_json(const GameState& st, std::ostream& ss) const;
+    virtual void dump_json(const GameState& st, std::ostream& ss) const = 0;
 
     // Handles serialization and deserialization of the Action object to a
     // buffer.
@@ -70,10 +70,13 @@ public:
     }
 
     // Outputs to a stream the json dump of the action.
-    virtual void dump_json(const TState& st, std::ostream& ss) const;
+    virtual void dump_json(const TState& st, std::ostream& ss) const
+    {
+    }
+
     void dump_json(const GameState& st, std::ostream& ss) const override
     {
-        return dump_json(static_cast<const TState&>(st), ss);
+        dump_json(static_cast<const TState&>(st), ss);
     }
 };
 
