@@ -64,25 +64,12 @@ public:
     virtual void start_of_round() {}
     virtual void end_of_round() {}
 
-    // Called at every turn by the server to dump the gamestate in the dumpfile
-    virtual void dump_state(std::ostream&)
-    {
-        FATAL("dump_state() virtual function not implemented in the rules "
-              "but the server was launched with the `--dump` option.");
-    }
-
     // Called after every turn to save the actions of the player to the replay
     // file
     void save_player_actions(Actions* actions);
 
 protected:
     bool is_spectator(uint32_t id);
-
-    void dump_state_stream()
-    {
-        if (opt_.dump_stream)
-            dump_state(*opt_.dump_stream);
-    }
 
     Options opt_;
 

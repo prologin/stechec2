@@ -147,8 +147,6 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
     at_start();
     at_server_start(msgr);
 
-    dump_state_stream();
-
     while (!is_finished())
     {
         auto spectators_count = spectators_.size();
@@ -204,14 +202,15 @@ void SynchronousRules::server_loop(ServerMessenger_sptr msgr)
         }
 
         save_player_actions(actions);
-
+        int actions_count = 0;
         for (const auto& action : actions->all())
+        {
+            actions_count++;
             apply_action(*action);
+        }
         msgr->push_actions(*actions);
 
         end_of_round();
-
-        dump_state_stream();
     }
 
     at_end();
@@ -464,8 +463,6 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
     start_of_round();
 
-    dump_state_stream();
-
     while (!is_finished())
     {
         for (const auto& player : players_)
@@ -494,8 +491,12 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
                     DEBUG("Acknowledging...");
                     msgr->ack();
 
+                    int actions_count = 0;
                     for (const auto& action : actions->all())
+                    {
                         apply_action(*action);
+                        actions_count++;
+                    }
                 }
             }
 
@@ -504,8 +505,6 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
 
             end_of_player_turn(player->id);
             end_of_turn(player->id);
-
-            dump_state_stream();
 
             /* Spectators must be able to see the state of the game between
              * after each player has finished its turn. */
@@ -533,7 +532,9 @@ void TurnBasedRules::server_loop(ServerMessenger_sptr msgr)
         end_of_round();
         DEBUG("End of round!");
         if (!is_finished())
+        {
             start_of_round();
+        }
         else
             break; // Avoid calling is_finished() twice
     }
