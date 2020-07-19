@@ -70,7 +70,7 @@ public:
     }
 
     // Outputs to a stream the json dump of the action.
-    virtual void dump_json(const TState& st, std::ostream& ss) const
+    virtual void dump_json(const TState& /* st */, std::ostream& /* ss */) const
     {
     }
 
