@@ -88,6 +88,16 @@ class TestLanguages(unittest.TestCase):
         except subprocess.CalledProcessError as e:
             self.fail("Champion compilation failed with output:\n" + e.output)
 
+        # Generate tarball
+        try:
+            subprocess.run(
+                ['make', 'tar'], universal_newlines=True, check=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                cwd=language_dir,
+            )
+        except subprocess.CalledProcessError as e:
+            self.fail("Tarball generation failed with output:\n" + e.output)
+
         # Compile tester
         shutil.copy2(language_test_dir / 'tester.cc', self.player_path)
         try:
