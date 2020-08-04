@@ -231,6 +231,7 @@ def build_server(bld):
     bld.program(source='''
             src/server/main.cc
             src/server/server.cc
+            src/lib/rules/rules.cc
         ''',
                 target='stechec2-server',
                 defines=[
