@@ -89,6 +89,11 @@ namespace Champion {
       }
       Api.SendMe42s(s);
 
+      StructWithOnlyDouble float_struct = new StructWithOnlyDouble ();
+      float_struct.FieldOne = 42.42;
+      float_struct.FieldTwo = 42.42;
+      Api.SendMeDoubleStruct(float_struct);
+
       Api.SendMeTestEnum(TestEnum.VAL1, TestEnum.VAL2);
 
       Api.AfficherTestEnum(TestEnum.VAL2);

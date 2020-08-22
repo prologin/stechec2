@@ -54,6 +54,10 @@ function test()
         "field_int_arr" => array_fill(0, 42, 42),
         "field_str_arr" => array_fill(0, 42, $struct1)
     ));
+    send_me_double_struct(array(
+        "field_one" => 42.42,
+        "field_two" => 42.42
+    ));
     $l1 = send_me_struct_array(array_fill(0, 42, array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),

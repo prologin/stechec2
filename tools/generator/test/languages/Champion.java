@@ -83,6 +83,12 @@ public class Champion extends Api
         }
         send_me_42s(s);
 
+        StructWithOnlyDouble float_struct = new StructWithOnlyDouble();
+        float_struct.field_one = 42.42;
+        float_struct.field_two = 42.42;
+        send_me_double_struct(float_struct);
+
+
         send_me_test_enum(TestEnum.VAL1, TestEnum.VAL2);
 
         afficher_test_enum(TestEnum.VAL2);

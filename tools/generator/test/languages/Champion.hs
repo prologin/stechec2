@@ -13,6 +13,7 @@ assert' False = error "Assertion failed."
 assert' _     = ()
 
 theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True 42.42 "TTY"))
+floatStruct = Struct_with_only_double 42.42 42.42
 
 -- Raise an assertion to check the alerting system works.
 test_alert :: IO ()
@@ -51,6 +52,7 @@ test = do
 
   send_me_simple $ Simple_struct 42 True 42.42 "TTY"
   send_me_42s $ theStruct
+  send_me_double_struct $ floatStruct
   send_me_test_enum Val1 Val2;
 
   afficher_test_enum(Val2);
