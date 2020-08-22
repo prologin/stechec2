@@ -44,6 +44,10 @@ def test():
         field_int_arr=[42] * 42,
         field_str_arr=[simple] * 42))
 
+    send_me_double_struct(struct_with_only_double(
+        field_one=42.42,
+        field_two=42.42))
+
     send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
     afficher_test_enum(test_enum.VAL2)
     l = send_me_struct_array([struct_with_array(

@@ -18,6 +18,7 @@ struct {
     int send_me_13_ints;
     int send_me_simple;
     int send_me_42s;
+    int send_me_double_struct;
     int send_me_test_enum;
     int send_me_struct_array;
     int afficher_test_enum;
@@ -185,6 +186,7 @@ extern "C"
     {
         assert(s.field_one > 42.41 and s.field_one < 42.43);
         assert(s.field_two > 42.41 and s.field_two < 42.43);
+        func_called.send_me_double_struct += 1;
     }
 
     void api_send_me_test_enum(test_enum v1, test_enum v2)
@@ -240,6 +242,7 @@ int main(int argc, char* argv[])
     assert(func_called.send_me_13_ints);
     assert(func_called.send_me_simple);
     assert(func_called.send_me_42s);
+    assert(func_called.send_me_double_struct);
     assert(func_called.send_me_test_enum);
     assert(func_called.send_me_struct_array);
     assert(func_called.afficher_test_enum);
