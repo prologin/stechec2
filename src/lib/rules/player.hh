@@ -41,6 +41,7 @@ struct Player final
     int32_t score;
     uint32_t nb_timeout;
     std::string name;
+    std::vector<double> turn_duration_ms;
 };
 
 class Players final : public utils::IBufferizable

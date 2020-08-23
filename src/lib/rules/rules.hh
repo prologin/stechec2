@@ -2,6 +2,8 @@
 // Copyright (c) 2013 Association Prologin <association@prologin.org>
 #pragma once
 
+#include <unordered_map>
+
 #include <utils/log.hh>
 
 #include "action.hh"
@@ -75,6 +77,9 @@ public:
     // file
     void save_player_actions(Actions* actions);
 
+    // Called when the game is finished to write the stats
+    void write_stats() const;
+
 protected:
     bool is_spectator(uint32_t id);
 
@@ -90,6 +95,10 @@ protected:
     Players spectators_;
 
     int timeout_;
+
+    // Key: metric name, value: metric value.
+    // Usage: metrics_["my_metric_total"] += 1;
+    std::unordered_map<std::string, double> metrics_;
 };
 
 class SynchronousRules : public Rules
