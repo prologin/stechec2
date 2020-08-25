@@ -30,6 +30,7 @@ Requirements
 * gcovr (for code coverage reports)
 * python-yaml
 * python-jinja2
+* pkg-config
 
 Arch Linux::
 
@@ -38,7 +39,7 @@ Arch Linux::
 Debian/Ubuntu::
 
   apt-get install build-essential libzmq3-dev libzmqpp-dev python3-yaml \
-      python3-jinja2 libgtest-dev libgflags-dev gcovr
+      python3-jinja2 libgtest-dev libgflags-dev gcovr pkg-config
 
 
 Installation
@@ -94,6 +95,7 @@ Requirements:
 - jdk-java
 - ghc
 - rustc
+- python-dev
 
 Archlinux::
 
@@ -102,7 +104,7 @@ Archlinux::
 Debian/Ubuntu::
 
   apt-get install php-cli php-dev libphp-embed ocaml mono-devel ghc \
-                  openjdk-11-jdk rustc
+                  openjdk-11-jdk rustc python3-dev
 
 Create your AI
 --------------
