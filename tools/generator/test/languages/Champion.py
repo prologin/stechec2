@@ -30,6 +30,9 @@ def test():
     for i, _ in enumerate(bdo):
         assert(bdi[i] - (1 / bdo[i]) < 0.0001)
 
+    ea = [test_enum.VAL1, test_enum.VAL2, test_enum.VAL2]
+    assert returns_reversed_enums(ea) == list(reversed(ea))
+
     assert returns_upper(["Alea", "Jacta", "Est"]) == ["ALEA", "JACTA", "EST"]
 
     simple = simple_struct(

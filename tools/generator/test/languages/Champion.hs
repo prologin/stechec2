@@ -47,6 +47,8 @@ test = do
     returns_not [True,False,False,True,False,False,True,False,False]
   () <- assert' . (== [-2.0, 1.0, 0.08, 0.023809523809523808]) <$>
     returns_inverse [-0.5,1.0,12.5,42.0]
+  () <- assert' . (== [Val2, Val2, Val1]) <$>
+    returns_reversed_enums [Val1, Val2, Val2]
   () <- assert' . (== ["ALEA", "JACTA", "EST"]) <$>
     returns_upper ["Alea", "Jacta", "Est"]
 

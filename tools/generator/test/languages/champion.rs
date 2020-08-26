@@ -41,6 +41,9 @@ pub fn test() {
         assert!(bdi[i] - (1. / bdo[i]) < 0.0001);
     }
 
+    let ea = returns_reversed_enums(&vec![TestEnum::Val1, TestEnum::Val2, TestEnum::Val2]);
+    assert_eq!(ea, vec![TestEnum::Val2, TestEnum::Val2, TestEnum::Val1]);
+
     let sa = ["Alea", "Jacta", "Est"];
     let sau = returns_upper(&sa);
     assert_eq!(sau, vec!["ALEA", "JACTA", "EST"]);

@@ -36,6 +36,8 @@ function test()
     for ($i = 0; $i < 4; $i++)
         assert($bdi[$i] - (1 / $bdo[$i]) < 0.0001);
 
+    assert(returns_reversed_enums(array(VAL1, VAL2, VAL2))
+        === array(VAL2, VAL2, VAL1));
     assert(returns_upper(array("Alea", "Jacta", "Est"))
            === array("ALEA", "JACTA", "EST"));
 

@@ -63,6 +63,11 @@ void test()
     for (int i = 0; i < 4; ++i)
         assert(bdi[i] - (1 / bdo[i]) < 0.0001);
 
+    std::vector<test_enum> eao = {VAL1, VAL2, VAL2};
+    std::vector<test_enum> ear = returns_reversed_enums(eao);
+    for (int i = 0; i < 3; ++i)
+        assert(ear[i] == eao[2 - i]);
+
     assert(returns_upper(std::vector<std::string>{"Alea", "Jacta", "Est"})
            == (std::vector<std::string>{"ALEA", "JACTA", "EST"}));
 
