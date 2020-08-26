@@ -31,6 +31,7 @@ struct {
     int returns_sorted; // Test arrays of ints
     int returns_not; // Test arrays of bools
     int returns_inverse; // Test arrays of double
+    int returns_reversed_enums; // Test arrays of enums
     int returns_upper; // Test arrays of strings
 } func_called;
 
@@ -152,6 +153,13 @@ extern "C"
         return l;
     }
 
+    std::vector<test_enum> api_returns_reversed_enums(std::vector<test_enum> l)
+    {
+        func_called.returns_reversed_enums += 1;
+        std::reverse(l.begin(), l.end());
+        return l;
+    }
+
     std::vector<std::string> api_returns_upper(std::vector<std::string> l)
     {
         func_called.returns_upper += 1;
@@ -255,5 +263,6 @@ int main(int argc, char* argv[])
     assert(func_called.returns_sorted);
     assert(func_called.returns_not);
     assert(func_called.returns_inverse);
+    assert(func_called.returns_reversed_enums);
     assert(func_called.returns_upper);
 }

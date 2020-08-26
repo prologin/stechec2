@@ -66,6 +66,13 @@ void test()
         assert(bdi.items[i] - (1 / bdo[i]) < 0.0001);
     free(bdi.items);
 
+    test_enum eao[] = {VAL1, VAL2, VAL2};
+    test_enum_array ea = (test_enum_array){eao, 3};
+    ea = returns_reversed_enums(ea);
+    for (int i = 0; i < 3; ++i)
+        assert(ea.items[i] == eao[2 - i]);
+    free(ea.items);
+
     char* sa[] = {"Alea", "Jacta", "Est"};
     string_array sau = (string_array){sa, 3};
     sau = returns_upper(sau);

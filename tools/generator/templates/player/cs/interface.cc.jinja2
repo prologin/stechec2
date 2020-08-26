@@ -70,7 +70,16 @@ template <>
 MonoClass* get_mono_class<bool>() { return mono_get_boolean_class(); };
 template <>
 MonoClass* get_mono_class<std::string>() { return mono_get_string_class(); };
+{% for enum in game.enum %}
+
+template <>
+MonoClass* get_mono_class<{{ enum.enum_name }}>()
+{
+    return mono_get_int32_class();
+}
+{% endfor %}
 {% for struct in game.struct %}
+
 template <>
 MonoClass* get_mono_class<{{ struct.str_name }}>()
 {
@@ -156,6 +165,8 @@ MonoArray* cxx2lang_array(const std::vector<CxxType>& in)
         if constexpr (std::is_same_v<CsType, MonoObject*> ||
                       std::is_same_v<CsType, MonoString*>)
             mono_array_setref(maArray, i, item);
+        else if constexpr (std::is_enum<CxxType>::value)
+            mono_array_set(maArray, int, i, item);
         else
             mono_array_set(maArray, CxxType, i, item);
     }

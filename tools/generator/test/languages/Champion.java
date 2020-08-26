@@ -54,6 +54,12 @@ public class Champion extends Api
             assert(bdi[i] - (1 / bdo[i]) < 0.0001);
         }
 
+        TestEnum[] eao = {TestEnum.VAL1, TestEnum.VAL2, TestEnum.VAL2};
+        TestEnum[] ear = returns_reversed_enums(eao);
+        for (int i = 0; i < 3; ++i) {
+            assert(ear[i] == eao[2 - i]);
+        }
+
         String[] sa = {"Alea", "Jacta", "Est"};
         String[] sau = returns_upper(sa);
         assert(sau[0].equals("ALEA"));

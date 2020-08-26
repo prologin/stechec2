@@ -65,6 +65,12 @@ namespace Champion {
         Assert(bdi[i] - (1 / bdo[i]) < 0.0001);
       }
 
+      TestEnum[] eao = {TestEnum.VAL1, TestEnum.VAL2, TestEnum.VAL2};
+      TestEnum[] ear = Api.ReturnsReversedEnums(eao);
+      for (int i = 0; i < 3; ++i) {
+        Assert(ear[i] == eao[2 - i]);
+      }
+
       string[] sa = {"Alea", "Jacta", "Est"};
       string[] sau = Api.ReturnsUpper(sa);
       Assert(sau[0] == "ALEA");

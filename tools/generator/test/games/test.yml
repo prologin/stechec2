@@ -162,6 +162,12 @@ function:
     fct_arg:
       - [l, double array, input list]
   -
+    fct_name: returns_reversed_enums
+    fct_summary: Returns the input enum array, reversed
+    fct_ret_type: test_enum array
+    fct_arg:
+      - [l, test_enum array, input list]
+  -
     fct_name: send_me_simple
     fct_summary: Send me a simple struct
     fct_ret_type: void
