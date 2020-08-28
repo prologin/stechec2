@@ -36,10 +36,17 @@ Arch Linux::
 
   pacman --needed -S gcc zeromq gtest python-yaml python-jinja gflags gcovr
 
-Debian/Ubuntu::
+Debian::
+
+  apt-get install build-essential libzmq3-dev python3-yaml \
+      python3-jinja2 libgtest-dev libgflags-dev gcovr pkg-config
+
+Ubuntu::
 
   apt-get install build-essential libzmq3-dev libzmqpp-dev python3-yaml \
       python3-jinja2 libgtest-dev libgflags-dev gcovr pkg-config
+
+
 
 
 Installation
