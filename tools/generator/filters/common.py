@@ -27,7 +27,7 @@ def get_array_inner(type) -> bool:
 
 @register_test
 def is_tuple(struct) -> bool:
-    return struct['str_tuple']
+    return struct.get('str_tuple', False)
 
 
 @register_filter
