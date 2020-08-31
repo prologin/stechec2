@@ -91,14 +91,14 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
 
     if is_array(value):
         return 'Vec<{}>'.format(
-            rust_api_output_type(ctx, get_array_inner(value))
+            rust_api_output_type(ctx, get_array_inner(value), api_mod_path)
         )
     elif value in basic_types:
         return basic_types[value]
     elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
-                rust_api_output_type(ctx, field)
+                rust_api_output_type(ctx, field, api_mod_path)
                 for _, field, _ in ctx['game'].get_struct(value)['str_field']
             ))
     else:
@@ -119,12 +119,14 @@ def rust_api_input_type(
             return '&[impl AsRef<str>]'
         else:
             return '&[impl Borrow<{}>]'.format(
-                rust_api_input_type(ctx, get_array_inner(value), skip_ref=True)
+                rust_api_input_type(
+                    ctx, get_array_inner(value), api_mod_path, True
+                )
             )
     elif as_struct and is_tuple(as_struct):
         return '({})'.format(
             ', '.join(
-                rust_api_input_type(ctx, field)
+                rust_api_input_type(ctx, field, api_mod_path)
                 for _, field, _ in ctx['game'].get_struct(value)['str_field']
             ))
     elif not rust_is_copy(ctx, value):
