@@ -49,7 +49,7 @@ jobs:
           flake8 . --count --show-source --statistics --exclude test/languages
 
       - name: Coverage upload to Codecov
-        uses: codecov/codecov-action@v1.0.6
+        uses: codecov/codecov-action@v1
         with:
             file: tools/coverage.xml
             name: stechec2-generator
