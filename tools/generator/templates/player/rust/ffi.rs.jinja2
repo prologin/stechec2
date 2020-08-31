@@ -4,7 +4,7 @@
 //! Types and conversions for the C interface
 //!
 //! Please use the tools defined in `api.rs` to interact with the API for
-//! {{ game.name }}.
+//! {{ game.name }}.
 
 #![allow(clippy::unit_arg)]
 #![allow(clippy::unused_unit)]
@@ -99,14 +99,14 @@ pub trait RustToC<T> {
 {% with ffi_type=type|rust_ffi_type, api_type=type|rust_api_output_type %}
 // Conversions for {{ type }}
 
-impl CToRust<{{ api_type }}> for {{ ffi_type }} {
-    unsafe fn to_rust(self) -> {{ api_type }} {
+impl CToRust<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_rust(self) -> {{ api_type }} {
         self
     }
 }
 
-impl RustToC<{{ ffi_type }}> for {{ api_type }} {
-    unsafe fn to_c(&self) -> {{ ffi_type }} {
+impl RustToC<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_c(&self) -> {{ ffi_type }} {
         *self
     }
 }
@@ -193,7 +193,7 @@ where
 {% with name=enum.enum_name|camel_case %}
 // Conversions for {{ enum.enum_name }}
 
-impl CToRust<api::{{ name }}> for {{ name }} {
+impl CToRust<api::{{ name }}> for {{ name }} {
     unsafe fn to_rust(self) -> api::{{ name }} {
         match self {
             {% for field_name, _ in enum.enum_field %}
@@ -203,8 +203,8 @@ impl CToRust<api::{{ name }}> for {{ name }} {
     }
 }
 
-impl RustToC<{{ name }}> for api::{{ name }} {
-    unsafe fn to_c(&self) -> {{ name }} {
+impl RustToC<{{ name }}> for api::{{ name }} {
+    unsafe fn to_c(&self) -> {{ name }} {
         match self {
             {% for field_name, _ in enum.enum_field %}
             api::{{ name }}::{{ field_name|camel_case }} => {{ name }}::{{ field_name|camel_case }},
@@ -221,13 +221,13 @@ impl RustToC<{{ name }}> for api::{{ name }} {
 // Conversions for {{ struct.str_name }}
 
 {% with api_type=struct.str_name|rust_api_output_type(api_mod_path='api::') %}
-impl CToRust<{{ api_type }}> for {{ ffi_type }} {
-    unsafe fn to_rust(self) -> {{ api_type }} {
+impl CToRust<{{ api_type }}> for {{ ffi_type }} {
+    unsafe fn to_rust(self) -> {{ api_type }} {
         {% if struct is tuple %}
         {% set separator = joiner(', ') %}
-        ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_rust(){% endfor %})
+        ({% for field, _, _ in struct.str_field %}{{ separator() }}self.{{ field }}.to_rust(){% endfor %})
         {% else %}
-        {{ api_type }} {
+        {{ api_type }} {
             {% for field_name, _, _ in struct.str_field %}
             {{ field_name }}: self.{{ field_name }}.to_rust(),
             {% endfor %}
@@ -238,8 +238,8 @@ impl CToRust<{{ api_type }}> for {{ ffi_type }} {
 {% endwith %}
 
 {% with api_type=struct.str_name|rust_api_input_type(api_mod_path='api::', skip_ref=True) %}
-impl RustToC<{{ ffi_type }}> for {{ api_type }} {
-    unsafe fn to_c(&self) -> {{ ffi_type }} {
+impl RustToC<{{ ffi_type }}> for {{ api_type }} {
+    unsafe fn to_c(&self) -> {{ ffi_type }} {
         {% if struct is tuple %}
         let ({{ struct.str_field|map('first')|join(', ') }}) = self;
 
@@ -279,9 +279,9 @@ extern {
 #[no_mangle]
 unsafe extern "C" {{ func|rust_prototype(ffi=True) }} {
     {% for arg, type, _ in func.fct_arg %}
-    let {{ arg }} = {{ arg }}.to_rust();
+    let {{ arg }} = {{ arg }}.to_rust();
     {% endfor %}
     {% set separator = joiner(', ') %}
-    crate::{{ func.fct_name }}({{ separator() }}{% for field, _, _ in func.fct_arg %}{{ field }}{% endfor %}).to_c()
+    crate::{{ func.fct_name }}({{ separator() }}{% for field, _, _ in func.fct_arg %}{{ field }}{% endfor %}).to_c()
 }
 {% endfor %}
