@@ -3,6 +3,7 @@
 #pragma once
 
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -26,6 +27,9 @@ public:
 
     // Apply action to game state.
     virtual void apply(GameState* st) const = 0;
+
+    // Outputs to a stream the json dump of the action.
+    virtual void dump_json(const GameState& st, std::ostream& ss) const = 0;
 
     // Handles serialization and deserialization of the Action object to a
     // buffer.
@@ -63,6 +67,16 @@ public:
     void apply(std::unique_ptr<TState>& st) const
     {
         apply_on(st.get());
+    }
+
+    // Outputs to a stream the json dump of the action.
+    virtual void dump_json(const TState& /* st */, std::ostream& /* ss */) const
+    {
+    }
+
+    void dump_json(const GameState& st, std::ostream& ss) const override
+    {
+        dump_json(static_cast<const TState&>(st), ss);
     }
 };
 
