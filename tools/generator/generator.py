@@ -2,6 +2,7 @@
 # Copyright (c) 2020 Association Prologin <association@prologin.org>
 
 import jinja2
+from datetime import date
 from pathlib import Path
 
 from .filters import load_library_in
@@ -30,7 +31,7 @@ class Generator:
         if out_name is None:
             out_name = name
         tpl = self.env.get_template(name + '.jinja2')
-        out = tpl.stream(game=self.game, **params)
+        out = tpl.stream(game=self.game, year=date.today().year, **params)
         out_path = self.out_dir / out_name
         out_path.parent.mkdir(parents=True, exist_ok=True)
         try:
