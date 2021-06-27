@@ -249,12 +249,20 @@ PHP_FUNCTION(php_api_{{ func.fct_name }})
         RETURN_NULL();
     }
 }
+
+{# TODO: properly declare array arginfo, see: #}
+{# https://www.phpinternalsbook.com/php7/extensions_design/php_functions.html #}
+ZEND_BEGIN_ARG_INFO_EX(php_arginfo_{{ func.fct_name }}, 0, 0, {{ func.fct_arg|length }})
+{% for arg_name, _, _ in func.fct_arg %}
+    ZEND_ARG_INFO(0, {{ arg_name }})
+{% endfor %}
+ZEND_END_ARG_INFO()
 {% endfor %}
 
 // API function to register.
 static zend_function_entry api_callback[] = {
     {% for func in game.function %}
-    PHP_FALIAS({{ func.fct_name }}, php_api_{{ func.fct_name }}, NULL)
+    PHP_FALIAS({{ func.fct_name }}, php_api_{{ func.fct_name }}, php_arginfo_{{ func.fct_name }})
     {% endfor %}
     {NULL, NULL, NULL, 0, 0}
 };

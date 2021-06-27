@@ -4,7 +4,7 @@ require('api.php');
 
 function test_alert()
 {
-    assert("false");
+    assert(false);
 }
 
 /*
