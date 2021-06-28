@@ -7,5 +7,5 @@
 
 {% block extra_flags %}
 CXXFLAGS += $(shell php-config --includes)
-LDFLAGS += $(shell php-config --libs --ldflags) -lphp7
+LDFLAGS += $(shell php-config --libs --ldflags) -lphp
 {% endblock %}
