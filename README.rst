@@ -62,7 +62,7 @@ Clone the stechec2 repository::
 
 Then put every game you want to install in ``games/``::
 
-  for game in prologin{2012..2016}; do
+  for game in prologin{2012..2021}; do
     git clone https://github.com/prologin/${game}.git games/$game
   done
 
