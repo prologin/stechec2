@@ -73,6 +73,8 @@ pub fn test() {
     };
     send_me_double_struct(&float_struct);
 
+    send_me_tuple_struct((42, true));
+
     send_me_test_enum(TestEnum::Val1, TestEnum::Val2);
 
     afficher_test_enum(TestEnum::Val2);

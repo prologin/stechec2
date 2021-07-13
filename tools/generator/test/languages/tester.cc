@@ -21,6 +21,7 @@ struct {
     int send_me_double_struct;
     int send_me_test_enum;
     int send_me_struct_array;
+    int send_me_tuple_struct;
     int afficher_test_enum;
     int returns_42;
     int returns_true;
@@ -197,6 +198,12 @@ extern "C"
         func_called.send_me_double_struct += 1;
     }
 
+    void api_send_me_tuple_struct(simple_tuple_struct s) {
+        assert(s.field_0 == 42);
+        assert(s.field_1);
+        func_called.send_me_tuple_struct += 1;
+    }
+
     void api_send_me_test_enum(test_enum v1, test_enum v2)
     {
         assert(v1 == VAL1);
@@ -224,6 +231,7 @@ extern "C"
     void api_afficher_struct_with_array(struct_with_array) {}
     void api_afficher_struct_with_struct(struct_with_struct) {}
     void api_afficher_struct_with_only_double(struct_with_only_double) {}
+    void api_afficher_simple_tuple_struct(simple_tuple_struct) {}
 }
 
 
@@ -253,6 +261,7 @@ int main(int argc, char* argv[])
     assert(func_called.send_me_double_struct);
     assert(func_called.send_me_test_enum);
     assert(func_called.send_me_struct_array);
+    assert(func_called.send_me_tuple_struct);
     assert(func_called.afficher_test_enum);
     assert(func_called.returns_42);
     assert(func_called.returns_true);
