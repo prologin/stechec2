@@ -106,6 +106,11 @@ void test()
     float_struct.field_two = 42.42;
     send_me_double_struct(float_struct);
 
+    simple_tuple_struct tuple_struct;
+    tuple_struct.field_0 = 42;
+    tuple_struct.field_1 = true;
+    send_me_tuple_struct(tuple_struct);
+
     send_me_test_enum(VAL1, VAL2);
 
     afficher_test_enum(VAL2);

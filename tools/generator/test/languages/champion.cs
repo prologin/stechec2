@@ -95,10 +95,15 @@ namespace Champion {
       }
       Api.SendMe42s(s);
 
-      StructWithOnlyDouble float_struct = new StructWithOnlyDouble ();
+      StructWithOnlyDouble float_struct = new StructWithOnlyDouble();
       float_struct.FieldOne = 42.42;
       float_struct.FieldTwo = 42.42;
       Api.SendMeDoubleStruct(float_struct);
+
+      SimpleTupleStruct tuple_struct = new SimpleTupleStruct();
+      tuple_struct.Field0 = 42;
+      tuple_struct.Field1 = true;
+      Api.SendMeTupleStruct(tuple_struct);
 
       Api.SendMeTestEnum(TestEnum.VAL1, TestEnum.VAL2);
 

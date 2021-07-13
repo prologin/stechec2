@@ -54,6 +54,13 @@ struct:
     str_field:
       - [field_one, double, "First double"]
       - [field_two, double, "First double"]
+  -
+    str_name: simple_tuple_struct
+    str_summary: Simple tuple-like structure.
+    str_tuple: yes
+    str_field:
+      - [field_0, int, "Tuple first field"]
+      - [field_1, bool, "Tuple second field"]
 
 function:
   -
@@ -198,6 +205,12 @@ function:
     fct_ret_type: struct_with_array array
     fct_arg:
       - [l, struct_with_array array, the list]
+  -
+    fct_name: send_me_tuple_struct
+    fct_summary: Send me this struct with value (42, true)
+    fct_ret_type: void
+    fct_arg:
+      - [s, simple_tuple_struct, the tuple]
 
 user_function:
   -

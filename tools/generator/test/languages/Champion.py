@@ -50,6 +50,8 @@ def test():
     send_me_double_struct(struct_with_only_double(
         field_one=42.42,
         field_two=42.42))
+    
+    send_me_tuple_struct((42, True))
 
     send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
     afficher_test_enum(test_enum.VAL2)
