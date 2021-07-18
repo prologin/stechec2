@@ -31,7 +31,8 @@ pub enum {{ enum.enum_name|camel_case }} {
 }
 
 {% endfor %}
-{% for struct in game.struct if not struct is tuple %}
+{% for struct in game.struct %}
+{% if not struct is tuple %}
 #[derive({{ struct.str_name|rust_auto_traits|sort|join(', ') }})]
 pub struct {{ struct.str_name|camel_case }} {
     {% for field_name, field_type, field_comment in struct.str_field %}
@@ -39,6 +40,9 @@ pub struct {{ struct.str_name|camel_case }} {
     pub {{ field_name }}: {{ field_type|rust_api_output_type }},
     {% endfor %}
 }
+{% else %}
+pub type {{ struct.str_name|camel_case }} = {{ struct.str_name|rust_tuple_type }};
+{% endif %}
 
 {% endfor %}
 {%- for func in game.function %}
