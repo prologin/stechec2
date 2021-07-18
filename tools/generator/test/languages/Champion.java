@@ -94,7 +94,7 @@ public class Champion extends Api
         float_struct.field_two = 42.42;
         send_me_double_struct(float_struct);
 
-        SimpleTupleStruct tuple_struct = new SimpleTupleStruct();
+        SimpleTuple tuple_struct = new SimpleTuple();
         tuple_struct.field_0 = 42;
         tuple_struct.field_1 = true;
         send_me_tuple_struct(tuple_struct);
