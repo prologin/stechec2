@@ -198,7 +198,7 @@ extern "C"
         func_called.send_me_double_struct += 1;
     }
 
-    void api_send_me_tuple_struct(simple_tuple_struct s) {
+    void api_send_me_tuple_struct(simple_tuple s) {
         assert(s.field_0 == 42);
         assert(s.field_1);
         func_called.send_me_tuple_struct += 1;
@@ -231,7 +231,7 @@ extern "C"
     void api_afficher_struct_with_array(struct_with_array) {}
     void api_afficher_struct_with_struct(struct_with_struct) {}
     void api_afficher_struct_with_only_double(struct_with_only_double) {}
-    void api_afficher_simple_tuple_struct(simple_tuple_struct) {}
+    void api_afficher_simple_tuple(simple_tuple) {}
 }
 
 

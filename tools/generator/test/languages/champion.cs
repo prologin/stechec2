@@ -100,7 +100,7 @@ namespace Champion {
       float_struct.FieldTwo = 42.42;
       Api.SendMeDoubleStruct(float_struct);
 
-      SimpleTupleStruct tuple_struct = new SimpleTupleStruct();
+      SimpleTuple tuple_struct = new SimpleTuple();
       tuple_struct.Field0 = 42;
       tuple_struct.Field1 = true;
       Api.SendMeTupleStruct(tuple_struct);
