@@ -114,8 +114,6 @@ def rust_tuple_type(ctx, value: str, api_mod_path='') -> str:
 def rust_api_input_type(
     ctx, value: str, api_mod_path='', skip_ref=False
 ) -> str:
-    as_struct = ctx['game'].get_struct(value)
-
     if value == 'string':
         return '&str'
     elif is_array(value):
@@ -127,7 +125,7 @@ def rust_api_input_type(
                     ctx, get_array_inner(value), api_mod_path, True
                 )
             )
-    elif rust_is_copy(ctx, value) or is_tuple(as_struct):
+    elif rust_is_copy(ctx, value):
         return rust_api_output_type(ctx, value, api_mod_path)
     else:
         res = rust_api_output_type(ctx, value, api_mod_path)

@@ -43,6 +43,10 @@ pub struct {{ struct.str_name|camel_case }} {
     {% endfor %}
 }
 {% else %}
+/// ### Fields
+{% for _, _, field_comment in struct.str_field %}
+/// - {{ field_comment }}
+{% endfor %}
 pub type {{ struct.str_name|camel_case }} = {{ struct.str_name|rust_tuple_type }};
 {% endif %}
 
