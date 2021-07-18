@@ -17,11 +17,12 @@ use crate::ffi::{array_of_borrow_to_c, CToRust, RustToC};
 use std::{cell::UnsafeCell, borrow::Borrow};
 
 {% for constant in game.constant %}
-{{ constant.cst_comment|cxx_comment(doc=True) }}
+{{ constant.cst_comment|rust_comment(doc=True) }}
 pub const {{ constant.cst_name }}: {{ (constant.cst_type or 'int')|rust_api_output_type }} = {{ constant.cst_val }};
 
 {% endfor %}
 {% for enum in game.enum %}
+{{ enum.enum_summary|rust_comment(doc=True) }}
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub enum {{ enum.enum_name|camel_case }} {
     {% for field_name, field_comment in enum.enum_field %}
@@ -32,6 +33,7 @@ pub enum {{ enum.enum_name|camel_case }} {
 
 {% endfor %}
 {% for struct in game.struct %}
+{{ struct.str_summary|rust_comment(doc=True) }}
 {% if not struct is tuple %}
 #[derive({{ struct.str_name|rust_auto_traits|sort|join(', ') }})]
 pub struct {{ struct.str_name|camel_case }} {
