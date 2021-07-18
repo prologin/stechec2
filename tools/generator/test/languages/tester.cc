@@ -20,8 +20,10 @@ struct {
     int send_me_42s;
     int send_me_double_struct;
     int send_me_test_enum;
+    int send_me_struct_with_struct;
     int send_me_struct_array;
     int send_me_tuple_struct;
+    int send_me_tuple_with_struct;
     int afficher_test_enum;
     int returns_42;
     int returns_true;
@@ -211,6 +213,28 @@ extern "C"
         func_called.send_me_test_enum += 1;
     }
 
+    void api_send_me_struct_with_struct(struct_with_struct s) {
+        assert(s.field_integer == 42);
+        assert(s.field_struct.field_i == 42);
+        assert(s.field_struct.field_bool);
+        assert(s.field_struct.field_double > 42.41 and s.field_struct.field_double < 42.43);
+        assert(s.field_struct.field_string == "TTY");
+        assert(s.field_tuple.field_0 == 42);
+        assert(s.field_tuple.field_1);
+        func_called.send_me_struct_with_struct += 1;
+    }
+
+    void api_send_me_tuple_with_struct(tuple_with_struct s) {
+        assert(s.field_0_int == 42);
+        assert(s.field_1_struct.field_i == 42);
+        assert(s.field_1_struct.field_bool);
+        assert(s.field_1_struct.field_double > 42.41 and s.field_1_struct.field_double < 42.43);
+        assert(s.field_1_struct.field_string == "TTY");
+        assert(s.field_2_tuple.field_0 == 42);
+        assert(s.field_2_tuple.field_1);
+        func_called.send_me_tuple_with_struct += 1;
+    }
+
     std::vector<struct_with_array>
     api_send_me_struct_array(std::vector<struct_with_array> l)
     {
@@ -232,6 +256,7 @@ extern "C"
     void api_afficher_struct_with_struct(struct_with_struct) {}
     void api_afficher_struct_with_only_double(struct_with_only_double) {}
     void api_afficher_simple_tuple(simple_tuple) {}
+    void api_afficher_tuple_with_struct(tuple_with_struct) {}
 }
 
 
@@ -260,8 +285,10 @@ int main(int argc, char* argv[])
     assert(func_called.send_me_42s);
     assert(func_called.send_me_double_struct);
     assert(func_called.send_me_test_enum);
+    assert(func_called.send_me_struct_with_struct);
     assert(func_called.send_me_struct_array);
     assert(func_called.send_me_tuple_struct);
+    assert(func_called.send_me_tuple_with_struct);
     assert(func_called.afficher_test_enum);
     assert(func_called.returns_42);
     assert(func_called.returns_true);

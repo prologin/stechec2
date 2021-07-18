@@ -79,6 +79,15 @@ pub fn test() {
 
     afficher_test_enum(TestEnum::Val2);
 
+    let s_with_struct = StructWithStruct {
+        field_integer: 42,
+        field_struct: simple.clone(),
+        field_tuple: (42, true),
+    };
+    send_me_struct_with_struct(&s_with_struct);
+
+    send_me_tuple_with_struct((42, &simple, (42, true)));
+
     let l = vec![
         StructWithArray {
             field_int: 42,

@@ -103,6 +103,18 @@ public class Champion extends Api
 
         afficher_test_enum(TestEnum.VAL2);
 
+        StructWithStruct s_with_struct = new StructWithStruct();
+        s_with_struct.field_integer = 42;
+        s_with_struct.field_struct = simple;
+        s_with_struct.field_tuple = tuple_struct;
+        send_me_struct_with_struct(s_with_struct);
+
+        TupleWithStruct t_with_struct = new TupleWithStruct();
+        t_with_struct.field_0_int = 42;
+        t_with_struct.field_1_struct = simple;
+        t_with_struct.field_2_tuple = tuple_struct;
+        send_me_tuple_with_struct(t_with_struct);
+
         StructWithArray[] l = new StructWithArray[42];
         for (int i = 0; i < 42; ++i)
         {
