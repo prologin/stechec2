@@ -109,6 +109,18 @@ namespace Champion {
 
       Api.AfficherTestEnum(TestEnum.VAL2);
 
+      StructWithStruct s_with_struct = new StructWithStruct();
+      s_with_struct.FieldInteger = 42;
+      s_with_struct.FieldStruct = simple;
+      s_with_struct.FieldTuple = tuple_struct;
+      Api.SendMeStructWithStruct(s_with_struct);
+
+      TupleWithStruct t_with_struct = new TupleWithStruct();
+      t_with_struct.Field0Int = 42;
+      t_with_struct.Field1Struct = simple;
+      t_with_struct.Field2Tuple = tuple_struct;
+      Api.SendMeTupleWithStruct(t_with_struct);
+
       StructWithArray[] l = new StructWithArray[42];
       for (int i = 0; i < 42; ++i)
       {

@@ -41,6 +41,8 @@ def test():
         field_double=42.42,
         field_string="TTY",
     )
+    simple_tup = ((42, True))
+
     send_me_simple(simple)
     send_me_42s(struct_with_array(
         field_int=42,
@@ -51,10 +53,17 @@ def test():
         field_one=42.42,
         field_two=42.42))
     
-    send_me_tuple_struct((42, True))
+    send_me_tuple_struct(simple_tup)
 
     send_me_test_enum(test_enum.VAL1, test_enum.VAL2)
     afficher_test_enum(test_enum.VAL2)
+
+    send_me_struct_with_struct(struct_with_struct(
+        field_integer=42,
+        field_struct=simple,
+        field_tuple=simple_tup))
+    send_me_tuple_with_struct((42, simple, simple_tup))
+
     l = send_me_struct_array([struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,

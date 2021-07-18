@@ -54,6 +54,15 @@ struct:
     str_field:
       - [field_integer, int, "Integer field"]
       - [field_struct, simple_struct, "Structure field"]
+      - [field_tuple, simple_tuple, "Tuple field"]
+  -
+    str_name: tuple_with_struct
+    str_summary: Tuple which contains other structs
+    str_tuple: yes
+    str_field:
+      - [field_0_int, int, "Integer field"]
+      - [field_1_struct, simple_struct, "Structure field"]
+      - [field_2_tuple, simple_tuple, "Tuple field"]
   -
     str_name: struct_with_only_double
     str_summary: Structure which contains only double
@@ -211,6 +220,18 @@ function:
     fct_ret_type: void
     fct_arg:
       - [s, simple_tuple, the tuple]
+  -
+    fct_name: send_me_struct_with_struct
+    fct_summary: Send me this struct with the usual test values for these fields
+    fct_ret_type: void
+    fct_arg:
+      - [s, struct_with_struct, the struct]
+  -
+    fct_name: send_me_tuple_with_struct
+    fct_summary: Send me this tuple with the usual test values for these fields
+    fct_ret_type: void
+    fct_arg:
+      - [s, tuple_with_struct, the tuple]
 
 user_function:
   -

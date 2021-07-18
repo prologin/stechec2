@@ -50,6 +50,10 @@ function test()
         "field_double" => 42.42,
         "field_string" => "TTY",
     );
+    $tuple1 = array(
+        "field_0" => 42,
+        "field_1" => true
+    );
     send_me_simple($struct1);
     send_me_42s(array(
         "field_int" => 42,
@@ -60,9 +64,16 @@ function test()
         "field_one" => 42.42,
         "field_two" => 42.42
     ));
-    send_me_tuple_struct(array(
-        "field_0" => 42,
-        "field_1" => true
+    send_me_tuple_struct($tuple1);
+    send_me_struct_with_struct(array(
+        "field_integer" => 42,
+        "field_struct" => $struct1,
+        "field_tuple" => $tuple1
+    ));
+    send_me_tuple_with_struct(array(
+        "field_0_int" => 42,
+        "field_1_struct" => $struct1,
+        "field_2_tuple" => $tuple1
     ));
     $l1 = send_me_struct_array(array_fill(0, 42, array(
         "field_int" => 42,

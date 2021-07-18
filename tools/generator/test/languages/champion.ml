@@ -54,6 +54,10 @@ let test () =  (* Pose ton code ici *)
     send_me_tuple_struct (42, true);
     send_me_test_enum Val1 Val2;
     afficher_test_enum Val2;
+    send_me_struct_with_struct { field_integer = 42;
+                                 field_struct = simple;
+                                 field_tuple = (42, true) };
+    send_me_tuple_with_struct (42, simple, (42, true));
     let l = send_me_struct_array (
         times42 { field_int = 42;
                   field_int_arr = times42 42;
