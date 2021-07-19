@@ -13,9 +13,9 @@ assert' False = error "Assertion failed."
 assert' _     = ()
 
 simpleStruct = Simple_struct 42 True 42.42 "TTY"
-theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 (Simple_struct 42 True 42.42 "TTY"))
-floatStruct = Struct_with_only_double 42.42 42.42
 tupleStruct = Simple_tuple 42 True
+theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 simpleStruct) (replicate 42 tupleStruct)
+floatStruct = Struct_with_only_double 42.42 42.42
 
 -- Raise an assertion to check the alerting system works.
 test_alert :: IO ()

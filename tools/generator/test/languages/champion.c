@@ -88,28 +88,31 @@ void test()
     simple.field_string = "TTY";
     send_me_simple(simple);
 
+    simple_tuple tuple_struct;
+    tuple_struct.field_0 = 42;
+    tuple_struct.field_1 = true;
+    send_me_tuple_struct(tuple_struct);
+
     struct_with_array s;
     s.field_int = 42;
     simple_struct ss[42];
+    simple_tuple st[42];
     int sr[42];
     for (int i = 0; i < 42; ++i)
     {
         sr[i] = 42;
         ss[i] = simple;
+        st[i] = tuple_struct;
     }
     s.field_int_arr = (int_array){sr, 42};
     s.field_str_arr = (simple_struct_array){ss, 42};
+    s.field_tup_arr = (simple_tuple_array){st, 42};
     send_me_42s(s);
 
     struct_with_only_double float_struct;
     float_struct.field_one = 42.42;
     float_struct.field_two = 42.42;
     send_me_double_struct(float_struct);
-
-    simple_tuple tuple_struct;
-    tuple_struct.field_0 = 42;
-    tuple_struct.field_1 = true;
-    send_me_tuple_struct(tuple_struct);
 
     send_me_test_enum(VAL1, VAL2);
 
@@ -133,12 +136,15 @@ void test()
         l[i].field_int = 42;
         l[i].field_int_arr.length = 42;
         l[i].field_str_arr.length = 42;
+        l[i].field_tup_arr.length = 42;
         l[i].field_int_arr.items = malloc(42 * sizeof (int));
         l[i].field_str_arr.items = malloc(42 * sizeof (simple_struct));
+        l[i].field_tup_arr.items = malloc(42 * sizeof (simple_tuple));
         for (int j = 0; j < 42; ++j)
         {
             l[i].field_int_arr.items[j] = 42;
             l[i].field_str_arr.items[j] = simple;
+            l[i].field_tup_arr.items[j] = tuple_struct;
         }
     }
     struct_with_array_array ll = send_me_struct_array((struct_with_array_array){l, 42});
@@ -146,6 +152,7 @@ void test()
     {
         free(l[i].field_int_arr.items);
         free(l[i].field_str_arr.items);
+        free(l[i].field_tup_arr.items);
     }
     assert(ll.length == 42);
     for (int i = 0; i < 42; ++i)
@@ -153,6 +160,7 @@ void test()
         assert(ll.items[i].field_int == 42);
         assert(ll.items[i].field_int_arr.length == 42);
         assert(ll.items[i].field_str_arr.length == 42);
+        assert(ll.items[i].field_tup_arr.length == 42);
         for (int j = 0; j < 42; ++j)
         {
             assert(ll.items[i].field_int_arr.items[j] == 42);
@@ -160,12 +168,16 @@ void test()
             assert(ll.items[i].field_str_arr.items[j].field_bool == true);
             assert(ll.items[i].field_str_arr.items[j].field_double == 42.42);
             assert(!strcmp(ll.items[i].field_str_arr.items[j].field_string, "TTY"));
+
+            assert(ll.items[i].field_tup_arr.items[j].field_0 == 42);
+            assert(ll.items[i].field_tup_arr.items[j].field_1 == true);
         }
     }
     for (int i = 0; i < 42; ++i)
     {
         free(ll.items[i].field_int_arr.items);
         free(ll.items[i].field_str_arr.items);
+        free(ll.items[i].field_tup_arr.items);
     }
     free(ll.items);
 }

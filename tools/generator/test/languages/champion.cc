@@ -78,12 +78,18 @@ void test()
     simple.field_string = "TTY";
     send_me_simple(simple);
 
+    simple_tuple tuple_struct;
+    tuple_struct.field_0 = 42;
+    tuple_struct.field_1 = true;
+    send_me_tuple_struct(tuple_struct);
+
     struct_with_array s;
     s.field_int = 42;
     for (int i = 0; i < 42; ++i)
     {
         s.field_int_arr.push_back(42);
         s.field_str_arr.push_back(simple);
+        s.field_tup_arr.push_back(tuple_struct);
     }
     send_me_42s(s);
 
@@ -91,11 +97,6 @@ void test()
     float_struct.field_one = 42.42;
     float_struct.field_two = 42.42;
     send_me_double_struct(float_struct);
-
-    simple_tuple tuple_struct;
-    tuple_struct.field_0 = 42;
-    tuple_struct.field_1 = true;
-    send_me_tuple_struct(tuple_struct);
 
     send_me_test_enum(VAL1, VAL2);
 
@@ -121,6 +122,7 @@ void test()
         {
             l[i].field_int_arr.push_back(42);
             l[i].field_str_arr.push_back(simple);
+            l[i].field_tup_arr.push_back(tuple_struct);
         }
     }
     l = send_me_struct_array(l);
@@ -130,6 +132,7 @@ void test()
         assert(l[i].field_int == 42);
         assert(l[i].field_int_arr.size() == 42);
         assert(l[i].field_str_arr.size() == 42);
+        assert(l[i].field_tup_arr.size() == 42);
         for (int j = 0; j < 42; ++j)
         {
             assert(l[i].field_int_arr[j] == 42);
@@ -137,6 +140,8 @@ void test()
             assert(l[i].field_str_arr[j].field_bool == true);
             assert(l[i].field_str_arr[j].field_double == 42.42);
             assert(l[i].field_str_arr[j].field_string == "TTY");
+            assert(l[i].field_tup_arr[j].field_0 == 42);
+            assert(l[i].field_tup_arr[j].field_1);
         }
     }
 
@@ -147,6 +152,7 @@ void test()
     {
         s2.field_int_arr.push_back(42);
         s2.field_str_arr.push_back(simple);
+        s2.field_tup_arr.push_back(tuple_struct);
     }
     assert(s == s2);
     s2.field_int = 1337;

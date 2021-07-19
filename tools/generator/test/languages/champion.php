@@ -58,7 +58,8 @@ function test()
     send_me_42s(array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
-        "field_str_arr" => array_fill(0, 42, $struct1)
+        "field_str_arr" => array_fill(0, 42, $struct1),
+        "field_tup_arr" => array_fill(0, 42, $tuple1)
     ));
     send_me_double_struct(array(
         "field_one" => 42.42,
@@ -78,13 +79,15 @@ function test()
     $l1 = send_me_struct_array(array_fill(0, 42, array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
-        "field_str_arr" => array_fill(0, 42, $struct1)
+        "field_str_arr" => array_fill(0, 42, $struct1),
+        "field_tup_arr" => array_fill(0, 42, $tuple1)
     )));
 
     $l2 = array_fill(0, 42, array(
         "field_int" => 42,
         "field_int_arr" => array_fill(0, 42, 42),
-        "field_str_arr" => array_fill(0, 42, $struct1)
+        "field_str_arr" => array_fill(0, 42, $struct1),
+        "field_tup_arr" => array_fill(0, 42, $tuple1)
     ));
 
     assert($l1 == $l2);
