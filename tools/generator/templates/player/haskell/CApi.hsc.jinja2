@@ -124,7 +124,7 @@ data {{ struct.str_name|capitalize }} = {{ struct.str_name|capitalize }} {
 
 {% if struct.str_tuple %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }}
-{% for name, type, comment in struct.str_field %} C{{ type|haskell_type }}{% endfor %}
+{% for name, type, comment in struct.str_field %} C{{ type|haskell_c_type }}{% endfor %}
 {% else %}
 data C{{ struct.str_name|capitalize }} = C{{ struct.str_name|capitalize }} {
 {% for name, type, comment in struct.str_field %}
