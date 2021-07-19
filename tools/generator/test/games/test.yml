@@ -47,6 +47,7 @@ struct:
       - [field_int, int, "Integer field"]
       - [field_int_arr, int array, "Integer array field"]
       - [field_str_arr, simple_struct array, "Structure array field"]
+      - [field_tup_arr, simple_tuple array, "Tuple array field"]
   -
     str_name: struct_with_struct
     str_summary: Structure which contains an other struct

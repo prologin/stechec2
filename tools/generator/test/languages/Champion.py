@@ -47,7 +47,8 @@ def test():
     send_me_42s(struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple] * 42))
+        field_str_arr=[simple] * 42,
+        field_tup_arr=[(42, True)] * 42))
 
     send_me_double_struct(struct_with_only_double(
         field_one=42.42,
@@ -67,9 +68,11 @@ def test():
     l = send_me_struct_array([struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple] * 42)] * 42)
+        field_str_arr=[simple] * 42,
+        field_tup_arr=[(42, True)] * 42)] * 42)
 
     assert l == [struct_with_array(
         field_int=42,
         field_int_arr=[42] * 42,
-        field_str_arr=[simple] * 42)] * 42
+        field_str_arr=[simple] * 42,
+        field_tup_arr=[(42, True)] * 42)] * 42

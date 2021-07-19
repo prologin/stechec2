@@ -84,14 +84,21 @@ namespace Champion {
       simple.FieldString = "TTY";
       Api.SendMeSimple(simple);
 
+      SimpleTuple tuple_struct = new SimpleTuple();
+      tuple_struct.Field0 = 42;
+      tuple_struct.Field1 = true;
+      Api.SendMeTupleStruct(tuple_struct);
+
       StructWithArray s = new StructWithArray();
       s.FieldInt = 42;
       s.FieldIntArr = new int[42];
       s.FieldStrArr = new SimpleStruct[42];
+      s.FieldTupArr = new SimpleTuple[42];
       for (int i = 0; i < 42; ++i)
       {
         s.FieldIntArr[i] = 42;
         s.FieldStrArr[i] = simple;
+        s.FieldTupArr[i] = tuple_struct;
       }
       Api.SendMe42s(s);
 
@@ -99,11 +106,6 @@ namespace Champion {
       float_struct.FieldOne = 42.42;
       float_struct.FieldTwo = 42.42;
       Api.SendMeDoubleStruct(float_struct);
-
-      SimpleTuple tuple_struct = new SimpleTuple();
-      tuple_struct.Field0 = 42;
-      tuple_struct.Field1 = true;
-      Api.SendMeTupleStruct(tuple_struct);
 
       Api.SendMeTestEnum(TestEnum.VAL1, TestEnum.VAL2);
 
@@ -128,10 +130,12 @@ namespace Champion {
         l[i].FieldInt = 42;
         l[i].FieldIntArr = new int[42];
         l[i].FieldStrArr = new SimpleStruct[42];
+        l[i].FieldTupArr = new SimpleTuple[42];
         for (int j = 0; j < 42; ++j)
         {
           l[i].FieldIntArr[j] = 42;
           l[i].FieldStrArr[j] = simple;
+          l[i].FieldTupArr[j] = tuple_struct;
         }
       }
 
@@ -143,6 +147,7 @@ namespace Champion {
         Assert(l[i].FieldInt == 42);
         Assert(l[i].FieldIntArr.Length == 42);
         Assert(l[i].FieldStrArr.Length == 42);
+        Assert(l[i].FieldTupArr.Length == 42);
         for (int j = 0; j < 42; ++j)
         {
           Assert(l[i].FieldIntArr[j] == 42);
@@ -150,6 +155,8 @@ namespace Champion {
           Assert(l[i].FieldStrArr[j].FieldBool == true);
           Assert(l[i].FieldStrArr[j].FieldDouble == 42.42);
           Assert(l[i].FieldStrArr[j].FieldString == "TTY");
+          Assert(l[i].FieldTupArr[j].Field0 == 42);
+          Assert(l[i].FieldTupArr[j].Field1);
         }
       }
     }

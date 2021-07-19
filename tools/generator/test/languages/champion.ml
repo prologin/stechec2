@@ -49,7 +49,8 @@ let test () =  (* Pose ton code ici *)
     send_me_simple simple;
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 simple };
+                  field_str_arr = times42 simple;
+                  field_tup_arr = times42 (42, true) };
     send_me_double_struct { field_one = 42.42; field_two = 42.42 };
     send_me_tuple_struct (42, true);
     send_me_test_enum Val1 Val2;
@@ -61,11 +62,13 @@ let test () =  (* Pose ton code ici *)
     let l = send_me_struct_array (
         times42 { field_int = 42;
                   field_int_arr = times42 42;
-                  field_str_arr = times42 simple }
+                  field_str_arr = times42 simple;
+                  field_tup_arr = times42 (42, true) }
     ) in
     assert (l = (times42 { field_int = 42;
                            field_int_arr = times42 42;
-                           field_str_arr = times42 simple }));
+                           field_str_arr = times42 simple;
+                           field_tup_arr = times42 (42, true) }));
     flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
   end
 

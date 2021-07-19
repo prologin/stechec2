@@ -64,6 +64,7 @@ pub fn test() {
         field_int: 42,
         field_int_arr: vec![42; 42],
         field_str_arr: vec![simple.clone(); 42],
+        field_tup_arr: vec![(42, true); 42],
     };
     send_me_42s(&s);
 
@@ -93,6 +94,7 @@ pub fn test() {
             field_int: 42,
             field_int_arr: vec![42; 42],
             field_str_arr: vec![simple.clone(); 42],
+            field_tup_arr: vec![(42, true); 42],
         };
         42
     ];

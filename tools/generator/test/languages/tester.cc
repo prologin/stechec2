@@ -181,6 +181,12 @@ extern "C"
         func_called.send_me_simple += 1;
     }
 
+    void api_send_me_tuple_struct(simple_tuple s) {
+        assert(s.field_0 == 42);
+        assert(s.field_1);
+        func_called.send_me_tuple_struct += 1;
+    }
+
     void api_send_me_42s(struct_with_array s)
     {
         assert(s.field_int == 42);
@@ -190,6 +196,8 @@ extern "C"
         assert(s.field_str_arr.size() == 42);
         for (auto& s2 : s.field_str_arr)
             api_send_me_simple(s2);
+        for (auto& t : s.field_tup_arr)
+            api_send_me_tuple_struct(t);
         func_called.send_me_42s += 1;
     }
 
@@ -198,12 +206,6 @@ extern "C"
         assert(s.field_one > 42.41 and s.field_one < 42.43);
         assert(s.field_two > 42.41 and s.field_two < 42.43);
         func_called.send_me_double_struct += 1;
-    }
-
-    void api_send_me_tuple_struct(simple_tuple s) {
-        assert(s.field_0 == 42);
-        assert(s.field_1);
-        func_called.send_me_tuple_struct += 1;
     }
 
     void api_send_me_test_enum(test_enum v1, test_enum v2)

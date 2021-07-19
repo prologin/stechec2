@@ -73,19 +73,21 @@ public class Champion extends Api
         simple.field_string = "TTY";
         send_me_simple(simple);
 
+        SimpleTuple tuple_struct = new SimpleTuple();
+        tuple_struct.field_0 = 42;
+        tuple_struct.field_1 = true;
+        send_me_tuple_struct(tuple_struct);
+
         StructWithArray s = new StructWithArray();
         s.field_int = 42;
         s.field_int_arr = new int[42];
         s.field_str_arr = new SimpleStruct[42];
+        s.field_tup_arr = new SimpleTuple[42];
         for (int i = 0; i < 42; ++i)
         {
             s.field_int_arr[i] = 42;
-            SimpleStruct ss = new SimpleStruct();
-            ss.field_i = 42;
-            ss.field_bool = true;
-            ss.field_double = 42.42;
-            ss.field_string = "TTY";
-            s.field_str_arr[i] = ss;
+            s.field_str_arr[i] = simple;
+            s.field_tup_arr[i] = tuple_struct;
         }
         send_me_42s(s);
 
@@ -93,11 +95,6 @@ public class Champion extends Api
         float_struct.field_one = 42.42;
         float_struct.field_two = 42.42;
         send_me_double_struct(float_struct);
-
-        SimpleTuple tuple_struct = new SimpleTuple();
-        tuple_struct.field_0 = 42;
-        tuple_struct.field_1 = true;
-        send_me_tuple_struct(tuple_struct);
 
         send_me_test_enum(TestEnum.VAL1, TestEnum.VAL2);
 
@@ -122,15 +119,12 @@ public class Champion extends Api
             l[i].field_int = 42;
             l[i].field_int_arr = new int[42];
             l[i].field_str_arr = new SimpleStruct[42];
+            l[i].field_tup_arr = new SimpleTuple[42];
             for (int j = 0; j < 42; ++j)
             {
                 l[i].field_int_arr[j] = 42;
-                SimpleStruct ss = new SimpleStruct();
-                ss.field_i = 42;
-                ss.field_bool = true;
-                ss.field_double = 42.42;
-                ss.field_string = "TTY";
-                l[i].field_str_arr[j] = ss;
+                l[i].field_str_arr[j] = simple;
+                l[i].field_tup_arr[j] = tuple_struct;
             }
         }
 
@@ -141,6 +135,7 @@ public class Champion extends Api
             assert(l[i].field_int == 42);
             assert(l[i].field_int_arr.length == 42);
             assert(l[i].field_str_arr.length == 42);
+            assert(l[i].field_tup_arr.length == 42);
             for (int j = 0; j < 42; ++j)
             {
                 assert(l[i].field_int_arr[j] == 42);
@@ -148,6 +143,8 @@ public class Champion extends Api
                 assert(l[i].field_str_arr[j].field_bool == true);
                 assert(l[i].field_str_arr[j].field_double == 42.42);
                 assert(l[i].field_str_arr[j].field_string.equals("TTY"));
+                assert(l[i].field_tup_arr[j].field_0 == 42);
+                assert(l[i].field_tup_arr[j].field_1);
             }
         }
 
