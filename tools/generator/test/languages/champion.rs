@@ -87,7 +87,7 @@ pub fn test() {
     };
     send_me_struct_with_struct(&s_with_struct);
 
-    send_me_tuple_with_struct((42, &simple, (42, true)));
+    send_me_tuple_with_struct(&(42, simple.clone(), (42, true)));
 
     let l = vec![
         StructWithArray {
