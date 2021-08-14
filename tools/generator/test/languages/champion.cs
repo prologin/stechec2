@@ -81,7 +81,7 @@ namespace Champion {
       simple.FieldI = 42;
       simple.FieldBool = true;
       simple.FieldDouble = 42.42;
-      simple.FieldString = "TTY";
+      simple.FieldString = Api.CONST_STR;
       Api.SendMeSimple(simple);
 
       SimpleTuple tuple_struct = new SimpleTuple();
@@ -154,7 +154,7 @@ namespace Champion {
           Assert(l[i].FieldStrArr[j].FieldI == 42);
           Assert(l[i].FieldStrArr[j].FieldBool == true);
           Assert(l[i].FieldStrArr[j].FieldDouble == 42.42);
-          Assert(l[i].FieldStrArr[j].FieldString == "TTY");
+          Assert(l[i].FieldStrArr[j].FieldString == Api.CONST_STR);
           Assert(l[i].FieldTupArr[j].Field0 == 42);
           Assert(l[i].FieldTupArr[j].Field1);
         }

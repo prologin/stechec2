@@ -48,7 +48,7 @@ function test()
         "field_i" => 42,
         "field_bool" => true,
         "field_double" => 42.42,
-        "field_string" => "TTY",
+        "field_string" => CONST_STR,
     );
     $tuple1 = array(
         "field_0" => 42,

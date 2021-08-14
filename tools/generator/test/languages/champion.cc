@@ -24,6 +24,7 @@ void test()
 {
     assert(CONST_VAL / 4 == 10);
     assert(CONST_DOUBLE == 42.42);
+    assert(CONST_STR == "TTY");
 
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
@@ -75,7 +76,7 @@ void test()
     simple.field_i = 42;
     simple.field_bool = true;
     simple.field_double = 42.42;
-    simple.field_string = "TTY";
+    simple.field_string = CONST_STR;
     send_me_simple(simple);
 
     simple_tuple tuple_struct;
@@ -139,7 +140,7 @@ void test()
             assert(l[i].field_str_arr[j].field_i == 42);
             assert(l[i].field_str_arr[j].field_bool == true);
             assert(l[i].field_str_arr[j].field_double == 42.42);
-            assert(l[i].field_str_arr[j].field_string == "TTY");
+            assert(l[i].field_str_arr[j].field_string == CONST_STR);
             assert(l[i].field_tup_arr[j].field_0 == 42);
             assert(l[i].field_tup_arr[j].field_1);
         }

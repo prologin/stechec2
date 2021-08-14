@@ -8,8 +8,9 @@ pub fn test_alert() {
 
 /// Called 10K times to test if things work well.
 pub fn test() {
-    assert!(CONST_VAL / 4 == 10);
-    assert!(CONST_DOUBLE == 42.42);
+    assert_eq!(CONST_VAL / 4, 10);
+    assert_eq!(CONST_DOUBLE, 42.42);
+    assert_eq!(CONST_STR, "TTY");
 
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
@@ -56,7 +57,7 @@ pub fn test() {
         field_i: 42,
         field_bool: true,
         field_double: 42.42,
-        field_string: String::from("TTY"),
+        field_string: String::from(CONST_STR),
     };
     send_me_simple(&simple);
 

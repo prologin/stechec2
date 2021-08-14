@@ -12,6 +12,10 @@ constant:
     cst_val: 42.42
     cst_type: double
     cst_comment: Floating point constant
+  -
+    cst_name: CONST_STR
+    cst_val: "TTY"
+    cst_comment: Value to use in simple_struct
 
 enum:
   -

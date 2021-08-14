@@ -71,6 +71,10 @@ class Game:
                     "Constant '{}' type '{}' does not match value '{}'"
                     .format(cst['cst_name'], cst['cst_type'], cst_type)
                 )
+            if cst['cst_type'] == 'string':
+                # Quotation marks are removed when YAML is parsed,
+                # add them back
+                cst['cst_val'] = '"{}"'.format(cst['cst_val'])
 
     def load_base_types(self):
         '''
@@ -376,7 +380,8 @@ GAME_SCHEMA = {
     'constant': [
         {
             'cst_name': CONSTANT,
-            'cst_val': Union(int, float),
+            'cst_val': Union(int, str, float),
+            'cst_type': O(re.compile('(int|string|double)')),
             'cst_comment': str,
         }
     ],

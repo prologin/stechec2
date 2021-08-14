@@ -45,7 +45,7 @@ let test () =  (* Pose ton code ici *)
     let simple = { field_i = 42;
                    field_bool = true;
                    field_double = 42.42;
-                   field_string = "TTY" } in
+                   field_string = const_str } in
     send_me_simple simple;
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
