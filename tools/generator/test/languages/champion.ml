@@ -69,6 +69,7 @@ let test () =  (* Pose ton code ici *)
                            field_int_arr = times42 42;
                            field_str_arr = times42 simple;
                            field_tup_arr = times42 (42, true) }));
+    send_me_tuple_with_array (42, times42 (42, true));
     flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
   end
 

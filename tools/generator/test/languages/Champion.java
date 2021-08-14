@@ -148,6 +148,15 @@ public class Champion extends Api
             }
         }
 
+        TupleWithArray t_with_array = new TupleWithArray();
+        t_with_array.field_0_count = 42;
+        t_with_array.field_1_array = new SimpleTuple[42];
+        for (int i = 0; i < 42; i++)
+        {
+            t_with_array.field_1_array[i] = tuple_struct;
+        }
+        send_me_tuple_with_array(t_with_array);
+
         // Specific Java test
         StructWithStruct sws = new StructWithStruct();
         assert(sws.field_struct != null);

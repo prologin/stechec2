@@ -49,6 +49,13 @@ struct:
       - [field_str_arr, simple_struct array, "Structure array field"]
       - [field_tup_arr, simple_tuple array, "Tuple array field"]
   -
+    str_name: tuple_with_array
+    str_summary: Tuple which contains an array.
+    str_tuple: yes
+    str_field:
+    - [field_0_count, int, "Integer field"]
+    - [field_1_array, simple_tuple array, "Tuple array field"]
+  -
     str_name: struct_with_struct
     str_summary: Structure which contains an other struct
     str_tuple: no
@@ -215,6 +222,12 @@ function:
     fct_ret_type: struct_with_array array
     fct_arg:
       - [l, struct_with_array array, the list]
+  -
+    fct_name: send_me_tuple_with_array
+    fct_summary: Send me (42, [(42, true)] * 42)
+    fct_ret_type: void
+    fct_arg:
+      - [s, tuple_with_array, the tuple]
   -
     fct_name: send_me_tuple_struct
     fct_summary: Send me this struct with value (42, true)

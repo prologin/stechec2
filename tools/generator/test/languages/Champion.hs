@@ -66,6 +66,9 @@ test = do
   send_me_tuple_with_struct $ Tuple_with_struct 42 simpleStruct tupleStruct
 
   () <- assert' . (== (replicate 42 theStruct)) <$> send_me_struct_array (replicate 42 theStruct)
+
+  send_me_tuple_with_array $ Tuple_with_array 42 (replicate 42 tupleStruct)
+
   return ()
 
 

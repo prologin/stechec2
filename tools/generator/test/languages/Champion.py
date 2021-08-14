@@ -76,3 +76,5 @@ def test():
         field_int_arr=[42] * 42,
         field_str_arr=[simple] * 42,
         field_tup_arr=[(42, True)] * 42)] * 42
+
+    send_me_tuple_with_array((42, [(42, True)] * 42))

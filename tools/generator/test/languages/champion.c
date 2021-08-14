@@ -180,5 +180,16 @@ void test()
         free(ll.items[i].field_tup_arr.items);
     }
     free(ll.items);
+
+    tuple_with_array t_with_array;
+    t_with_array.field_0_count = 42;
+    t_with_array.field_1_array.length = 42;
+    t_with_array.field_1_array.items = malloc(42 * sizeof (simple_tuple));
+    for (int i = 0; i < 42; i++)
+    {
+        t_with_array.field_1_array.items[i] = tuple_struct;
+    }
+    send_me_tuple_with_array(t_with_array);
+    free(t_with_array.field_1_array.items);
 }
 
