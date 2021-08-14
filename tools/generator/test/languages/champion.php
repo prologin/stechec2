@@ -91,4 +91,9 @@ function test()
     ));
 
     assert($l1 == $l2);
+
+    send_me_tuple_with_array(array(
+        "field_0_count" => 42,
+        "field_1_array" => array_fill(0, 42, $tuple1)
+    ));
 }

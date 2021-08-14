@@ -158,4 +158,12 @@ void test()
     s2.field_int = 1337;
     assert(s < s2);
     assert(std::hash<struct_with_array>()(s2) != 42);
+
+    tuple_with_array t_with_array;
+    t_with_array.field_0_count = 42;
+    for (int i = 0; i < 42; i++)
+    {
+        t_with_array.field_1_array.push_back(tuple_struct);
+    }
+    send_me_tuple_with_array(t_with_array);
 }

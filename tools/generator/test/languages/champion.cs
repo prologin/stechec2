@@ -159,6 +159,15 @@ namespace Champion {
           Assert(l[i].FieldTupArr[j].Field1);
         }
       }
+
+      TupleWithArray t_with_array = new TupleWithArray();
+      t_with_array.Field0Count = 42;
+      t_with_array.Field1Array = new SimpleTuple[42];
+      for (int i = 0; i < 42; ++i)
+      {
+        t_with_array.Field1Array[i] = tuple_struct;
+      }
+      Api.SendMeTupleWithArray(t_with_array);
     }
   }
 }

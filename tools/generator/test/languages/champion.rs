@@ -98,10 +98,10 @@ pub fn test() {
         };
         42
     ];
-    let lr = send_me_struct_array(&l);
-    assert_eq!(l, lr);
 
-    let l_with_refs: Vec<&StructWithArray> = l.iter().collect();
+    let l_with_refs: Vec<_> = l.iter().collect();
     let lr = send_me_struct_array(&l_with_refs);
     assert_eq!(l, lr);
+
+    send_me_tuple_with_array(&(42, vec![(42, true); 42]))
 }
