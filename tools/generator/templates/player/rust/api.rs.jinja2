@@ -18,7 +18,7 @@ use std::{cell::UnsafeCell, borrow::Borrow};
 
 {% for constant in game.constant %}
 {{ constant.cst_comment|rust_comment(doc=True) }}
-pub const {{ constant.cst_name }}: {{ (constant.cst_type or 'int')|rust_api_output_type }} = {{ constant.cst_val }};
+pub const {{ constant.cst_name }}: {{ (constant.cst_type or 'int')|rust_api_const_type }} = {{ constant.cst_val }};
 
 {% endfor %}
 {% for enum in game.enum %}

@@ -137,6 +137,16 @@ def rust_api_input_type(
 
 
 @register_filter
+def rust_api_const_type(value: str) -> str:
+    const_types = {
+        'double': 'f64',
+        'int': 'i32',
+        'string': "&'static str",
+    }
+    return const_types[value]
+
+
+@register_filter
 @contextfilter
 def rust_is_copy(ctx, value: str) -> bool:
     """Check if a type implements the Copy trait"""

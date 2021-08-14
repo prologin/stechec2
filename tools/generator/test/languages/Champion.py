@@ -39,7 +39,7 @@ def test():
         field_i=42,
         field_bool=True,
         field_double=42.42,
-        field_string="TTY",
+        field_string=CONST_STR,
     )
     simple_tup = ((42, True))
 
