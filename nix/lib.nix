@@ -17,9 +17,10 @@
         inherit (stechec2.deps) buildInputs nativeBuildInputs checkInputs;
         inherit name version;
         src = stechecWithGame;
+
+        # this is needed to build player environment within waf (see prologin2021)
         preConfigure = let p = stechec2.stechecPython; in ''
           export PYTHONPATH="''${PYTHONPATH:+:}${p}/${p.sitePackages}"
-          echo $PYTHONPATH
         '';
         wafConfigureFlags = ["--with-games=${name}" "--games-only"];
       };
