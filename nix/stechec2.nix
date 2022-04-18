@@ -3,7 +3,7 @@
 let
   stechecPython = pkgs.python39.withPackages (ps: [ ps.pyyaml ps.jinja2 ] );
 
-  stechec-unwrapped = pkgs.stdenv.mkDerivation {
+  stechec-unwrapped = pkgs.stdenv.mkDerivation rec {
     name = "prologin-stechec2-unwrapped";
     version = "1.0";
 
@@ -27,6 +27,12 @@ let
       gcovr
     ];
 
+    passthru.deps = {
+      nativeBuildInputs = nativeBuildInputs;
+      buildInputs = buildInputs;
+      checkInputs = checkInputs;
+    };
+
     fixupPhase = ''
       mv $out/bin/stechec2-run $out/bin/stechec2-run-unwrapped
       rm $out/bin/stechec2-generator
@@ -49,7 +55,7 @@ pkgs.stdenv.mkDerivation {
   name = "prologin-stechec2";
   version = "1.0";
 
-  passthru.src = stechec-unwrapped.src;
+  passthru = stechec-unwrapped.passthru;
 
   builder = pkgs.writeShellScript "builder.sh" ''
     export PATH="${pkgs.coreutils}/bin"

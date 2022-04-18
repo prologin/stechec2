@@ -17,27 +17,12 @@ let
 in
 
 pkgs.stdenv.mkDerivation {
+  inherit (stechec2.deps) buildInputs nativeBuildInputs checkInputs;
+
   name = "tictactoe";
   version = "1.0";
 
   src = stechecWithGame;
-
-  nativeBuildInputs = with pkgs; [
-    pkg-config
-    wafHook
-  ];
-
-  buildInputs = with pkgs; [
-    zeromq
-    cppzmq
-    gflags
-    python39
-  ];
-
-  checkInputs = with pkgs; [
-    gtest
-    gcovr
-  ];
 
   wafConfigureFlags = ["--with-games=tictactoe" "--games-only"];
 }
