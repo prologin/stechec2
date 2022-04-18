@@ -1,25 +1,26 @@
 {
-  description = "A very basic flake";
+  description = "Prologin's Stechec2";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-21.11";
+    futils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs }: 
-  let
-    pkgs = import nixpkgs { system = "x86_64-linux"; };
-  in
+  outputs = { self, nixpkgs, futils }: 
+    futils.lib.eachDefaultSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+      rec {
+        packages = futils.lib.flattenTree {
+          stechec2 = import ./nix/stechec2.nix { inherit pkgs; };
+          tictactoe = import ./nix/tictactoe.nix { inherit pkgs; stechec2 = packages.stechec2; };
+        };
 
-  {
-    defaultPackage.x86_64-linux = ( import ./nix/stechec2.nix { inherit pkgs; });
-    packages.x86_64-linux = {
-      stechec2 = self.outputs.defaultPackage.x86_64-linux;
-      tictactoe = ( import ./nix/tictactoe.nix { inherit pkgs; self = self; });
-    };
-
-
-    devShell.x86_64-linux = pkgs.mkShell {
-      propagatedBuildInputs = (pkgs.lib.attrValues self.outputs.packages.x86_64-linux);
-    };
-  };
+        defaultPackage = packages.stechec2;
+        devShell = pkgs.mkShell {
+          buildInputs = (pkgs.lib.attrValues packages);
+        };
+      }
+    );
 }

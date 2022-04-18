@@ -8,16 +8,23 @@ let
     version = "1.0";
 
     src = ./..;
+    passthru.src = ./..;
+
+    nativeBuildInputs = with pkgs; [
+      pkg-config
+      wafHook
+    ];
 
     buildInputs = with pkgs; [
-      gtest
       zeromq
       cppzmq
-      gcc
       gflags
+      python39
+    ];
+
+    checkInputs = with pkgs; [
+      gtest
       gcovr
-      wafHook
-      pkg-config
     ];
 
     fixupPhase = ''
@@ -42,13 +49,13 @@ pkgs.stdenv.mkDerivation {
   name = "prologin-stechec2";
   version = "1.0";
 
-  buildInputs = [ stechec-unwrapped ];
+  passthru.src = stechec-unwrapped.src;
 
   builder = pkgs.writeShellScript "builder.sh" ''
     export PATH="${pkgs.coreutils}/bin"
     mkdir -p $out/bin
-    cp ${stechec2-run-wrapper}  $out/bin/stechec2-run
-    cp ${stechec2-generator-wrapper} $out/bin/stechec2-generator
+    cp -r ${stechec2-run-wrapper}  $out/bin/stechec2-run
+    cp -r ${stechec2-generator-wrapper} $out/bin/stechec2-generator
     cp -r ${stechec-unwrapped}/* $out
   '';
 }

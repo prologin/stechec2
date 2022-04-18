@@ -1,12 +1,7 @@
-{ self, pkgs, ... }:
+{ pkgs, stechec2, ... }:
 
 
 let
-  stechec2-src = fetchGit {
-    url = "https://github.com/prologin/stechec2.git";
-    rev = "12a087716795e965354aac57904ee840f65fe789";
-  };
-
   stechecWithGame = pkgs.stdenv.mkDerivation {
     name = "stechecWithGame";
     version = "1.0";
@@ -15,7 +10,7 @@ let
 
     builder = pkgs.writeShellScript "builder" ''
       export PATH="${pkgs.coreutils}/bin"
-      cp --no-preserve=mode,ownership -r ${stechec2-src} $out
+      cp --no-preserve=mode,ownership -r ${stechec2.src} $out
       cp --no-preserve=mode,ownership -r $src $out/games/tictactoe
     '';
   };
@@ -27,19 +22,22 @@ pkgs.stdenv.mkDerivation {
 
   src = stechecWithGame;
 
-  buildInputs = with pkgs; [
-    gtest
-    zeromq
-    cppzmq
-    gcc
-    gflags
-    gcovr
+  nativeBuildInputs = with pkgs; [
     pkg-config
     wafHook
   ];
 
-  preConfigure = ''
-    prefix=$out/usr
-    wafConfigureFlags="--with-games=tictactoe --games-only"
-  '';
+  buildInputs = with pkgs; [
+    zeromq
+    cppzmq
+    gflags
+    python39
+  ];
+
+  checkInputs = with pkgs; [
+    gtest
+    gcovr
+  ];
+
+  wafConfigureFlags = ["--with-games=tictactoe" "--games-only"];
 }
