@@ -1,28 +1,8 @@
-{ pkgs, stechec2, ... }:
+{ lib, pkgs, stechec2, ... }:
 
-
-let
-  stechecWithGame = pkgs.stdenv.mkDerivation {
-    name = "stechecWithGame";
-    version = "1.0";
-
-    src = ../games/tictactoe;
-
-    builder = pkgs.writeShellScript "builder" ''
-      export PATH="${pkgs.coreutils}/bin"
-      cp --no-preserve=mode,ownership -r ${stechec2.src} $out
-      cp --no-preserve=mode,ownership -r $src $out/games/tictactoe
-    '';
-  };
-in
-
-pkgs.stdenv.mkDerivation {
-  inherit (stechec2.deps) buildInputs nativeBuildInputs checkInputs;
-
+lib.mkStechec2Game {
   name = "tictactoe";
+  game = ../games/tictactoe;
+  stechec2 = stechec2;
   version = "1.0";
-
-  src = stechecWithGame;
-
-  wafConfigureFlags = ["--with-games=tictactoe" "--games-only"];
 }
