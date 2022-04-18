@@ -28,9 +28,7 @@ let
     ];
 
     passthru.deps = {
-      nativeBuildInputs = nativeBuildInputs;
-      buildInputs = buildInputs;
-      checkInputs = checkInputs;
+      inherit nativeBuildInputs buildInputs checkInputs;
     };
 
     fixupPhase = ''

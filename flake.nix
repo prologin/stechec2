@@ -16,8 +16,8 @@
         packages = futils.lib.flattenTree {
           stechec2 = import ./nix/stechec2.nix { inherit pkgs lib; };
 
-          tictactoe = import ./nix/tictactoe.nix { inherit pkgs lib; inherit (packages) stechec2; };
-          plusminus = import ./nix/plusminus.nix { inherit pkgs lib; inherit (packages) stechec2; };
+          tictactoe = import ./nix/tictactoe.nix { inherit lib; inherit (packages) stechec2; };
+          plusminus = import ./nix/plusminus.nix { inherit lib; inherit (packages) stechec2; };
         };
 
         defaultPackage = packages.stechec2;

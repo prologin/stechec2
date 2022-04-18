@@ -1,4 +1,4 @@
-{ lib, pkgs, stechec2, ... }:
+{ lib, stechec2, ... }:
 
 lib.mkStechec2Game {
   name = "tictactoe";
