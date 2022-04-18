@@ -27,6 +27,7 @@ let
       gcovr
     ];
 
+    passthru.stechecPython = stechecPython;
     passthru.deps = {
       inherit nativeBuildInputs buildInputs checkInputs;
     };

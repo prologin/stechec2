@@ -17,6 +17,9 @@
         inherit (stechec2.deps) buildInputs nativeBuildInputs checkInputs;
         inherit name version;
         src = stechecWithGame;
+        preConfigure = let p = stechec2.stechecPython; in ''
+          export PYTHONPATH="$PYTHONPATH:${p}/${p.sitePackages}"
+        '';
         wafConfigureFlags = ["--with-games=${name}" "--games-only"];
       };
 
