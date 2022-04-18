@@ -11,7 +11,10 @@
   in
 
   {
-    defaultPackage.x86_64-linux = ( import ./stechec2.nix { inherit pkgs; });
-    packages.x86_64-linux.stechec2 = self.outputs.defaultPackage.x86_64-linux;
+    defaultPackage.x86_64-linux = ( import ./nix/stechec2.nix { inherit pkgs; });
+    packages.x86_64-linux = {
+      stechec2 = self.outputs.defaultPackage.x86_64-linux;
+      tictactoe = ( import ./nix/tictactoe.nix { inherit pkgs; self = self; });
+    };
   };
 }

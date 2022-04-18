@@ -7,7 +7,7 @@ let
     name = "prologin-stechec2-unwrapped";
     version = "1.0";
 
-    src = ./.;
+    src = ./..;
 
     buildInputs = with pkgs; [
       gtest
