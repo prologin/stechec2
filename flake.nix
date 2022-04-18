@@ -19,7 +19,7 @@
 
 
     devShell.x86_64-linux = pkgs.mkShell {
-      buildInputs = (pkgs.lib.attrValues self.outputs.packages.x86_64-linux);
+      propagatedBuildInputs = (pkgs.lib.attrValues self.outputs.packages.x86_64-linux);
     };
   };
 }

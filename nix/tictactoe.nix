@@ -39,6 +39,7 @@ pkgs.stdenv.mkDerivation {
   ];
 
   preConfigure = ''
+    prefix=$out/usr
     wafConfigureFlags="--with-games=tictactoe --games-only"
   '';
 }
