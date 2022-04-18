@@ -18,7 +18,8 @@
         inherit name version;
         src = stechecWithGame;
         preConfigure = let p = stechec2.stechecPython; in ''
-          export PYTHONPATH="$PYTHONPATH:${p}/${p.sitePackages}"
+          export PYTHONPATH="''${PYTHONPATH:+:}${p}/${p.sitePackages}"
+          echo $PYTHONPATH
         '';
         wafConfigureFlags = ["--with-games=${name}" "--games-only"];
       };
