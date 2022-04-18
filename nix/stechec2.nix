@@ -19,7 +19,7 @@ let
       zeromq
       cppzmq
       gflags
-      python39
+      stechecPython
     ];
 
     checkInputs = with pkgs; [
