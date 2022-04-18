@@ -10,9 +10,9 @@
     futils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        lib = import ./nix/lib.nix { inherit pkgs; };
       in
       rec {
+        lib = import ./nix/lib.nix { inherit pkgs; };
         packages = futils.lib.flattenTree {
           stechec2 = import ./nix/stechec2.nix { inherit pkgs lib; };
 
