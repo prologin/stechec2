@@ -28,7 +28,7 @@ let
 
   stechec2-run-wrapper = pkgs.writeShellScript "stechec2-run-wrapper" ''
     export PYTHONPATH="${stechecPython}/${stechecPython.sitePackages}"
-    exec ${stechecPython}/bin/python ${stechec-unwrapped}/bin/stechec2-run-unwrapped
+    exec ${stechecPython}/bin/python ${stechec-unwrapped}/bin/stechec2-run-unwrapped $*
   '';
 
   stechec2-generator-wrapper = pkgs.writeShellScript "stechec2-generator-wrapper" ''

@@ -16,5 +16,10 @@
       stechec2 = self.outputs.defaultPackage.x86_64-linux;
       tictactoe = ( import ./nix/tictactoe.nix { inherit pkgs; self = self; });
     };
+
+
+    devShell.x86_64-linux = pkgs.mkShell {
+      buildInputs = (pkgs.lib.attrValues self.outputs.packages.x86_64-linux);
+    };
   };
 }
