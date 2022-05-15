@@ -21,6 +21,7 @@
         # this is needed to build player environment within waf (see prologin2021)
         preConfigure = let p = stechec2.stechecPython; in ''
           export PYTHONPATH="''${PYTHONPATH:+:}${p}/${p.sitePackages}"
+          export WSCRIPT_SKIP_TESTS=1
         '';
         wafConfigureFlags = ["--with-games=${name}" "--games-only"];
       };
