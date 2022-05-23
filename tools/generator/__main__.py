@@ -63,7 +63,7 @@ def main():
         '--symlink-from', type=Path,
         help=("create symlinked player environment (conflicts with --symlink)"))
     player_subparser.add_argument(
-        '--no-resolve', action='store_true', default=True)
+        '--no-resolve', action='store_true', default=False)
 
     sp.add_parser('rules', help="generate boilerplate for api rules")
     sp.add_parser('texdoc', help="generate latex API doc of the game")
