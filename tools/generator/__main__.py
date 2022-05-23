@@ -60,9 +60,6 @@ def main():
               "install path.")
     )
     player_subparser.add_argument(
-        '--symlink-from', type=Path,
-        help=("create symlinked player environment (conflicts with --symlink)"))
-    player_subparser.add_argument(
         '--no-resolve', action='store_true', default=False)
 
     sp.add_parser('rules', help="generate boilerplate for api rules")
@@ -81,12 +78,6 @@ def main():
         make_rules(game, args.out_dir)
     elif args.command == 'player':
         symlink = None
-        if args.symlink and args.symlink_from:
-            raise RuntimeError(
-                 "--symlink and --symlink-from are mutually exclusive")
-
-        if args.symlink_from:
-            symlink = args.symlink_from
 
         if args.symlink:
             if args.symlink is True:  # Use default install path
