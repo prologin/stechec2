@@ -1,28 +1,39 @@
-{ pkgs, ... }:
+{ cppzmq
+, gcovr
+, gflags
+, gtest
+, pkg-config
+, stdenv
+, symlinkJoin
+, wafHook
+, writeShellScriptBin
+, zeromq
+, python3
+}:
 
 let
-  stechecPython = pkgs.python39.withPackages (ps: [ ps.pyyaml ps.jinja2 ] );
+  stechecPython = python3.withPackages (ps: [ ps.pyyaml ps.jinja2 ] );
 
-  stechec-unwrapped = pkgs.stdenv.mkDerivation rec {
-    name = "prologin-stechec2-unwrapped";
+  stechec-unwrapped = stdenv.mkDerivation rec {
+    pname = "prologin-stechec2-unwrapped";
     version = "1.0";
 
     src = ./..;
     passthru.src = ./..;
 
-    nativeBuildInputs = with pkgs; [
+    nativeBuildInputs = [
       pkg-config
       wafHook
     ];
 
-    buildInputs = with pkgs; [
+    buildInputs = [
       zeromq
       cppzmq
       gflags
       stechecPython
     ];
 
-    checkInputs = with pkgs; [
+    checkInputs = [
       gtest
       gcovr
     ];
@@ -38,29 +49,27 @@ let
     '';
   };
 
-  stechec2-run-wrapper = pkgs.writeShellScript "stechec2-run-wrapper" ''
+  stechec2-run-wrapper = writeShellScriptBin "stechec2-run" ''
     export PYTHONPATH="${stechecPython}/${stechecPython.sitePackages}"
     exec ${stechecPython}/bin/python ${stechec-unwrapped}/bin/stechec2-run-unwrapped $*
   '';
 
-  stechec2-generator-wrapper = pkgs.writeShellScript "stechec2-generator-wrapper" ''
+  stechec2-generator-wrapper = writeShellScriptBin "stechec2-generator" ''
     export PYTHONPATH="${stechecPython}/${stechecPython.sitePackages}:${stechec-unwrapped}/lib/stechec2"
     exec ${stechecPython}/bin/python -m generator $*
   '';
 
 in
-
-pkgs.stdenv.mkDerivation {
-  name = "prologin-stechec2";
+symlinkJoin rec {
+  pname = "prologin-stechec2";
   version = "1.0";
+  name = "${pname}-${version}";
 
   passthru = stechec-unwrapped.passthru;
 
-  builder = pkgs.writeShellScript "builder.sh" ''
-    export PATH="${pkgs.coreutils}/bin"
-    mkdir -p $out/bin
-    cp -r ${stechec2-run-wrapper}  $out/bin/stechec2-run
-    cp -r ${stechec2-generator-wrapper} $out/bin/stechec2-generator
-    cp -r ${stechec-unwrapped}/* $out
-  '';
+  paths = [
+    stechec-unwrapped
+    stechec2-generator-wrapper
+    stechec2-run-wrapper
+  ];
 }

@@ -1,8 +1,7 @@
-{ lib, stechec2, ... }:
+{ mkStechec2Game }:
 
-lib.mkStechec2Game {
+mkStechec2Game {
   name = "tictactoe";
   game = ../games/tictactoe;
-  stechec2 = stechec2;
   version = "1.0";
 }

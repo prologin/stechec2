@@ -6,24 +6,40 @@
     futils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, futils }: 
-    futils.lib.eachDefaultSystem (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in
-      rec {
-        lib = import ./nix/lib.nix { inherit pkgs; };
-        packages = futils.lib.flattenTree {
-          stechec2 = import ./nix/stechec2.nix { inherit pkgs lib; };
+  outputs = { self, nixpkgs, futils }:
+    let
+      inherit (nixpkgs) lib;
+      inherit (lib) recursiveUpdate;
+      inherit (futils.lib) eachDefaultSystem;
 
-          tictactoe = import ./nix/tictactoe.nix { inherit lib; inherit (packages) stechec2; };
-          plusminus = import ./nix/plusminus.nix { inherit lib; inherit (packages) stechec2; };
-        };
+      anySystemOutputs = {
+        overlay = final: prev: {
+          stechec2 = final.callPackage ./nix/stechec2.nix { };
+          mkStechec2Game = final.callPackage ./nix/lib.nix { };
 
-        defaultPackage = packages.stechec2;
-        devShell = pkgs.mkShell {
-          buildInputs = (pkgs.lib.attrValues packages);
+          tictactoe = final.callPackage ./nix/tictactoe.nix { };
+          plusminus = final.callPackage ./nix/plusminus.nix { };
         };
-      }
-    );
+      };
+
+      multipleSystemsOutpus = eachDefaultSystem (system:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [ self.overlay ];
+          };
+        in
+        {
+          packages = {
+            inherit (pkgs) stechec2;
+            inherit (pkgs) tictactoe plusminus;
+          };
+
+          devShell = pkgs.mkShell {
+            buildInputs = lib.attrValues self.packages.${system};
+          };
+        }
+      );
+    in
+    recursiveUpdate anySystemOutputs multipleSystemsOutpus;
 }
