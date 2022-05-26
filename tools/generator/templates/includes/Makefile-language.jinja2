@@ -35,7 +35,7 @@ distclean: clean
 
 champion.tgz: $(CHAMPION_FILES)
 	@echo "{% block lang %}{% endblock %}" > _lang
-	tar czf $@ $^ _lang
+	tar czfh $@ $^ _lang
 	@rm _lang
 
 tar: champion.tgz
