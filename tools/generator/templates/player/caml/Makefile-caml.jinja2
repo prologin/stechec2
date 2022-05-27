@@ -8,7 +8,7 @@ OCAML_PATH = $(shell $(OCAMLOPT) -where)
 OCAML_FLAGS = -g -no-unboxed-types
 
 CXXFLAGS += -I$(OCAML_PATH)
-LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lasmrun_shared -lcurses -lm
+LDFLAGS += -L$(OCAML_PATH) -Wl,-R$(OCAML_PATH) -lasmrun_shared -lncurses -lm
 {% endblock %}
 
 {% block extra_rules %}
