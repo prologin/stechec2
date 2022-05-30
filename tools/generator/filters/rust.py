@@ -1,4 +1,7 @@
-from jinja2 import contextfilter
+try:
+    from jinja2 import pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
 
 from . import register_filter
 from .common import (
@@ -11,7 +14,7 @@ register_filter(cxx_comment, name='rust_comment')
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_ffi_call(ctx, func) -> str:
     """
     Call FFI function, assuming that non-copy types are wrapped in a
@@ -32,7 +35,7 @@ def rust_ffi_call(ctx, func) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_prototype(ctx, func, ffi=False) -> str:
     # Input params
     get_type = rust_ffi_type if ffi else rust_api_input_type
@@ -57,7 +60,7 @@ def rust_prototype(ctx, func, ffi=False) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_ffi_type(ctx, value: str) -> str:
     """Type sent to the FFI"""
     basic_types = {
@@ -77,7 +80,7 @@ def rust_ffi_type(ctx, value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
     basic_types = {
         'bool': 'bool',
@@ -98,7 +101,7 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_tuple_type(ctx, value: str, api_mod_path='') -> str:
     tup = ctx['game'].get_struct(value)
     assert is_tuple(tup), "{} is not a tuple struct".format(value)
@@ -110,7 +113,7 @@ def rust_tuple_type(ctx, value: str, api_mod_path='') -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_api_input_type(
     ctx, value: str, api_mod_path='', skip_ref=False
 ) -> str:
@@ -147,7 +150,7 @@ def rust_api_const_type(value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_is_copy(ctx, value: str) -> bool:
     """Check if a type implements the Copy trait"""
     as_struct = ctx['game'].get_struct(value)
@@ -165,7 +168,7 @@ def rust_is_copy(ctx, value: str) -> bool:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def rust_auto_traits(ctx, value: str) -> set:
     """
     Return the list of auto traits that can be implemented for given input

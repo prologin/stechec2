@@ -1,5 +1,10 @@
 from functools import partial
-from jinja2 import contextfilter, contextfunction
+try:
+    from jinja2 import pass_context
+    contextfunction = pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
+    from jinja2 import contextfunction
 
 from . import register_filter, register_function
 from .common import (generic_comment, get_array_inner, generic_prototype,
@@ -8,7 +13,7 @@ from .cxx import cxx_type
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cs_type(ctx, value) -> str:
     if is_array(value):
         return '{}[]'.format(cs_type(ctx, get_array_inner(value)))
@@ -24,7 +29,7 @@ cs_comment = register_filter(
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cs_prototype(ctx, value, *args, **kwargs) -> str:
     value = value.copy()
     value['fct_name'] = camel_case(value['fct_name'])
@@ -41,7 +46,7 @@ def cs_is_reftype(ctx, value: str) -> bool:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cs_mono_type(ctx, value):
     if is_array(value):
         return 'MonoArray*'
@@ -60,14 +65,14 @@ def cs_mono_type(ctx, value):
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cs_mono_prototype(ctx, *args, **kwargs) -> str:
     return generic_prototype(type_mapper=partial(cs_mono_type, ctx),
                              *args, prefix='cs_', **kwargs)
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cs_to_cxx(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -81,7 +86,7 @@ def cs_to_cxx(ctx, value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cxx_to_cs(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)

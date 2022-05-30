@@ -1,5 +1,8 @@
 from functools import partial
-from jinja2 import contextfilter
+try:
+    from jinja2 import pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
 
 from . import register_filter
 from .common import generic_args, generic_prototype, is_array, get_array_inner
@@ -37,7 +40,7 @@ c_comment = register_filter(cxx_comment, name='c_comment')
 
 # To avoid name clashing, we prefix the internal C++ structs
 @register_filter
-@contextfilter
+@pass_context
 def c_internal_cxx_type(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -48,7 +51,7 @@ def c_internal_cxx_type(ctx, value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def c_to_cxx(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -64,7 +67,7 @@ def c_to_cxx(ctx, value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cxx_to_c(ctx, value: str) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -80,7 +83,7 @@ def cxx_to_c(ctx, value: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def c_internal_cxx_prototype(ctx, *args, **kwargs) -> str:
     return generic_prototype(type_mapper=partial(c_internal_cxx_type, ctx),
                              *args, **kwargs)
