@@ -4,9 +4,44 @@
 # Copyright (c) 2020 Antoine Pietri
 
 import os
+import subprocess
 from pathlib import Path
+from sys import stderr
 
 from .generator import Generator
+
+
+LANGUAGES = {
+    'c': {
+        'files': ['champion.c', 'Makefile'],
+        'symlinks': ['api.h', 'interface.cc', 'Makefile-c']},
+    'caml': {
+        'files': ['champion.ml', 'champion.mli', 'Makefile'],
+        'symlinks': ['api.ml', 'interface.cc', 'Makefile-caml']},
+    'cs': {
+        'files': ['champion.cs', 'api.cs', 'interface.cc', 'Makefile'],
+        'symlinks': ['Makefile-cs']},
+    'cxx': {
+        'files': ['champion.cc', 'Makefile'],
+        'symlinks': ['api.hh', 'interface.cc', 'Makefile-cxx']},
+    'haskell': {
+        'files': ['Champion.hs', 'Makefile'],
+        'symlinks': ['Api.hs', 'CApi.hsc', 'api.h', 'interface.cc',
+                     'Makefile-haskell']},
+    'java': {
+        'files': ['Champion.java', 'Makefile'],
+        'symlinks': ['Api.java', 'interface.cc', 'Makefile-java']},
+    'php': {
+        'files': ['champion.php', 'Makefile'],
+        'symlinks': ['api.php', 'interface.cc', 'Makefile-php']},
+    'python': {
+        'files': ['Champion.py', 'Makefile'],
+        'symlinks': ['api.py', 'interface.cc', 'Makefile-python']},
+    'rust': {
+        'files': ['Makefile', 'champion.rs'],
+        'symlinks': ['Cargo.toml', 'Makefile-rust', 'api.rs', 'ffi.rs',
+                     'api.h', 'interface.cc']},
+}
 
 
 def make_player(game, out_dir: Path, symlink: Path = None) -> None:
@@ -32,32 +67,50 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
             else:
                 gen.template(name)
 
-    gen_lang('c',
-             files=['champion.c', 'Makefile'],
-             symlinks=['api.h', 'interface.cc', 'Makefile-c'])
-    gen_lang('caml',
-             files=['champion.ml', 'champion.mli', 'Makefile'],
-             symlinks=['api.ml', 'interface.cc', 'Makefile-caml'])
-    gen_lang('cs',
-             files=['champion.cs', 'api.cs', 'interface.cc', 'Makefile'],
-             symlinks=['Makefile-cs'])
-    gen_lang('cxx',
-             files=['champion.cc', 'Makefile'],
-             symlinks=['api.hh', 'interface.cc', 'Makefile-cxx'])
-    gen_lang('haskell',
-             files=['Champion.hs', 'Makefile'],
-             symlinks=['Api.hs', 'CApi.hsc', 'api.h', 'interface.cc',
-                       'Makefile-haskell'])
-    gen_lang('java',
-             files=['Champion.java', 'Makefile'],
-             symlinks=['Api.java', 'interface.cc', 'Makefile-java'])
-    gen_lang('php',
-             files=['champion.php', 'Makefile'],
-             symlinks=['api.php', 'interface.cc', 'Makefile-php'])
-    gen_lang('python',
-             files=['Champion.py', 'Makefile'],
-             symlinks=['api.py', 'interface.cc', 'Makefile-python'])
-    gen_lang('rust',
-             files=['Makefile', 'champion.rs'],
-             symlinks=['Cargo.toml', 'Makefile-rust', 'api.rs', 'ffi.rs',
-                       'api.h', 'interface.cc'])
+    for lang, files in LANGUAGES.items():
+        gen_lang(lang, **files)
+
+
+def check_compile(lang_dir: Path, lang: str, *, cleanup=True) -> bool:
+    """Try to `make` a player, returns `True` on success.
+    If `cleanup`, also run `make clean`."""
+
+    # Print on stderr
+    def eprint(*args, **kwargs):
+        print(*args, file=stderr, **kwargs)
+
+    success = True
+    eprint(f"{lang}... ", end='', flush=True)
+
+    try:
+        subprocess.run(
+            ['make'], universal_newlines=True, check=True,
+            capture_output=True, cwd=lang_dir,
+        )
+    except subprocess.CalledProcessError as e:
+        success = False
+        eprint("FAILED")
+        eprint(e.stderr)
+    else:
+        eprint("OK")
+
+    if cleanup:
+        try:
+            subprocess.run(
+                ['make', 'clean'], universal_newlines=True, check=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                cwd=lang_dir,
+            )
+        except subprocess.CalledProcessError:
+            pass
+
+    return success
+
+
+def check_player(player_dir: Path) -> bool:
+    """Run `make` for all languages for an already generated player"""
+
+    success = True
+    for lang in LANGUAGES.keys():
+        success &= check_compile(player_dir / lang, lang)
+    return success
