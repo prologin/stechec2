@@ -1,5 +1,8 @@
 from functools import partial
-from jinja2 import contextfilter
+try:
+    from jinja2 import pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
 
 from . import register_filter
 from .common import generic_comment, get_array_inner, is_array, is_tuple
@@ -7,7 +10,7 @@ from .cxx import cxx_type
 
 
 @register_filter
-@contextfilter
+@pass_context
 def python_type(ctx, val: str) -> str:
     base_types = {
         'void': 'None',

@@ -1,5 +1,8 @@
 from functools import partial
-from jinja2 import contextfilter
+try:
+    from jinja2 import pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
 
 from . import register_filter
 from .c import c_type, c_args, c_internal_cxx_type
@@ -24,7 +27,7 @@ def haskell_c_type(type_id: str) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cptr_type(ctx, type_id: str) -> str:
     res = c_type(type_id)
     if is_array(type_id) or ctx['game'].get_struct(type_id):
@@ -62,7 +65,7 @@ def haskell_get_array_types(game: dict):
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cptr_to_cxx(ctx, value: str, use_ptr: bool = False) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -79,7 +82,7 @@ def cptr_to_cxx(ctx, value: str, use_ptr: bool = False) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cxx_to_cptr(ctx, value: str, use_ptr: bool = False) -> str:
     if is_array(value):
         base_type = get_array_inner(value)
@@ -96,14 +99,14 @@ def cxx_to_cptr(ctx, value: str, use_ptr: bool = False) -> str:
 
 
 @register_filter
-@contextfilter
+@pass_context
 def cptr_internal_cxx_prototype(ctx, *args, **kwargs) -> str:
     return generic_prototype(type_mapper=partial(c_internal_cxx_type, ctx),
                              *args, **kwargs)
 
 
 @register_filter
-@contextfilter
+@pass_context
 def haskell_c_prototype(ctx, *args, **kwargs) -> str:
     type_mapper = partial(cptr_type, ctx)
     arg_mapper = partial(c_args, type_mapper=type_mapper)
