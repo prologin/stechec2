@@ -12,7 +12,7 @@ assert' :: Bool -> ()
 assert' False = error "Assertion failed."
 assert' _     = ()
 
-simpleStruct = Simple_struct 42 True 42.42 const_str
+simpleStruct = Simple_struct 42 True 42.42 "TTY"
 tupleStruct = Simple_tuple 42 True
 theStruct = Struct_with_array 42 (replicate 42 42) (replicate 42 simpleStruct) (replicate 42 tupleStruct)
 floatStruct = Struct_with_only_double 42.42 42.42
@@ -26,8 +26,9 @@ test_alert = do
 -- Called 10K times to test if things work well.
 test :: IO ()
 test = do
-  -- Check the types of constants.
-  const (return ()) (const_val :: Int, const_double :: Double)
+  () <- return $ assert' (const_val == 42)
+  () <- return $ assert' (const_double == 42.42)
+  () <- return $ assert' (const_str == "TTY")
 
   send_me_42 42
   send_me_42_and_1337 42 1337

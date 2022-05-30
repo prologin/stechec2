@@ -7,6 +7,10 @@ def test_alert():
 
 # Called 10K times to test if things work well.
 def test():
+    assert CONST_VAL == 42
+    assert CONST_DOUBLE == 42.42
+    assert CONST_STR == "TTY"
+
     send_me_42(42)
     send_me_42_and_1337(42, 1337)
     send_me_true(True)
@@ -39,7 +43,7 @@ def test():
         field_i=42,
         field_bool=True,
         field_double=42.42,
-        field_string=CONST_STR,
+        field_string="TTY",
     )
     simple_tup = ((42, True))
 

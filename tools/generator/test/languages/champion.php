@@ -12,6 +12,10 @@ function test_alert()
  */
 function test()
 {
+    assert(CONST_VAL === 42);
+    assert(CONST_DOUBLE === 42.42);
+    assert(CONST_STR === "TTY");
+
     send_me_42(42);
     send_me_42_and_1337(42, 1337);
     send_me_true(true);
@@ -48,7 +52,7 @@ function test()
         "field_i" => 42,
         "field_bool" => true,
         "field_double" => 42.42,
-        "field_string" => CONST_STR,
+        "field_string" => "TTY",
     );
     $tuple1 = array(
         "field_0" => 42,

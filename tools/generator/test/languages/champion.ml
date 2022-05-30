@@ -17,9 +17,9 @@ let test_alert () = assert (false)
 *)
 let test () =  (* Pose ton code ici *)
   begin
-    (* Check the types of constants. *)
-    ignore (const_val : int);
-    ignore (const_double : float);
+    assert (const_val = 42);
+    assert (const_double = 42.42);
+    assert (const_str = "TTY");
 
     send_me_42 42;
     send_me_42_and_1337 42 1337;
@@ -45,7 +45,7 @@ let test () =  (* Pose ton code ici *)
     let simple = { field_i = 42;
                    field_bool = true;
                    field_double = 42.42;
-                   field_string = const_str } in
+                   field_string = "TTY" } in
     send_me_simple simple;
     send_me_42s { field_int = 42;
                   field_int_arr = times42 42;
