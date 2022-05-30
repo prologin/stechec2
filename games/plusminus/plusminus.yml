@@ -51,3 +51,5 @@ user_function:
     fct_summary: Function called at the end of the game
     fct_ret_type: void
     fct_arg: []
+
+constant: []

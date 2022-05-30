@@ -8,14 +8,18 @@ import pathlib
 import shutil
 import subprocess
 import unittest
+from sys import stderr
 
-from generator.test.utils import generate_player
+from generator.game import load_game
+from generator.player import check_player
+from generator.test.utils import generate_player, load_test_game
 
 
 class TestLanguages(unittest.TestCase):
     def setUp(self):
         with contextlib.ExitStack() as stack:
-            self.player_path = stack.enter_context(generate_player('test'))
+            tmp = generate_player(load_test_game('test'))
+            self.player_path = stack.enter_context(tmp)
             self.addCleanup(stack.pop_all().close)
 
     def test_c(self):
@@ -112,3 +116,23 @@ class TestLanguages(unittest.TestCase):
             )
         except subprocess.CalledProcessError as e:
             self.fail("Tester compilation failed with output:\n" + e.output)
+
+
+class CheckLanguages(unittest.TestCase):
+    def test_check_games(self):
+        file = pathlib.Path(__file__)
+        GAMES_DIR = file.parent.parent.parent.parent / 'games'
+        success = True
+        with contextlib.ExitStack() as stack:
+            for game in filter(pathlib.Path.is_dir, GAMES_DIR.iterdir()):
+                config = game / f"{game.name}.yml"
+                with config.open() as f:
+                    tmp = generate_player(load_game(f))
+                    player_path = stack.enter_context(tmp)
+                print(f"\n--- {game.name} ---", file=stderr)
+                success &= check_player(player_path)
+
+            self.addCleanup(stack.pop_all().close)
+
+        if not success:
+            self.fail("some tests failed")

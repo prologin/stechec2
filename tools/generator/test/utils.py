@@ -15,8 +15,7 @@ def load_test_game(game_name):
 
 
 @contextmanager
-def generate_player(game_name):
+def generate_player(game):
     with tempfile.TemporaryDirectory(prefix='stechec2-generator-test-') as td:
-        game = load_test_game(game_name)
         make_player(game, pathlib.Path(td))
         yield pathlib.Path(td)
