@@ -7,6 +7,7 @@ import os
 import subprocess
 from pathlib import Path
 from sys import stderr
+from typing import Optional
 
 from .generator import Generator
 
@@ -71,46 +72,39 @@ def make_player(game, out_dir: Path, symlink: Path = None) -> None:
         gen_lang(lang, **files)
 
 
-def check_compile(lang_dir: Path, lang: str, *, cleanup=True) -> bool:
-    """Try to `make` a player, returns `True` on success.
-    If `cleanup`, also run `make clean`."""
-
-    # Print on stderr
-    def eprint(*args, **kwargs):
-        print(*args, file=stderr, **kwargs)
-
-    success = True
-    eprint(f"{lang}... ", end='', flush=True)
+def check_compile(lang_dir: Path) -> Optional[str]:
+    """Try to `make` a player, returns `None` on success
+    or the error message in case of a failure"""
 
     try:
         subprocess.run(
             ['make'], universal_newlines=True, check=True,
             capture_output=True, cwd=lang_dir,
         )
+        subprocess.run(
+            ['make', 'tar'], universal_newlines=True, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            cwd=lang_dir,
+        )
     except subprocess.CalledProcessError as e:
-        success = False
-        eprint("FAILED")
-        eprint(e.stderr)
-    else:
-        eprint("OK")
-
-    if cleanup:
-        try:
-            subprocess.run(
-                ['make', 'clean'], universal_newlines=True, check=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                cwd=lang_dir,
-            )
-        except subprocess.CalledProcessError:
-            pass
-
-    return success
+        return e.stderr
 
 
 def check_player(player_dir: Path) -> bool:
     """Run `make` for all languages for an already generated player"""
 
+    # Print on stderr
+    def eprint(*args, **kwargs):
+        print(*args, file=stderr, **kwargs)
+
     success = True
     for lang in LANGUAGES.keys():
-        success &= check_compile(player_dir / lang, lang)
+        eprint(f"{lang}...", end='', flush=True)
+        err = check_compile(player_dir / lang)
+        if err is None:
+            eprint("OK")
+        else:
+            eprint("FAILED")
+            eprint(err)
+            success = False
     return success
