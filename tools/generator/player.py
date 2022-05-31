@@ -37,7 +37,7 @@ LANGUAGES = {
         'symlinks': ['api.php', 'interface.cc', 'Makefile-php']},
     'python': {
         'files': ['Champion.py', 'Makefile'],
-        'symlinks': ['api.py', 'interface.cc', 'Makefile-python']},
+        'symlinks': ['_api.pyi', 'api.py', 'interface.cc', 'Makefile-python']},
     'rust': {
         'files': ['Makefile', 'champion.rs'],
         'symlinks': ['Cargo.toml', 'Makefile-rust', 'api.rs', 'ffi.rs',

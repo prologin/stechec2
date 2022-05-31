@@ -1,0 +1,12 @@
+{# SPDX-License-Identifier: GPL-2.0-or-later #}
+{# Copyright (c) 2022 Association Prologin <association@prologin.org> -#}
+{# Copyright (c) 2022 Sacha Delanoue -#}
+# {{ stechec2_generated }}
+
+{{ game.function|get_python_import }}
+{% for func in game.function %}
+
+{{ func|python_prototype(typed=True) }}
+    {{ func.fct_summary|python_docstring(4) }}
+    ...
+{% endfor %}
