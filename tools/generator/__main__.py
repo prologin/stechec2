@@ -7,7 +7,7 @@ import textwrap
 from pathlib import Path
 
 from .game import load_game
-from .player import make_player
+from .player import check_player, make_player
 from .rules import make_rules
 from .texdoc import make_texdoc
 from .sphinxdoc import make_sphinxdoc
@@ -59,6 +59,10 @@ def main():
               "changes. If no path is given, defaults to the default rules "
               "install path.")
     )
+    player_subparser.add_argument(
+        '--check', action='store_true',
+        help="Check that the generated player stubs compile",
+    )
 
     sp.add_parser('rules', help="generate boilerplate for api rules")
     sp.add_parser('texdoc', help="generate latex API doc of the game")
@@ -89,6 +93,8 @@ def main():
             else:
                 symlink = args.symlink
         make_player(game, args.out_dir, symlink=symlink)
+        if args.check:
+            check_player(args.out_dir)
     elif args.command == 'texdoc':
         make_texdoc(game, args.out_dir)
     elif args.command == 'sphinxdoc':

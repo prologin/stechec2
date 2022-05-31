@@ -8,14 +8,18 @@ import pathlib
 import shutil
 import subprocess
 import unittest
+from sys import stderr
 
-from generator.test.utils import generate_player
+from generator.game import load_game
+from generator.player import check_player, check_compile, check_tar
+from generator.test.utils import generate_player, load_test_game
 
 
 class TestLanguages(unittest.TestCase):
     def setUp(self):
         with contextlib.ExitStack() as stack:
-            self.player_path = stack.enter_context(generate_player('test'))
+            tmp = generate_player(load_test_game('test'))
+            self.player_path = stack.enter_context(tmp)
             self.addCleanup(stack.pop_all().close)
 
     def test_c(self):
@@ -79,24 +83,12 @@ class TestLanguages(unittest.TestCase):
         shutil.copy2(language_test_dir / champion_file_name, language_dir)
 
         # Compile champion.so
-        try:
-            subprocess.run(
-                ['make'], universal_newlines=True, check=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                cwd=language_dir,
-            )
-        except subprocess.CalledProcessError as e:
-            self.fail("Champion compilation failed with output:\n" + e.output)
-
-        # Generate tarball
-        try:
-            subprocess.run(
-                ['make', 'tar'], universal_newlines=True, check=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                cwd=language_dir,
-            )
-        except subprocess.CalledProcessError as e:
-            self.fail("Tarball generation failed with output:\n" + e.output)
+        err = check_compile(language_dir)
+        if err is not None:
+            self.fail("Champion compilation failed with output:\n" + err)
+        err = check_tar(language_dir)
+        if err is not None:
+            self.fail("Tarball generation failed with output:\n" + err)
 
         # Compile tester
         shutil.copy2(language_test_dir / 'tester.cc', self.player_path)
@@ -112,3 +104,23 @@ class TestLanguages(unittest.TestCase):
             )
         except subprocess.CalledProcessError as e:
             self.fail("Tester compilation failed with output:\n" + e.output)
+
+
+class TestExampleGames(unittest.TestCase):
+    def test_example_games(self):
+        file = pathlib.Path(__file__)
+        GAMES_DIR = file.parent.parent.parent.parent / 'games'
+        success = True
+        with contextlib.ExitStack() as stack:
+            for game in filter(pathlib.Path.is_dir, GAMES_DIR.iterdir()):
+                config = game / f"{game.name}.yml"
+                with config.open() as f:
+                    tmp = generate_player(load_game(f))
+                    player_path = stack.enter_context(tmp)
+                print(f"\n--- {game.name} ---", file=stderr)
+                success &= check_player(player_path)
+
+            self.addCleanup(stack.pop_all().close)
+
+        if not success:
+            self.fail("some tests failed")
