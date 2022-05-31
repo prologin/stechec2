@@ -81,6 +81,14 @@ def check_compile(lang_dir: Path) -> Optional[str]:
             ['make'], universal_newlines=True, check=True,
             capture_output=True, cwd=lang_dir,
         )
+    except subprocess.CalledProcessError as e:
+        return e.stderr
+
+
+def check_tar(lang_dir: Path) -> Optional[str]:
+    """Try to `make tar` a player, returns `None` on success
+    or the error message in case of a failure"""
+    try:
         subprocess.run(
             ['make', 'tar'], universal_newlines=True, check=True,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -100,7 +108,7 @@ def check_player(player_dir: Path) -> bool:
     success = True
     for lang in LANGUAGES.keys():
         eprint(f"{lang}...", end='', flush=True)
-        err = check_compile(player_dir / lang)
+        err = check_compile(player_dir / lang) or check_tar(player_dir / lang)
         if err is None:
             eprint("OK")
         else:

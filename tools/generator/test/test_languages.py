@@ -11,7 +11,7 @@ import unittest
 from sys import stderr
 
 from generator.game import load_game
-from generator.player import check_player, check_compile
+from generator.player import check_player, check_compile, check_tar
 from generator.test.utils import generate_player, load_test_game
 
 
@@ -84,8 +84,11 @@ class TestLanguages(unittest.TestCase):
 
         # Compile champion.so
         err = check_compile(language_dir)
-        if err:
+        if err is not None:
             self.fail("Champion compilation failed with output:\n" + err)
+        err = check_tar(language_dir)
+        if err is not None:
+            self.fail("Tarball generation failed with output:\n" + err)
 
         # Compile tester
         shutil.copy2(language_test_dir / 'tester.cc', self.player_path)
