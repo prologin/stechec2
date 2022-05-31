@@ -175,6 +175,22 @@ class Game:
             raise GameError(
                 "Function '{}': name conflicts with a type name."
                 .format(func['fct_name']))
+        # In haskell, struct fields are symbols and conflict with functions:
+        for struct in self.game['struct']:
+            for field, _, _ in struct['str_field']:
+                if func['fct_name'] == field:
+                    raise GameError(
+                        f"Function '{func['fct_name']}': name conflicts "
+                        f"with field of struct '{struct['str_name']}'."
+                    )
+        # This check is not strictly necessary currently, but to be safe:
+        for enum in self.game['enum']:
+            for field, _ in enum['enum_field']:
+                if func['fct_name'] == field:
+                    raise GameError(
+                        f"Function '{func['fct_name']}': name conflicts "
+                        f"with field of enum '{enum['enum_name']}'."
+                    )
         arg_names = set()
         for arg_name, arg_type, arg_comment in func['fct_arg']:
             if arg_name in self.types:
