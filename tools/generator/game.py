@@ -1,12 +1,13 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
-# Copyright (c) 2020 Association Prologin <association@prologin.org>
+# Copyright (c) 2020-2022 Association Prologin <association@prologin.org>
 # Copyright (c) 2020 Antoine Pietri
 # Copyright (c) 2020 Rémi Dupré
-# Copyright (c) 2020 Sacha Delanoue
+# Copyright (c) 2020-2022 Sacha Delanoue
 
 import re
 import typing
 import yaml
+from collections import defaultdict
 from keyword import iskeyword
 
 
@@ -149,32 +150,46 @@ class Game:
 
     def check(self):
         '''Perform various integrity checks on the game objects'''
-        for s in self.game['struct']:
-            self.check_struct(s)
-        for f in (self.game['function'] + self.game['user_function']):
-            self.check_func(f)
-        self.check_field_unicity()
+        self.check_name_unicity()
         self.check_reserved_keywords()
 
-    def check_struct(self, struct):
-        field_names = set()
-        for field_name, field_type, field_comment in struct['str_field']:
-            if field_name in self.types:
-                raise GameError(
-                    "Struct {}: Field '{}' conflicts with a type name "
-                    "(C code will not compile)."
-                    .format(struct['str_name'], field_name))
-            if field_name in field_names:
-                raise GameError(
-                    "Struct {}: Field '{}' was defined twice."
-                    .format(struct['str_name'], field_name))
-            field_names.add(field_name)
+    def check_name_unicity(self):
+        '''
+        Check that all the name used are unique.
 
-    def check_func(self, func):
-        if func['fct_name'] in self.types:
-            raise GameError(
-                "Function '{}': name conflicts with a type name."
-                .format(func['fct_name']))
+        Some languages like OCaml infer types from the name of the enum and
+        struct fields, and thus require them to be unique *across* different
+        types.
+        So here we ensure that every name used in the game (except for function
+        arguments) are unique.
+        '''
+        uses = defaultdict(list)
+        for basic in ('void', 'int', 'double', 'bool', 'string'):
+            uses[basic.lower()].append('a build-in type')
+        for constant in self.game['constant']:
+            uses[constant['cst_name'].lower()].append('a constant')
+        for struct in self.game['struct']:
+            name = struct['str_name']
+            uses[name.lower()].append('a struct name')
+            for field_name, _, _ in struct['str_field']:
+                uses[field_name.lower()].append(f'a field of struct "{name}"')
+        for enum in self.game['enum']:
+            name = enum['enum_name']
+            uses[name.lower()].append('an enum name')
+            for field_name, _ in enum['enum_field']:
+                uses[field_name.lower()].append(f'a field of enum "{name}"')
+        for func in (self.game['function'] + self.game['user_function']):
+            name = func['fct_name']
+            uses[name.lower()].append('a function name')
+            self.check_func_args(func)
+
+        for name in uses:
+            if len(uses[name]) > 1:
+                raise GameError(
+                    f'Name "{name}" conflicts: {", ".join(uses[name])}'
+                )
+
+    def check_func_args(self, func):
         arg_names = set()
         for arg_name, arg_type, arg_comment in func['fct_arg']:
             if arg_name in self.types:
@@ -186,32 +201,6 @@ class Game:
                     "Function '{}': Argument '{}' was defined twice."
                     .format(func['fct_name'], arg_name))
             arg_names.add(arg_name)
-
-    def check_field_unicity(self):
-        '''
-        Check that the enum and struct field names are unique.
-
-        Some languages like OCaml infer types from the name of the enum and
-        struct fields, and thus require them to be unique *across* different
-        types. This rejects types that share a common field name.
-        '''
-        merged_types = [
-            *[('enum', e['enum_name'], [fn for fn, _ in e['enum_field']])
-              for e in self.game['enum']],
-            *[('struct', e['str_name'], [fn for fn, _, _ in e['str_field']])
-              for e in self.game['struct']]
-        ]
-
-        used_field_names = {}  # field_name -> origin type
-        for origin_type, origin, field_names in merged_types:
-            for name in field_names:
-                if name in used_field_names:
-                    def_type, def_name = used_field_names[name]
-                    raise GameError(
-                        "{} '{}': Field name '{}' already used in {} '{}'. "
-                        "This will confuse some type inferrers."
-                        .format(origin_type, origin, name, def_type, def_name))
-                used_field_names[name] = (origin_type, origin)
 
     def check_reserved_keywords(self) -> None:
         '''Check that no identifier is in conflict with a reserved keyword'''
