@@ -55,8 +55,8 @@ class TestYamlErrors(unittest.TestCase):
             }))
 
     def test_error_struct_field_typename(self):
-        expected = ("Struct structtype: Field 'conflict' conflicts with a "
-                    "type name")
+        expected = ('Name "conflict" conflicts: a field of struct '
+                    '"structtype", an enum name')
         with self.assertRaisesRegex(GameError, expected):
             Game(get_test_game({
                 'enum': [{
@@ -147,9 +147,8 @@ class TestYamlErrors(unittest.TestCase):
             }))
 
     def test_error_unicity_struct_fields(self):
-        expected = ("struct 'structtype': Field name 'conflict' already used "
-                    "in enum 'enumtype'. This will confuse some type "
-                    "inferrers.")
+        expected = ('Name "conflict" conflicts: a field of struct '
+                    '"structtype", a field of enum "enumtype')
         with self.assertRaisesRegex(GameError, expected):
             Game(get_test_game({
                 'enum': [{
