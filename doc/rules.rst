@@ -145,6 +145,10 @@ An enumeration is described by three fields:
 
 * ``enum_name``: the name of the enum.
 * ``enum_summary``: a short documentation of the enum.
+* ``enum_error`` (yes/no): if set to "yes", the enum will be interpreted as
+  an error and enable some sugar in the languages that support it. The first
+  variant of the enum will represent success and all other variants represent
+  errors.
 * ``enum_field``: a list of the different fields of the enum. Each field is a
   list containing:
 
@@ -162,6 +166,7 @@ We can write it quickly::
       enum_summary:
         "Enumeration containing all possible error types that can be returned
         by action functions"
+      enum_error: yes
       enum_field:
         - [ok, "no error occurred"]
         - [out_of_bounds, "provided position is out of bounds"]

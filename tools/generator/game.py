@@ -152,6 +152,7 @@ class Game:
         '''Perform various integrity checks on the game objects'''
         self.check_name_unicity()
         self.check_reserved_keywords()
+        self.check_empty_errors()
 
     def check_name_unicity(self):
         '''
@@ -230,6 +231,15 @@ class Game:
             for arg_name, _, _ in func['fct_arg']:
                 throw_if_conflicts(
                     arg_name, "Function {}: argument".format(func['fct_name']))
+
+    def check_empty_errors(self):
+        '''Make sure errors have at least one field'''
+        for enum in self.game['enum']:
+            if enum.get('enum_error', False) and enum['enum_field'] == []:
+                raise GameError(
+                    "Enum '{}' is an error but has no fields."
+                    .format(enum['enum_name'])
+                )
 
     def get_enum(self, enum_name):
         '''Get an enum by name, None if it does not exist'''
@@ -378,6 +388,7 @@ GAME_SCHEMA = {
         {
             'enum_name': IDENTIFIER,
             'enum_summary': str,
+            'enum_error': O(bool),
             'enum_field': [(IDENTIFIER, str)],
         }
     ],

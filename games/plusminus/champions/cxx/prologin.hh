@@ -15,7 +15,7 @@
 typedef enum error
 {
     OK,           /* <- no error occurred */
-    OUT_OF_BOUDS, /* <- guess is out of bounds */
+    OUT_OF_BOUNDS, /* <- guess is out of bounds */
 } error;
 // This is needed for old compilers
 namespace std
