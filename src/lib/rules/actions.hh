@@ -19,7 +19,7 @@ class Actions : public utils::IBufferizable
     using ActionLog = std::vector<std::unique_ptr<IAction>>;
 
 public:
-    static constexpr size_t MAX_ACTIONS = 1024;
+    static constexpr size_t MAX_ACTIONS = 4096;
 
     // To handle unserialization of multiple Actions, we have to be able to
     // instantiate the corresponding objects
