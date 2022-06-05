@@ -7,15 +7,22 @@ except ImportError:  # jinja < 3
 from . import register_filter
 from .c import c_type, c_args, c_internal_cxx_type
 from .common import (generic_comment, generic_prototype, get_array_inner,
-                     is_array)
+                     is_array, is_error)
 
 
 @register_filter
-def haskell_type(type_id: str) -> str:
+@pass_context
+def haskell_type(ctx, type_id: str, *, parens: bool = False) -> str:
     if is_array(type_id):
-        return f'[{haskell_type(get_array_inner(type_id))}]'
+        return f'[{haskell_type(ctx, get_array_inner(type_id))}]'
     elif type_id == 'void':
         return '()'
+    enum = ctx['game'].get_enum(type_id)
+    if enum and is_error(enum):
+        ty = 'Either () {}'.format(type_id.capitalize())
+        if parens:
+            ty = '({})'.format(ty)
+        return ty
     return type_id.capitalize()
 
 

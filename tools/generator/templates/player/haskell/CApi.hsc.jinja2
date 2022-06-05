@@ -87,12 +87,27 @@ instance ApiStorable String where
 
 {{ enum.enum_summary|haskell_comment }}
 data {{ enum.enum_name|capitalize }} =
-{% for field_name, field_comment in enum.enum_field %}
+{% for field_name, field_comment in enum|enum_fields_except_ok %}
 {% if not loop.first %}  |{% else %}   {% endif %} {{ field_name|capitalize }} {{ field_comment|haskell_comment }}
 {% endfor %}
   deriving(Show, Eq, Enum)
 type C{{ enum.enum_name|capitalize }} = CInt
 
+{% if enum is error %}
+instance ApiStorable (Either () {{ enum.enum_name|capitalize }}) where
+  type ApiStorableType (Either () {{ enum.enum_name|capitalize }}) = CInt
+  toStorable (Left ()) f = f $ fromIntegral 0
+  toStorable (Right x) f = f $ fromIntegral $ fromEnum x + 1
+  {-# INLINE toStorable #-}
+  unStorable 0 = return $ Left ()
+  unStorable x = return $ Right $ toEnum $ fromIntegral x - 1
+  {-# INLINE unStorable #-}
+  type ApiStorableBaseType (Either () {{ enum.enum_name|capitalize }}) = ApiStorableType (Either () {{ enum.enum_name|capitalize }})
+  toStorableBase = toStorable
+  {-# INLINE toStorableBase #-}
+  unStorableBase = unStorable
+  {-# INLINE unStorableBase #-}
+{% else %}
 instance ApiStorable {{ enum.enum_name|capitalize }} where
   type ApiStorableType {{ enum.enum_name|capitalize }} = CInt
   toStorable x f = f (fromIntegral (fromEnum x))
@@ -104,6 +119,7 @@ instance ApiStorable {{ enum.enum_name|capitalize }} where
   {-# INLINE toStorableBase #-}
   unStorableBase = unStorable
   {-# INLINE unStorableBase #-}
+{% endif %}
 
 {% endfor %}
 
@@ -243,10 +259,11 @@ instance ApiStorable {{ type|haskell_type }} where
 
 {% for func in game.function %}
 {{ func.fct_summary|haskell_comment }}
-{{ func.fct_name }} ::{% for _, type, _ in func.fct_arg %} {{ type|haskell_type }} -> {% endfor %}IO {{ func.fct_ret_type|haskell_type }}
+{{ func.fct_name }} ::{% for _, type, _ in func.fct_arg %} {{ type|haskell_type }} -> {% endfor %}IO {{ func.fct_ret_type|haskell_type(parens=True) }}
 {{ func.fct_name }}{% for name, _, _ in func.fct_arg %} {{ name }} {% endfor %} ={% for name, _, _ in func.fct_arg %} toStorable {{ name }} $ \{{ name }}' -> {% endfor %} (hs_{{ func.fct_name }} {% for name, _, _ in func.fct_arg %} {{ name }}'{% endfor %}) >>= unStorable
 
-
 foreign import ccall
-  hs_{{ func.fct_name }} :: {% for _, type, _ in func.fct_arg %} (ApiStorableType {{ type|haskell_type }}) ->{% endfor %} IO (ApiStorableType {{ func.fct_ret_type|haskell_type }})
+  hs_{{ func.fct_name }} :: {% for _, type, _ in func.fct_arg %} (ApiStorableType {{ type|haskell_type(parens=True) }}) ->{% endfor %} IO (ApiStorableType {{ func.fct_ret_type|haskell_type(parens=True) }})
+
+
 {% endfor %}
