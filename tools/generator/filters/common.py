@@ -30,6 +30,11 @@ def is_tuple(struct) -> bool:
     return struct.get('str_tuple', False)
 
 
+@register_test
+def is_error(enum) -> bool:
+    return enum.get('enum_error', False)
+
+
 @register_filter
 def generic_args(value, type_mapper=lambda x: x) -> str:
     return ", ".join("{} {}".format(type_mapper(type_), name)
@@ -56,3 +61,12 @@ def generic_comment(value: str, start: str, indent: int = 0) -> str:
         break_long_words=False,
         replace_whitespace=False
     ))
+
+
+@register_filter
+def enum_fields_except_ok(enum):
+    """Returns the list of variants for an enum,
+    except the OK variant of an error."""
+    if is_error(enum):
+        return enum['enum_field'][1:]
+    return enum['enum_field']

@@ -5,7 +5,7 @@ except ImportError:  # jinja < 3
 
 from . import register_filter
 from .common import (
-    camel_case, get_array_inner, is_array, is_returning, is_tuple,
+    camel_case, get_array_inner, is_array, is_error, is_returning, is_tuple,
 )
 from .cxx import cxx_comment
 
@@ -94,6 +94,9 @@ def rust_api_output_type(ctx, value: str, api_mod_path='') -> str:
         return 'Vec<{}>'.format(
             rust_api_output_type(ctx, get_array_inner(value), api_mod_path)
         )
+    enum = ctx['game'].get_enum(value)
+    if enum and is_error(enum):
+        return 'Result<(), {}>'.format(api_mod_path + camel_case(value))
     elif value in basic_types:
         return basic_types[value]
     else:

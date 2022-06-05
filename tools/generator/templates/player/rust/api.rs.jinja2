@@ -25,7 +25,7 @@ pub const {{ constant.cst_name }}: {{ (constant.cst_type or 'int')|rust_api_cons
 {{ enum.enum_summary|rust_comment(doc=True) }}
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, PartialOrd, Ord)]
 pub enum {{ enum.enum_name|camel_case }} {
-    {% for field_name, field_comment in enum.enum_field %}
+    {% for field_name, field_comment in enum|enum_fields_except_ok %}
     {{ field_comment|rust_comment(doc=True, indent=4)}}
     {{ field_name|camel_case }},
     {% endfor %}
