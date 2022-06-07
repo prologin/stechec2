@@ -82,3 +82,6 @@ def test():
         field_tup_arr=[(42, True)] * 42)] * 42
 
     send_me_tuple_with_array((42, [(42, True)] * 42))
+
+    assert simple_fallible(0) == test_error.OK
+    assert simple_fallible(42) == test_error.NON_ZERO

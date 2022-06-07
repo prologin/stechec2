@@ -104,5 +104,8 @@ pub fn test() {
     let lr = send_me_struct_array(&l_with_refs);
     assert_eq!(l, lr);
 
-    send_me_tuple_with_array(&(42, vec![(42, true); 42]))
+    send_me_tuple_with_array(&(42, vec![(42, true); 42]));
+
+    assert!(simple_fallible(0).is_ok());
+    assert!(simple_fallible(42).is_err());
 }

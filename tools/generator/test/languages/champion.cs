@@ -172,6 +172,9 @@ namespace Champion {
         t_with_array.Field1Array[i] = tuple_struct;
       }
       Api.SendMeTupleWithArray(t_with_array);
+
+      Assert(Api.SimpleFallible(0) == TestError.OK);
+      Assert(Api.SimpleFallible(42) == TestError.NON_ZERO);
     }
   }
 }

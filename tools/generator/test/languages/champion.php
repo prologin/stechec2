@@ -100,4 +100,7 @@ function test()
         "field_0_count" => 42,
         "field_1_array" => array_fill(0, 42, $tuple1)
     ));
+
+    assert(simple_fallible(0) == OK);
+    assert(simple_fallible(42) == NON_ZERO);
 }

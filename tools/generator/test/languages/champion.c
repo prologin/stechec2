@@ -192,5 +192,8 @@ void test()
     }
     send_me_tuple_with_array(t_with_array);
     free(t_with_array.field_1_array.items);
+
+    assert(simple_fallible(0) == OK);
+    assert(simple_fallible(42) == NON_ZERO);
 }
 

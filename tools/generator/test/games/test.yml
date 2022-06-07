@@ -25,6 +25,14 @@ enum:
     enum_field:
       - [val1, "value 1"]
       - [val2, "value 2"]
+  -
+    enum_name: test_error
+    enum_summary:
+      "Just a simple error."
+    enum_error: yes
+    enum_field:
+      - [ok, "ok!"]
+      - [non_zero, "How dare you"]
 
 struct:
   -
@@ -250,6 +258,12 @@ function:
     fct_ret_type: void
     fct_arg:
       - [s, tuple_with_struct, the tuple]
+  -
+    fct_name: simple_fallible
+    fct_summary: Don't pass a non-zero value
+    fct_ret_type: test_error
+    fct_arg:
+      - [i, int, Should be perfectly balanced]
 
 user_function:
   -

@@ -37,6 +37,7 @@ struct {
     int returns_inverse; // Test arrays of double
     int returns_reversed_enums; // Test arrays of enums
     int returns_upper; // Test arrays of strings
+    int simple_fallible;
 } func_called;
 
 extern "C"
@@ -256,6 +257,15 @@ extern "C"
         func_called.send_me_tuple_with_array += 1;
     }
 
+    test_error api_simple_fallible(int i) {
+        func_called.simple_fallible += 1;
+        if (i == 0) {
+            return test_error::OK;
+        } else {
+            return test_error::NON_ZERO;
+        }
+    }
+
     void api_afficher_test_enum(test_enum v)
     {
         assert(v == VAL2);
@@ -269,6 +279,7 @@ extern "C"
     void api_afficher_struct_with_only_double(struct_with_only_double) {}
     void api_afficher_simple_tuple(simple_tuple) {}
     void api_afficher_tuple_with_struct(tuple_with_struct) {}
+    void api_afficher_test_error(test_error) {}
 }
 
 
@@ -314,4 +325,5 @@ int main(int argc, char* argv[])
     assert(func_called.returns_inverse);
     assert(func_called.returns_reversed_enums);
     assert(func_called.returns_upper);
+    assert(func_called.simple_fallible);
 }

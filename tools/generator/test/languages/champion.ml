@@ -70,6 +70,10 @@ let test () =  (* Pose ton code ici *)
                            field_str_arr = times42 simple;
                            field_tup_arr = times42 (42, true) }));
     send_me_tuple_with_array (42, times42 (42, true));
+
+    assert (simple_fallible 0 = Ok ());
+    assert (simple_fallible 42 = Error Non_zero);
+
     flush stderr; flush stdout (* Pour que vos sorties s'affichent *)
   end
 

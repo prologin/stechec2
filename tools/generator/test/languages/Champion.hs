@@ -70,6 +70,9 @@ test = do
 
   send_me_tuple_with_array $ Tuple_with_array 42 (replicate 42 tupleStruct)
 
+  () <- assert' . (== Left ()) <$> simple_fallible 0
+  () <- assert' . (== Right Non_zero) <$> simple_fallible 42
+
   return ()
 
 

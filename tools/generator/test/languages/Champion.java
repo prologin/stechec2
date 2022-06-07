@@ -161,6 +161,9 @@ public class Champion extends Api
         }
         send_me_tuple_with_array(t_with_array);
 
+        assert(simple_fallible(0) == TestError.OK);
+        assert(simple_fallible(42) == TestError.NON_ZERO);
+
         // Specific Java test
         StructWithStruct sws = new StructWithStruct();
         assert(sws.field_struct != null);
