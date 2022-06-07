@@ -160,6 +160,36 @@ std::vector<double> caml_to_cxx_array(value in)
 
 {% for enum in game.enum %}
 
+{% if enum is error %}
+template<>
+value cxx_to_caml<value, {{ enum.enum_name }}>({{ enum.enum_name }} in)
+{
+    CAMLparam0();
+    CAMLlocal1(result);
+
+    if (in == {{ enum.enum_field[0][0]|upper }}) {
+        result = caml_alloc_small(1, 0);
+        Field(result, 0) = Val_unit;
+    } else {
+        result = caml_alloc_small(1, 1);
+        Field(result, 0) = Val_int(in - 1);
+    }
+
+    CAMLreturn(result);
+}
+
+template<>
+{{ enum.enum_name }} caml_to_cxx<value, {{ enum.enum_name }}>(value in)
+{
+    CAMLparam1(in);
+
+    if (Tag_val(in) == 0) {
+        CAMLreturnT({{ enum.enum_name }}, {{ enum.enum_field[0][0]|upper }});
+    } else {
+        CAMLreturnT({{ enum.enum_name }}, ({{ enum.enum_name }})(Int_val(in) + 1));
+    }
+}
+{% else %}
 {{ enum.enum_summary|cxx_comment }}
 template<>
 value cxx_to_caml<value, {{ enum.enum_name }}>({{ enum.enum_name }} in)
@@ -174,6 +204,7 @@ template<>
     CAMLparam1(in);
     CAMLreturnT({{ enum.enum_name }}, ({{ enum.enum_name }})Int_val(in));
 }
+{% endif %}
 {% endfor %}
 {% for struct in game.struct %}
 

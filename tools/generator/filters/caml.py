@@ -1,18 +1,27 @@
 import textwrap
 
+try:
+    from jinja2 import pass_context
+except ImportError:  # jinja < 3
+    from jinja2 import contextfilter as pass_context
+
 from . import register_filter, register_test
-from .common import get_array_inner, is_array
+from .common import get_array_inner, is_array, is_error
 from .cxx import cxx_type
 
 
 @register_filter
-def caml_type(value: str) -> str:
+@pass_context
+def caml_type(ctx, value: str) -> str:
     if value == 'void':
         return 'unit'
     if value == 'double':
         return 'float'
     if is_array(value):
-        return '{} array'.format(caml_type(get_array_inner(value)))
+        return '{} array'.format(caml_type(ctx, get_array_inner(value)))
+    enum = ctx['game'].get_enum(value)
+    if enum and is_error(enum):
+        return '(unit, {}) result'.format(value)
     return value
 
 
@@ -27,20 +36,22 @@ def caml_cxx_args(arg_list):
 
 
 @register_filter
-def caml_prototype(func) -> str:
-    arg_list = ' '.join("({}:{})".format(arg_name, caml_type(arg_type))
+@pass_context
+def caml_prototype(ctx, func) -> str:
+    arg_list = ' '.join("({}:{})".format(arg_name, caml_type(ctx, arg_type))
                         for arg_name, arg_type, _ in func['fct_arg'])
     if arg_list == '':  # make unit the only parameter
         arg_list = '()'
 
     return 'let {} {} : {} ='.format(func['fct_name'],
                                      arg_list,
-                                     caml_type(func['fct_ret_type']))
+                                     caml_type(ctx, func['fct_ret_type']))
 
 
 @register_filter
-def caml_signature(func, external: bool = False) -> str:
-    arg_list = ' -> '.join(caml_type(arg_type)
+@pass_context
+def caml_signature(ctx, func, external: bool = False) -> str:
+    arg_list = ' -> '.join(caml_type(ctx, arg_type)
                            for _, arg_type, _
                            in func['fct_arg'])
     if arg_list == '':  # make unit the only parameter
@@ -49,7 +60,7 @@ def caml_signature(func, external: bool = False) -> str:
     return '{} {} : {} -> {}'.format('external' if external else 'val',
                                      func['fct_name'],
                                      arg_list,
-                                     caml_type(func['fct_ret_type']))
+                                     caml_type(ctx, func['fct_ret_type']))
 
 
 @register_filter

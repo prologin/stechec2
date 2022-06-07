@@ -9,7 +9,7 @@ let {{ constant.cst_name|lower }} = {{ constant.cst_val }}
 {% for enum in game.enum %}
 {{ enum.enum_summary|caml_comment(doc=True) }}
 type {{ enum.enum_name }} =
-  {% for field_name, field_comment in enum.enum_field %}
+  {% for field_name, field_comment in enum|enum_fields_except_ok %}
   | {{ field_name|capitalize }} (** <- {{ field_comment }} *)
   {% endfor %}
 
